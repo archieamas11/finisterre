@@ -1,23 +1,48 @@
-import { useNavigate } from "react-router-dom";
+import { AppSidebar } from "@/components/app-sidebar"
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbList,
+  BreadcrumbPage,
+} from "@/components/ui/breadcrumb"
+import { Separator } from "@/components/ui/separator"
+import {
+  SidebarInset,
+  SidebarProvider,
+  SidebarTrigger,
+} from "@/components/ui/sidebar"
 
 export default function UserDashboard() {
-  const navigate = useNavigate();
-  const handleLogout = () => {
-    // Clear auth state if needed
-    localStorage.removeItem("authToken");
-    sessionStorage.removeItem("authToken");
-    navigate("/");
-  };
+  // Placeholder user data. Replace with actual data fetching logic as needed.
+  const data = { user: { name: "User" } }
+
   return (
-    <div className="p-8">
-      <h2 className="text-2xl font-bold mb-4">User Dashboard</h2>
-      <p>Welcome, user! This is your dashboard.</p>
-      <button
-        className="mt-6 px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700"
-        onClick={handleLogout}
-      >
-        Logout
-      </button>
-    </div>
-  );
+    <SidebarProvider>
+      <AppSidebar />
+      <SidebarInset>
+        <header className="flex h-14 shrink-0 items-center gap-2">
+          <div className="flex flex-1 items-center gap-2 px-3">
+            <SidebarTrigger />
+            <Separator
+              orientation="vertical"
+              className="mr-2 data-[orientation=vertical]:h-4"
+            />
+            <Breadcrumb>
+              <BreadcrumbList>
+                <BreadcrumbItem>
+                  <BreadcrumbPage className="line-clamp-1">
+                    Welcome, {data.user.name}!
+                  </BreadcrumbPage>
+                </BreadcrumbItem>
+              </BreadcrumbList>
+            </Breadcrumb>
+          </div>
+        </header>
+        <div className="flex flex-1 flex-col gap-4 px-4 py-10">
+          <div className="bg-muted/50 mx-auto h-24 w-full max-w-3xl rounded-xl" />
+          <div className="bg-muted/50 mx-auto h-full w-full max-w-3xl rounded-xl" />
+        </div>
+      </SidebarInset>
+    </SidebarProvider>
+  )
 }
