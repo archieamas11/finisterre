@@ -36,8 +36,6 @@ export default function LoginPage() {
     setLoginError("");
     try {
       const { loginUser } = await import("./api");
-      // Debug log to verify values sent
-      console.log("Sending login:", { username: trimmedUsername, password: trimmedPassword });
       // Ensure payload is correct
       const res = await loginUser(trimmedUsername, trimmedPassword);
       console.log("Login response:", res);

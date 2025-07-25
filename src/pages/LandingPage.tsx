@@ -2,6 +2,8 @@ import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import { MapPin, MoonStar, SunIcon, EclipseIcon } from 'lucide-react';
 import { ThemeProvider, useTheme } from "@/components/theme-provide";
+import { useNavigate } from "react-router-dom";
+
 import {
   Select,
   SelectContent,
@@ -10,6 +12,7 @@ import {
 } from "@/components/ui/select"
 
 export default function LandingPage() {
+  const navigate = useNavigate();
   // Theme switcher component
   const ThemeSwitcher = () => {
     const { theme, setTheme } = useTheme();
@@ -34,7 +37,9 @@ export default function LandingPage() {
     <ThemeProvider>
       <div className="min-h-screen bg-gradient-to-br from-stone-100 to-stone-300 dark:from-stone-900 dark:to-stone-800 flex flex-col">
         <nav className="flex items-center justify-between px-8 py-4 bg-white dark:bg-stone-900 border-b border-stone-200 dark:border-stone-700 shadow-sm">
-          <span className="font-bold text-xl text-stone-700 dark:text-stone-100 flex items-center"><MapPin className="mr-2" /> Finisterre</span>
+          <span className="font-bold text-xl text-stone-700 dark:text-stone-100 flex items-center" onClick={() => navigate("/")}
+            style={{ cursor: "pointer" }}><MapPin className="mr-2"
+            /> Finisterre</span>
           <div className="flex gap-6">
             <Link to="/" className="text-stone-700 dark:text-stone-100 hover:underline">Home</Link>
           </div>
@@ -52,7 +57,7 @@ export default function LandingPage() {
               Inspired by Spain’s El Camino de Santiago, Finisterre Gardenz celebrates life and honors the pilgrimage we all make as we live life to the fullest.
             </p>
             <Link to="/map" className="w-full flex justify-center">
-              <Button variant="default" className="w-40 rounded-md bg-stone-700 dark:bg-stone-800 text-white hover:bg-stone-800 dark:hover:bg-stone-900"> <MapPin /> Explore Map</Button>
+              <Button variant="default" className="w-40 rounded-md bg-stone-700 dark:bg-stone-800 text-white hover:bg-stone-800 dark:hover:bg-stone-700"> <MapPin /> Explore Map</Button>
             </Link>
           </div>
         </main>
