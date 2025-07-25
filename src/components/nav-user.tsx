@@ -115,14 +115,14 @@ export function NavUser({
               {/* Theme toggle group */}
               <DropdownMenuLabel className="pt-2 pb-1 text-xs font-semibold">Theme</DropdownMenuLabel>
               <DropdownMenuSeparator />
-              <ToggleGroup type="single" value={theme} className="flex border-1 border-sidebar-accent rounded-lg">
+              <ToggleGroup type="single" value={theme} className="flex border-1 border-sidebar-accent rounded-lg ">
                 <ToggleGroupItem
                   value="system"
                   aria-label="System"
                   onClick={() => handleThemeChange('system')}
                   className={theme === 'system' ? "bg-sidebar-accent text-sidebar-accent-foreground" : ""}
                 >
-                  <EclipseIcon/>
+                  <EclipseIcon />
                 </ToggleGroupItem>
                 <ToggleGroupItem
                   value="light"
@@ -130,7 +130,7 @@ export function NavUser({
                   onClick={() => handleThemeChange('light')}
                   className={theme === 'light' ? "bg-sidebar-accent text-sidebar-accent-foreground" : ""}
                 >
-                  <SunIcon/>
+                  <SunIcon />
                 </ToggleGroupItem>
                 <ToggleGroupItem
                   value="dark"
@@ -138,7 +138,7 @@ export function NavUser({
                   onClick={() => handleThemeChange('dark')}
                   className={theme === 'dark' ? "bg-sidebar-accent text-sidebar-accent-foreground" : ""}
                 >
-                  <MoonStar/>
+                  <MoonStar />
                 </ToggleGroupItem>
               </ToggleGroup>
             </DropdownMenuGroup>

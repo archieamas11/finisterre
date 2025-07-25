@@ -57,10 +57,10 @@ export default function LoginPage() {
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-background">
-      <Card className="w-lg max-w-md p-8 space-y-6 shadow-xl">
+      <Card className="w-lg max-w-sm p-7 space-y-6 shadow-xl">
         <div className="space-y-1 text-center">
           <MapPin
-            className="mx-auto h-12 w-12 text-stone-700"
+            className="mx-auto h-12 w-12 text-stone-500"
             onClick={() => navigate("/")}
             style={{ cursor: "pointer" }}
           />
@@ -98,7 +98,11 @@ export default function LoginPage() {
             {passError && <div className="text-destructive text-sm">{passError}</div>}
           </div>
           {loginError && <div className="text-destructive text-sm text-center">{loginError}</div>}
-          <Button type="submit" className="w-full mt-5" disabled={loading}>
+          <Button
+            type="submit"
+            className="w-full mt-6 hover:bg-primary/80"
+            disabled={loading}
+          >
             {loading ? "Logging in..." : "Login"}
           </Button>
         </form>

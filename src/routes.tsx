@@ -3,7 +3,7 @@ import { lazy } from "react";
 import AdminLayout from "@/pages/admin/AdminLayout";
 const LandingPage = lazy(() => import("@/pages/LandingPage"));
 const UserDashboard = lazy(() => import("@/pages/user/UserDashboard"));
-const AdminDashboard = lazy(() => import("@/pages/admin/AdminDashboard"));
+const AdminDashboard = lazy(() => import("@/pages/admin/contents/AdminDashboard"));
 import IntermentSetup from "./pages/admin/contents/IntermentSetup";
 const AdminMap = lazy(() => import("@/pages/admin/contents/Map"));
 const Services = lazy(() => import("@/pages/admin/contents/Services"));

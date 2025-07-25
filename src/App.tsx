@@ -1,7 +1,7 @@
 import { Suspense } from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import AdminLayout from "@/pages/admin/AdminLayout";
-import AdminDashboard from "@/pages/admin/AdminDashboard";
+import AdminDashboard from "@/pages/admin/contents/AdminDashboard";
 import IntermentSetup from "./pages/admin/contents/IntermentSetup";
 import AdminMap from "@/pages/admin/contents/Map";
 import Services from "@/pages/admin/contents/Services";

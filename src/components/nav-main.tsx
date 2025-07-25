@@ -1,13 +1,12 @@
-"use client"
-
-import { type LucideIcon } from "lucide-react"
-import { Link, useLocation } from "react-router-dom"
-
 import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar"
+import type { LucideIcon } from "lucide-react"
+import { Link, useLocation } from "react-router-dom"
+
+
 
 export function NavMain({
   items,
@@ -18,19 +17,27 @@ export function NavMain({
     icon: LucideIcon
     isActive?: boolean
   }[]
+    activeItem?: {
+    title: string
+    url: string
+    icon: LucideIcon
+  }
 }) {
   const location = useLocation();
   return (
     <SidebarMenu>
       {items.map((item) => {
         const isActive = location.pathname === item.url;
-        // Use CSS classes for dark mode support
+  
         return (
           <SidebarMenuItem key={item.title}>
             <SidebarMenuButton
               asChild
-              isActive={isActive}
-              className={isActive ? "bg-indigo-900 dark:stone-0" : ""}
+              className={
+                isActive
+                  ? "bg-stone-700 text-stone-100 dark:bg-stone-300 dark:text-black transition-colors duration-300"
+                  :  "p-4"
+              }
             >
               <Link to={item.url}>
                 <item.icon />

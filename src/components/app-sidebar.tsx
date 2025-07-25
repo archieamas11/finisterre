@@ -5,24 +5,25 @@ import {
   SettingsIcon,
   CircleUser,
   PaintBucket,
-  MapPin,
+  User2Icon
 } from "lucide-react"
 
 import { NavMain } from "@/components/nav-main"
 import { NavUser } from "@/components/nav-user"
-
 import {
   Sidebar,
   SidebarContent,
+  SidebarFooter,
   SidebarHeader,
+  SidebarMenu,
+  SidebarMenuButton,
+  SidebarMenuItem,
 } from "@/components/ui/sidebar"
 
-
-// This is sample data.
 const data = {
   user: {
-    name: "shadcn",
-    email: "m@example.com",
+    name: "rico",
+    email: "archieamas11@gmail.com",
     avatar: "/avatars/shadcn.jpg",
   },
   navMain: [
@@ -56,18 +57,31 @@ const data = {
   ]
 }
 
+
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   return (
-    <Sidebar className="border-r-0" {...props}>
-      <div className="flex justify-center items-center py-4">
-        <MapPin className="text-primary" size={50} />
-      </div>
+    <Sidebar collapsible="offcanvas" {...props}>
       <SidebarHeader>
-        <NavMain items={data.navMain} />
+        <SidebarMenu>
+          <SidebarMenuItem>
+            <SidebarMenuButton
+              asChild
+              className="data-[slot=sidebar-menu-button]:!p-1.5"
+            >
+              <a href="#">
+                <User2Icon />
+                <span className="text-base font-semibold">Admin</span>
+              </a>
+            </SidebarMenuButton>
+          </SidebarMenuItem>
+        </SidebarMenu>
       </SidebarHeader>
       <SidebarContent>
+        <NavMain items={data.navMain} />
       </SidebarContent>
-      <NavUser user={data.user} />
+      <SidebarFooter>
+        <NavUser user={data.user} />
+      </SidebarFooter>
     </Sidebar>
   )
 }
