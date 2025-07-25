@@ -1,0 +1,22 @@
+Right-click the whale icon in the task-tray → Settings → Resources → File Sharing.
+Press +, choose C:\cemetery, then Apply & Restart.
+────────────────────────
+1. Pull the OSRM image (once)
+docker pull osrm/osrm-backend:latest
+────────────────────────
+5. Build the routing graph (run once per new cemetery.osm)
+docker run --rm -t -v C:/cemetery:/data osrm/osrm-backend osrm-extract -p /opt/foot.lua /data/cemetery.osm
+docker run --rm -t -v C:/cemetery:/data osrm/osrm-backend osrm-partition /data/cemetery.osrm
+docker run --rm -t -v C:/cemetery:/data osrm/osrm-backend osrm-customize /data/cemetery.osrm
+
+6. Start the server
+docker run --name osrm-cemetery -d -p 5000:5000 -v C:/cemetery:/data osrm/osrm-backend osrm-routed --algorithm mld /data/cemetery.osrm
+
+7. To be remember
+docker start osrm-cemetery
+docker stop osrm-cemetery
+
+// Remove osrm
+docker rm osrm-cemetery
+docker rm -f osrm-cemetery
+
