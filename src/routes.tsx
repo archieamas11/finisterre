@@ -1,8 +1,6 @@
-
 import { lazy } from "react";
 import AdminLayout from "@/pages/admin/AdminLayout";
 const LandingPage = lazy(() => import("@/pages/LandingPage"));
-const UserDashboard = lazy(() => import("@/pages/user/UserDashboard"));
 const AdminDashboard = lazy(() => import("@/pages/admin/contents/AdminDashboard"));
 import IntermentSetup from "./pages/admin/contents/IntermentSetup";
 const AdminMap = lazy(() => import("@/pages/admin/contents/Map"));
@@ -13,11 +11,16 @@ import LoginPage from "@/auth/LoginPage";
 import ForgotPassword from "./auth/ForgotPassword";
 import ResetPassword from "./auth/ResetPassword";
 import Logout from "./auth/Logout";
+import UserLayout from "@/pages/user/UserLayout";
+const UserDashboard = lazy(() => import("@/pages/user/contents/UserDashboard"));
+const UserOrdersStatus = lazy(() => import("@/pages/user/contents/OrdersStatus"));
+const UserServices = lazy(() => import("@/pages/user/contents/Services"));
+const UserMap = lazy(() => import("@/pages/user/contents/Map"));
 
 export const routes = [
   { path: "/", element: <LandingPage /> },
-  { path: "/user", element: <UserDashboard /> },
   {
+    // admin dashboard
     path: "/admin",
     element: <AdminLayout />,
     children: [
@@ -28,6 +31,17 @@ export const routes = [
       { path: "manage-accounts", element: <ManageAccounts /> },
     ],
   },
+  {
+    // user dashboard
+    path: "/user",
+    element: <UserLayout />,
+    children: [
+      { path: "", element: <UserDashboard /> },
+      { path: "orders-status", element: <UserOrdersStatus /> },
+      { path: "services", element: <UserServices /> },
+      { path: "map", element: <UserMap /> },
+    ],
+  },
   { path: "/map", element: <MapPage /> },
 
   // auth page
@@ -35,11 +49,4 @@ export const routes = [
   { path: "/forgot-password", element: <ForgotPassword /> },
   { path: "/reset-password", element: <ResetPassword /> },
   { path: "/logout", element: <Logout /> },
-
-  // UserDashboard
-  { path: "/user-dashboard", element: <ForgotPassword /> },
-  { path: "/interment-setup", element: <ResetPassword /> },
-  { path: "/manage-accounts", element: <Logout /> },
-  { path: "/manage-services", element: <Logout /> },
-  { path: "/mananage-map", element: <Logout /> },
 ];

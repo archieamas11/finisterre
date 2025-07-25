@@ -7,7 +7,7 @@ import AdminMap from "@/pages/admin/contents/Map";
 import Services from "@/pages/admin/contents/Services";
 import ManageAccounts from "@/pages/admin/contents/ManageAccounts";
 import LandingPage from "@/pages/LandingPage";
-import UserDashboard from "@/pages/user/UserDashboard";
+import UserDashboard from "@/pages/user/contents/UserDashboard";
 import MapPage from "@/pages/MapPage";
 import LoginPage from "@/auth/LoginPage";
 import ForgotPassword from "@/auth/ForgotPassword";

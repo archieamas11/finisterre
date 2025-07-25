@@ -40,6 +40,8 @@ export default function LoginPage() {
       const res = await loginUser(trimmedUsername, trimmedPassword);
       console.log("Login response:", res);
       if (res.success) {
+        // Save isAdmin to localStorage (1 for admin, 0 for user)
+        window.localStorage.setItem("isAdmin", res.isAdmin ? "1" : "0");
         if (res.isAdmin) {
           navigate("/admin");
         } else {
