@@ -1,5 +1,5 @@
 import { lazy } from "react";
-const LandingPage = lazy(() => import("@/pages/LandingPage"));
+const LandingLayout = lazy(() => import("@/components/layout/LandingLayout"));
 import IntermentSetup from "./pages/admin/contents/IntermentSetup";
 const AdminMap = lazy(() => import("@/pages/admin/contents/Map"));
 const Services = lazy(() => import("@/pages/admin/contents/Services"));
@@ -18,7 +18,7 @@ const UserServices = lazy(() => import("@/pages/user/contents/Services"));
 const UserMap = lazy(() => import("@/pages/user/contents/Map"));
 
 export const routes = [
-  { path: "/", element: <LandingPage /> },
+  { path: "/", element: <LandingLayout /> },
   {
     // admin dashboard
     path: "/admin",

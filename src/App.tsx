@@ -11,7 +11,7 @@ import UserDashboard from "@/pages/user/contents/UserDashboard";
 import UserProfile from "@/pages/user/contents/Profile"; 
 import UserServices from "@/pages/user/contents/Services";
 import UserMap from "@/pages/user/contents/Map"; 
-import LandingPage from "@/pages/LandingPage";
+import LandingLayout from "@/components/layout/LandingLayout";
 import MapPage from "@/pages/MapPage";
 import LoginV2 from "@/auth/page";
 import ForgotPassword from "@/auth/ForgotPassword";
@@ -62,7 +62,7 @@ export default function App() {
       <Suspense fallback={<div>Loading...</div>}>
         <Routes>
           {/* Public Routes */}
-          <Route path="/" element={<LandingPage />} />
+          <Route path="/" element={<LandingLayout />} />
           <Route path="/map" element={<MapPage />} />
           <Route path="/login" element={
             isAuthenticated() ? 
