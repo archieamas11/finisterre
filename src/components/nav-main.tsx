@@ -35,7 +35,7 @@ export function NavMain({
               asChild
               className={
                 isActive
-                  ? "bg-stone-700 text-stone-100 dark:bg-stone-300 dark:text-black transition-colors duration-300"
+                  ? "bg-primary text-primary-foreground dark:bg-primary dark:text-primary-foreground transition-colors duration-300"
                   :  "p-4"
               }
             >
