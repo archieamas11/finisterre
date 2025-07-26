@@ -6,6 +6,7 @@ import { ThemeToggleAdvanced } from "@/components/ThemeToggleAdvanced";
 import { OurServicesSection } from "@/pages/landing/section/OurServicesSection";
 import { HeroSection } from "@/pages/landing/section/HeroSection";
 import { NavigationMenuSection } from "@/pages/landing/section/NavigationMenu";
+import { AboutSection } from "@/pages/landing/section/AboutSection";
 
 export default function LandingLayout() {
     const navigate = useNavigate();
@@ -39,6 +40,7 @@ export default function LandingLayout() {
             </nav>
             <HeroSection />
             <OurServicesSection />
+            <AboutSection/>
         </div>
     );
 }

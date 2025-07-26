@@ -165,6 +165,13 @@ export function NavigationMenuSection() {
                     </NavigationMenuContent>
                 </NavigationMenuItem>
                 <NavigationMenuItem>
+                    <Link to="/about">
+                        <NavigationMenuLink className={cn(navigationMenuTriggerStyle(), "bg-transparent")}>
+                            About
+                        </NavigationMenuLink>
+                    </Link>
+                </NavigationMenuItem>
+                <NavigationMenuItem>
                     <Link to="/location">
                         <NavigationMenuLink className={cn(navigationMenuTriggerStyle(), "bg-transparent")}>
                             Location

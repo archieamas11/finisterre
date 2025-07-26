@@ -1,5 +1,6 @@
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Separator } from "@/components/ui/separator";
 
 const services = [
     {
@@ -36,16 +37,17 @@ export function OurServicesSection() {
         >
             <div className="max-w-5xl mx-auto px-6">
                 <h2
-                    id="our-services-heading"
-                    className="text-3xl font-bold text-center text-foreground mb-4"
+                    id="about-section-heading"
+                    className="text-4xl font-extrabold text-center text-foreground mb-2 tracking-tight"
                 >
                     Our Services
                 </h2>
-                <p className="text-muted-foreground text-center mb-10 max-w-2xl mx-auto">
+                <p className="text-lg text-muted-foreground text-center mb-6 max-w-2xl mx-auto">
                     Discover the range of services we offer to support you and your
                     family.
                 </p>
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 ">
+                <Separator className="my-8" />
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
                     {services.map((service) => (
                         <Card
                             key={service.title}
