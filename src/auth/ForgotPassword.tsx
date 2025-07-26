@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { useDarkMode } from "@/hooks/useDarkMode";
 import { useNavigate } from "react-router-dom";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -9,7 +8,6 @@ import { forgotPassword } from "./api";
 import { MapPin } from 'lucide-react';
 
 export default function ForgotPassword() {
-  useDarkMode();
   const [username, setUsername] = useState("");
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);

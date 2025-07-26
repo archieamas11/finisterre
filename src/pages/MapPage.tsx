@@ -1,4 +1,3 @@
-import { ThemeProvider } from "@/components/theme-provide";
 
 export default function MapPage() {
 function MapEmbed() {
@@ -14,13 +13,11 @@ function MapEmbed() {
 
 
   return (
-    <ThemeProvider>
       <div className="min-h-screen flex flex-col items-center justify-center bg-white  dark:bg-stone-900 border dark:border-stone-700">
         <h2 className="text-2xl font-bold mb-4">Finisterre Gardenz Map</h2>
         <div className="w-full max-w-4xl h-[600px] border rounded shadow">
           <MapEmbed />
           </div>
       </div>
-    </ThemeProvider>
   );
 }

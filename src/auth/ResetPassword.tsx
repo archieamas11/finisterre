@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { useDarkMode } from "@/hooks/useDarkMode";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -9,7 +8,6 @@ import { resetPassword } from "./api";
 import { MapPin } from 'lucide-react';
 
 export default function ResetPassword() {
-  useDarkMode();
     const location = useLocation();
     const initialUsername = location.state?.username || "";
     const [username] = useState(initialUsername);
