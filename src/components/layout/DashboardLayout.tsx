@@ -6,6 +6,7 @@ import { SiteHeader } from "@/components/sidebar/site-header";
 import { getSidebarItems } from "@/navigation/sidebar/sidebar-items";
 import { useEffect, useState } from "react";
 import { isAuthenticated, isAdmin } from "@/utils/auth";
+import { Toaster } from "sonner";
 
 interface DashboardLayoutProps {
   role: 'admin' | 'user';
@@ -48,6 +49,7 @@ export default function DashboardLayout({ role }: DashboardLayoutProps) {
     >
       <AppSidebar items={getSidebarItems(role === 'admin')} variant="floating" />
       <SidebarInset>
+        <Toaster />
         <SiteHeader activeItem={activeItem} />
         <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
           <Outlet />

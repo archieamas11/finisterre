@@ -48,7 +48,7 @@ export default function ResetPassword() {
             <Card className="w-full max-w-md p-8 space-y-6 shadow-xl">
                 <div className="space-y-1 text-center">
                     <MapPin
-                        className="mx-auto h-12 w-12 text-stone-700"
+                        className="mx-auto h-12 w-12 text-accent-foreground"
                         onClick={() => navigate("/")}
                         style={{ cursor: "pointer" }}
                     />

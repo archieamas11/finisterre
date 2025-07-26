@@ -1,5 +1,4 @@
 import { APP_CONFIG } from "@/config/app-config";
-
 import { LoginPage } from "@/auth/LoginPage";
 
 export default function LoginV2() {

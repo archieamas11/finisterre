@@ -1,7 +1,7 @@
 // src/pages/LoginPage.tsx
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
 import { z } from "zod";
+import { useForm } from "react-hook-form";
 import { Link, useNavigate } from "react-router-dom";
 
 import { Button } from "@/components/ui/button";
@@ -16,6 +16,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { loginUser } from "@/api/auth";
+import { toast, Toaster } from "sonner";
 
 const FormSchema = z.object({
   username: z.string().min(3, { message: "Property ID must be at least 3 characters." }),
@@ -57,8 +58,9 @@ export function LoginPage() {
         if (res.message === "User not found") {
           form.setError("username", {
             type: "manual",
-            message: "Incorrect Property ID or Password"
+            message: "Incorrect Property ID or Password",
           });
+          toast.error("Incorrect Property ID or Password");
         } else if (res.message === "Invalid password") {
           form.setError("password", {
             type: "manual",
@@ -75,6 +77,8 @@ export function LoginPage() {
 
   return (
     <Form {...form}>
+      <Toaster />
+
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
         <FormField
           control={form.control}
