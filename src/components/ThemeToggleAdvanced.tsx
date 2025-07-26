@@ -1,5 +1,3 @@
-// src/components/ThemeToggleAdvanced.tsx
-import React from 'react';
 import {
   DropdownMenu,
   DropdownMenuContent,
