@@ -1,10 +1,13 @@
+// src/config/sidebar-items.ts
 import {
   LayoutDashboard,
   ChartBar,
   type LucideIcon,
   MapIcon,
   Users,
-  PaintBucket
+  PaintBucket,
+  User,
+  Home
 } from "lucide-react";
 
 export interface NavSubItem {
@@ -32,10 +35,11 @@ export interface NavGroup {
   items: NavMainItem[];
 }
 
-export const sidebarItems: NavGroup[] = [
+// Admin sidebar items
+export const adminSidebarItems: NavGroup[] = [
   {
     id: 1,
-    label: "Dashboards",
+    label: "Admin Dashboard",
     items: [
       {
         title: "Home",
@@ -43,7 +47,7 @@ export const sidebarItems: NavGroup[] = [
         icon: LayoutDashboard,
       },
       {
-        title: "Interment",
+        title: "Interment Setup",
         url: "/admin/interment-setup",
         icon: ChartBar,
       },
@@ -58,10 +62,45 @@ export const sidebarItems: NavGroup[] = [
         icon: PaintBucket,
       },
       {
-        title: "Users",
+        title: "Manage Accounts",
         url: "/admin/manage-accounts",
         icon: Users,
       },
     ],
   },
 ];
+
+// User sidebar items
+export const userSidebarItems: NavGroup[] = [
+  {
+    id: 1,
+    label: "User Dashboard",
+    items: [
+      {
+        title: "Home",
+        url: "/user",
+        icon: Home,
+      },
+      {
+        title: "My Profile",
+        url: "/user/profile",
+        icon: User,
+      },
+      {
+        title: "My Services",
+        url: "/user/services",
+        icon: PaintBucket,
+      },
+      {
+        title: "Map",
+        url: "/user/map",
+        icon: MapIcon,
+      },
+    ],
+  },
+];
+
+// Function to get sidebar items based on role
+export const getSidebarItems = (isAdmin: boolean): NavGroup[] => {
+  return isAdmin ? adminSidebarItems : userSidebarItems;
+};

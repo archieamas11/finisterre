@@ -1,7 +1,5 @@
 import { lazy } from "react";
-import AdminLayout from "@/pages/admin/AdminLayout";
 const LandingPage = lazy(() => import("@/pages/LandingPage"));
-const AdminDashboard = lazy(() => import("@/pages/admin/contents/AdminDashboard"));
 import IntermentSetup from "./pages/admin/contents/IntermentSetup";
 const AdminMap = lazy(() => import("@/pages/admin/contents/Map"));
 const Services = lazy(() => import("@/pages/admin/contents/Services"));
@@ -11,9 +9,10 @@ import LoginV2 from "@/auth/page";
 import ForgotPassword from "./auth/ForgotPassword";
 import ResetPassword from "./auth/ResetPassword";
 import Logout from "./auth/Logout";
-import UserLayout from "@/pages/user/UserLayout";
 import Layout from "@/auth/layout";
-const UserDashboard = lazy(() => import("@/pages/user/contents/UserDashboard"));
+import DashboardLayout from "@/components/layout/DashboardLayout";
+import AdminDashboard from "./pages/admin/contents/AdminDashboard";
+import UserDashboard from "./pages/admin/contents/AdminDashboard";
 const UserOrdersStatus = lazy(() => import("@/pages/user/contents/OrdersStatus"));
 const UserServices = lazy(() => import("@/pages/user/contents/Services"));
 const UserMap = lazy(() => import("@/pages/user/contents/Map"));
@@ -23,7 +22,7 @@ export const routes = [
   {
     // admin dashboard
     path: "/admin",
-    element: <AdminLayout />,
+    element: <DashboardLayout role="admin" />,
     children: [
       { path: "", element: <AdminDashboard /> },
       { path: "interment-setup", element: <IntermentSetup /> },
@@ -35,7 +34,7 @@ export const routes = [
   {
     // user dashboard
     path: "/user",
-    element: <UserLayout />,
+    element: <DashboardLayout role="user" />,
     children: [
       { path: "", element: <UserDashboard /> },
       { path: "orders-status", element: <UserOrdersStatus /> },

@@ -1,13 +1,17 @@
+// src/App.tsx
 import { Suspense, type JSX } from "react";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
-import AdminLayout from "@/pages/admin/AdminLayout";
+import DashboardLayout from "@/components/layout/DashboardLayout";
 import AdminDashboard from "@/pages/admin/contents/AdminDashboard";
 import IntermentSetup from "./pages/admin/contents/IntermentSetup";
 import AdminMap from "@/pages/admin/contents/Map";
 import Services from "@/pages/admin/contents/Services";
 import ManageAccounts from "@/pages/admin/contents/ManageAccounts";
-import LandingPage from "@/pages/LandingPage";
 import UserDashboard from "@/pages/user/contents/UserDashboard";
+import UserProfile from "@/pages/user/contents/Profile"; 
+import UserServices from "@/pages/user/contents/Services";
+import UserMap from "@/pages/user/contents/Map"; 
+import LandingPage from "@/pages/LandingPage";
 import MapPage from "@/pages/MapPage";
 import LoginV2 from "@/auth/page";
 import ForgotPassword from "@/auth/ForgotPassword";
@@ -37,7 +41,6 @@ const UserRoute = ({ children }: { children: JSX.Element }) => {
   return isAuthenticated() && !isAdmin() ? children : <Navigate to="/unauthorized" />;
 };
 
-// Unauthorized page component (you can create this)
 const Unauthorized = () => (
   <div className="flex items-center justify-center min-h-screen">
     <div className="text-center">
@@ -75,16 +78,21 @@ export default function App() {
           <Route path="/user" element={
             <ProtectedRoute>
               <UserRoute>
-                <UserDashboard />
+                <DashboardLayout role="user" />
               </UserRoute>
             </ProtectedRoute>
-          } />
+          }>
+            <Route index element={<UserDashboard />} />
+            <Route path="profile" element={<UserProfile />} />
+            <Route path="services" element={<UserServices />} />
+            <Route path="map" element={<UserMap />} />
+          </Route>
           
           {/* Admin Protected Routes */}
           <Route path="/admin" element={
             <ProtectedRoute>
               <AdminRoute>
-                <AdminLayout />
+                <DashboardLayout role="admin" />
               </AdminRoute>
             </ProtectedRoute>
           }>
