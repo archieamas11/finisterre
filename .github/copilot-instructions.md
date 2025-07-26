@@ -8,6 +8,6 @@
 ## Coding Guidelines
 - Use a consistent project structure for components, hooks, services, types, utilities, and styling.
 - Enable strict type-checking in tsconfig.json.
-- For TypeScript and React specifics, see `Typescript.instructions.md` and `React_Typescript.instructions.md`.
+- For TypeScript and React specifics, see `Typescript.instructions.md`.
 - Optimize images, use Tailwind CSS, shadcnUI, lucide-react icons, and implement form validation with react-hook-form and zodResolver.
 - Use SEO, PWA, and analytics plugins as configured.

@@ -1,7 +1,7 @@
 import { Outlet, useLocation } from "react-router-dom"
-import { AppSidebar } from "@/components/app-sidebar"
+import { AppSidebar } from "@/components/sidebar/app-sidebar"
 import { SidebarProvider, SidebarInset } from "@/components/ui/sidebar"
-import { SiteHeader } from "@/components/site-header"
+import { SiteHeader } from "@/components/sidebar/site-header"
 import {
     MapIcon,
     LayoutDashboardIcon,
@@ -25,7 +25,7 @@ export default function UserLayout() {
     const activeItem = sidebarItems.find(item => item.url === location.pathname);
     return (
         <SidebarProvider>
-            <AppSidebar variant="inset" />
+            <AppSidebar variant="floating" />
             <SidebarInset>
                 <SiteHeader activeItem={activeItem} />
                 {/* The Outlet renders the matched child route */}

@@ -1,5 +1,5 @@
-import { DataTable } from "@/components/data-table"
-import { SectionCards } from "@/components/section-cards"
+import { DataTable } from "@/components/sidebar/data-table"
+import { SectionCards } from "@/components/sidebar/section-cards"
 
 
 import data from "../data.json"

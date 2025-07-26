@@ -5,9 +5,7 @@ import {
   Bell,
   ChevronsUpDown,
   LogOut,
-  MoonStar, SunIcon, EclipseIcon
 } from "lucide-react"
-import { useDarkMode } from "@/hooks/useDarkMode"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   DropdownMenu,
@@ -18,7 +16,6 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group"
 import {
   SidebarMenu,
   SidebarMenuButton,
@@ -26,7 +23,6 @@ import {
   useSidebar,
 } from "@/components/ui/sidebar"
 import { useNavigate } from "react-router-dom"
-import React from "react";
 
 export function NavUser({
   user,
@@ -44,25 +40,6 @@ export function NavUser({
     navigate("/logout");
   };
 
-  const { isDark, toggleDarkMode } = useDarkMode();
-  // Add system theme support
-  const [theme, setTheme] = React.useState<'system' | 'light' | 'dark'>(() => {
-    if (typeof window !== 'undefined') {
-      return localStorage.getItem('theme') as 'system' | 'light' | 'dark' || 'system';
-    }
-    return 'system';
-  });
-
-  const handleThemeChange = (value: 'system' | 'light' | 'dark') => {
-    setTheme(value);
-    localStorage.setItem('theme', value);
-    if (value === 'system') {
-      const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-      if (prefersDark !== isDark) toggleDarkMode();
-    } else if ((value === 'dark') !== isDark) {
-      toggleDarkMode();
-    }
-  };
 
   return (
     <SidebarMenu>
@@ -112,35 +89,6 @@ export function NavUser({
                 <Bell />
                 Notifications
               </DropdownMenuItem>
-              {/* Theme toggle group */}
-              <DropdownMenuLabel className="pt-2 pb-1 text-xs font-semibold">Theme</DropdownMenuLabel>
-              <DropdownMenuSeparator />
-              <ToggleGroup type="single" value={theme} className="flex border-1 border-sidebar-accent rounded-lg ">
-                <ToggleGroupItem
-                  value="system"
-                  aria-label="System"
-                  onClick={() => handleThemeChange('system')}
-                  className={theme === 'system' ? "bg-sidebar-accent text-sidebar-accent-foreground" : ""}
-                >
-                  <EclipseIcon />
-                </ToggleGroupItem>
-                <ToggleGroupItem
-                  value="light"
-                  aria-label="Light Mode"
-                  onClick={() => handleThemeChange('light')}
-                  className={theme === 'light' ? "bg-sidebar-accent text-sidebar-accent-foreground" : ""}
-                >
-                  <SunIcon />
-                </ToggleGroupItem>
-                <ToggleGroupItem
-                  value="dark"
-                  aria-label="Dark Mode"
-                  onClick={() => handleThemeChange('dark')}
-                  className={theme === 'dark' ? "bg-sidebar-accent text-sidebar-accent-foreground" : ""}
-                >
-                  <MoonStar />
-                </ToggleGroupItem>
-              </ToggleGroup>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
             <DropdownMenuItem onClick={handleLogout}>
