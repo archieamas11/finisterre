@@ -4,7 +4,7 @@ import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
-import { forgotPassword } from "./api";
+import { forgotPassword } from "@/api/auth";
 import { MapPin } from 'lucide-react';
 
 export default function ForgotPassword() {

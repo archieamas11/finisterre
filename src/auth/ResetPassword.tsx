@@ -4,7 +4,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { useNavigate, useLocation } from "react-router-dom";
-import { resetPassword } from "./api";
+import { resetPassword } from "@/api/auth";
 import { MapPin } from 'lucide-react';
 
 export default function ResetPassword() {

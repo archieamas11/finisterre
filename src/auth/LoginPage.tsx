@@ -1,116 +1,146 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+// src/pages/LoginPage.tsx
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+import { Link, useNavigate } from "react-router-dom";
+
 import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
+import { Checkbox } from "@/components/ui/checkbox";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { MapPin } from 'lucide-react';
+import { loginUser } from "@/api/auth";
 
-export default function LoginPage() {
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
-  const [userError, setUserError] = useState("");
-  const [passError, setPassError] = useState("");
-  const [loginError, setLoginError] = useState("");
-  const [loading, setLoading] = useState(false);
+const FormSchema = z.object({
+  username: z.string().min(3, { message: "Property ID must be at least 3 characters." }),
+  password: z.string().min(4, { message: "Password must be at least 4 characters." }),
+  remember: z.boolean().optional(),
+});
+
+export function LoginPage() {
   const navigate = useNavigate();
+  const form = useForm<z.infer<typeof FormSchema>>({
+    resolver: zodResolver(FormSchema),
+    defaultValues: {
+      username: "",
+      password: "",
+      remember: false,
+    },
+  });
 
-  const handleLogin = async () => {
-    let hasError = false;
-    const trimmedUsername = username.trim();
-    const trimmedPassword = password.trim();
-    if (!trimmedUsername) {
-      setUserError("Please enter your username.");
-      hasError = true;
-    } else {
-      setUserError("");
-    }
-    if (!trimmedPassword) {
-      setPassError("Please enter your password.");
-      hasError = true;
-    } else {
-      setPassError("");
-    }
-    if (hasError) return;
-    setLoading(true);
-    setLoginError("");
+  const onSubmit = async (data: z.infer<typeof FormSchema>) => {
     try {
-      const { loginUser } = await import("./api");
-      // Ensure payload is correct
-      const res = await loginUser(trimmedUsername, trimmedPassword);
+      console.log("Sending login request:", data);
+      const res = await loginUser(data.username, data.password);
       console.log("Login response:", res);
+
       if (res.success) {
-        // Save isAdmin to localStorage (1 for admin, 0 for user)
-        window.localStorage.setItem("isAdmin", res.isAdmin ? "1" : "0");
+        // Save token and role
+        localStorage.setItem("token", res.token!);
+        localStorage.setItem("isAdmin", res.isAdmin ? "1" : "0");
+
+        // Navigate based on role
         if (res.isAdmin) {
           navigate("/admin");
         } else {
           navigate("/user");
         }
       } else {
-        setLoginError(res.message || "Invalid username or password.");
+        // Set backend error to form state
+        form.setValue("password", "");
+        if (res.message === "User not found") {
+          form.setError("username", {
+            type: "manual",
+            message: "Incorrect Property ID or Password"
+          });
+        } else if (res.message === "Invalid password") {
+          form.setError("password", {
+            type: "manual",
+            message: "Incorrect Property ID or Password"
+          });
+        } else {
+          // For other errors, show in toast
+        }
       }
-    } catch {
-      setLoginError("Server error. Please try again later.");
-    } finally {
-      setLoading(false);
+    } catch (err: any) {
+      console.error("Login error:", err);
     }
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-background">
-      <Card className="w-lg max-w-sm p-7 space-y-6 shadow-xl">
-        <div className="space-y-1 text-center">
-          <MapPin
-            className="mx-auto h-12 w-12 text-stone-500"
-            onClick={() => navigate("/")}
-            style={{ cursor: "pointer" }}
-          />
-          <h2 className="text-2xl font-bold">Welcome back</h2>
-          <h3 className="text-sm text-muted-foreground">Login to your Finisterre Account</h3>
-        </div>
-        <form className="space-y-4" onSubmit={e => { e.preventDefault(); handleLogin(); }}>
-          <div className="space-y-2">
-            <Label htmlFor="username">Username</Label>
-            <Input
-              id="username"
-              type="text"
-              placeholder="JuanDelacruz"
-              value={username}
-              onChange={e => setUsername(e.target.value)}
-              autoComplete="username"
-              disabled={loading}
-              className={userError ? "border-destructive focus:border-destructive" : ""}
-            />
-            {userError && <div className="text-destructive text-xs">{userError}</div>}
-          </div>
-          <div className="space-y-2">
-            <div className="flex justify-between items-center">
-              <Label htmlFor="password">Password</Label>
-              <a href="/forgot-password" className="text-xs text-muted-foreground hover:underline">Forgot your password?</a>
-            </div>
-            <Input
-              id="password"
-              type="password"
-              placeholder="Password"
-              value={password}
-              onChange={e => setPassword(e.target.value)}
-              autoComplete="current-password"
-              disabled={loading}
-              className={passError ? "border-destructive focus:border-destructive" : ""}
-            />
-            {passError && <div className="text-destructive text-xs">{passError}</div>}
-          </div>
-          {loginError && <div className="text-destructive text-xs text-center">{loginError}</div>}
-          <Button
-            type="submit"
-            className="w-full mt-6 hover:bg-primary/80"
-            disabled={loading}
-          >
-            {loading ? "Logging in..." : "Login"}
-          </Button>
-        </form>
-      </Card>
-    </div>
+    <Form {...form}>
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+        <FormField
+          control={form.control}
+          name="username"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Property ID</FormLabel>
+              <FormControl>
+                <Input
+                  id="username"
+                  type="text"
+                  placeholder="your property ID"
+                  autoComplete="username"
+                  {...field}
+                />
+              </FormControl>
+              <FormMessage /> {/* This will show validation errors */}
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="password"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Password</FormLabel>
+              <FormControl>
+                <Input
+                  id="password"
+                  type="password"
+                  placeholder="Password"
+                  autoComplete="current-password"
+                  {...field}
+                />
+              </FormControl>
+              <FormMessage /> {/* This will show validation errors */}
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="remember"
+          render={({ field }) => (
+            <FormItem className="flex flex-row items-center justify-between">
+              <FormLabel htmlFor="login-remember" className="cursor-pointer flex items-center gap-2">
+                <Checkbox
+                  id="login-remember"
+                  checked={field.value}
+                  onCheckedChange={field.onChange}
+                  className="size-4"
+                />
+                Remember me
+              </FormLabel>
+              <Link
+                to="/forgot-password"
+                className="text-xs text-muted-foreground hover:underline block mt-1"
+              >
+                Forgot your password?
+              </Link>
+            </FormItem>
+          )}
+        />
+        <Button className="w-full" type="submit">
+          Login
+        </Button>
+      </form>
+    </Form>
   );
 }

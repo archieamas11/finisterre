@@ -1,0 +1,1 @@
+GET http://localhost/finisterre_backend/auth/login.php?username=admin&password=admin123
