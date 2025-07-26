@@ -80,8 +80,9 @@ export default function LoginPage() {
               onChange={e => setUsername(e.target.value)}
               autoComplete="username"
               disabled={loading}
+              className={userError ? "border-destructive focus:border-destructive" : ""}
             />
-            {userError && <div className="text-destructive text-sm">{userError}</div>}
+            {userError && <div className="text-destructive text-xs">{userError}</div>}
           </div>
           <div className="space-y-2">
             <div className="flex justify-between items-center">
@@ -96,10 +97,11 @@ export default function LoginPage() {
               onChange={e => setPassword(e.target.value)}
               autoComplete="current-password"
               disabled={loading}
+              className={passError ? "border-destructive focus:border-destructive" : ""}
             />
-            {passError && <div className="text-destructive text-sm">{passError}</div>}
+            {passError && <div className="text-destructive text-xs">{passError}</div>}
           </div>
-          {loginError && <div className="text-destructive text-sm text-center">{loginError}</div>}
+          {loginError && <div className="text-destructive text-xs text-center">{loginError}</div>}
           <Button
             type="submit"
             className="w-full mt-6 hover:bg-primary/80"
