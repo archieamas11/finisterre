@@ -1,24 +1,26 @@
-// src/App.tsx
 import { Suspense, type JSX } from "react";
+
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
-import DashboardLayout from "@/components/layout/DashboardLayout";
+
 import AdminDashboard from "@/pages/admin/contents/AdminDashboard";
-import IntermentSetup from "./pages/admin/contents/IntermentSetup";
 import AdminMap from "@/pages/admin/contents/Map";
-import Services from "@/pages/admin/contents/Services";
-import ManageAccounts from "@/pages/admin/contents/ManageAccounts";
-import UserDashboard from "@/pages/user/contents/UserDashboard";
-import UserProfile from "@/pages/user/contents/Profile"; 
-import UserServices from "@/pages/user/contents/Services";
-import UserMap from "@/pages/user/contents/Map"; 
-import LandingLayout from "@/components/layout/LandingLayout";
-import MapPage from "@/components/layout/WebMapLayout";
-import LoginV2 from "@/auth/page";
+import DashboardLayout from "@/components/layout/DashboardLayout";
 import ForgotPassword from "@/auth/ForgotPassword";
-import ResetPassword from "@/auth/ResetPassword";
-import Logout from "@/auth/Logout";
+import LandingLayout from "@/components/layout/LandingLayout";
 import Layout from "@/auth/layout";
+import LoginV2 from "@/auth/page";
+import Logout from "@/auth/Logout";
+import ManageAccounts from "@/pages/admin/contents/ManageAccounts";
+import MapPage from "@/components/layout/WebMapLayout";
+import ResetPassword from "@/auth/ResetPassword";
+import Services from "@/pages/admin/contents/Services";
 import UnauthorizedPage from "@/pages/UnauthorizedPage";
+import UserDashboard from "@/pages/user/contents/UserDashboard";
+import UserMap from "@/pages/user/contents/Map";
+import UserProfile from "@/pages/user/contents/Profile";
+import UserServices from "@/pages/user/contents/Services";
+
+import IntermentSetup from "./pages/admin/contents/IntermentSetup";
 
 // Auth utility functions
 const isAuthenticated = (): boolean => {
