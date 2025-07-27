@@ -1,12 +1,13 @@
-import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import { MapPin } from 'lucide-react';
 import { useNavigate } from "react-router-dom";
-import { ThemeToggleAdvanced } from "@/components/ThemeToggleAdvanced";
-import { OurServicesSection } from "@/pages/landing/section/OurServicesSection";
+
+import { AboutSection } from "@/pages/landing/section/AboutSection";
+import { Button } from "@/components/ui/button";
 import { HeroSection } from "@/pages/landing/section/HeroSection";
 import { NavigationMenuSection } from "@/pages/landing/section/NavigationMenu";
-import { AboutSection } from "@/pages/landing/section/AboutSection";
+import { OurServicesSection } from "@/pages/landing/section/OurServicesSection";
+import { ThemeToggleAdvanced } from "@/components/ThemeToggleAdvanced";
 
 export default function LandingLayout() {
     const navigate = useNavigate();

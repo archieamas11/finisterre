@@ -1,11 +1,13 @@
+import { useEffect, useState } from "react";
+
 import { Outlet, useLocation } from "react-router-dom";
+import { Toaster } from "sonner";
+
 import { AppSidebar } from "@/components/sidebar/app-sidebar";
 import { SidebarProvider, SidebarInset } from "@/components/ui/sidebar";
 import { SiteHeader } from "@/components/sidebar/site-header";
 import { getSidebarItems } from "@/navigation/sidebar/sidebar-items";
-import { useEffect, useState } from "react";
 import { isAuthenticated, isAdmin } from "@/utils/auth";
-import { Toaster } from "sonner";
 
 interface DashboardLayoutProps {
   role: 'admin' | 'user';
