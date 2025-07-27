@@ -1,6 +1,6 @@
-import CustomersTable from "@/components/layout/CustomersTable";
 import { useEffect, useState } from "react";
-import { getCustomers } from "@/api/users";
+
+import CustomersTable from "@/components/layout/CustomersTable";
 import type { Customer } from "@/components/layout/columns";
 import {
   Tabs,
@@ -8,6 +8,7 @@ import {
   TabsList,
   TabsTrigger,
 } from "@/components/ui/tabs"
+import { getCustomers } from "@/api/users";
 
 export default function IntermentSetup() {
   const [customers, setCustomers] = useState<Customer[]>([]);
@@ -18,9 +19,8 @@ export default function IntermentSetup() {
       setLoading(true);
       try {
         const response = await getCustomers();
-        console.log("API Response:", response); // Debug line
+        console.log("API Response:", response);
 
-        // Expect customer data as array under response.customers
         if (response && response.success && Array.isArray(response.customers)) {
           setCustomers(response.customers);
         } else {
