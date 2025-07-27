@@ -14,7 +14,7 @@ const Logout: React.FC = () => {
         toast.success("You have been logged out successfully");
         
         // Redirect to login (handled by logout function, but we can also do it here)
-        navigate("/login");
+        navigate("/");
     }, [navigate]);
 
     return (
