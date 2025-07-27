@@ -1,10 +1,11 @@
-"use client";
+import * as React from "react";
 
 import type { ColumnDef } from "@tanstack/react-table";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
-import { Checkbox } from "@/components/ui/checkbox";
-import { Button } from "@/components/ui/button";
 import { MoreHorizontal, ClipboardCopy, Pencil, Eye } from "lucide-react";
+
+import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 
 export type Customer = {
     select: boolean;
@@ -13,6 +14,7 @@ export type Customer = {
     last_name: string;
     email: string;
     contact_number: string;
+    religion: string;
     address: string;
     status?: string;
 };
@@ -22,7 +24,6 @@ function capitalizeWords(str: string) {
 }
 
 // Fix: Checkbox with indeterminate state for header
-import * as React from "react";
 function SelectAllCheckbox({ table }: { table: any }) {
     const ref = React.useRef<HTMLButtonElement>(null);
     React.useEffect(() => {
@@ -37,6 +38,7 @@ function SelectAllCheckbox({ table }: { table: any }) {
             checked={table.getIsAllPageRowsSelected()}
             onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
             aria-label="Select all"
+            className="border-gray-300 dark:border-gray-600"
         />
     );
 }
@@ -46,13 +48,13 @@ export const columns: ColumnDef<Customer>[] = [
         id: "select",
         header: ({ table }) => <SelectAllCheckbox table={table} />,
         cell: ({ row }) => {
-            // Defensive: Only render Checkbox if row exists
             if (!row || typeof row.getIsSelected !== 'function' || typeof row.toggleSelected !== 'function') return null;
             return (
                 <Checkbox
                     checked={row.getIsSelected()}
                     onCheckedChange={(value) => row.toggleSelected(!!value)}
                     aria-label="Select row"
+                    className="border-gray-300 dark:border-gray-600"
                 />
             );
         },
@@ -80,6 +82,10 @@ export const columns: ColumnDef<Customer>[] = [
     {
         accessorKey: "email",
         header: "Email",
+    },
+    {
+        accessorKey: "religion",
+        header: "Religion",
     },
     {
         accessorKey: "status",
