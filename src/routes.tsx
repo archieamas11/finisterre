@@ -1,21 +1,22 @@
 import { lazy } from "react";
 const LandingLayout = lazy(() => import("@/components/layout/LandingLayout"));
-import IntermentSetup from "./pages/admin/contents/IntermentSetup";
+const IntermentSetup = lazy(() => import("@/pages/admin/contents/IntermentSetup"));
 const AdminMap = lazy(() => import("@/pages/admin/contents/Map"));
 const Services = lazy(() => import("@/pages/admin/contents/Services"));
 const ManageAccounts = lazy(() => import("@/pages/admin/contents/ManageAccounts"));
 const MapPage = lazy(() => import("@/pages/MapPage"));
 import LoginV2 from "@/auth/page";
-import ForgotPassword from "./auth/ForgotPassword";
-import ResetPassword from "./auth/ResetPassword";
-import Logout from "./auth/Logout";
+import ForgotPassword from "@/auth/ForgotPassword";
+import ResetPassword from "@/auth/ResetPassword";
+import Logout from "@/auth/Logout";
 import Layout from "@/auth/layout";
 import DashboardLayout from "@/components/layout/DashboardLayout";
-import AdminDashboard from "./pages/admin/contents/AdminDashboard";
-import UserDashboard from "./pages/admin/contents/AdminDashboard";
+const AdminDashboard = lazy(() => import("@/pages/admin/contents/AdminDashboard"));
+const UserDashboard = lazy(() => import("@/pages/user/contents/UserDashboard"));
 const UserOrdersStatus = lazy(() => import("@/pages/user/contents/OrdersStatus"));
 const UserServices = lazy(() => import("@/pages/user/contents/Services"));
 const UserMap = lazy(() => import("@/pages/user/contents/Map"));
+const UnauthorizedPage = lazy(() => import("@/pages/UnauthorizedPage"));
 
 export const routes = [
   { path: "/", element: <LandingLayout /> },
@@ -49,4 +50,5 @@ export const routes = [
   { path: "/forgot-password", element: <ForgotPassword /> },
   { path: "/reset-password", element: <ResetPassword /> },
   { path: "/logout", element: <Logout /> },
+  { path: "/unauthorized", element: <UnauthorizedPage /> },
 ];
