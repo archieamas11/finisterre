@@ -12,7 +12,7 @@ import UserProfile from "@/pages/user/contents/Profile";
 import UserServices from "@/pages/user/contents/Services";
 import UserMap from "@/pages/user/contents/Map"; 
 import LandingLayout from "@/components/layout/LandingLayout";
-import MapPage from "@/pages/MapPage";
+import MapPage from "@/components/layout/WebMapLayout";
 import LoginV2 from "@/auth/page";
 import ForgotPassword from "@/auth/ForgotPassword";
 import ResetPassword from "@/auth/ResetPassword";

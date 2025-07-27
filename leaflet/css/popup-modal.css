@@ -1,0 +1,409 @@
+:root {
+  --bronze: #7d7d7d;
+  --silver: #b00020;
+  --platinum: #d4af37;
+  --diamond: #cc6688;
+  --available: #22a239;
+  --occupied: #b00020;
+  --reserved: #d4af37;
+  --info: #007bff;
+
+  --bronze-bg: #7d7d7d1a;
+  --silver-bg: #b000201a;
+  --platinum-bg: #d4af371a;
+  --diamond-bg: #cc66881a;
+  --info-bg: #007bff1a;
+  --available-bg: rgba(0, 128, 0, 0.233);
+  --occupied-bg: rgba(176, 0, 32, 0.233);
+  --reserved-bg: rgba(212, 175, 55, 0.233);
+
+
+  /* Grayscale palette */
+  --gray-50: #fafafa;
+  --gray-100: #f5f5f5;
+  --gray-200: #eeeeee;
+  --gray-300: #e0e0e0;
+  --gray-400: #bdbdbd;
+  --gray-500: #9e9e9e;
+  --gray-600: #757575;
+  --gray-700: #616161;
+  --gray-800: #424242;
+  --gray-900: #212121;
+}
+
+.direction-button {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  transition: all 0.3s ease;
+  margin-left: 30px;
+}
+
+.direction-button svg {
+  width: 20px;
+  height: 20px;
+}
+
+.popup-header.platinum,
+.direction-button.platinum {
+  background-color: var(--platinum);
+  color: rgb(53, 53, 53);
+}
+
+.plot-dimension-header.platinum {
+  border: solid 1px var(--platinum);
+  background-color: var(--platinum-bg);
+}
+
+.direction-button.platinum:hover {
+  background-color: #e6b800;
+  color: rgb(53, 53, 53);
+  transform: scale(1.1);
+}
+
+.popup-header.silver,
+.direction-button.silver {
+  background-color: var(--silver);
+  color: rgb(228, 228, 228);
+}
+
+.plot-dimension-header.silver {
+  border: solid 1px var(--silver);
+  background-color: var(--silver-bg);
+}
+
+.direction-button.silver:hover {
+  background-color: #96080b;
+  color: rgb(228, 228, 228);
+  transform: scale(1.1);
+}
+
+.popup-header.bronze,
+.direction-button.bronze {
+  background-color: var(--bronze);
+  color: rgb(253, 253, 253);
+}
+
+.plot-dimension-header.bronze {
+  border: solid 1px var(--bronze);
+  background-color: var(--bronze-bg);
+}
+
+.direction-button.bronze:hover {
+  background-color: #535353;
+  color: rgb(22, 22, 22);
+  transform: scale(1.1);
+}
+
+.popup-header.diamond,
+.direction-button.diamond {
+  background-color: var(--diamond);
+  color: rgb(255, 255, 255);
+}
+
+.plot-dimension-header.diamond {
+  border: solid 1px var(--diamond);
+  background-color: var(--diamond-bg);
+}
+
+.direction-button.diamond:hover {
+  background-color: #a06b87;
+  color: rgb(255, 255, 255);
+  transform: scale(1.1);
+}
+
+.plot-status-badge.Available {
+  border: solid 1px var(--available);
+  background-color: rgba(0, 128, 0, 0.233);
+  color: var(--available);
+}
+
+.plot-status-badge.Occupied {
+  border: solid 1px var(--occupied);
+  background-color: rgba(176, 0, 32, 0.233);
+  color: var(--occupied);
+}
+
+.plot-status-badge.Reserved {
+  border: solid 1px var(--reserved);
+  background-color: rgba(212, 175, 55, 0.233);
+  color: var(--reserved);
+}
+
+.plot-dimension-badge {
+  padding: 5px 2px 5px 2px;
+  border-radius: 20px;
+  font-size: 0.75em;
+  font-weight: 800;
+  width: 80%;
+  margin: 0 auto;
+}
+
+.plot-dimension-badge.diamond {
+  border: solid 1px var(--diamond);
+  background-color: var(--diamond-bg);
+  color: var(--diamond);
+}
+
+.plot-dimension-badge.silver {
+  border: solid 1px var(--silver);
+  background-color: var(--silver-bg);
+  color: var(--silver);
+}
+
+.plot-dimension-badge.bronze {
+  border: solid 1px var(--bronze);
+  background-color: var(--bronze-bg);
+  color: var(--bronze);
+}
+
+.plot-dimension-badge.platinum {
+  border: solid 1px var(--platinum);
+  background-color: var(--platinum-bg);
+  color: var(--platinum);
+}
+
+.popup {
+  max-width: 420px;
+  border-radius: 16px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.popup-header {
+  padding: 15px 20px;
+  background-color: #435ebe;
+  color: white;
+  display: flex;
+  justify-content: space-between;
+  border-top-right-radius: 10px;
+  border-top-left-radius: 10px;
+}
+
+.popup-title {
+  margin: 0;
+  font-size: 1.5em;
+  font-weight: bold;
+}
+
+.seperator {
+  height: 1px;
+  background-color: rgba(0, 0, 0, 0.123);
+  margin: 10px 0;
+  width: 100%;
+}
+
+.popup-title1 {
+  font-size: 12px;
+  font-weight: 200;
+}
+
+.icons-test {
+  margin-top: 10px;
+}
+
+.popup-content {
+  padding: 20px;
+}
+
+.icons {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-top: 10px;
+}
+
+.plot-status-title {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.plot-status-badge {
+  padding: 2px 10px 2px 10px;
+  border-radius: 20px;
+}
+
+.plot-status-badge.Available {
+  border: solid 1px var(--available);
+  background-color: rgba(0, 128, 0, 0.233);
+}
+
+.timeline-grid {
+  border-radius: 10px;
+  background-color: hsla(0, 0%, 95%, 0.699);
+  padding: 2px 20px 10px 20px;
+  margin-top: 10px;
+}
+
+.plot-specifications-container {
+  margin-top: 10px;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.plot-dimension {
+  width: 100%;
+}
+
+.plot-dimension-header {
+  background-color: var(--info-bg);
+  border: 1px solid var(--info);
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
+  padding: 5px 10px;
+}
+
+.plot-dimension-content {
+  border-bottom-left-radius: 10px;
+  border-bottom-right-radius: 10px;
+  padding: 5px;
+  max-height: 60px;
+  height: 100%;
+  background-color: hsla(0, 0%, 95%, 0.699);
+  margin-bottom: 10px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.plot-dimension-content span {
+  margin: 0 auto;
+}
+
+.status-badge {
+  padding: 5px 10px;
+  border-radius: 20px;
+  border: solid 1px var(--silver);
+  background-color: var(--silver-bg);
+  color: var(--silver);
+  font-size: 0.75em;
+}
+
+.info-grid {
+  border-bottom-right-radius: 10px;
+  border-bottom-left-radius: 10px;
+  background-color: hsla(0, 0%, 95%, 0.699);
+  padding: 20px;
+}
+
+.container-map {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  padding: 0 25px;
+}
+
+.info-label {
+  color: #666;
+}
+
+.timeline-title {
+  font-weight: bold;
+}
+
+.info-value {
+  color: #333;
+  font-weight: bold;
+  margin-left: 1.25em;
+}
+
+.photo-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: center;
+}
+
+.images-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+  gap: 10px;
+  padding: 10px;
+}
+
+.grave-photo {
+  width: 100%;
+  height: 100px;
+  object-fit: cover;
+  border-radius: 4px;
+  transition: transform 0.2s ease;
+  cursor: pointer;
+}
+
+.grave-photo:hover {
+  transform: scale(1.05);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.close-modal {
+  position: absolute;
+  right: 25px;
+  top: 10px;
+  color: #f1f1f1;
+  font-size: 40px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.image-modal {
+  display: none;
+  position: fixed;
+  z-index: 1000;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.9);
+}
+
+.deceased-list {
+  margin-top: 10px;
+}
+
+.deceased-container {
+  display: flex;
+  align-items: flex-start;
+  padding: 10px;
+  margin: 5px 0;
+  background: #f8f9fa;
+  border-radius: 5px;
+  border-left: 3px solid #435ebe;
+}
+
+.deceased-number {
+  font-weight: bold;
+  margin-right: 10px;
+  color: #435ebe;
+}
+
+.deceased-info {
+  flex-grow: 1;
+}
+
+.deceased-name {
+  display: block;
+  font-weight: 500;
+  color: #333;
+  margin-bottom: 5px;
+}
+
+.deceased-dates {
+  display: block;
+  font-size: 0.9em;
+  color: #666;
+}
+
+.no-records {
+  text-align: center;
+  color: #666;
+  padding: 10px;
+}

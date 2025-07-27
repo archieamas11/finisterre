@@ -1,0 +1,203 @@
+:root {
+    --searchbox-bg: #ffffff;
+    --searchbox-border: rgba(0, 0, 0, 0.3);
+    --searchbox-hover-bg: #f3f3f3;
+    --searchbox-icon-color: #666;
+    --searchbox-radius: 20px;
+    --searchbox-height: 40px;
+    --searchbox-width: 300px;
+    --searchbox-transition: 0.5s ease-in-out;
+    --searchbox-z-index: 702;
+    --autocomplete-z-index: 701;
+}
+
+/* Main wrapper */
+.leaflet-searchbox-wrapper {
+    display: flex;
+    justify-content: flex-end;
+    height: var(--searchbox-height);
+    border-radius: var(--searchbox-radius);
+}
+
+/* Base styles for interactive elements */
+.leaflet-searchbox-wrapper .leaflet-searchbox,
+.leaflet-searchbox-wrapper .leaflet-searchbox-button,
+.leaflet-searchbox-container .leaflet-searchbox-autocomplete,
+.leaflet-searchbox-autocomplete .leaflet-searchbox-autocomplete-item {
+    background-color: var(--searchbox-bg);
+    border: 1px solid var(--searchbox-border);
+    outline: none;
+    transition: all var(--searchbox-transition);
+}
+
+/* Search input field */
+.leaflet-searchbox-wrapper .leaflet-searchbox {
+    width: var(--searchbox-width);
+    font-size: 0.875rem;
+    transition-delay: 0s;
+    z-index: var(--searchbox-z-index);
+    min-width: 0;
+}
+
+/* Input positioning variants */
+.leaflet-searchbox-wrapper .leaflet-searchbox-left {
+    border-top-left-radius: var(--searchbox-radius);
+    border-bottom-left-radius: var(--searchbox-radius);
+    border-right: none;
+    padding: 0 0 0 15px;
+}
+
+.leaflet-searchbox-wrapper .leaflet-searchbox-right {
+    border-top-right-radius: var(--searchbox-radius);
+    border-bottom-right-radius: var(--searchbox-radius);
+    border-left: none;
+    padding: 0 15px 0 0;
+}
+
+/* Search button */
+.leaflet-searchbox-wrapper .leaflet-searchbox-button {
+    width: var(--searchbox-height);
+    min-width: var(--searchbox-height);
+    transition-delay: 0s;
+    z-index: var(--searchbox-z-index);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+}
+
+.leaflet-searchbox-wrapper .leaflet-searchbox-button:hover,
+.leaflet-searchbox-wrapper .leaflet-searchbox-button:focus {
+    background-color: var(--searchbox-hover-bg);
+}
+
+.leaflet-searchbox-wrapper .leaflet-searchbox-button:focus {
+    box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
+}
+
+/* Button positioning variants */
+.leaflet-searchbox-wrapper .leaflet-searchbox-button-right {
+    border-top-right-radius: var(--searchbox-radius);
+    border-bottom-right-radius: var(--searchbox-radius);
+    border-left: none;
+}
+
+.leaflet-searchbox-wrapper .leaflet-searchbox-button-left {
+    border-top-left-radius: var(--searchbox-radius);
+    border-bottom-left-radius: var(--searchbox-radius);
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+    border-right: none;
+}
+
+/* Icon styles */
+.leaflet-searchbox-wrapper .leaflet-searchbox-button i {
+    font-size: 130%;
+}
+
+.leaflet-searchbox-container .leaflet-searchbox-icon {
+    width: 20px !important;
+    height: 20px !important;
+    stroke: var(--searchbox-icon-color);
+    stroke-width: 2;
+    flex-shrink: 0;
+}
+
+.leaflet-searchbox-container .search-icon-css {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    color: var(--searchbox-icon-color);
+}
+
+/* Autocomplete dropdown */
+.leaflet-searchbox-container .leaflet-searchbox-autocomplete {
+    position: absolute;
+    top: 20px;
+    width: 100%;
+    list-style-type: none;
+    margin: 0;
+    padding: 20px 0 0 0;
+    background-color: var(--searchbox-bg);
+    border-top: none;
+    border-radius: 0 0 var(--searchbox-radius) var(--searchbox-radius);
+    z-index: var(--autocomplete-z-index);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.leaflet-searchbox-container .leaflet-searchbox-autocomplete:empty {
+    display: none;
+}
+
+/* Autocomplete items */
+.leaflet-searchbox-autocomplete .leaflet-searchbox-autocomplete-item {
+    width: 100%;
+    border-left: none;
+    border-right: none;
+    border-top: none;
+    z-index: var(--autocomplete-z-index);
+    font-size: 0.8rem;
+    padding: 8px 15px;
+    cursor: pointer;
+    transition: background-color 0.15s ease;
+}
+
+.leaflet-searchbox-autocomplete .leaflet-searchbox-autocomplete-item:hover,
+.leaflet-searchbox-autocomplete .leaflet-searchbox-autocomplete-item:focus {
+    background-color: var(--searchbox-hover-bg);
+}
+
+.leaflet-searchbox-autocomplete .leaflet-searchbox-autocomplete-item:last-child {
+    border-bottom-left-radius: var(--searchbox-radius);
+    border-bottom-right-radius: var(--searchbox-radius);
+}
+
+/* Collapsed state */
+.collapsed .leaflet-searchbox {
+    width: 0 !important;
+    min-width: 0;
+    padding: 0;
+    transition-delay: 0s;
+    border-right: none;
+}
+
+.collapsed .leaflet-searchbox-button {
+    border-radius: 50%;
+    transition-delay: 0.3s;
+}
+
+.collapsed .leaflet-searchbox-autocomplete {
+    display: none;
+}
+
+/* Open state for dropdown */
+.leaflet-searchbox-wrapper.open .leaflet-searchbox,
+.leaflet-searchbox-wrapper.open .leaflet-searchbox-button {
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+    transition-delay: 0s;
+}
+
+/* Responsive adjustments */
+@media (max-width: 480px) {
+    :root {
+        --searchbox-width: 200px;
+    }
+
+    .leaflet-searchbox-wrapper .leaflet-searchbox {
+        font-size: 16px;
+    }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+
+    .leaflet-searchbox-wrapper .leaflet-searchbox,
+    .leaflet-searchbox-wrapper .leaflet-searchbox-button,
+    .leaflet-searchbox-autocomplete .leaflet-searchbox-autocomplete-item {
+        transition: none;
+    }
+}

@@ -1,0 +1,339 @@
+/* Advanced Search Results Styles */
+.result-item {
+    transition: background-color 0.2s ease;
+}
+
+.result-item:hover {
+    background-color: #f8f9fa !important;
+}
+
+.result-item:last-child {
+    border-bottom: none !important;
+}
+
+/* Legend Styles */
+.toggle-swtich {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.toggle-swtich .legend-btn {
+    transition: all 0.3s ease;
+    width: 100%;
+    border-radius: 8px;
+}
+
+.floating-legends {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    z-index: 1000;
+    position: absolute;
+    top: 1%;
+    right: 1%;
+    width: 15%;
+}
+
+.legend {
+    max-width: 200px;
+    max-height: 230px;
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.95);
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    z-index: 1000;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    font-size: 12px;
+}
+
+.legend-card-header {
+    padding: 0 12px 0 12px;
+}
+
+.legend-item {
+    display: flex;
+    align-items: center;
+}
+
+.legend-color {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    margin-right: 10px;
+    border: 1px solid rgba(0, 0, 0, 0.4);
+}
+
+.legend-color.available {
+    background-color: #28a745;
+}
+
+.legend-color.occupied {
+    background-color: #dc3545;
+}
+
+.legend-color.reserved {
+    background-color: #ffc107;
+}
+
+.legend-color.road {
+    background-color: #6c757d;
+}
+
+.legend-color.landmark {
+    background-color: #17a2b8;
+}
+
+/* Floating Stats */
+.floating-stats .card {
+    background-color: rgba(255, 255, 255, 0.95);
+    border-radius: 8px;
+}
+
+.floating-stats .card-header {
+    background-color: rgba(255, 255, 255, 0.95) !important;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+    border-radius: 8px 8px 0 0;
+}
+
+.stat-item {
+    padding: 0.25rem 0;
+}
+
+.stat-item:not(:last-child) {
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+/* Animation and transition styles */
+.floating-legends {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    margin-top: 10px;
+}
+
+.floating-legends .legend,
+.floating-legends .floating-stats {
+    transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    will-change: transform, opacity;
+}
+
+.legend-card {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    transform-origin: top center;
+}
+
+.legend-card .card-header {
+    transition: all 0.2s ease;
+}
+
+.legend-card .card-body {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    max-height: 300px;
+    overflow: hidden;
+}
+
+/* Minimized states with smooth animations */
+.legend.minimized .card-body,
+.floating-stats.minimized .card-body {
+    max-height: 0;
+    padding-top: 0 !important;
+    padding-bottom: 0 !important;
+    opacity: 0;
+    transform: translateY(-10px);
+}
+
+.legend.minimized,
+.floating-stats.minimized {
+    opacity: 0.8;
+    transform: scale(0.98);
+}
+
+.legend.minimized:hover,
+.floating-stats.minimized:hover {
+    opacity: 1;
+    transform: scale(1);
+}
+
+/* Button animations */
+.legend-btn {
+    transition: all 0.2s ease;
+    transform: translateY(0);
+    background-color: white;
+    color: #435ebe;
+    font-weight: 700;
+    font-size: 15px;
+}
+
+.legend-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 123, 255, 0.3);
+}
+
+.legend-btn:active {
+    transform: translateY(0);
+}
+
+/* Icon rotation animation */
+.minimize-icon {
+    transition: transform 0.3s ease;
+}
+
+.minimized .minimize-icon {
+    transform: rotate(180deg);
+}
+
+#displayUserCemeteryMap {
+    border-radius: 8px;
+    min-height: 750px !important; 
+    min-width: 100% !important;
+    margin: 0 auto !important;
+}
+
+/* Advanced search icon centering */
+.button-wrapper {
+    height: 40px;
+    width: 40px;
+    background-color: white;
+    border-radius: 50%;
+}
+
+.advanced-search-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    background-color: white;
+    border-radius: 50%;
+}
+
+.button-wrapper i {
+    color: black;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.button-wrapper i:hover {
+    background-color: rgba(0, 0, 0, 0.05);
+    /* color: red; */
+}
+
+/* Loading and interaction states */
+.legend-btn.loading,
+.legend-btn.animating {
+    opacity: 0.8;
+    pointer-events: none;
+    position: relative;
+}
+
+.legend-btn.animating {
+    transform: translateY(0) !important;
+}
+
+@keyframes buttonSpinner {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+/* Enhanced card hover effects */
+.legend-card {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    border: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.legend-card:hover {
+    border-color: rgba(0, 123, 255, 0.2);
+}
+
+/* Improved minimize button styling */
+.card-header .btn-link {
+    padding: 4px 8px;
+    border-radius: 4px;
+    transition: all 0.2s ease;
+}
+
+.card-header .btn-link:hover {
+    background-color: rgba(0, 0, 0, 0.05);
+    transform: scale(1.1);
+}
+
+.card-header .btn-link:active {
+    transform: scale(0.95);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .legend {
+        bottom: 0;
+        left: 10px;
+        max-width: 200px;
+    }
+
+    .floating-stats {
+        top: 10px;
+        right: 10px;
+        min-width: 160px;
+    }
+}
+
+/* Custom button responsiveness */
+.btn-md-normal {
+    font-size: 0.875rem;
+}
+
+/* Focus states for accessibility */
+.legend-btn:focus,
+.card-header .btn-link:focus {
+    outline: 2px solid #007bff;
+    outline-offset: 2px;
+}
+
+/* Smooth scrollbar for long content */
+.legend-card .card-body {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(0, 0, 0, 0.2) transparent;
+}
+
+.legend-card .card-body::-webkit-scrollbar {
+    width: 4px;
+}
+
+.legend-card .card-body::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.legend-card .card-body::-webkit-scrollbar-thumb {
+    background-color: rgba(0, 0, 0, 0.2);
+    border-radius: 4px;
+}
+
+/* Enhanced visual hierarchy */
+.legend-item {
+    transition: transform 0.2s ease;
+}
+
+.legend-item:hover {
+    transform: translateX(2px);
+}
+
+.stat-item {
+    transition: background-color 0.2s ease;
+    border-radius: 4px;
+    padding: 0.5rem 0.25rem;
+    margin: 0 -0.25rem;
+}
+
+.stat-item:hover {
+    background-color: rgba(0, 123, 255, 0.05);
+}
+
+.glow-effect {
+    filter: drop-shadow(0 0 6px #66ff66);
+}

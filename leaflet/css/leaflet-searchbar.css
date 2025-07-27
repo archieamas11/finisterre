@@ -1,0 +1,41 @@
+/* Navigation */
+.searchbar-container {
+  position: absolute;
+  z-index: 999;
+  left: 50%;
+  top: 1.5%;
+  transform: translateX(-50%);
+  background-color: transparent;
+}
+
+/* Modern Leaflet Controls */
+.leaflet-bar .leaflet-control {
+  background: rgba(255, 255, 255, 0.95) !important;
+  border-radius: 8px !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
+  color: #333 !important;
+  font-size: 16px !important;
+  padding: 8px 12px !important;
+  transition: all 0.2s ease !important;
+  backdrop-filter: blur(10px) !important;
+}
+
+.leaflet-control {
+  background-color: transparent !important;
+  background: transparent !important;
+  border: transparent !important;
+}
+
+.advanced-search-icon {
+  height: 40px !important;
+  width: 40px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  border-radius: 20px !important;
+}
+
+.advanced-search-icon .bi-sliders {
+  font-size: 15px;
+  line-height: 1;
+}
