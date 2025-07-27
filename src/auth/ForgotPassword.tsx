@@ -8,7 +8,7 @@ import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { useState } from "react";
-import { toast, Toaster } from "sonner";
+import { toast } from "sonner";
 import { Card } from "@/components/ui/card";
 
 const FormSchema = z.object({
@@ -40,25 +40,27 @@ export default function ForgotPassword() {
         navigate("/reset-password", {
           state: { username: data.username }
         });
+        toast.success("Property ID verified successfully!", {
+          closeButton: true,
+        });
       } else {
-        const errorMessage = res.message || "Failed to process request";
-        toast.error(errorMessage);
-        form.setError("username", {
-          type: "manual",
-          message: "Invalid Property ID"
+        toast.error(res.message || "Failed to process request", {
+          description: "Please check your Property ID and try again.",
+          closeButton: true,
         });
       }
     } catch (err: any) {
-      console.error("Forgot password error:", err);
-      toast.error("An unexpected error occurred. Please try again.");
+      toast.error("An unexpected error occurred. Please try again.", {
+        closeButton: true,
+      });
     } finally {
       setIsSubmitting(false);
     }
   };
 
+
   return (
     <div className="flex items-center justify-center min-h-screen">
-      <Toaster />
       <Card className="space-y-6 w-full max-w-md p-10">
         <div className="flex flex-col items-center space-y-4">
           <div className="p-3 rounded-full bg-primary/10">

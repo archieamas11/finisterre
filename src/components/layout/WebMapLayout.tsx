@@ -1,16 +1,9 @@
-import { Button } from "@/components/ui/button";
-import { Link } from "react-router-dom";
 import WebMapNavs from "@/pages/webmap/WebMapNavs";
 
 export default function MapPage() {
   return (
     <div className="fixed inset-0 w-full h-full bg-white dark:bg-stone-900">
       <WebMapNavs />
-      <Link to="/" className="absolute bottom-6 left-6 z-20 text-base shadow">
-        <Button variant="link">
-          ← Back to Landing Page
-        </Button>
-      </Link>
       {/* Map content placeholder */}
       <div className="absolute inset-0 flex items-center justify-center w-full h-full p-0">
         <img
