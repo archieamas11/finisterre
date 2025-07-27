@@ -10,6 +10,7 @@ import {
   BreadcrumbSeparator
 } from "@/components/ui/breadcrumb"
 import { ThemeToggleAdvanced } from "../ThemeToggleAdvanced"
+import { BellIcon } from "lucide-react"
 
 export function SiteHeader({ activeItem }: { activeItem?: { title: string; url: string } }) {
   return (
@@ -39,15 +40,8 @@ export function SiteHeader({ activeItem }: { activeItem?: { title: string; url: 
         </Breadcrumb>
         <div className="ml-auto flex items-center gap-2">
           <ThemeToggleAdvanced />
-          <Button variant="ghost" asChild size="sm" className="hidden sm:flex">
-            <a
-              href="https://github.com/shadcn-ui/ui/tree/main/apps/v4/app/(examples)/dashboard"
-              rel="noopener noreferrer"
-              target="_blank"
-              className="dark:text-foreground"
-            >
-              GitHub
-            </a>
+          <Button variant="ghost" size="sm" className="hidden sm:flex" aria-label="Notifications">
+            <BellIcon className="h-4 w-4" />
           </Button>
         </div>
       </div>
