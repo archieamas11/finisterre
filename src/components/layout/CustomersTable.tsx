@@ -25,6 +25,8 @@ import { Input } from "@/components/ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { columns, type Customer } from "./columns";
 import { ChevronDown, Columns2, Search } from "lucide-react";
+import { Label } from "@radix-ui/react-label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
 
 interface CustomersTableProps {
     data: Customer[];
@@ -65,7 +67,12 @@ export default function CustomersTable({ data }: CustomersTableProps) {
         },
         onGlobalFilterChange: setGlobalFilter,
     });
-
+    // Helper function to format column names
+    function formatColumnName(name: string): string {
+        return name
+            .replace(/_/g, ' ')         
+            .replace(/\b\w/g, char => char.toUpperCase());
+    }
     return (
         <div>
             <div className="flex items-center py-4 gap-2">
@@ -100,7 +107,7 @@ export default function CustomersTable({ data }: CustomersTableProps) {
                                         checked={column.getIsVisible()}
                                         onCheckedChange={value => column.toggleVisibility(!!value)}
                                     >
-                                        {column.id}
+                                        {formatColumnName(column.id)}
                                     </DropdownMenuCheckboxItem>
                                 ))}
                         </DropdownMenuContent>
@@ -148,16 +155,26 @@ export default function CustomersTable({ data }: CustomersTableProps) {
                 </div>
                 <div className="flex items-center space-x-6 lg:space-x-8">
                     <div className="flex items-center space-x-2">
-                        <span className="text-sm font-medium">Rows per page</span>
-                        <select
-                            className="h-8 w-[70px] border rounded px-1"
-                            value={table.getState().pagination.pageSize}
-                            onChange={e => table.setPageSize(Number(e.target.value))}
+                        <Label className="text-sm font-medium">Rows per page</Label>
+                        <Select
+                            value={`${table.getState().pagination.pageSize}`}
+                            onValueChange={(value) => {
+                                table.setPageSize(Number(value))
+                            }}
                         >
-                            {[10, 20, 25, 30, 40, 50].map(pageSize => (
-                                <option key={pageSize} value={pageSize}>{pageSize}</option>
-                            ))}
-                        </select>
+                            <SelectTrigger size="sm" className="w-20" id="rows-per-page">
+                                <SelectValue
+                                    placeholder={table.getState().pagination.pageSize}
+                                />
+                            </SelectTrigger>
+                            <SelectContent side="top">
+                                {[10, 20, 25, 30, 40, 50].map(pageSize => (
+                                    <SelectItem key={pageSize} value={`${pageSize}`}>
+                                        {pageSize}
+                                    </SelectItem>
+                                ))}
+                            </SelectContent>
+                        </Select>
                     </div>
                     <div className="flex w-[100px] items-center justify-center text-sm font-medium">
                         Page {table.getState().pagination.pageIndex + 1} of {table.getPageCount()}
