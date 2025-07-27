@@ -12,9 +12,9 @@ export default function LandingLayout() {
     const navigate = useNavigate();
 
     return (
-        <div className="min-h-screen bg-background flex flex-col">
+        <div className="min-h-full bg-background flex flex-col">
             <nav
-                className="fixed top-2 left-0 right-0 z-30 flex items-center justify-between px-6 sm:px-8 py-4 rounded-xl mx-auto w-[95vw] sm:w-[80vw] max-w-4xl border shadow-lg backdrop-blur-lg"
+                className="fixed top-2 left-0 right-0 z-30 flex items-center justify-between px-6 sm:px-8 py-4 rounded-xl mx-auto w-[80vw] sm:w-[90vw] max-w-6xl border shadow-lg backdrop-blur-lg"
                 aria-label="Main Navigation"
             >
                 <span
@@ -22,7 +22,8 @@ export default function LandingLayout() {
                     onClick={() => navigate("/")}
                     aria-label="Go to homepage"
                 >
-                    <MapPin className="mr-2" /> Finisterre
+                    <MapPin className="mr-2" />
+                    <span className="hidden md:inline">Finisterre</span>
                 </span>
                 <NavigationMenuSection />
                 <div className="flex gap-2 sm:gap-4 items-center">
@@ -40,7 +41,7 @@ export default function LandingLayout() {
             </nav>
             <HeroSection />
             <OurServicesSection />
-            <AboutSection/>
+            <AboutSection />
         </div>
     );
 }

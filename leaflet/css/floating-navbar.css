@@ -1,0 +1,151 @@
+.floating-navbar {
+  display: flex;
+  flex-direction: row;
+  gap: 0.6rem;
+  z-index: 1000;
+  transition: flex-direction 0.3s ease, gap 0.3s ease;
+}
+
+.floating-navbar .nav-button {
+  height: 2.5rem;
+  border-radius: 1.25rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 1rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.floating-navbar .nav-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.floating-navbar .nav-button i {
+  font-size: 1rem;
+  margin-right: 0.5rem;
+}
+
+.floating-navbar .nav-button .button-label {
+  font-weight: 500;
+  font-size: 0.875rem;
+}
+
+.floating-navbar .nav-button.search-btn {
+  background-color: #f8f9fa;
+  color: #212529;
+}
+
+.floating-navbar .nav-button.home-btn {
+  background-color: #4058a0;
+  color: white;
+}
+
+.floating-navbar .nav-button.signin-btn {
+  background-color: #6c757d;
+  color: white;
+}
+
+.floating-navbar i {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .floating-navbar {
+    align-items: flex-end;
+    flex-direction: row;
+  }
+
+  .floating-navbar .nav-button {
+    width: 2.50rem;
+    height: 2.50rem;
+    padding: 0;
+  }
+
+  .floating-navbar .button-label {
+    display: none;
+  }
+
+  .floating-navbar .nav-button i {
+    margin-right: 0rem;
+  }
+
+  .floating-navbar .nav-button .button-label {
+    font-size: 0.8rem;
+  }
+}
+
+@media (max-width: 576px) {
+  .floating-navbar {
+    align-items: flex-end;
+    flex-direction: row;
+  }
+
+  .floating-navbar .nav-button {
+    width: 2.50rem;
+    height: 2.50rem;
+    padding: 0;
+    border-radius: 50%;
+    justify-content: center;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+
+  .floating-navbar .nav-button:hover,
+  .floating-navbar .nav-button:focus {
+    transform: scale(1.1);
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.2);
+  }
+
+  .floating-navbar .button-label {
+    display: none;
+  }
+
+  .floating-navbar .nav-button i {
+    margin-right: 0;
+    font-size: 1.1rem;
+  }
+}
+
+/* Accessibility enhancement */
+.floating-navbar .nav-button:focus {
+  outline: 3px solid rgba(13, 110, 253, 0.5);
+  outline-offset: 2px;
+}
+
+@media (max-width: 500px) {
+  .floating-navbar {
+    flex-direction: column;
+    align-items: center;
+    position: absolute !important;
+    left: 110%;
+    top: 0;
+  }
+
+  .searchbar-container {
+    display: flex !important;
+    position: absolute !important;
+    z-index: 999 !important;
+    top: 1% !important;
+    left: 85% !important;
+    background-color: transparent !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 0.75rem !important;
+    border-radius: 1.5rem !important;
+    padding: 0.5rem !important;  }
+
+  .searchbar {
+    position: absolute !important;
+    z-index: 999 !important;
+    right: 10px !important;
+    top: 0 !important;
+  }
+}

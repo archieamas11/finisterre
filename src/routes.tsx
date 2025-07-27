@@ -4,7 +4,7 @@ const IntermentSetup = lazy(() => import("@/pages/admin/contents/IntermentSetup"
 const AdminMap = lazy(() => import("@/pages/admin/contents/Map"));
 const Services = lazy(() => import("@/pages/admin/contents/Services"));
 const ManageAccounts = lazy(() => import("@/pages/admin/contents/ManageAccounts"));
-const MapPage = lazy(() => import("@/pages/MapPage"));
+const MapPage = lazy(() => import("@/components/layout/WebMapLayout"));
 import LoginV2 from "@/auth/page";
 import ForgotPassword from "@/auth/ForgotPassword";
 import ResetPassword from "@/auth/ResetPassword";
