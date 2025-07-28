@@ -24,10 +24,12 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { columns, type Customer } from "./columns";
+import type { Customer } from "@/types/IntermentTypes";
 import { ChevronDown, Columns2, Search } from "lucide-react";
-import { Label } from "@radix-ui/react-label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
+
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../../../components/ui/select";
+import { Label } from "@/components/ui/label";
+import { customerColumns } from "./columns/columns";
 
 interface CustomersTableProps {
     data: Customer[];
@@ -49,7 +51,7 @@ export default function CustomersTable({ data }: CustomersTableProps) {
     }, []);
     const table = useReactTable<Customer>({
         data,
-        columns,
+        columns: customerColumns,
         onSortingChange: setSorting,
         onColumnFiltersChange: setColumnFilters,
         getCoreRowModel: getCoreRowModel(),
@@ -68,12 +70,14 @@ export default function CustomersTable({ data }: CustomersTableProps) {
         },
         onGlobalFilterChange: setGlobalFilter,
     });
+
     // Helper function to format column names
     function formatColumnName(name: string): string {
         return name
             .replace(/_/g, ' ')         
             .replace(/\b\w/g, char => char.toUpperCase());
     }
+
     // Show skeleton if data is undefined or empty
     if (!data || data.length === 0) {
         return (
@@ -152,7 +156,7 @@ export default function CustomersTable({ data }: CustomersTableProps) {
                             ))
                         ) : (
                             <TableRow className="h-14">
-                                <TableCell colSpan={columns.length} className="h-24 text-center">
+                                <TableCell colSpan={customerColumns.length} className="h-24 text-center">
                                     No results.
                                 </TableCell>
                             </TableRow>

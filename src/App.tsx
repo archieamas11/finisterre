@@ -2,25 +2,25 @@ import { Suspense, type JSX } from "react";
 
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 
-import AdminDashboard from "@/pages/admin/contents/AdminDashboard";
-import AdminMap from "@/pages/admin/contents/AdminMap";
+import AdminDashboard from "@/pages/admin/home/AdminDashboard";
+import AdminMap from "@/pages/admin/map4admin/AdminMap";
 import DashboardLayout from "@/components/layout/DashboardLayout";
 import ForgotPassword from "@/auth/ForgotPassword";
 import LandingLayout from "@/components/layout/LandingLayout";
 import Layout from "@/auth/layout";
 import LoginV2 from "@/auth/page";
 import Logout from "@/auth/Logout";
-import ManageAccounts from "@/pages/admin/contents/ManageAccounts";
+import ManageAccounts from "@/pages/admin/accounts/ManageAccounts";
 import MapPage from "@/components/layout/WebMapLayout";
 import ResetPassword from "@/auth/ResetPassword";
-import Services from "@/pages/admin/contents/Services";
+import Services from "@/pages/admin/services/Services";
 import UnauthorizedPage from "@/pages/UnauthorizedPage";
 import UserDashboard from "@/pages/user/contents/UserDashboard";
 import UserMap from "@/pages/user/contents/Map";
 import UserProfile from "@/pages/user/contents/Profile";
 import UserServices from "@/pages/user/contents/Services";
 
-import IntermentSetup from "./pages/admin/contents/IntermentSetup";
+import IntermentSetup from "./pages/admin/interment/IntermentSetup";
 
 // Auth utility functions
 const isAuthenticated = (): boolean => {
