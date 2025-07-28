@@ -37,10 +37,7 @@ export function LoginPage() {
 
   const onSubmit = async (data: z.infer<typeof FormSchema>) => {
     try {
-      console.log("Sending login request:", data);
       const res = await loginUser(data.username, data.password);
-      console.log("Login response:", res);
-
       if (res.success) {
         // Save token and role
         localStorage.setItem("token", res.token!);
@@ -49,8 +46,10 @@ export function LoginPage() {
         // Navigate based on role
         if (res.isAdmin) {
           navigate("/admin");
+          toast.success(`Welcome back, ${data.username}!`);
         } else {
           navigate("/user");
+          toast.success(`Welcome back, ${data.username}!`);
         }
       } else {
         // Set backend error to form state
@@ -60,18 +59,18 @@ export function LoginPage() {
             type: "manual",
             message: "Incorrect Property ID or Password",
           });
-          toast.error("Incorrect Property ID or Password");
         } else if (res.message === "Invalid password") {
           form.setError("password", {
             type: "manual",
             message: "Incorrect Property ID or Password"
           });
-        } else {
-          // For other errors, show in toast
         }
       }
     } catch (err: any) {
       console.error("Login error:", err);
+      toast.error("Something went wrong. Please try again later.", {
+        closeButton: true,
+      });
     }
   };
 
