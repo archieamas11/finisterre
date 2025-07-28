@@ -93,7 +93,7 @@ export default function CustomersTable({ data }: CustomersTableProps) {
     }
     return (
         <div>
-            <div className="flex items-center py-4 gap-2">
+            <div className="flex items-center py-2">
                 <div className="relative flex items-center rounded-md border focus-within:ring-1 focus-within:ring-ring pl-2 dark:bg-background">
                     <Search className="h-5 w-5 text-muted-foreground dark:bg-background" />
                     <Input
@@ -106,7 +106,7 @@ export default function CustomersTable({ data }: CustomersTableProps) {
                 <div className="ml-auto flex gap-2">
                     <DropdownMenu>
                         <DropdownMenuTrigger asChild>
-                            <Button variant="outline" size="sm">
+                            <Button variant="outline" size="lg">
                                 <Columns2 className="mr-2 h-4 w-4" />
                                 <span className="hidden lg:inline">Customize Columns</span>
                                 <span className="lg:hidden">Columns</span>

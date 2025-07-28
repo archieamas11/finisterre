@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 
 import { Outlet, useLocation } from "react-router-dom";
 import { Toaster } from "sonner";
@@ -6,7 +6,7 @@ import { Toaster } from "sonner";
 import { AppSidebar } from "@/components/sidebar/app-sidebar";
 import { SidebarProvider, SidebarInset } from "@/components/ui/sidebar";
 import { SiteHeader } from "@/components/sidebar/site-header";
-import { getSidebarItems } from "@/navigation/sidebar/sidebar-items";
+import { getSidebarItems, findSidebarItemByPath } from "@/navigation/sidebar/sidebar-items";
 import { isAuthenticated, isAdmin } from "@/utils/auth";
 
 interface DashboardLayoutProps {
@@ -15,29 +15,21 @@ interface DashboardLayoutProps {
 
 export default function DashboardLayout({ role }: DashboardLayoutProps) {
   const location = useLocation();
-  const [sidebarItems, setSidebarItems] = useState<any[]>([]);
 
   useEffect(() => {
-    // Check authentication
     if (!isAuthenticated()) {
       window.location.href = "/login";
       return;
     }
-
-    // Check role authorization
     const userIsAdmin = isAdmin();
     if ((role === 'admin' && !userIsAdmin) || (role === 'user' && userIsAdmin)) {
       window.location.href = userIsAdmin ? "/admin" : "/user";
       return;
     }
-
-    // Set sidebar items based on role
-    const items = getSidebarItems(role === 'admin');
-    setSidebarItems(items.flatMap(group => group.items));
   }, [role]);
 
-  // Find the currently active item
-  const activeItem = sidebarItems.find(item => item.url === location.pathname);
+  // Find the current main/sub item for breadcrumb
+  const breadcrumbItem = findSidebarItemByPath(location.pathname, role === 'admin');
 
   return (
     <SidebarProvider
@@ -51,7 +43,7 @@ export default function DashboardLayout({ role }: DashboardLayoutProps) {
       <AppSidebar items={getSidebarItems(role === 'admin')} variant="floating" />
       <SidebarInset>
         <Toaster />
-        <SiteHeader activeItem={activeItem} />
+        <SiteHeader breadcrumbItem={breadcrumbItem} />
         <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
           <Outlet />
         </div>

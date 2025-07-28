@@ -27,11 +27,11 @@ export function HeroSection() {
             </div>
 
             {/* Content Card */}
-            <Card className="relative z-10 w-full max-w-3xl border border-muted bg-background/80 p-6 shadow-lg backdrop-blur-md sm:p-10 dark:bg-background/70">
-                <h1 className="mb-4 text-center text-3xl font-bold drop-shadow-sm sm:text-4xl">
+            <Card className="relative border border-muted bg-background/80 shadow-lg backdrop-blur-md dark:bg-background/60 z-10 sm:px-10 p-10 mx-auto w-[80vw] sm:w-[50vw] max-w-4xl">
+                <h1 className="text-center text-3xl font-bold drop-shadow-sm sm:text-5xl">
                     Not Your Usual Memorial Park
                 </h1>
-                <p className="mb-8 text-center text-base text-muted-foreground sm:text-lg">
+                <p className="text-center text-base text-muted-foreground sm:text-md">
                     Inspired by Spain's El Camino de Santiago, Finisterre Gardenz celebrates life and honors the pilgrimage we all make as we live life to the fullest.
                 </p>
                 <div className="flex justify-center">

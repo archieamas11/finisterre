@@ -31,7 +31,7 @@ function SelectAllCheckbox({ table }: { table: any }) {
                 checked={table.getIsAllPageRowsSelected()}
                 onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
                 aria-label="Select all"
-                className="border-gray-300 dark:border-gray-600"
+                className="border-gray-500 dark:border-gray-600"
             />
         </div>
     );
@@ -48,7 +48,7 @@ export const customerColumns: ColumnDef<Customer>[] = [
                     checked={row.getIsSelected()}
                     onCheckedChange={(value) => row.toggleSelected(!!value)}
                     aria-label="Select row"
-                    className="border-gray-300 dark:border-gray-600"
+                    className="border-accent dark:border-accent-background"
                 />
             );
         },
