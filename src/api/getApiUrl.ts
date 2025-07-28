@@ -1,7 +1,7 @@
 // src/api/getApiUrl.ts
 import axios from "axios";
 
-export const REMOTE_API_URL = "https://finisterre-backend.onrender.com/";
+export const REMOTE_API_URL = "https://finisterre.ct.ws/";
 export const LOCAL_API_URL = "http://localhost/finisterre_backend/";
 
 // Simple runtime check for backend availability (first request will try REMOTE, fallback on error)
