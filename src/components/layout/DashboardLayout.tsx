@@ -1,8 +1,5 @@
 import { useEffect } from "react";
-
 import { Outlet, useLocation } from "react-router-dom";
-import { Toaster } from "sonner";
-
 import { AppSidebar } from "@/components/sidebar/app-sidebar";
 import { SidebarProvider, SidebarInset } from "@/components/ui/sidebar";
 import { SiteHeader } from "@/components/sidebar/site-header";
@@ -42,7 +39,6 @@ export default function DashboardLayout({ role }: DashboardLayoutProps) {
     >
       <AppSidebar items={getSidebarItems(role === 'admin')} variant="floating" />
       <SidebarInset>
-        <Toaster />
         <SiteHeader breadcrumbItem={breadcrumbItem} />
         <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
           <Outlet />

@@ -8,23 +8,25 @@ export default function CustomersTablePage() {
   const [customers, setCustomers] = useState<Customer[]>([]);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    async function fetchData() {
-      setLoading(true);
-      try {
-        const response = await getCustomers();
-        if (response && response.success && Array.isArray(response.customers)) {
-          setCustomers(response.customers);
-        } else {
-          setCustomers([]);
-        }
-      } catch (error) {
+
+  const reloadCustomers = async () => {
+    setLoading(true);
+    try {
+      const response = await getCustomers();
+      if (response && response.success && Array.isArray(response.customers)) {
+        setCustomers(response.customers);
+      } else {
         setCustomers([]);
-      } finally {
-        setLoading(false);
       }
+    } catch (error) {
+      setCustomers([]);
+    } finally {
+      setLoading(false);
     }
-    fetchData();
+  };
+
+  useEffect(() => {
+    reloadCustomers();
   }, []);
 
   if (loading)
@@ -33,5 +35,5 @@ export default function CustomersTablePage() {
         <SpinnerCircle4 />
       </div>
     );
-  return <CustomersTable data={customers} />;
+  return <CustomersTable data={customers} reloadCustomers={reloadCustomers} />;
 }

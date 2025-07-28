@@ -87,6 +87,10 @@ export default function DeceasedRecordsTable({ data }: DeceasedRecordsTableProps
     }
     return (
         <div>
+            <div className="flex flex-col mb-2">
+                <h1 className="text-2xl font-bold leading-tight">Deceased Records Management</h1>
+                <p className="text-muted-foreground text-sm">View, search, and manage your deceased records.</p>
+            </div>
             <div className="flex items-center py-2">
                 <div className="relative flex items-center rounded-md border focus-within:ring-1 focus-within:ring-ring pl-2 dark:bg-background">
                     <Search className="h-5 w-5 text-muted-foreground dark:bg-background" />

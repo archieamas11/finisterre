@@ -22,3 +22,8 @@ export async function createCustomer(data: any) {
   const res = await axios.post(APP_URL + "customers/create_customer.php", data);
   return res.data;
 }
+
+export async function deleteCustomer(id: string) {
+  const res = await axios.post(APP_URL + "customers/delete_customer.php", { id });
+  return res.data;
+}
