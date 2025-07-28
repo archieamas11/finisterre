@@ -1,8 +1,8 @@
 import axios from "axios";
 
-const API_URL = "http://localhost/finisterre_backend/customers/";
-
+import { getApiUrl } from "./getApiUrl";
 export async function getCustomers() {
-  const res = await axios.post(API_URL + "get_customers.php");
+  const url = await getApiUrl();
+  const res = await axios.post(url + "customers/get_customers.php");
   return res.data;
 }
