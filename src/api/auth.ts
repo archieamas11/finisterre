@@ -1,5 +1,6 @@
 import axios from "axios";
-import { getApiUrl } from "./getApiUrl";
+// import { getApiUrl } from "./getApiUrl";
+const APP_URL = "http://localhost/finisterre_backend/";
 
 export interface LoginResponse {
   success: boolean;
@@ -9,9 +10,8 @@ export interface LoginResponse {
 }
 
 export async function loginUser(username: string, password: string): Promise<LoginResponse> {
-  const url = await getApiUrl();
   try {
-    const res = await axios.post<LoginResponse>(url + "auth/login.php", { username, password });
+    const res = await axios.post<LoginResponse>(APP_URL + "auth/login.php", { username, password });
     return res.data;
   } catch (error: any) {
     // Handle network errors or server errors
@@ -38,8 +38,7 @@ export async function loginUser(username: string, password: string): Promise<Log
 }
 
 export async function resetPassword(username: string, newPassword: string) {
-  const url = await getApiUrl();
-  const res = await axios.post(url + "auth/reset_password.php", {
+  const res = await axios.post(APP_URL + "auth/reset_password.php", {
     username,
     new_password: newPassword,
   });
@@ -47,7 +46,6 @@ export async function resetPassword(username: string, newPassword: string) {
 }
 
 export async function forgotPassword(username: string) {
-  const url = await getApiUrl();
-  const res = await axios.post(url + "auth/forgot_password.php", { username });
+  const res = await axios.post(APP_URL + "auth/forgot_password.php", { username });
   return res.data;
 }

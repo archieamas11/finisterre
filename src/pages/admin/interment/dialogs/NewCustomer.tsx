@@ -5,9 +5,11 @@ import { Plus } from "lucide-react";
 import { Form, FormField, FormItem, FormLabel, FormControl, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { z } from "zod";
+import { email, z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { createCustomer } from "@/api/users"; // adjust path as needed
+import { toast } from "sonner";
 
 const FormSchema = z.object({
     first_name: z.string().min(1, { message: "First name is required." }),
@@ -21,6 +23,10 @@ const FormSchema = z.object({
     religion: z.string().min(1, { message: "Religion is required." }),
     citizenship: z.string().min(1, { message: "Citizenship is required." }),
     occupation: z.string().min(1, { message: "Occupation is required." }),
+    email: z.string().min(1, { message: "Email is required." }).email({ message: "Invalid email address." }),
+    status: z.enum(["single", "married", "widowed", "divorced", "separated"], {
+        message: "Status is required.",
+    }),
 });
 
 export default function NewCustomerDialog({ onSubmit }: { onSubmit?: (values: any) => void }) {
@@ -34,12 +40,45 @@ export default function NewCustomerDialog({ onSubmit }: { onSubmit?: (values: an
             address: "",
             contact_number: "",
             birth_date: "",
-            gender: "",
+            gender: "male",
             religion: "",
             citizenship: "",
             occupation: "",
+            email: "",
+            status: "single"
         },
     });
+
+    async function handleSubmit(values: z.infer<typeof FormSchema>) {
+        // Prepare payload for backend: match PHP expected order and types
+        const payload = {
+            last_name: values.last_name.trim(),
+            first_name: values.first_name.trim(),
+            middle_name: values.middle_name.trim(),
+            nickname: values.nickname.trim(),
+            address: values.address.trim(),
+            contact_number: values.contact_number.trim(),
+            email: values.email.trim(),
+            birth_date: values.birth_date ? new Date(values.birth_date).toISOString().slice(0, 10) : '',
+            gender: values.gender,
+            religion: values.religion.trim(),
+            citizenship: values.citizenship.trim(),
+            status: values.status,
+            occupation: values.occupation.trim(),
+        };
+        try {
+            const result = await createCustomer(payload);
+            if (result && result.success) {
+                if (onSubmit) onSubmit(payload);
+                toast.success("Successfully created customer: " + payload.first_name + " " + payload.last_name);
+            } else {
+                toast.error(result?.message || "Failed to create customer: " + payload.first_name + " " + payload.last_name);
+            }
+        } catch (error) {
+            toast.error("Failed to create customer: " + payload.first_name + " " + payload.last_name);
+            console.error("Failed to create customer:", error);
+        }
+    }
 
     return (
         <Dialog>
@@ -55,9 +94,7 @@ export default function NewCustomerDialog({ onSubmit }: { onSubmit?: (values: an
                 </DialogHeader>
                 <Form {...form}>
                     <form
-                        onSubmit={form.handleSubmit((values) => {
-                            if (onSubmit) onSubmit(values);
-                        })}
+                        onSubmit={form.handleSubmit(handleSubmit)}
                         className="space-y-4"
                     >
                         <div className="grid grid-cols-3 gap-4">
@@ -141,6 +178,47 @@ export default function NewCustomerDialog({ onSubmit }: { onSubmit?: (values: an
                             />
                             <FormField
                                 control={form.control}
+                                name="email"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>Email</FormLabel>
+                                        <FormControl>
+                                            <Input placeholder="Email Address" {...field} />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                            <FormField
+                                control={form.control}
+                                name="status"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>Status</FormLabel>
+                                        <FormControl>
+                                            <Select
+                                                value={field.value}
+                                                onValueChange={field.onChange}
+                                                defaultValue={field.value}
+                                            >
+                                                <SelectTrigger className="w-full">
+                                                    <SelectValue placeholder="Select gender" />
+                                                </SelectTrigger>
+                                                <SelectContent>
+                                                    <SelectItem value="single">Single</SelectItem>
+                                                    <SelectItem value="married">Married</SelectItem>
+                                                    <SelectItem value="widowed">Widowed</SelectItem>
+                                                    <SelectItem value="divorced">Divorced</SelectItem>
+                                                    <SelectItem value="separated">Separated</SelectItem>
+                                                </SelectContent>
+                                            </Select>
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                            <FormField
+                                control={form.control}
                                 name="birth_date"
                                 render={({ field }) => (
                                     <FormItem>
@@ -170,7 +248,6 @@ export default function NewCustomerDialog({ onSubmit }: { onSubmit?: (values: an
                                                 <SelectContent>
                                                     <SelectItem value="male">Male</SelectItem>
                                                     <SelectItem value="female">Female</SelectItem>
-                                                    <SelectItem value="other">Other</SelectItem>
                                                 </SelectContent>
                                             </Select>
                                         </FormControl>

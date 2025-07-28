@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import LotOwnersTable from "./LotOwnersTable";
 import { getLotOwners } from "@/api/users";
 import type { LotOwners } from "@/types/IntermentTypes";
+import SpinnerCircle4 from "@/components/spinner-10";
 
 export default function LotOwnersTablePage() {
   const [lotOwners, setLotOwners] = useState<LotOwners[]>([]);
@@ -26,6 +27,11 @@ export default function LotOwnersTablePage() {
     fetchData();
   }, []);
 
-  if (loading) return <div>Loading lot owners...</div>;
+  if (loading)
+    return (
+      <div className="flex items-center justify-center h-full">
+        <SpinnerCircle4 />
+      </div>
+    );
   return <LotOwnersTable data={lotOwners} />;
 }

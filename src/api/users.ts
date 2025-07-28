@@ -1,21 +1,24 @@
 import axios from "axios";
 
-import { getApiUrl } from "./getApiUrl";
+// import { APP_URL } from "./getApiUrl";
+const APP_URL = "http://localhost/finisterre_backend/";
 
 export async function getCustomers() {
-  const url = await getApiUrl();
-  const res = await axios.post(url + "customers/get_customers.php");
+  const res = await axios.post(APP_URL + "customers/get_customers.php");
   return res.data;
 }
 
 export async function getLotOwners() {
-  const url = await getApiUrl();
-  const res = await axios.post(url + "customers/get_lot_owners.php");
+  const res = await axios.post(APP_URL + "customers/get_lot_owners.php");
   return res.data;
 }
 
 export async function getDeceasedRecords() {
-  const url = await getApiUrl();
-  const res = await axios.post(url + "customers/get_deceased.php");
+  const res = await axios.post(APP_URL + "customers/get_deceased.php");
+  return res.data;
+}
+
+export async function createCustomer(data: any) {
+  const res = await axios.post(APP_URL + "customers/create_customer.php", data);
   return res.data;
 }

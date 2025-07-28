@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import CustomersTable from "./CustomersTable";
 import { getCustomers } from "@/api/users";
 import type { Customer } from "@/types/IntermentTypes";
+import SpinnerCircle4 from "@/components/spinner-10";
 
 export default function CustomersTablePage() {
   const [customers, setCustomers] = useState<Customer[]>([]);
@@ -26,6 +27,11 @@ export default function CustomersTablePage() {
     fetchData();
   }, []);
 
-  if (loading) return <div>Loading customers...</div>;
+  if (loading)
+    return (
+      <div className="flex items-center justify-center h-full">
+        <SpinnerCircle4 />
+      </div>
+    );
   return <CustomersTable data={customers} />;
 }
