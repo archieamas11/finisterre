@@ -1,4 +1,3 @@
-// src/api/getApiUrl.ts
 import axios from "axios";
 
 export const REMOTE_API_URL = "https://finisterre.ct.ws/";

@@ -1,4 +1,3 @@
-// src/api/auth.ts
 import axios from "axios";
 import { getApiUrl } from "./getApiUrl";
 

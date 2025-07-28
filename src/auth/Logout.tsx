@@ -7,13 +7,8 @@ const Logout: React.FC = () => {
     const navigate = useNavigate();
 
     useEffect(() => {
-        // Perform logout
         logout();
-        
-        // Show success message
         toast.success("You have been logged out successfully");
-        
-        // Redirect to login (handled by logout function, but we can also do it here)
         navigate("/");
     }, [navigate]);
 
