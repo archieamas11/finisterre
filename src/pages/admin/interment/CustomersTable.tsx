@@ -1,4 +1,5 @@
 "use client";
+import NewCustomerDialog from "./dialogs/NewCustomer";
 import * as React from "react";
 import {
     useReactTable,
@@ -30,6 +31,7 @@ import { ChevronDown, Columns2, Search } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../../../components/ui/select";
 import { Label } from "@/components/ui/label";
 import { customerColumns } from "./columns/columns";
+
 
 interface CustomersTableProps {
     data: Customer[];
@@ -74,7 +76,7 @@ export default function CustomersTable({ data }: CustomersTableProps) {
     // Helper function to format column names
     function formatColumnName(name: string): string {
         return name
-            .replace(/_/g, ' ')         
+            .replace(/_/g, ' ')
             .replace(/\b\w/g, char => char.toUpperCase());
     }
 
@@ -128,6 +130,7 @@ export default function CustomersTable({ data }: CustomersTableProps) {
                                 ))}
                         </DropdownMenuContent>
                     </DropdownMenu>
+                    <NewCustomerDialog />
                 </div>
             </div>
             <div className="overflow-hidden rounded-md border">
