@@ -16,7 +16,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { loginUser } from "@/api/auth";
-import { toast, Toaster } from "sonner";
+import { toast } from "sonner";
 
 const FormSchema = z.object({
   username: z.string().min(3, { message: "Property ID must be at least 3 characters." }),
@@ -64,20 +64,18 @@ export function LoginPage() {
             type: "manual",
             message: "Incorrect Property ID or Password"
           });
+        } else {
+          toast.error("Something went wrong. Please try again later.");
         }
       }
     } catch (err: any) {
       console.error("Login error:", err);
-      toast.error("Something went wrong. Please try again later.", {
-        closeButton: true,
-      });
+      toast.error("Something went wrong. Please try again later.");
     }
   };
 
   return (
     <Form {...form}>
-      <Toaster />
-
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
         <FormField
           control={form.control}
@@ -94,7 +92,7 @@ export function LoginPage() {
                   {...field}
                 />
               </FormControl>
-              <FormMessage /> {/* This will show validation errors */}
+              <FormMessage />
             </FormItem>
           )}
         />

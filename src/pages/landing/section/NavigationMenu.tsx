@@ -152,7 +152,7 @@ const MobileMenuItem = ({
                         {children}
                     </div>
                 )}
-            </div>
+        </div>
         );
     }
 
