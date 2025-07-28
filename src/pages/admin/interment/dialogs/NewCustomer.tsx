@@ -5,10 +5,10 @@ import { Plus } from "lucide-react";
 import { Form, FormField, FormItem, FormLabel, FormControl, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { email, z } from "zod";
+import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { createCustomer } from "@/api/users"; // adjust path as needed
+import { createCustomer, deleteCustomer } from "@/api/users"; // adjust path as needed
 import { toast } from "sonner";
 
 const FormSchema = z.object({
@@ -29,7 +29,7 @@ const FormSchema = z.object({
     }),
 });
 
-export default function NewCustomerDialog({ onSubmit }: { onSubmit?: (values: any) => void }) {
+export default function NewCustomerDialog({ onSubmit }: { onSubmit?: () => void }) {
     const form = useForm<z.infer<typeof FormSchema>>({
         resolver: zodResolver(FormSchema),
         defaultValues: {
@@ -50,7 +50,6 @@ export default function NewCustomerDialog({ onSubmit }: { onSubmit?: (values: an
     });
 
     async function handleSubmit(values: z.infer<typeof FormSchema>) {
-        // Prepare payload for backend: match PHP expected order and types
         const payload = {
             last_name: values.last_name.trim(),
             first_name: values.first_name.trim(),
@@ -68,9 +67,38 @@ export default function NewCustomerDialog({ onSubmit }: { onSubmit?: (values: an
         };
         try {
             const result = await createCustomer(payload);
-            if (result && result.success) {
-                if (onSubmit) onSubmit(payload);
-                toast.success("Successfully created customer: " + payload.first_name + " " + payload.last_name);
+            if (result.success) {
+                if (onSubmit) onSubmit();
+                // Format current date and time for the toast
+                const now = new Date();
+                const formatted = now.toLocaleString(undefined, {
+                    weekday: 'long',
+                    year: 'numeric',
+                    month: 'long',
+                    day: '2-digit',
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    hour12: true
+                });
+                // Implement undo: delete the customer by ID if available
+                toast.success("Customer has been created", {
+                    description: formatted,
+                    action: {
+                        label: "Undo",
+                        onClick: async () => {
+                            if (result.id) {
+                                try {
+                                    await deleteCustomer(result.id);
+                                    toast.success("Customer creation undone");
+                                } catch (err) {
+                                    toast.error("Failed to undo customer creation");
+                                }
+                            } else {
+                                toast.error("Cannot undo: missing customer ID");
+                            }
+                        },
+                    },
+                });
             } else {
                 toast.error(result?.message || "Failed to create customer: " + payload.first_name + " " + payload.last_name);
             }

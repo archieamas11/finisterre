@@ -37,7 +37,12 @@ interface CustomersTableProps {
     data: Customer[];
 }
 
-export default function CustomersTable({ data }: CustomersTableProps) {
+interface CustomersTableProps {
+    data: Customer[];
+    reloadCustomers: () => void;
+}
+
+export default function CustomersTable({ data, reloadCustomers }: CustomersTableProps) {
     const [sorting, setSorting] = React.useState<SortingState>([]);
     const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([]);
     const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({});
@@ -93,7 +98,11 @@ export default function CustomersTable({ data }: CustomersTableProps) {
     }
     return (
         <div>
-            <div className="flex items-center py-2">
+            <div className="flex flex-col mb-2">
+                <h1 className="text-2xl font-bold leading-tight">Customer Management</h1>
+                <p className="text-muted-foreground text-sm">View, search, and manage your customer records.</p>
+            </div>
+            <div className="flex items-center py-2 gap-4">
                 <div className="relative flex items-center rounded-md border focus-within:ring-1 focus-within:ring-ring pl-2 dark:bg-background">
                     <Search className="h-5 w-5 text-muted-foreground dark:bg-background" />
                     <Input
@@ -130,7 +139,7 @@ export default function CustomersTable({ data }: CustomersTableProps) {
                                 ))}
                         </DropdownMenuContent>
                     </DropdownMenu>
-                    <NewCustomerDialog />
+                    <NewCustomerDialog onSubmit={reloadCustomers} />
                 </div>
             </div>
             <div className="overflow-hidden rounded-md border">

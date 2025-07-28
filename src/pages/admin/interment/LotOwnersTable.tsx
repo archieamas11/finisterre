@@ -73,7 +73,7 @@ export default function LotOwnersTable({ data }: LotOwnersTableProps) {
     // Helper function to format column names
     function formatColumnName(name: string): string {
         return name
-            .replace(/_/g, ' ')         
+            .replace(/_/g, ' ')
             .replace(/\b\w/g, char => char.toUpperCase());
     }
     // Show skeleton if data is undefined or empty
@@ -89,6 +89,10 @@ export default function LotOwnersTable({ data }: LotOwnersTableProps) {
     }
     return (
         <div>
+            <div className="flex flex-col mb-2">
+                <h1 className="text-2xl font-bold leading-tight">Lot Owners Management</h1>
+                <p className="text-muted-foreground text-sm">View, search, and manage your lot owners records.</p>
+            </div>
             <div className="flex items-center py-2">
                 <div className="relative flex items-center rounded-md border focus-within:ring-1 focus-within:ring-ring pl-2 dark:bg-background">
                     <Search className="h-5 w-5 text-muted-foreground dark:bg-background" />
