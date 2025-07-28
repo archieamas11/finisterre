@@ -1,7 +1,7 @@
 import { lazy } from "react";
 const LandingLayout = lazy(() => import("@/components/layout/LandingLayout"));
 const IntermentSetup = lazy(() => import("@/pages/admin/contents/IntermentSetup"));
-const AdminMap = lazy(() => import("@/pages/admin/contents/Map"));
+const AdminMap = lazy(() => import("@/pages/admin/contents/AdminMap"));
 const Services = lazy(() => import("@/pages/admin/contents/Services"));
 const ManageAccounts = lazy(() => import("@/pages/admin/contents/ManageAccounts"));
 const MapPage = lazy(() => import("@/components/layout/WebMapLayout"));

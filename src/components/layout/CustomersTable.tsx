@@ -12,6 +12,7 @@ import {
     type VisibilityState,
     type RowSelectionState,
 } from "@tanstack/react-table";
+import { Skeleton } from "@/components/ui/skeleton"
 import {
     DropdownMenu,
     DropdownMenuTrigger,
@@ -72,6 +73,17 @@ export default function CustomersTable({ data }: CustomersTableProps) {
         return name
             .replace(/_/g, ' ')         
             .replace(/\b\w/g, char => char.toUpperCase());
+    }
+    // Show skeleton if data is undefined or empty
+    if (!data || data.length === 0) {
+        return (
+            <div className="space-y-2">
+                <Skeleton className="h-10 w-full" />
+                <Skeleton className="h-10 w-full" />
+                <Skeleton className="h-10 w-full" />
+                <Skeleton className="h-10 w-full" />
+            </div>
+        );
     }
     return (
         <div>

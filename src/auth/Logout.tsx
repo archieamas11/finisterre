@@ -8,7 +8,9 @@ const Logout: React.FC = () => {
 
     useEffect(() => {
         logout();
-        toast.success("You have been logged out successfully");
+        toast.success("You have been logged out successfully",
+            { duration: 1000 }
+        );
         navigate("/");
     }, [navigate]);
 

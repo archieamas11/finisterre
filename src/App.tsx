@@ -3,7 +3,7 @@ import { Suspense, type JSX } from "react";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 
 import AdminDashboard from "@/pages/admin/contents/AdminDashboard";
-import AdminMap from "@/pages/admin/contents/Map";
+import AdminMap from "@/pages/admin/contents/AdminMap";
 import DashboardLayout from "@/components/layout/DashboardLayout";
 import ForgotPassword from "@/auth/ForgotPassword";
 import LandingLayout from "@/components/layout/LandingLayout";
