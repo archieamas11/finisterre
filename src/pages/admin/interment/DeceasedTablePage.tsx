@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import DeceasedTable from "./DeceasedTable";
 import { getDeceasedRecords } from "@/api/users";
 import type { DeceasedRecords } from "@/types/IntermentTypes";
+import SpinnerCircle4 from "@/components/spinner-10";
 
 export default function DeceasedTablePage() {
   const [deceasedRecords, setDeceasedRecords] = useState<DeceasedRecords[]>([]);
@@ -26,6 +27,11 @@ export default function DeceasedTablePage() {
     fetchData();
   }, []);
 
-  if (loading) return <div>Loading deceased records...</div>;
+  if (loading)
+    return (
+      <div className="flex items-center justify-center h-full">
+        <SpinnerCircle4 />
+      </div>
+    );
   return <DeceasedTable data={deceasedRecords} />;
 }
