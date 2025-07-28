@@ -10,9 +10,6 @@ export const logout = (): void => {
     // Clear all authentication data
     localStorage.removeItem("token");
     localStorage.removeItem("isAdmin");
-    
-    // Optionally redirect
-    window.location.href = "/";
 };
 
 export const getToken = (): string | null => {
