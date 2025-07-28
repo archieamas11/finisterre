@@ -1,18 +1,21 @@
-import { Button } from "@/components/ui/button"
-import { Separator } from "@/components/ui/separator"
-import { SidebarTrigger, } from "@/components/ui/sidebar"
-import {
-  Breadcrumb,
-  BreadcrumbItem,
-  BreadcrumbList,
-  BreadcrumbPage,
-  BreadcrumbLink,
-  BreadcrumbSeparator
-} from "@/components/ui/breadcrumb"
-import { ThemeToggleAdvanced } from "../ThemeToggleAdvanced"
-import { BellIcon } from "lucide-react"
 
-export function SiteHeader({ activeItem }: { activeItem?: { title: string; url: string } }) {
+import { Button } from "@/components/ui/button";
+import { Separator } from "@/components/ui/separator";
+import { SidebarTrigger } from "@/components/ui/sidebar";
+import { Breadcrumb, BreadcrumbItem, BreadcrumbList, BreadcrumbPage, BreadcrumbLink, BreadcrumbSeparator } from "@/components/ui/breadcrumb";
+import { ThemeToggleAdvanced } from "../ThemeToggleAdvanced";
+import { BellIcon } from "lucide-react";
+
+import type { NavMainItem, NavSubItem } from "@/navigation/sidebar/sidebar-items";
+
+interface SiteHeaderProps {
+  breadcrumbItem?: {
+    mainItem: NavMainItem;
+    subItem?: NavSubItem;
+  } | null;
+}
+
+export function SiteHeader({ breadcrumbItem }: SiteHeaderProps) {
   return (
     <header className="flex h-(--header-height) shrink-0 items-center gap-2 border-b transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-(--header-height)">
       <div className="flex w-full items-center gap-1 px-4 lg:gap-2 lg:px-6">
@@ -24,18 +27,32 @@ export function SiteHeader({ activeItem }: { activeItem?: { title: string; url: 
         <Breadcrumb>
           <BreadcrumbList>
             <BreadcrumbItem className="hidden md:block">
-              <BreadcrumbLink href="/admin">Dashboard</BreadcrumbLink>
+              <BreadcrumbLink href={breadcrumbItem?.mainItem ? breadcrumbItem.mainItem.url : "/admin"}>
+                Dashboard
+              </BreadcrumbLink>
             </BreadcrumbItem>
             <BreadcrumbSeparator className="hidden md:block" />
-            <BreadcrumbItem>
-              {activeItem ? (
+            {breadcrumbItem ? (
+              breadcrumbItem.subItem ? (
                 <>
-                  <BreadcrumbLink href={activeItem.url}>{activeItem.title}</BreadcrumbLink>
+                  <BreadcrumbItem>
+                    <BreadcrumbLink href={breadcrumbItem.mainItem.url}>{breadcrumbItem.mainItem.title}</BreadcrumbLink>
+                  </BreadcrumbItem>
+                  <BreadcrumbSeparator />
+                  <BreadcrumbItem>
+                    <BreadcrumbPage>{breadcrumbItem.subItem.title}</BreadcrumbPage>
+                  </BreadcrumbItem>
                 </>
               ) : (
+                <BreadcrumbItem>
+                  <BreadcrumbPage>{breadcrumbItem.mainItem.title}</BreadcrumbPage>
+                </BreadcrumbItem>
+              )
+            ) : (
+              <BreadcrumbItem>
                 <BreadcrumbPage>Loading...</BreadcrumbPage>
-              )}
-            </BreadcrumbItem>
+              </BreadcrumbItem>
+            )}
           </BreadcrumbList>
         </Breadcrumb>
         <div className="ml-auto flex items-center gap-2">
@@ -45,6 +62,6 @@ export function SiteHeader({ activeItem }: { activeItem?: { title: string; url: 
           </Button>
         </div>
       </div>
-    </header >
+    </header>
   );
 }

@@ -44,7 +44,7 @@ export default function NewCustomerDialog({ onSubmit }: { onSubmit?: (values: an
     return (
         <Dialog>
             <DialogTrigger asChild>
-                <Button variant="outline" size="sm"><Plus />Add Customer</Button>
+                <Button variant="outline" size="lg"><Plus />Add Customer</Button>
             </DialogTrigger>
             <DialogContent className="lg:max-w-[800px]">
                 <DialogHeader>

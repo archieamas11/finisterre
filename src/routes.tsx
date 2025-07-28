@@ -26,7 +26,15 @@ export const routes = [
     element: <DashboardLayout role="admin" />,
     children: [
       { path: "", element: <AdminDashboard /> },
-      { path: "interment-setup", element: <IntermentSetup /> },
+      {
+        path: "interment-setup",
+        element: <IntermentSetup />,
+        children: [
+          { path: "customers", element: <div>Customers Table Page</div> },
+          { path: "lot-owners", element: <div>Lot Owners Table Page</div> },
+          { path: "deceased-records", element: <div>Deceased Records Table Page</div> },
+        ],
+      },
       { path: "map", element: <AdminMap /> },
       { path: "services", element: <Services /> },
       { path: "manage-accounts", element: <ManageAccounts /> },

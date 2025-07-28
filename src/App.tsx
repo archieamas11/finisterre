@@ -1,9 +1,11 @@
 import { Suspense, type JSX } from "react";
-
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
-
 import AdminDashboard from "@/pages/admin/home/AdminDashboard";
 import AdminMap from "@/pages/admin/map4admin/AdminMap";
+import CustomersTablePage from "@/pages/admin/interment/CustomersTablePage";
+import LotOwnersTablePage from "@/pages/admin/interment/LotOwnersTablePage";
+import DeceasedTablePage from "@/pages/admin/interment/DeceasedTablePage";
+
 import DashboardLayout from "@/components/layout/DashboardLayout";
 import ForgotPassword from "@/auth/ForgotPassword";
 import LandingLayout from "@/components/layout/LandingLayout";
@@ -53,15 +55,15 @@ export default function App() {
           <Route path="/" element={<LandingLayout />} />
           <Route path="/map" element={<MapPage />} />
           <Route path="/login" element={
-            isAuthenticated() ? 
-              (isAdmin() ? <Navigate to="/admin" /> : <Navigate to="/user" />) : 
+            isAuthenticated() ?
+              (isAdmin() ? <Navigate to="/admin" /> : <Navigate to="/user" />) :
               <Layout><LoginV2 /></Layout>
           } />
           <Route path="/forgot-password" element={<ForgotPassword />} />
           <Route path="/reset-password" element={<ResetPassword />} />
           <Route path="/logout" element={<Logout />} />
           <Route path="/unauthorized" element={<UnauthorizedPage />} />
-          
+
           {/* User Protected Routes */}
           <Route path="/user" element={
             <ProtectedRoute>
@@ -75,7 +77,7 @@ export default function App() {
             <Route path="services" element={<UserServices />} />
             <Route path="map" element={<UserMap />} />
           </Route>
-          
+
           {/* Admin Protected Routes */}
           <Route path="/admin" element={
             <ProtectedRoute>
@@ -85,12 +87,16 @@ export default function App() {
             </ProtectedRoute>
           }>
             <Route index element={<AdminDashboard />} />
-            <Route path="interment-setup" element={<IntermentSetup />} />
+            <Route path="interment-setup" element={<IntermentSetup />}>
+              <Route path="customers" element={<CustomersTablePage />} />
+              <Route path="lot-owners" element={<LotOwnersTablePage />} />
+              <Route path="deceased-records" element={<DeceasedTablePage />} />
+            </Route>
             <Route path="map" element={<AdminMap />} />
             <Route path="services" element={<Services />} />
             <Route path="manage-accounts" element={<ManageAccounts />} />
           </Route>
-          
+
           {/* Catch all unmatched routes */}
           <Route path="*" element={<Navigate to="/" />} />
         </Routes>
