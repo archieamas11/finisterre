@@ -59,8 +59,8 @@ export default function ForgotPassword() {
 
 
   return (
-    <div className="flex items-center justify-center min-h-screen">
-      <div className="mx-auto flex w-full flex-col justify-center space-y-8 sm:w-[350px]">
+    <div className="flex items-center justify-center min-h-screen p-12">
+      <div className="mx-auto flex flex-col justify-center space-y-8 sm:w-[350px]">
         <div className="space-y-2 text-center">
           <div className="flex justify-center">
             <Link
@@ -95,7 +95,7 @@ export default function ForgotPassword() {
               )}
             />
             <Button
-              className="w-full mt-5"
+              className="w-full mt-2"
               type="submit"
               disabled={isSubmitting}
             >

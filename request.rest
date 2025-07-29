@@ -1,1 +1,1 @@
-GET http://localhost/finisterre_backend/users/get_users.php
+POST http://finisterre.ct.ws/customers/get_customers.php
