@@ -1,9 +1,14 @@
 export default function AdminControlPanel() {
   return (
-    <div>
-      <h1>Admin Control Panel</h1>
-      <p>This is the control panel for administrative tasks.</p>
-      {/* Additional control panel features can be added here */}
+    <div className="flex flex-1 flex-col">
+      <div className="@container/main flex flex-1 flex-col gap-2">
+        <div className="flex flex-col gap-4 py-4 md:gap-6 md:py-6">
+          <div className="px-4 lg:px-6">
+            <h2 className="text-xl font-bold mb-2">Admin Control Panel</h2>
+            <p>This is the admin control panel card for testing.</p>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }

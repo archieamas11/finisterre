@@ -8,7 +8,7 @@ import {
   PaintBucket,
   User,
   Home,
-  ToggleLeft
+  MonitorCog
 } from "lucide-react";
 
 export interface NavSubItem {
@@ -87,7 +87,7 @@ export const adminSidebarItems: NavGroup[] = [
       {
         title: "Control Panel",
         url: "/admin/control-panel",
-        icon: ToggleLeft,
+        icon: MonitorCog,
       },
     ],
   },
