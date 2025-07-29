@@ -71,7 +71,7 @@ export function HeroSection() {
                     <Button 
                         asChild 
                         size="lg"
-                        className="group relative overflow-hidden bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-semibold px-8 py-4 rounded-full shadow-2xl hover:shadow-blue-500/25 transition-all duration-300 hover:scale-105 border-0"
+                        className="group relative overflow-hidden bg-gradient-to-r from-chart-4 to-chart-5 hover:from-chart-4 hover:to-chart-5 text-foreground dark:text-accent font-semibold px-8 py-4 rounded-full shadow-2xl hover:shadow-blue-500/25 transition-all duration-300 hover:scale-105 border-0"
                     >
                         <Link to="/map" aria-label="Explore Map" className="flex items-center gap-3">
                             <MapPin className="h-5 w-5" />
@@ -114,7 +114,7 @@ export function HeroSection() {
             </div>
 
             {/* Bottom fade */}
-            <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-background to-transparent z-[5]"></div>
+            <div className="absolute bottom-0 left-0 right-0 h-48 bg-gradient-to-t from-background via-background/60 to-transparent z-[5]"></div>
             
             {/* Custom animations */}
             <style>{`
