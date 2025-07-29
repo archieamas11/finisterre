@@ -5,7 +5,6 @@ import AdminMap from "@/pages/admin/map4admin/AdminMap";
 import CustomersTablePage from "@/pages/admin/interment/CustomersTablePage";
 import LotOwnersTablePage from "@/pages/admin/interment/LotOwnersTablePage";
 import DeceasedTablePage from "@/pages/admin/interment/DeceasedTablePage";
-
 import DashboardLayout from "@/components/layout/DashboardLayout";
 import ForgotPassword from "@/auth/ForgotPassword";
 import LandingLayout from "@/components/layout/LandingLayout";
@@ -21,7 +20,6 @@ import UserDashboard from "@/pages/user/contents/UserDashboard";
 import UserMap from "@/pages/user/contents/Map";
 import UserProfile from "@/pages/user/contents/Profile";
 import UserServices from "@/pages/user/contents/Services";
-
 import IntermentSetup from "./pages/admin/interment/IntermentSetup";
 
 // Auth utility functions

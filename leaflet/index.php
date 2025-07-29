@@ -22,7 +22,6 @@ include_once '../include/database.php';
 
     <!-- Custom CSS -->
     <link rel="stylesheet" crossorigin href="../assets/compiled/css/app.css">
-    <link rel="shortcut icon" href="../assets/images/system-icon.svg" type="image/x-icon" />
     <link rel="stylesheet" href="css/map-filter.css">
     <link rel="stylesheet" href="css/popup-modal.css">
     <link rel="stylesheet" href="css/map-overview.css">
