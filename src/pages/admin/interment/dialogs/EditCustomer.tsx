@@ -7,7 +7,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Form, FormField, FormItem, FormLabel, FormControl, FormMessage } from "@/components/ui/form";
 import type { Customer } from "@/types/IntermentTypes";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { editCustomer } from "@/api/users";
+import { useUpsertCustomer } from "@/hooks/customers";
 import { toast } from "sonner";
 
 const EditCustomerSchema = z.object({
@@ -54,6 +54,9 @@ export default function EditCustomerDialog({ open, onOpenChange, customer }: Edi
         },
     });
 
+    // Use React Query mutation for cache invalidation
+    const { mutateAsync } = useUpsertCustomer();
+
     async function handleSubmit(values: z.infer<typeof EditCustomerSchema>) {
         const payload = {
             customer_id: customer.customer_id,
@@ -72,16 +75,15 @@ export default function EditCustomerDialog({ open, onOpenChange, customer }: Edi
             occupation: values.occupation.trim(),
         };
         try {
-            const result = await editCustomer(payload);
-            if (result.success) {
+            const result = await mutateAsync(payload);
+            if ((result as any)?.success) {
                 toast.success("Customer edited successfully");
                 onOpenChange(false);
             } else {
-                toast.error(result?.message || "Failed to edit customer: " + payload.first_name + " " + payload.last_name);
+                toast.error((result as any)?.message || "Failed to edit customer: " + payload.first_name + " " + payload.last_name);
             }
         } catch (error) {
             toast.error("Failed to edit customer: " + payload.first_name + " " + payload.last_name);
-            // Optionally log error
         }
     }
 

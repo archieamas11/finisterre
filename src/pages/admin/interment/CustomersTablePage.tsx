@@ -1,38 +1,21 @@
-import { useEffect, useState } from "react";
 import CustomersTable from "./CustomersTable";
-import { getCustomers } from "@/api/users";
-import type { Customer } from "@/types/IntermentTypes";
 import SpinnerCircle4 from "@/components/spinner-10";
+import { useCustomers } from '@/hooks/customers';
 
 export default function CustomersTablePage() {
-  const [customers, setCustomers] = useState<Customer[]>([]);
-  const [loading, setLoading] = useState(true);
+  const { data: customers, isLoading, isError } = useCustomers();
 
-  const reloadCustomers = async () => {
-    setLoading(true);
-    try {
-      const response = await getCustomers();
-      if (response && response.success && Array.isArray(response.customers)) {
-        setCustomers(response.customers);
-      } else {
-        setCustomers([]);
-      }
-    } catch (error) {
-      setCustomers([]);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    reloadCustomers();
-  }, []);
-
-  if (loading)
+  if (isLoading) {
     return (
       <div className="flex items-center justify-center h-full">
         <SpinnerCircle4 />
       </div>
     );
-  return <CustomersTable data={customers} reloadCustomers={reloadCustomers} />;
+  }
+
+  if (isError || !customers) {
+    return <div className="p-4 text-center">Failed to load customers.</div>;
+  }
+
+  return <CustomersTable data={customers} />;
 }

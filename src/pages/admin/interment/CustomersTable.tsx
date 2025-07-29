@@ -35,10 +35,9 @@ import { customerColumns } from "./columns/columns";
 
 interface CustomersTableProps {
     data: Customer[];
-    reloadCustomers: () => void;
 }
 
-export default function CustomersTable({ data, reloadCustomers }: CustomersTableProps) {
+export default function CustomersTable({ data }: CustomersTableProps) {
     const [sorting, setSorting] = React.useState<SortingState>([]);
     const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([]);
     const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({});
@@ -135,7 +134,7 @@ export default function CustomersTable({ data, reloadCustomers }: CustomersTable
                                 ))}
                         </DropdownMenuContent>
                     </DropdownMenu>
-                    <NewCustomerDialog onSubmit={reloadCustomers} />
+                    <NewCustomerDialog />
                 </div>
             </div>
             <div className="overflow-hidden rounded-md border">
