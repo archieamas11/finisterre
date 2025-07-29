@@ -1,20 +1,29 @@
 import { lazy } from "react";
+
 const LandingLayout = lazy(() => import("@/components/layout/LandingLayout"));
-const IntermentSetup = lazy(() => import("@/pages/admin/interment/IntermentSetup"));
+const IntermentSetup = lazy(
+  () => import("@/pages/admin/interment/IntermentSetup")
+);
 const AdminMap = lazy(() => import("@/pages/admin/map4admin/AdminMap"));
 const Services = lazy(() => import("@/pages/admin/services/Services"));
-const ManageAccounts = lazy(() => import("@/pages/admin/accounts/ManageAccounts"));
+const ManageAccounts = lazy(
+  () => import("@/pages/admin/accounts/ManageAccounts")
+);
 const MapPage = lazy(() => import("@/components/layout/WebMapLayout"));
-import LoginV2 from "@/auth/page";
+
 import ForgotPassword from "@/auth/ForgotPassword";
-import ResetPassword from "@/auth/ResetPassword";
 import Logout from "@/auth/Logout";
 import Layout from "@/auth/layout";
+import LoginV2 from "@/auth/page";
+import ResetPassword from "@/auth/ResetPassword";
 import DashboardLayout from "@/components/layout/DashboardLayout";
 import AdminControlPanel from "@/pages/admin/control/AdminControlPanel";
+
 const AdminDashboard = lazy(() => import("@/pages/admin/home/AdminDashboard"));
 const UserDashboard = lazy(() => import("@/pages/user/contents/UserDashboard"));
-const UserOrdersStatus = lazy(() => import("@/pages/user/contents/OrdersStatus"));
+const UserOrdersStatus = lazy(
+  () => import("@/pages/user/contents/OrdersStatus")
+);
 const UserServices = lazy(() => import("@/pages/user/contents/Services"));
 const UserMap = lazy(() => import("@/pages/user/contents/Map"));
 const UnauthorizedPage = lazy(() => import("@/pages/UnauthorizedPage"));
@@ -33,7 +42,10 @@ export const routes = [
         children: [
           { path: "customers", element: <div>Customers Table Page</div> },
           { path: "lot-owners", element: <div>Lot Owners Table Page</div> },
-          { path: "deceased-records", element: <div>Deceased Records Table Page</div> },
+          {
+            path: "deceased-records",
+            element: <div>Deceased Records Table Page</div>,
+          },
         ],
       },
       { path: "map", element: <AdminMap /> },
@@ -56,7 +68,14 @@ export const routes = [
   { path: "/map", element: <MapPage /> },
 
   // auth page
-  { path: "/login", element: <Layout><LoginV2 /></Layout> },
+  {
+    path: "/login",
+    element: (
+      <Layout>
+        <LoginV2 />
+      </Layout>
+    ),
+  },
   { path: "/forgot-password", element: <ForgotPassword /> },
   { path: "/reset-password", element: <ResetPassword /> },
   { path: "/logout", element: <Logout /> },

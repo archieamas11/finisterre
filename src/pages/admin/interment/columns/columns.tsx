@@ -1,14 +1,15 @@
 import * as React from "react";
 
 import type { ColumnDef } from "@tanstack/react-table";
-import { MoreHorizontal, ClipboardCopy, Pencil, Eye, Archive } from "lucide-react";
+import { MoreHorizontal, ClipboardCopy, Pencil, Eye, Archive, CirclePlus } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import type { LotOwners, Customer, DeceasedRecords } from "@/types/IntermentTypes";
 
-import EditCustomerDialog from "../dialogs/EditCustomer";
+import EditCustomerDialog from "../dialogs/customers-dialog/EditCustomer";
+import NewLotOwnerDialog from "../dialogs/lot-dialogs/NewLotOwner";
 
 
 function capitalizeWords(str: string) {
@@ -92,6 +93,7 @@ export const customerColumns: ColumnDef<Customer>[] = [
         enableHiding: false,
         cell: ({ row }) => {
             const [open, setOpen] = React.useState(false);
+            const [newLotOwnerOpen, setNewLotOwnerOpen] = React.useState(false);
             if (!row || !row.original) return null;
             const customer = row.original;
             return (
@@ -106,13 +108,17 @@ export const customerColumns: ColumnDef<Customer>[] = [
                         <DropdownMenuContent align="end" className="z-50">
                             <DropdownMenuLabel>Actions</DropdownMenuLabel>
                             <DropdownMenuSeparator />
+                            <DropdownMenuItem onClick={() => setNewLotOwnerOpen(true)}>
+                                <CirclePlus className="mr-2 h-4 w-4" />
+                                Add Plot Property
+                            </DropdownMenuItem>
                             <DropdownMenuItem onClick={() => setOpen(true)}>
                                 <Pencil className="mr-2 h-4 w-4" />
                                 Edit Customer
                             </DropdownMenuItem>
-                            <DropdownMenuItem>
+                            <DropdownMenuItem onClick={() => setOpen(true)}>
                                 <Eye className="mr-2 h-4 w-4" />
-                                View
+                                View Customer
                             </DropdownMenuItem>
                             <DropdownMenuSeparator />
                             <DropdownMenuItem className="text-red-600 hover:bg-red-100" onClick={() => navigator.clipboard.writeText(row.original.customer_id)}>
@@ -122,6 +128,7 @@ export const customerColumns: ColumnDef<Customer>[] = [
                         </DropdownMenuContent>
                     </DropdownMenu>
                     <EditCustomerDialog open={open} onOpenChange={setOpen} customer={customer} />
+                    <NewLotOwnerDialog open={newLotOwnerOpen} onOpenChange={setNewLotOwnerOpen} customer={customer} />
                 </>
             );
         },

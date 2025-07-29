@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import LotOwnersTable from "./LotOwnersTable";
-import { getLotOwners } from "@/api/users";
+import { getLotOwner } from "@/api/LotOwnerApi";
 import type { LotOwners } from "@/types/IntermentTypes";
 import SpinnerCircle4 from "@/components/spinner-10";
 
@@ -12,7 +12,7 @@ export default function LotOwnersTablePage() {
     async function fetchData() {
       setLoading(true);
       try {
-        const response = await getLotOwners();
+        const response = await getLotOwner();
         if (response && response.success && Array.isArray(response.lotOwners)) {
           setLotOwners(response.lotOwners);
         } else {
