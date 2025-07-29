@@ -25,7 +25,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import type { DeceasedRecords } from "@/types/IntermentTypes";
-import { ChevronDown, Columns2, Search } from "lucide-react";
+import { ChevronDown, Columns2, Ghost, Search } from "lucide-react";
 import { deceasedRecordsColumns } from "./columns/columns";
 
 interface DeceasedRecordsTableProps {
@@ -73,17 +73,6 @@ export default function DeceasedRecordsTable({ data }: DeceasedRecordsTableProps
         return name
             .replace(/_/g, ' ')
             .replace(/\b\w/g, char => char.toUpperCase());
-    }
-    // Show skeleton if data is undefined or not an array or loading
-    if (!Array.isArray(data) || data.length === 0) {
-        return (
-            <div className="space-y-2">
-                <Skeleton className="h-10 w-full" />
-                <Skeleton className="h-10 w-full" />
-                <Skeleton className="h-10 w-full" />
-                <Skeleton className="h-10 w-full" />
-            </div>
-        );
     }
     return (
         <div>
@@ -155,9 +144,12 @@ export default function DeceasedRecordsTable({ data }: DeceasedRecordsTableProps
                                 </TableRow>
                             ))
                         ) : (
-                            <TableRow className="h-14">
-                                <TableCell colSpan={deceasedRecordsColumns.length} className="h-24 text-center">
-                                    No results.
+                            <TableRow>
+                                <TableCell colSpan={deceasedRecordsColumns.length}>
+                                    <div className="flex flex-col items-center justify-center gap-1 py-10 text-sm text-muted-foreground">
+                                        <Ghost className="mb-1 size-6 opacity-50" />
+                                        <span>No results found.</span>
+                                    </div>
                                 </TableCell>
                             </TableRow>
                         )}

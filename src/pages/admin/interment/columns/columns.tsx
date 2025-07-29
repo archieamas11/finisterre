@@ -115,7 +115,7 @@ export const customerColumns: ColumnDef<Customer>[] = [
                                 View
                             </DropdownMenuItem>
                             <DropdownMenuSeparator />
-                            <DropdownMenuItem className="text-red-600 hover:bg-red-100 dark:hover:bg-red-800" onClick={() => navigator.clipboard.writeText(row.original.customer_id)}>
+                            <DropdownMenuItem className="text-red-600 hover:bg-red-100" onClick={() => navigator.clipboard.writeText(row.original.customer_id)}>
                                 <Archive className="mr-2 h-4 w-4 text-red-600" />
                                 Archive
                             </DropdownMenuItem>
