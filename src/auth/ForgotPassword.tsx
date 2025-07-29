@@ -9,7 +9,6 @@ import { useForm } from "react-hook-form";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { useState } from "react";
 import { toast } from "sonner";
-import { Card } from "@/components/ui/card";
 
 const FormSchema = z.object({
   username: z.string().min(3, {
@@ -61,19 +60,19 @@ export default function ForgotPassword() {
 
   return (
     <div className="flex items-center justify-center min-h-screen">
-      <Card className="space-y-6 w-full max-w-md p-10">
-        <div className="flex flex-col items-center space-y-4">
-          <div className="p-3 rounded-full bg-primary/10">
-            <Link to="/">
-              <MapPin className="h-8 w-8 text-primary" />
+      <div className="mx-auto flex w-full flex-col justify-center space-y-8 sm:w-[350px]">
+        <div className="space-y-2 text-center">
+          <div className="flex justify-center">
+            <Link
+              to="/"
+              className="flex items-center justify-center border border-primary/10 bg-primary/10 rounded-full p-3 w-16 h-16 aspect-square mb-5"
+            >
+              <MapPin className="h-20 w-20" />
             </Link>
           </div>
-          <h1 className="text-2xl font-bold">Forgot Password</h1>
-          <p className="text-center text-muted-foreground">
-            Enter your Property ID to verify your identity.
-          </p>
+          <h1 className="text-3xl font-medium">Forgot Password</h1>
+          <p className="text-muted-foreground text-sm">Please enter your property id to verify your account.</p>
         </div>
-
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
             <FormField
@@ -102,9 +101,17 @@ export default function ForgotPassword() {
             >
               {isSubmitting ? "Verifying..." : "Verify"}
             </Button>
+            <Button
+              className="w-full"
+              type="button"
+              variant="outline"
+              onClick={() => navigate(-1)}
+            >
+              Back
+            </Button>
           </form>
         </Form>
-      </Card>
+      </div>
     </div>
   );
 }
