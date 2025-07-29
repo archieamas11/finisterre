@@ -1,5 +1,5 @@
 "use client";
-import NewCustomerDialog from "./dialogs/NewCustomer";
+import NewCustomerDialog from "./dialogs/customers-dialog/NewCustomer";
 import * as React from "react";
 import {
     useReactTable,

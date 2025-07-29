@@ -5,12 +5,7 @@ const APP_URL = "http://localhost/finisterre_backend/";
 // const APP_URL = "https://finisterre.ct.ws/";
 
 export async function getCustomers() {
-  const res = await axios.post(APP_URL + "customers/get_customers.php");
-  return res.data;
-}
-
-export async function getLotOwners() {
-  const res = await axios.post(APP_URL + "customers/get_lot_owners.php");
+  const res = await axios.post(APP_URL + "customers/get_customer.php");
   return res.data;
 }
 

@@ -25,82 +25,82 @@ import AdminControlPanel from '@/pages/admin/control/AdminControlPanel';
 
 // Auth utility functions
 const isAuthenticated = (): boolean => {
-  return !!localStorage.getItem("token");
+	return !!localStorage.getItem("token");
 };
 
 const isAdmin = (): boolean => {
-  return localStorage.getItem("isAdmin") === "1";
+	return localStorage.getItem("isAdmin") === "1";
 };
 
 // Protected Route Components
 const ProtectedRoute = ({ children }: { children: JSX.Element }) => {
-  return isAuthenticated() ? children : <Navigate to="/login" />;
+	return isAuthenticated() ? children : <Navigate to="/login" />;
 };
 
 const AdminRoute = ({ children }: { children: JSX.Element }) => {
-  return isAuthenticated() && isAdmin() ? children : <Navigate to="/unauthorized" />;
+	return isAuthenticated() && isAdmin() ? children : <Navigate to="/unauthorized" />;
 };
 
 const UserRoute = ({ children }: { children: JSX.Element }) => {
-  return isAuthenticated() && !isAdmin() ? children : <Navigate to="/unauthorized" />;
+	return isAuthenticated() && !isAdmin() ? children : <Navigate to="/unauthorized" />;
 };
 
 export default function App() {
-  return (
-    <BrowserRouter>
-      <Suspense fallback={<div>Loading...</div>}>
-        <Routes>
-          {/* Public Routes */}
-          <Route path="/" element={<LandingLayout />} />
-          <Route path="/map" element={<MapPage />} />
-          <Route path="/login" element={
-            isAuthenticated() ?
-              (isAdmin() ? <Navigate to="/admin" /> : <Navigate to="/user" />) :
-              <Layout><LoginV2 /></Layout>
-          } />
-          <Route path="/forgot-password" element={<ForgotPassword />} />
-          <Route path="/reset-password" element={<ResetPassword />} />
-          <Route path="/logout" element={<Logout />} />
-          <Route path="/unauthorized" element={<UnauthorizedPage />} />
+	return (
+		<BrowserRouter>
+			<Suspense fallback={<div>Loading...</div>}>
+				<Routes>
+					{/* Public Routes */}
+					<Route path="/" element={<LandingLayout />} />
+					<Route path="/map" element={<MapPage />} />
+					<Route path="/login" element={
+						isAuthenticated() ?
+							(isAdmin() ? <Navigate to="/admin" /> : <Navigate to="/user" />) :
+							<Layout><LoginV2 /></Layout>
+					} />
+					<Route path="/forgot-password" element={<ForgotPassword />} />
+					<Route path="/reset-password" element={<ResetPassword />} />
+					<Route path="/logout" element={<Logout />} />
+					<Route path="/unauthorized" element={<UnauthorizedPage />} />
 
-          {/* User Protected Routes */}
-          <Route path="/user" element={
-            <ProtectedRoute>
-              <UserRoute>
-                <DashboardLayout role="user" />
-              </UserRoute>
-            </ProtectedRoute>
-          }>
-            <Route index element={<UserDashboard />} />
-            <Route path="profile" element={<UserProfile />} />
-            <Route path="services" element={<UserServices />} />
-            <Route path="map" element={<UserMap />} />
-          </Route>
+					{/* User Protected Routes */}
+					<Route path="/user" element={
+						<ProtectedRoute>
+							<UserRoute>
+								<DashboardLayout role="user" />
+							</UserRoute>
+						</ProtectedRoute>
+					}>
+						<Route index element={<UserDashboard />} />
+						<Route path="profile" element={<UserProfile />} />
+						<Route path="services" element={<UserServices />} />
+						<Route path="map" element={<UserMap />} />
+					</Route>
 
-          {/* Admin Protected Routes */}
-          <Route path="/admin" element={
-            <ProtectedRoute>
-              <AdminRoute>
-                <DashboardLayout role="admin" />
-              </AdminRoute>
-            </ProtectedRoute>
-          }>
-            <Route index element={<AdminDashboard />} />
-            <Route path="interment-setup" element={<IntermentSetup />}>
-              <Route path="customers" element={<CustomersTablePage />} />
-              <Route path="lot-owners" element={<LotOwnersTablePage />} />
-              <Route path="deceased-records" element={<DeceasedTablePage />} />
-            </Route>
-            <Route path="map" element={<AdminMap />} />
-            <Route path="services" element={<Services />} />
-            <Route path="manage-accounts" element={<ManageAccounts />} />
-            <Route path="control-panel" element={<AdminControlPanel />} />
-          </Route>
+					{/* Admin Protected Routes */}
+					<Route path="/admin" element={
+						<ProtectedRoute>
+							<AdminRoute>
+								<DashboardLayout role="admin" />
+							</AdminRoute>
+						</ProtectedRoute>
+					}>
+						<Route index element={<AdminDashboard />} />
+						<Route path="interment-setup" element={<IntermentSetup />}>
+							<Route path="customers" element={<CustomersTablePage />} />
+							<Route path="lot-owners" element={<LotOwnersTablePage />} />
+							<Route path="deceased-records" element={<DeceasedTablePage />} />
+						</Route>
+						<Route path="map" element={<AdminMap />} />
+						<Route path="services" element={<Services />} />
+						<Route path="manage-accounts" element={<ManageAccounts />} />
+						<Route path="control-panel" element={<AdminControlPanel />} />
+					</Route>
 
-          {/* Catch all unmatched routes */}
-          <Route path="*" element={<Navigate to="/" />} />
-        </Routes>
-      </Suspense>
-    </BrowserRouter>
-  );
+					{/* Catch all unmatched routes */}
+					<Route path="*" element={<Navigate to="/" />} />
+				</Routes>
+			</Suspense>
+		</BrowserRouter>
+	);
 }

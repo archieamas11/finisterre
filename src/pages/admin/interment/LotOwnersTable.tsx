@@ -25,7 +25,6 @@ import { Input } from "@/components/ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import type { LotOwners } from "@/types/IntermentTypes";
 import { ChevronDown, Columns2, Ghost, Search } from "lucide-react";
-
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../../../components/ui/select";
 import { Label } from "@/components/ui/label";
 import { lotOwnerColumns } from "./columns/columns";
