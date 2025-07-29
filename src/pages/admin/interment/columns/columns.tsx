@@ -95,7 +95,7 @@ export const customerColumns: ColumnDef<Customer>[] = [
             const [open, setOpen] = React.useState(false);
             const [newLotOwnerOpen, setNewLotOwnerOpen] = React.useState(false);
             if (!row || !row.original) return null;
-            const customer = row.original;
+            const { customer_id, first_name, last_name } = row.original;
             return (
                 <>
                     <DropdownMenu>
@@ -127,8 +127,14 @@ export const customerColumns: ColumnDef<Customer>[] = [
                             </DropdownMenuItem>
                         </DropdownMenuContent>
                     </DropdownMenu>
-                    <EditCustomerDialog open={open} onOpenChange={setOpen} customer={customer} />
-                    <NewLotOwnerDialog open={newLotOwnerOpen} onOpenChange={setNewLotOwnerOpen} customer={customer} />
+                    <EditCustomerDialog open={open} onOpenChange={setOpen} customer={row.original} />
+                    <NewLotOwnerDialog
+                        open={newLotOwnerOpen}
+                        onOpenChange={setNewLotOwnerOpen}
+                        customer_id={customer_id}
+                        first_name={first_name}
+                        last_name={last_name}
+                    />
                 </>
             );
         },
