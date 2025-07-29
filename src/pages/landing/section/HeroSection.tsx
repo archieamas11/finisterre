@@ -1,7 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import { MapPin, ArrowRight, Sparkles, Heart } from 'lucide-react';
-import { Card } from "@/components/ui/card";
 
 export function HeroSection() {
     return (
