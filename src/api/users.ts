@@ -1,7 +1,7 @@
 import axios from "axios";
 
 // import { APP_URL } from "./getApiUrl";
-const APP_URL = "http://localhost/finisterre_backend/";
+const APP_URL = "http://finisterre.ct.ws/";
 
 export async function getCustomers() {
   const res = await axios.post(APP_URL + "customers/get_customers.php");
