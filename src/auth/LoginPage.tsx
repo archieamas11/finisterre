@@ -136,8 +136,16 @@ export function LoginPage() {
             </FormItem>
           )}
         />
-        <Button className="w-full" type="submit">
+        <Button className="w-full mt-2" type="submit">
           Login
+        </Button>
+        <Button
+          className="w-full"
+          type="button"
+          variant="outline"
+          onClick={() => navigate(-1)}
+        >
+          Back
         </Button>
       </form>
     </Form>
