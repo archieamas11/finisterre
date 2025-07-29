@@ -57,7 +57,7 @@ export function SiteHeader({ breadcrumbItem }: SiteHeaderProps) {
         </Breadcrumb>
         <div className="ml-auto flex items-center gap-2">
           <ThemeToggleAdvanced />
-          <Button variant="ghost" size="sm" className="hidden sm:flex" aria-label="Notifications">
+          <Button variant="ghost" size="sm" className="hidden sm:flex border border-transparent hover:border-accent-foreground hover:bg-transparent focus:bg-transparent cursor-pointer" aria-label="Notifications">
             <BellIcon className="h-4 w-4" />
           </Button>
         </div>
