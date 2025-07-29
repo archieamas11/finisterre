@@ -11,6 +11,7 @@ import ResetPassword from "@/auth/ResetPassword";
 import Logout from "@/auth/Logout";
 import Layout from "@/auth/layout";
 import DashboardLayout from "@/components/layout/DashboardLayout";
+import AdminControlPanel from "@/pages/admin/control/AdminControlPanel";
 const AdminDashboard = lazy(() => import("@/pages/admin/home/AdminDashboard"));
 const UserDashboard = lazy(() => import("@/pages/user/contents/UserDashboard"));
 const UserOrdersStatus = lazy(() => import("@/pages/user/contents/OrdersStatus"));
@@ -38,6 +39,7 @@ export const routes = [
       { path: "map", element: <AdminMap /> },
       { path: "services", element: <Services /> },
       { path: "manage-accounts", element: <ManageAccounts /> },
+      { path: "control-panel", element: <AdminControlPanel /> },
     ],
   },
   {

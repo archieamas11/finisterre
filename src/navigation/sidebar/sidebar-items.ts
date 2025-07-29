@@ -8,6 +8,7 @@ import {
   PaintBucket,
   User,
   Home,
+  ToggleLeft
 } from "lucide-react";
 
 export interface NavSubItem {
@@ -51,9 +52,21 @@ export const adminSidebarItems: NavGroup[] = [
         url: "/admin/interment-setup",
         icon: ChartBar,
         subItems: [
-          { title: "Manage Customers", url: "/admin/interment-setup/customers", newTab: false },
-          { title: "Manage Lot Owners", url: "/admin/interment-setup/lot-owners", newTab: false },
-          { title: "Manage Deceased Records", url: "/admin/interment-setup/deceased-records", newTab: false },
+          {
+            title: "Manage Customers",
+            url: "/admin/interment-setup/customers",
+            newTab: false,
+          },
+          {
+            title: "Manage Lot Owners",
+            url: "/admin/interment-setup/lot-owners",
+            newTab: false,
+          },
+          {
+            title: "Manage Deceased Records",
+            url: "/admin/interment-setup/deceased-records",
+            newTab: false,
+          },
         ],
       },
       {
@@ -70,6 +83,11 @@ export const adminSidebarItems: NavGroup[] = [
         title: "Manage Accounts",
         url: "/admin/manage-accounts",
         icon: Users,
+      },
+      {
+        title: "Control Panel",
+        url: "/admin/control-panel",
+        icon: ToggleLeft,
       },
     ],
   },
@@ -105,7 +123,6 @@ export const userSidebarItems: NavGroup[] = [
   },
 ];
 
-
 export const getSidebarItems = (isAdmin: boolean): NavGroup[] => {
   return isAdmin ? adminSidebarItems : userSidebarItems;
 };
@@ -115,7 +132,10 @@ export const getSidebarItems = (isAdmin: boolean): NavGroup[] => {
  * Returns { mainItem, subItem } or null if not found.
  * Used for Breadcrumbs that support subItems.
  */
-export function findSidebarItemByPath(pathname: string, isAdmin: boolean): {
+export function findSidebarItemByPath(
+  pathname: string,
+  isAdmin: boolean
+): {
   mainItem: NavMainItem;
   subItem?: NavSubItem;
 } | null {
