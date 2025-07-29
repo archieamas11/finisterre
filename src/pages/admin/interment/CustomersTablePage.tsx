@@ -8,7 +8,6 @@ export default function CustomersTablePage() {
   const [customers, setCustomers] = useState<Customer[]>([]);
   const [loading, setLoading] = useState(true);
 
-
   const reloadCustomers = async () => {
     setLoading(true);
     try {
