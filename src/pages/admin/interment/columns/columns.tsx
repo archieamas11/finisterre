@@ -8,6 +8,8 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import type { LotOwners, Customer, DeceasedRecords } from "@/types/IntermentTypes";
 
+import EditCustomerDialog from "../dialogs/EditCustomer";
+
 
 function capitalizeWords(str: string) {
     return str.replace(/\b\w+/g, (word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase());
@@ -89,34 +91,38 @@ export const customerColumns: ColumnDef<Customer>[] = [
         id: "actions",
         enableHiding: false,
         cell: ({ row }) => {
-            // Defensive: Only render DropdownMenu if row and row.original exist
+            const [open, setOpen] = React.useState(false);
             if (!row || !row.original) return null;
+            const customer = row.original;
             return (
-                <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" className="h-8 w-8 p-0">
-                            <span className="sr-only">Open menu</span>
-                            <MoreHorizontal />
-                        </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end" className="z-50">
-                        <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                        <DropdownMenuSeparator />
-                        <DropdownMenuItem>
-                            <Pencil className="mr-2 h-4 w-4" />
-                            Edit
-                        </DropdownMenuItem>
-                        <DropdownMenuItem>
-                            <Eye className="mr-2 h-4 w-4" />
-                            View
-                        </DropdownMenuItem>
-                        <DropdownMenuSeparator />
-                        <DropdownMenuItem className="text-red-600 hover:bg-red-100 dark:hover:bg-red-800" onClick={() => navigator.clipboard.writeText(row.original.customer_id)}>
-                            <Archive className="mr-2 h-4 w-4 text-red-600" />
-                            Archive
-                        </DropdownMenuItem>
-                    </DropdownMenuContent>
-                </DropdownMenu>
+                <>
+                    <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                            <Button variant="ghost" className="h-8 w-8 p-0">
+                                <span className="sr-only">Open menu</span>
+                                <MoreHorizontal />
+                            </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end" className="z-50">
+                            <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                            <DropdownMenuSeparator />
+                            <DropdownMenuItem onClick={() => setOpen(true)}>
+                                <Pencil className="mr-2 h-4 w-4" />
+                                Edit Customer
+                            </DropdownMenuItem>
+                            <DropdownMenuItem>
+                                <Eye className="mr-2 h-4 w-4" />
+                                View
+                            </DropdownMenuItem>
+                            <DropdownMenuSeparator />
+                            <DropdownMenuItem className="text-red-600 hover:bg-red-100 dark:hover:bg-red-800" onClick={() => navigator.clipboard.writeText(row.original.customer_id)}>
+                                <Archive className="mr-2 h-4 w-4 text-red-600" />
+                                Archive
+                            </DropdownMenuItem>
+                        </DropdownMenuContent>
+                    </DropdownMenu>
+                    <EditCustomerDialog open={open} onOpenChange={setOpen} customer={customer} />
+                </>
             );
         },
     },

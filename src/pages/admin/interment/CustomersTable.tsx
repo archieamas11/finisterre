@@ -35,10 +35,6 @@ import { customerColumns } from "./columns/columns";
 
 interface CustomersTableProps {
     data: Customer[];
-}
-
-interface CustomersTableProps {
-    data: Customer[];
     reloadCustomers: () => void;
 }
 

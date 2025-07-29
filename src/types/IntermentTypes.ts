@@ -5,6 +5,7 @@ export type Customer = {
   first_name: string;
   middle_name: string;
   last_name: string;
+  email: string;
   nickname: string;
   address: string;
   contact_number: string;

@@ -1,5 +1,6 @@
 // ...existing code...
-import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import React from "react";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
 import { Form, FormField, FormItem, FormLabel, FormControl, FormMessage } from "@/components/ui/form";
@@ -8,7 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { createCustomer, deleteCustomer } from "@/api/users"; // adjust path as needed
+import { createCustomer } from "@/api/users"; // adjust path as needed
 import { toast } from "sonner";
 
 const FormSchema = z.object({
@@ -49,27 +50,17 @@ export default function NewCustomerDialog({ onSubmit }: { onSubmit?: () => void 
         },
     });
 
+    // Prevent double submit by disabling the button while submitting
+    const [submitting, setSubmitting] = React.useState(false);
+
     async function handleSubmit(values: z.infer<typeof FormSchema>) {
-        const payload = {
-            last_name: values.last_name.trim(),
-            first_name: values.first_name.trim(),
-            middle_name: values.middle_name.trim(),
-            nickname: values.nickname.trim(),
-            address: values.address.trim(),
-            contact_number: values.contact_number.trim(),
-            email: values.email.trim(),
-            birth_date: values.birth_date ? new Date(values.birth_date).toISOString().slice(0, 10) : '',
-            gender: values.gender,
-            religion: values.religion.trim(),
-            citizenship: values.citizenship.trim(),
-            status: values.status,
-            occupation: values.occupation.trim(),
-        };
+        if (submitting) return; // Prevent double submit
+        setSubmitting(true);
         try {
-            const result = await createCustomer(payload);
-            if (result.success) {
+            // Call API to create customer
+            const result = await createCustomer(values);
+            if (result && result.success) {
                 if (onSubmit) onSubmit();
-                // Format current date and time for the toast
                 const now = new Date();
                 const formatted = now.toLocaleString(undefined, {
                     weekday: 'long',
@@ -80,31 +71,17 @@ export default function NewCustomerDialog({ onSubmit }: { onSubmit?: () => void 
                     minute: '2-digit',
                     hour12: true
                 });
-                // Implement undo: delete the customer by ID if available
                 toast.success("Customer has been created", {
                     description: formatted,
-                    action: {
-                        label: "Undo",
-                        onClick: async () => {
-                            if (result.id) {
-                                try {
-                                    await deleteCustomer(result.id);
-                                    toast.success("Customer creation undone");
-                                } catch (err) {
-                                    toast.error("Failed to undo customer creation");
-                                }
-                            } else {
-                                toast.error("Cannot undo: missing customer ID");
-                            }
-                        },
-                    },
                 });
             } else {
-                toast.error(result?.message || "Failed to create customer: " + payload.first_name + " " + payload.last_name);
+                toast.error(result?.message || "Failed to create customer: " + values.first_name + " " + values.last_name);
             }
         } catch (error) {
-            toast.error("Failed to create customer: " + payload.first_name + " " + payload.last_name);
+            toast.error("Failed to create customer: " + values.first_name + " " + values.last_name);
             console.error("Failed to create customer:", error);
+        } finally {
+            setSubmitting(false);
         }
     }
 
@@ -323,14 +300,11 @@ export default function NewCustomerDialog({ onSubmit }: { onSubmit?: () => void 
                                 )}
                             />
                         </div>
-                        <DialogFooter className="pt-4">
-                            <DialogClose asChild>
-                                <Button variant="outline" type="button">Cancel</Button>
-                            </DialogClose>
-                            <Button type="submit" variant="default">
-                                Save
+                        <div className="flex justify-end pt-4">
+                            <Button type="submit" size="lg" disabled={submitting}>
+                                {submitting ? "Saving..." : "Save"}
                             </Button>
-                        </DialogFooter>
+                        </div>
                     </form>
                 </Form>
             </DialogContent>

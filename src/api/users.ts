@@ -24,7 +24,14 @@ export async function createCustomer(data: any) {
   return res.data;
 }
 
+export async function editCustomer(data: any) {
+  const res = await axios.post(APP_URL + "customers/edit_customer.php", data);
+  return res.data;
+}
+
 export async function deleteCustomer(id: string) {
-  const res = await axios.post(APP_URL + "customers/delete_customer.php", { id });
+  const res = await axios.post(APP_URL + "customers/delete_customer.php", {
+    id,
+  });
   return res.data;
 }
