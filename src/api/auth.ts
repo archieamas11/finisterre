@@ -1,6 +1,6 @@
 import axios from "axios";
 // import { getApiUrl } from "./getApiUrl";
-const APP_URL = "http://finisterre.ct.ws/";
+const APP_URL = "https://finisterre.ct.ws/";
 
 export interface LoginResponse {
   success: boolean;
