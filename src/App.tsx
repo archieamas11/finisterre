@@ -21,6 +21,7 @@ import UserMap from "@/pages/user/contents/Map";
 import UserProfile from "@/pages/user/contents/Profile";
 import UserServices from "@/pages/user/contents/Services";
 import IntermentSetup from "./pages/admin/interment/IntermentSetup";
+import AdminControlPanel from '@/pages/admin/control/AdminControlPanel';
 
 // Auth utility functions
 const isAuthenticated = (): boolean => {
@@ -93,6 +94,7 @@ export default function App() {
             <Route path="map" element={<AdminMap />} />
             <Route path="services" element={<Services />} />
             <Route path="manage-accounts" element={<ManageAccounts />} />
+            <Route path="control-panel" element={<AdminControlPanel />} />
           </Route>
 
           {/* Catch all unmatched routes */}
