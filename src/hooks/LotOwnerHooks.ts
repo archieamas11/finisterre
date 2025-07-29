@@ -6,7 +6,7 @@ import { createLotOwner, editLotOwner, getLotOwner  } from '@/api/LotOwnerApi';
 export function useLotOwners() {
   return useQuery({
     queryKey: ['lotOwners'],
-    queryFn: () => getLotOwner().then(r => r.customers),
+    queryFn: () => getLotOwner().then(r => r.lotOwners),
   });
 }
 
@@ -16,7 +16,7 @@ export function useUpsertLotOwner() {
   return useMutation<LotOwners, Error, Partial<LotOwners>>({
     mutationFn: async (data) => {
       // Only call editLotOwner if data.lotOwner_id exists and is not undefined/null
-      if ('lotOwner_id' in data && data.lotOwner_id !== undefined && data.lotOwner_id !== null) {
+      if ('lot_id' in data && data.lot_id !== undefined && data.lot_id !== null) {
         return await editLotOwner(data);
       }
       return await createLotOwner(data);
