@@ -13,7 +13,6 @@ import {
     type VisibilityState,
     type RowSelectionState,
 } from "@tanstack/react-table";
-import { Skeleton } from "@/components/ui/skeleton"
 import {
     DropdownMenu,
     DropdownMenuTrigger,
