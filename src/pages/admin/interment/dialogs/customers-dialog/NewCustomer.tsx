@@ -2,7 +2,7 @@ import React from "react";
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
 import CustomerForm from "./CustomerForm";
-import { createLotOwner } from "@/api/LotOwnerApi";
+import { createCustomer } from "@/api/users";
 import { toast } from "sonner";
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
@@ -10,7 +10,7 @@ export default function NewCustomerDialog() {
     const queryClient = useQueryClient();
     const [open, setOpen] = React.useState(false);
     const { mutate, isPending } = useMutation({
-        mutationFn: createLotOwner,
+        mutationFn: createCustomer,
         onSuccess: () => {
             toast.success('Customer has been saved');
             setOpen(false);

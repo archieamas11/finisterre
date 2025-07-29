@@ -2,15 +2,16 @@ import LotForm from "./LotForm";
 import { createLotOwner } from "@/api/LotOwnerApi";
 import { toast } from "sonner";
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import type { Customer } from "@/types/IntermentTypes";
 
 export interface NewLotOwnerDialogProps {
+    customer_id: string;
+    first_name: string;
+    last_name: string;
     open: boolean;
     onOpenChange: (open: boolean) => void;
-    customer?: Customer;
 }
 
-export default function NewLotOwnerDialog({ open, onOpenChange, customer, }: NewLotOwnerDialogProps) {
+export default function NewLotOwnerDialog({ customer_id, first_name, last_name, open, onOpenChange }: NewLotOwnerDialogProps) {
     const queryClient = useQueryClient();
     const { mutate, isPending } = useMutation({
         mutationFn: createLotOwner,
@@ -18,29 +19,19 @@ export default function NewLotOwnerDialog({ open, onOpenChange, customer, }: New
             toast.success('Lot Owner has been saved');
             onOpenChange(false);
             queryClient.invalidateQueries({ queryKey: ['lotOwners'] });
-            console.log('Lot Owner created successfully with customer:', customer);
         },
-        onError: () => {
+        onError: (error) => {
             toast.error('Error saving lot owner');
-            console.log('Error saving lot owner with customer:', customer);
+            console.error("MUTATION ERROR:", error);
         },
     });
-
-    const initialValues = customer
-        ? {
-            first_name: customer.first_name || "",
-            last_name: customer.last_name || "",
-            customer_id: customer.customer_id || "",
-            full_name: `${customer.first_name || ""} ${customer.last_name || ""}`.trim(),
-        }
-        : undefined;
 
     return (
         <LotForm
             mode="add"
             open={open}
             onOpenChange={onOpenChange}
-            initialValues={initialValues}
+            initialValues={{ customer_id, first_name, last_name }}
             onSubmit={mutate}
             isPending={isPending}
         />

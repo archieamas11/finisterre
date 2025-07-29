@@ -11,6 +11,7 @@ import { Input } from "@/components/ui/input";
 
 // Unified customer schema for both add and edit
 const LotScheme = z.object({
+    customer_id: z.string().min(1, { message: "Customer ID is required." }),
     first_name: z.string().min(1, { message: "First name is required." }),
     plot_id: z.string().min(1, { message: "Plot ID is required." }),
     type: z.string().min(2, { message: "Invalid type." }),
@@ -94,15 +95,15 @@ export default function LotForm({ mode, open, onOpenChange, initialValues, onSub
         <Dialog open={open} onOpenChange={onOpenChange}>
             <DialogContent className="lg:max-w-[700px]">
                 <DialogHeader>
-                    <DialogTitle>{mode === "add" ? "Add New Customer" : "Edit Customer"}</DialogTitle>
+                    <DialogTitle>{mode === "add" ? "Add New Lot Owner" : "Edit Lot Owner"}</DialogTitle>
                     <DialogDescription>
-                        {mode === "add" ? "Click save when you're done." : "Edit customer details and save."}
+                        {mode === "add" ? "Click save when you're done." : "Edit lot owner details and save."}
                     </DialogDescription>
                 </DialogHeader>
                 <Form {...form}>
                     <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4">
                         <div className="grid grid-cols-2 gap-4">
-                            <FormField control={form.control} name="full_name" render={({ field }) => (
+                            <FormField control={form.control} name="first_name" render={({ field }) => (
                                 <FormItem>
                                     <FormLabel>Customer Name<span className="text-red-500">*</span></FormLabel>
                                     <FormControl>
