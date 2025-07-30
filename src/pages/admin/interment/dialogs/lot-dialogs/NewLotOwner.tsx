@@ -1,5 +1,5 @@
 import LotForm from "./LotForm";
-import { createLotOwner } from "@/api/LotOwnerApi";
+import { createLotOwner } from "@/api/LotOwner.api";
 import { toast } from "sonner";
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 

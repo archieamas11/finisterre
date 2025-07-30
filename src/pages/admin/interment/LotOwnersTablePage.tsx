@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import LotOwnersTable from "./LotOwnersTable";
-import { getLotOwner } from "@/api/LotOwnerApi";
+import { getLotOwner } from "@/api/LotOwner.api";
 import type { LotOwners } from "@/types/IntermentTypes";
 import SpinnerCircle4 from "@/components/spinner-10";
 

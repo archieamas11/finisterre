@@ -1,5 +1,5 @@
 import { toast } from "sonner";
-import { useUpsertCustomer } from "@/hooks/customers";
+import { useUpsertCustomer } from "@/hooks/customers.hooks";
 import CustomerForm from "./CustomerForm";
 import type { Customer } from "@/types/IntermentTypes";
 
