@@ -51,28 +51,34 @@ export function PlotLocations({ marker, backgroundColor, onDirectionClick }: Plo
                     {marker.plotStatus}
                 </span>
             </div>
-
-
+            {/* Plot Dimension */}
             <div className="flex gap-2 mb-3">
-                <div className="flex-1 bg-gray-50 rounded-lg p-2 border border-gray-200">
+                <div className="flex-1 bg-gray-100 rounded-lg p-2">
                     <div className="flex items-center gap-1 mb-1">
                         <Ruler size={16} className="text-blue-500" />
                         <span className="text-xs font-semibold text-blue-700">Dimension</span>
                     </div>
-                    <div className="text-sm text-gray-700 flex items-center gap-1 justify-center">
-                        {marker.dimensions.length}m x {marker.dimensions.width}m<br />
-                        {marker.dimensions.area} square meters
+                    <div className="flex flex-col items-center">
+                        <div className="text-xs text-gray-700 font-bold">
+                            {marker.dimensions.length} m × {marker.dimensions.width} m<br />
+                        </div>
+                        <span className="text-xs text-gray-500">
+                            {marker.dimensions.area.toLocaleString()} m²
+                        </span>
                     </div>
                 </div>
-                <div className="flex-1 bg-gray-50 rounded-lg p-2 border border-gray-200">
+                <div className="flex-1 bg-gray-100 rounded-lg p-2">
                     <div className="flex items-center gap-1 mb-1">
                         <Info size={16} className="text-gray-500" />
                         <span className="text-xs font-semibold text-gray-700">Details</span>
                     </div>
                     <span className={
-                        marker.category === 'Bronze' ? 'flex items-center gap-1 bg-amber-100 text-amber-800 px-2 py-1 rounded text-xs font-semibold' :
-                            marker.category === 'Silver' ? 'flex items-center gap-1 bg-gray-200 text-gray-800 px-2 py-1 rounded text-xs font-semibold' :
-                                'flex items-center gap-1 bg-yellow-200 text-yellow-900 px-2 py-1 rounded text-xs font-semibold'
+                        (marker.category === 'Bronze'
+                            ? 'bg-amber-100 text-amber-800'
+                            : marker.category === 'Silver'
+                                ? 'bg-gray-200 text-gray-800'
+                                : 'bg-yellow-200 text-yellow-900')
+                        + ' flex items-center justify-center px-2 py-1 rounded text-xs font-semibold'
                     }>
                         <Award size={14} className="inline" />
                         {marker.category}
