@@ -63,6 +63,10 @@ function createTwoStepRoute(userLat, userLng, graveLat, graveLng) {
         'https://router.project-osrm.org/route/v1/driving',
         '#FF6B6B',
         function (step1Route) {
+            // Force last point of driving route to be exactly the gate
+            if (step1Route.coordinates.length > 0) {
+                step1Route.coordinates[step1Route.coordinates.length - 1] = [gateLat, gateLng];
+            }
             console.log('🚗 Car route calculated');
             // Step 2: Walking route from gate to grave
             getRoute(
@@ -70,6 +74,10 @@ function createTwoStepRoute(userLat, userLng, graveLat, graveLng) {
                 'https://finisterreosm-production.up.railway.app/route/v1/foot',
                 '#4ECDC4',
                 function (step2Route) {
+                    // Force first point of walking route to be exactly the gate
+                    if (step2Route.coordinates.length > 0) {
+                        step2Route.coordinates[0] = [gateLat, gateLng];
+                    }
                     console.log('🚶 Walking route calculated');
                     var finalRoute = extendRouteToGrave(step2Route, graveLat, graveLng);
                     displayRoutes([step1Route, finalRoute], userLat, userLng, graveLat, graveLng);
