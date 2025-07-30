@@ -188,3 +188,8 @@
     letter-spacing: var(--tracking-normal);
   }
 }
+
+/* Rotates the destination marker icon -45 degrees */
+.destination-marker-rotate {
+  transform: rotate(-45deg);
+}

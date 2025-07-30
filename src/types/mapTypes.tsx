@@ -116,7 +116,7 @@ export interface UseRoutingReturn {
   isRecalculating: boolean;
   totalDistance: number;
   totalDuration: number;
-  
+
   // Actions
   startNavigation: (userPosition: L.LatLng, destination: Coordinate) => Promise<void>;
   stopNavigation: () => void;
@@ -128,11 +128,11 @@ export interface UseRoutingReturn {
   stopLiveTracking: () => void;
   setPendingDestination: (destination: Coordinate) => void;
   handlePendingDestination: (userPosition: L.LatLng) => void;
-  
+
   // Utilities
   formatDistance: (meters: number) => string;
   formatDuration: (seconds: number) => string;
-  
+
   // Constants
   CEMETERY_GATE: L.LatLng;
 }

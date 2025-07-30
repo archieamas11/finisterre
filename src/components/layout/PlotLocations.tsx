@@ -1,7 +1,7 @@
 import { CardDescription, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Award, BadgeCheck, Info, MapPin, Ruler } from 'lucide-react';
-import type { MarkerData } from '@/components/webmap/markerData';
+import type { MarkerData } from '@/data/geojson/markerData';
 
 interface PlotLocationsProps {
     marker: MarkerData;

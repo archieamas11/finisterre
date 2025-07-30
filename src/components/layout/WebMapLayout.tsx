@@ -4,6 +4,10 @@ import 'leaflet/dist/leaflet.css';
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import L from 'leaflet';
 import { createContext, useState, useCallback, useRef } from 'react';
+import { renderToStaticMarkup } from 'react-dom/server';
+import { GiOpenGate } from "react-icons/gi";
+import { PiMapPinFill } from "react-icons/pi";
+import { BiSolidChurch } from "react-icons/bi";
 
 // Fix default icon paths so markers actually show up
 import iconUrl from 'leaflet/dist/images/marker-icon.png';
@@ -19,8 +23,9 @@ import { PlotLocations } from './PlotLocations';
 
 // Hooks and data
 import { useRouting } from '@/hooks/useRouting';
-import { markerData } from '@/components/webmap/markerData';
-import type { MarkerData } from '@/components/webmap/markerData';
+import { type MarkerData } from '@/data/geojson/markerData';
+import { markerData } from '@/data/geojson/markerData';
+
 
 // Fix Leaflet default icon
 const DefaultIcon = L.icon({
@@ -142,7 +147,6 @@ export default function MapPage() {
       "></div>`,
       className: 'plot-marker',
       iconSize: [24, 24],
-      iconAnchor: [12, 12]
     });
   }, []);
 
@@ -189,16 +193,16 @@ export default function MapPage() {
 
         <MapContainer
           bounds={MAP_BOUNDS}
-          zoom={18}
-          maxZoom={25}
+          zoom={20}
+          maxZoom={20}
           scrollWheelZoom={true}
           className="h-full w-full"
-          zoomControl={true}
+          zoomControl={false}
           attributionControl={true}
         >
           <TileLayer
             url="https://services.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"
-            maxNativeZoom={18}
+            maxNativeZoom={19}
             maxZoom={25}
           />
 
@@ -216,20 +220,146 @@ export default function MapPage() {
             privateRoute={privateRoute}
           />
 
-          {/* Cemetery Gate Marker */}
+          {/* Destination marker (shows after private route is calculated) */}
+          {privateRoute && (
+            <Marker
+              position={privateRoute.to}
+              icon={L.divIcon({
+                html: renderToStaticMarkup(
+                  <div
+                    style={{
+                      background: '#ef4444',
+                      borderRadius: '50% 50% 50% 0',
+                      boxShadow: '0 0 8px rgba(0,0,0,0.15)',
+                      border: '2px solid #fff',
+                      transform: 'rotate(-45deg)',
+                    }}
+                  >
+                    <PiMapPinFill
+                      className='z-999'
+                      size={24}
+                      style={{
+                        transform: 'rotate(45deg)'
+                      }}
+                    />
+                  </div>
+                ),
+                className: 'destination-marker',
+                iconSize: [32, 32],
+                iconAnchor: [16, 35]
+              })}
+            >
+            </Marker>
+          )}
+
+          {/* Cemetery Entrance Marker */}
           <Marker
             position={[CEMETERY_GATE.lat, CEMETERY_GATE.lng]}
             icon={L.divIcon({
-              html: `<div class="bg-orange-400 border-2 border-white rounded-full w-4 h-4 shadow-md cursor-pointer flex items-center justify-center"></div>`,
-              className: 'gate-marker',
-              iconSize: [20, 20],
-              iconAnchor: [10, 10]
+              html: renderToStaticMarkup(
+                <div
+                  style={{
+                    background: '#000000',
+                    borderRadius: '50% 50% 50% 0',
+                    boxShadow: '0 0 8px rgba(0,0,0,0.15)',
+                    padding: '4px',
+                    border: '2px solid #fff',
+                    transform: 'rotate(-45deg)',
+                    display: 'inline-block'
+                  }}
+                >
+                  <GiOpenGate
+                    className='z-999 text-white'
+                    size={16}
+                    strokeWidth={2.5}
+                    style={{
+                      transform: 'rotate(45deg)'
+                    }}
+                  />
+                </div>
+              ),
+              className: 'destination-marker',
+              iconSize: [32, 32],
             })}
           >
             <Popup>
               <div className="text-center">
                 <div className="font-semibold text-orange-600">🚪 Cemetery Gate</div>
                 <div className="text-xs text-gray-500 mt-1">Entry point for cemetery visitors</div>
+              </div>
+            </Popup>
+          </Marker>
+
+          {/* Cemetery Exit Marker */}
+          <Marker position={[10.248166481872728, 123.79754558858059]}
+            icon={L.divIcon({
+              html: renderToStaticMarkup(
+                <div
+                  style={{
+                    background: '#000000',
+                    borderRadius: '50% 50% 50% 0',
+                    boxShadow: '0 0 8px rgba(0,0,0,0.15)',
+                    padding: '4px',
+                    border: '2px solid #fff',
+                    transform: 'rotate(-45deg)',
+                    display: 'inline-block'
+                  }}
+                >
+                  <GiOpenGate
+                    className='z-999 text-white'
+                    size={16}
+                    strokeWidth={2.5}
+                    style={{
+                      transform: 'rotate(45deg)'
+                    }}
+                  />
+                </div>
+              ),
+              className: 'destination-marker',
+              iconSize: [32, 32],
+            })}
+          >
+            <Popup>
+              <div className="text-center">
+                <div className="font-semibold text-orange-600">🚪 Cemetery Gate</div>
+                <div className="text-xs text-gray-500 mt-1">Entry point for cemetery visitors</div>
+              </div>
+            </Popup>
+          </Marker>
+
+          {/* Cemetery Chapel Marker */}
+          <Marker position={[10.248435228156183, 123.79787795587316]}
+            icon={L.divIcon({
+              html: renderToStaticMarkup(
+                <div
+                  style={{
+                    background: '#FF9800',
+                    borderRadius: '50% 50% 50% 0',
+                    boxShadow: '0 0 8px rgba(0,0,0,0.15)',
+                    padding: '4px',
+                    border: '2px solid #fff',
+                    transform: 'rotate(-45deg)',
+                    display: 'inline-block'
+                  }}
+                >
+                  <BiSolidChurch 
+                    className='z-999 text-white'
+                    size={16}
+                    strokeWidth={2.5}
+                    style={{
+                      transform: 'rotate(45deg)'
+                    }}
+                  />
+                </div>
+              ),
+              className: 'destination-marker',
+              iconSize: [32, 32],
+            })}
+          >
+            <Popup>
+              <div className="text-center">
+                <div className="font-semibold text-orange-600">🚪 Chapel</div>
+                <div className="text-xs text-gray-500 mt-1">Entry point for chapel visitors</div>
               </div>
             </Popup>
           </Marker>
