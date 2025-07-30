@@ -8,7 +8,8 @@ import {
   PaintBucket,
   User,
   Home,
-  MonitorCog
+  MonitorCog,
+  CalendarDays
 } from "lucide-react";
 
 export interface NavSubItem {
@@ -75,9 +76,9 @@ export const adminSidebarItems: NavGroup[] = [
         icon: MapIcon,
       },
       {
-        title: "Services",
-        url: "/admin/services",
-        icon: PaintBucket,
+        title: "Bookings",
+        url: "/admin/bookings",
+        icon: CalendarDays,
       },
       {
         title: "Manage Accounts",

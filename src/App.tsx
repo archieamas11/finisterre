@@ -1,27 +1,29 @@
 import { Suspense, type JSX } from "react";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
-import AdminDashboard from "@/pages/admin/home/AdminDashboard";
-import AdminMap from "@/pages/admin/map4admin/AdminMap";
-import CustomersTablePage from "@/pages/admin/interment/CustomersTablePage";
-import LotOwnersTablePage from "@/pages/admin/interment/LotOwnersTablePage";
-import DeceasedTablePage from "@/pages/admin/interment/DeceasedTablePage";
 import DashboardLayout from "@/components/layout/DashboardLayout";
-import ForgotPassword from "@/auth/ForgotPassword";
 import LandingLayout from "@/components/layout/LandingLayout";
 import Layout from "@/auth/layout";
+import ForgotPassword from "@/auth/ForgotPassword";
 import LoginV2 from "@/auth/page";
 import Logout from "@/auth/Logout";
 import ManageAccounts from "@/pages/admin/accounts/ManageAccounts";
 import MapPage from "@/components/layout/WebMapLayout";
 import ResetPassword from "@/auth/ResetPassword";
-import Services from "@/pages/admin/services/Services";
 import UnauthorizedPage from "@/pages/UnauthorizedPage";
+// Admin Imports 
+import AdminDashboard from "@/pages/admin/home/AdminDashboard";
+import AdminMap from "@/pages/admin/map4admin/AdminMap";
+import CustomersTablePage from "@/pages/admin/interment/CustomersTablePage";
+import LotOwnersTablePage from "@/pages/admin/interment/LotOwnersTablePage";
+import DeceasedTablePage from "@/pages/admin/interment/DeceasedTablePage";
+import Bookings from "@/pages/admin/bookings/ManageBookings";
+import AdminControlPanel from '@/pages/admin/control/AdminControlPanel';
+import IntermentSetup from "@/pages/admin/interment/IntermentSetup";
+// User Imports
 import UserDashboard from "@/pages/user/contents/UserDashboard";
 import UserMap from "@/pages/user/contents/Map";
 import UserProfile from "@/pages/user/contents/Profile";
 import UserServices from "@/pages/user/contents/Services";
-import IntermentSetup from "./pages/admin/interment/IntermentSetup";
-import AdminControlPanel from '@/pages/admin/control/AdminControlPanel';
 
 // Auth utility functions
 const isAuthenticated = (): boolean => {
@@ -92,7 +94,7 @@ export default function App() {
 							<Route path="deceased-records" element={<DeceasedTablePage />} />
 						</Route>
 						<Route path="map" element={<AdminMap />} />
-						<Route path="services" element={<Services />} />
+						<Route path="bookings" element={<Bookings />} />
 						<Route path="manage-accounts" element={<ManageAccounts />} />
 						<Route path="control-panel" element={<AdminControlPanel />} />
 					</Route>

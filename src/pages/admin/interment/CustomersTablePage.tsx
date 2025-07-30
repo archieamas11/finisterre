@@ -1,6 +1,6 @@
 import CustomersTable from "./CustomersTable";
 import SpinnerCircle4 from "@/components/spinner-10";
-import { useCustomers } from '@/hooks/customers';
+import { useCustomers } from '@/hooks/customers.hooks';
 
 export default function CustomersTablePage() {
   const { data: customers, isLoading, isError } = useCustomers();

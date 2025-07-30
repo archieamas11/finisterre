@@ -1,6 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import type { LotOwners } from '@/types/IntermentTypes';
-import { createLotOwner, editLotOwner, getLotOwner  } from '@/api/LotOwnerApi';
+import { createLotOwner, editLotOwner, getLotOwner  } from '@/api/LotOwner.api';
 
 // 1) Query for list
 export function useLotOwners() {

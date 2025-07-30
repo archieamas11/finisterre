@@ -35,7 +35,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
 
   // Apply theme to document and update resolved theme
   useEffect(() => {
-    // Only update resolvedTheme if it actually changes
+    // Compute the actual theme
     let actualTheme: 'light' | 'dark';
     if (theme === 'system') {
       actualTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
@@ -43,8 +43,10 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
       actualTheme = theme;
     }
 
-    // Prevent unnecessary state updates
-    setResolvedTheme(prev => (prev !== actualTheme ? actualTheme : prev));
+    // Only update resolvedTheme if it actually changes
+    if (resolvedTheme !== actualTheme) {
+      setResolvedTheme(actualTheme);
+    }
 
     // Apply theme to document
     document.documentElement.classList.remove('light', 'dark');
