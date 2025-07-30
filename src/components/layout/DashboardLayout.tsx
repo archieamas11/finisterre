@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { Outlet, useLocation } from "react-router-dom";
+import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import { AppSidebar } from "@/components/sidebar/app-sidebar";
 import { SidebarProvider, SidebarInset } from "@/components/ui/sidebar";
 import { SiteHeader } from "@/components/sidebar/site-header";
@@ -12,18 +12,19 @@ interface DashboardLayoutProps {
 
 export default function DashboardLayout({ role }: DashboardLayoutProps) {
   const location = useLocation();
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (!isAuthenticated()) {
-      window.location.href = "/login";
+      navigate("/login");
       return;
     }
     const userIsAdmin = isAdmin();
     if ((role === 'admin' && !userIsAdmin) || (role === 'user' && userIsAdmin)) {
-      window.location.href = userIsAdmin ? "/admin" : "/user";
+      navigate(userIsAdmin ? "/admin" : "/user");
       return;
     }
-  }, [role]);
+  }, [role, navigate]);
 
   // Find the current main/sub item for breadcrumb
   const breadcrumbItem = findSidebarItemByPath(location.pathname, role === 'admin');

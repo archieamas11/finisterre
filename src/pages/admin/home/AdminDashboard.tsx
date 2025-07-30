@@ -1,8 +1,8 @@
-import { DataTable } from "@/components/sidebar/data-table"
+// import { DataTable } from "@/components/sidebar/data-table"
 import { SectionCards } from "@/components/sidebar/section-cards"
 
 
-import data from "../data.json"
+// import data from "../data.json"
 
 export default function UserDashboard() {
   return (
@@ -12,7 +12,7 @@ export default function UserDashboard() {
               <SectionCards />
               <div className="px-4 lg:px-6">
               </div>
-              <DataTable data={data} />
+              {/* <DataTable data={data} /> */}
             </div>
           </div>
         </div>
