@@ -1,5 +1,6 @@
-import { Suspense, type JSX } from "react";
+import { Suspense } from "react";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { RequireAuth, RequireAdmin, RequireUser } from "@/authRoutes";
 import DashboardLayout from "@/components/layout/DashboardLayout";
 import LandingLayout from "@/components/layout/LandingLayout";
 import Layout from "@/auth/layout";
@@ -25,27 +26,7 @@ import UserMap from "@/pages/user/contents/Map";
 import UserProfile from "@/pages/user/contents/Profile";
 import UserServices from "@/pages/user/contents/Services";
 
-// Auth utility functions
-const isAuthenticated = (): boolean => {
-	return !!localStorage.getItem("token");
-};
-
-const isAdmin = (): boolean => {
-	return localStorage.getItem("isAdmin") === "1";
-};
-
-// Protected Route Components
-const ProtectedRoute = ({ children }: { children: JSX.Element }) => {
-	return isAuthenticated() ? children : <Navigate to="/login" />;
-};
-
-const AdminRoute = ({ children }: { children: JSX.Element }) => {
-	return isAuthenticated() && isAdmin() ? children : <Navigate to="/unauthorized" />;
-};
-
-const UserRoute = ({ children }: { children: JSX.Element }) => {
-	return isAuthenticated() && !isAdmin() ? children : <Navigate to="/unauthorized" />;
-};
+// ...existing code...
 
 export default function App() {
 	return (
@@ -55,11 +36,7 @@ export default function App() {
 					{/* Public Routes */}
 					<Route path="/" element={<LandingLayout />} />
 					<Route path="/map" element={<MapPage />} />
-					<Route path="/login" element={
-						isAuthenticated() ?
-							(isAdmin() ? <Navigate to="/admin" /> : <Navigate to="/user" />) :
-							<Layout><LoginV2 /></Layout>
-					} />
+					<Route path="/login" element={<Layout><LoginV2 /></Layout>} />
 					<Route path="/forgot-password" element={<ForgotPassword />} />
 					<Route path="/reset-password" element={<ResetPassword />} />
 					<Route path="/logout" element={<Logout />} />
@@ -67,11 +44,11 @@ export default function App() {
 
 					{/* User Protected Routes */}
 					<Route path="/user" element={
-						<ProtectedRoute>
-							<UserRoute>
+						<RequireAuth>
+							<RequireUser>
 								<DashboardLayout role="user" />
-							</UserRoute>
-						</ProtectedRoute>
+							</RequireUser>
+						</RequireAuth>
 					}>
 						<Route index element={<UserDashboard />} />
 						<Route path="profile" element={<UserProfile />} />
@@ -81,11 +58,11 @@ export default function App() {
 
 					{/* Admin Protected Routes */}
 					<Route path="/admin" element={
-						<ProtectedRoute>
-							<AdminRoute>
+						<RequireAuth>
+							<RequireAdmin>
 								<DashboardLayout role="admin" />
-							</AdminRoute>
-						</ProtectedRoute>
+							</RequireAdmin>
+						</RequireAuth>
 					}>
 						<Route index element={<AdminDashboard />} />
 						<Route path="interment-setup" element={<IntermentSetup />}>
