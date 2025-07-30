@@ -7,18 +7,20 @@ import SpinnerCircle4 from "@/components/spinner-10";
 
 const Logout: React.FC = () => {
     const navigate = useNavigate();
-    const hasLoggedOut = React.useRef(false);
+    const [loading, setLoading] = React.useState(true);
 
     useEffect(() => {
-        if (hasLoggedOut.current) return;
-        hasLoggedOut.current = true;
+        // Perform logout and redirect immediately after
         logout();
         toast.success("You have been logged out successfully", { duration: 1000 });
+        setLoading(false);
         navigate("/");
     }, [navigate]);
 
+    if (!loading) return null;
+
     return (
-        <div className="flex items-center justify-center h-full">
+        <div className="flex items-center justify-center h-full" role="status" aria-live="polite">
             <SpinnerCircle4 />
         </div>
     );
