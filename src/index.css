@@ -183,13 +183,29 @@
   * {
     @apply border-border outline-ring/50;
   }
+
   body {
     @apply bg-background text-foreground;
     letter-spacing: var(--tracking-normal);
   }
 }
 
-/* Rotates the destination marker icon -45 degrees */
-.destination-marker-rotate {
-  transform: rotate(-45deg);
+/* Dash flowing animation */
+@keyframes dashFlow {
+  0% {
+    stroke-dashoffset: 0;
+  }
+
+  100% {
+    stroke-dashoffset: -30;
+  }
+}
+
+.animate-dash-flow {
+  animation: dashFlow 1.5s linear infinite;
+}
+
+/* Combined glow and pulse */
+.animate-glow-pulse {
+  animation: glowPulse 2s ease-in-out infinite;
 }
