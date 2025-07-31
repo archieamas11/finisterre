@@ -9,7 +9,7 @@ import {
   User,
   Home,
   MonitorCog,
-  CalendarDays
+  CalendarDays,
 } from "lucide-react";
 
 export interface NavSubItem {
@@ -79,11 +79,6 @@ export const adminSidebarItems: NavGroup[] = [
         title: "Bookings",
         url: "/admin/bookings",
         icon: CalendarDays,
-      },
-      {
-        title: "Manage Accounts",
-        url: "/admin/manage-accounts",
-        icon: Users,
       },
       {
         title: "Control Panel",

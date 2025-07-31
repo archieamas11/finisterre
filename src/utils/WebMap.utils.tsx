@@ -25,19 +25,19 @@ export const MAP_CONFIG = {
 
 // Plot status color mapping
 export const PLOT_STATUS_COLORS = {
-    'Available': '#22c55e', // Green
-    'Occupied': '#ef4444',  // Red
-    'Reserved': '#facc15',  // Yellow
-    'Maintenance': '#6b7280', // Gray
-    'default': '#a3a3a3'    // Default gray
+    'Available': '#22c55e',
+    'Occupied': '#ef4444',
+    'Reserved': '#facc15',
+    'Maintenance': '#6b7280',
+    'default': '#a3a3a3'
 } as const;
 
 // Category background colors
 export const CATEGORY_COLORS = {
-    'Bronze': '#7d7d7d',   // Dark gray
-    'Silver': '#b00020',   // Dark red
-    'Platinum': '#d4af37', // Gold
-    'Diamond': '#cc6688'   // Pink
+    'Bronze': '#7d7d7d',
+    'Silver': '#b00020',
+    'Platinum': '#d4af37',
+    'Diamond': '#cc6688'
 } as const;
 
 // Icon creation utilities

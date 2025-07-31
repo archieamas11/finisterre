@@ -1,7 +1,7 @@
 import { toast } from "sonner";
 import { useUpsertCustomer } from "@/hooks/customers.hooks";
 import CustomerForm from "./CustomerForm";
-import type { Customer } from "@/types/IntermentTypes";
+import type { Customer } from "@/types/interment.types";
 
 interface EditCustomerDialogProps {
     open: boolean;

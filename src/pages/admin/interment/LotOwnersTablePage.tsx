@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 import LotOwnersTable from "./LotOwnersTable";
 import { getLotOwner } from "@/api/LotOwner.api";
-import type { LotOwners } from "@/types/IntermentTypes";
-import SpinnerCircle4 from "@/components/spinner-10";
+import type { LotOwners } from "@/types/interment.types";
+import SpinnerCircle4 from "@/components/ui/spinner-10";
 
 export default function LotOwnersTablePage() {
   const [lotOwners, setLotOwners] = useState<LotOwners[]>([]);

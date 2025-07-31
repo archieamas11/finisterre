@@ -1,6 +1,6 @@
 // components/RoutePolylines.tsx
 import { Polyline } from 'react-leaflet';
-import type { RouteData } from '../hooks/useRouting';
+import type { RouteData } from '../hooks/WebMapRouting.hook';
 
 interface RoutePolylinesProps {
     publicRoute: RouteData | null;

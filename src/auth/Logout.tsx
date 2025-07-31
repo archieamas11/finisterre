@@ -1,8 +1,8 @@
 import React, { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
-import { logout } from "@/utils/auth";
-import SpinnerCircle4 from "@/components/spinner-10";
+import { logout } from "@/utils/Auth.utils";
+import SpinnerCircle4 from "@/components/ui/spinner-10";
 
 
 const Logout: React.FC = () => {

@@ -1,4 +1,4 @@
-import type { RouteData } from '@/hooks/useRouting';
+import type { RouteData } from '@/hooks/WebMapRouting.hook';
 // Lucide icon imports
 import { MapPin, Timer, Car, Footprints, StopCircle, Loader2 } from 'lucide-react';
 
@@ -45,7 +45,7 @@ export function NavigationControl({
                     {/* Route breakdown */}
                     {publicRoute && privateRoute && (
                         <div className="mt-2 pt-2 border-t text-xs">
-                            <div className="flex justify-between items-center gap-3">
+                            <div className="flex flex-row justify-between items-center gap-3">
                                 <span className="flex items-center gap-1">
                                     <Car className="w-3 h-3" />
                                     Drive: {formatDistance(publicRoute.distance || 0)}

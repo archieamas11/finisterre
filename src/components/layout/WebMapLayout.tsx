@@ -1,5 +1,3 @@
-// WebMapNavs.tsx - Refactored and improved
-
 import 'leaflet/dist/leaflet.css';
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import L from 'leaflet';
@@ -16,13 +14,13 @@ import shadowUrl from 'leaflet/dist/images/marker-shadow.png';
 
 // Components
 import WebMapNavs from '@/pages/webmap/WebMapNavs';
-import { LocationMarker } from '@/components/LocationMarker';
-import { NavigationControl } from '@/components/NavigationControl';
-import { RoutePolylines } from '@/components/RoutePolyLines';
-import { PlotLocations } from './PlotLocations';
+import { LocationMarker } from '@/components/WebMap.LocationMarker';
+import { NavigationControl } from '@/components/WebMapNavControls';
+import { RoutePolylines } from '@/components/WebMap.RoutePolyLines';
+import { PlotLocations } from '../WebMap.popup';
 
 // Hooks and data
-import { useRouting } from '@/hooks/useRouting';
+import { useRouting } from '@/hooks/WebMapRouting.hook';
 import { type MarkerData } from '@/data/geojson/markerData';
 import { markerData } from '@/data/geojson/markerData';
 
@@ -163,9 +161,8 @@ export default function MapPage() {
 
   return (
     <LocateContext.Provider value={{ requestLocate }}>
+      <WebMapNavs />
       <div className="h-screen w-full relative">
-        <WebMapNavs />
-
         {/* Location error notification */}
         {locationError && (
           <div className="absolute top-4 right-4 z-[9999] bg-red-100 border border-red-300 text-red-700 px-4 py-2 rounded-lg shadow-lg max-w-sm">
@@ -342,7 +339,7 @@ export default function MapPage() {
                     display: 'inline-block'
                   }}
                 >
-                  <BiSolidChurch 
+                  <BiSolidChurch
                     className='z-999 text-white'
                     size={16}
                     strokeWidth={2.5}

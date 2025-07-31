@@ -54,11 +54,11 @@ export function HeroSection() {
                             Memorial Park
                         </span>
                     </h1>
-                    
+
                     <p className="text-lg sm:text-xl lg:text-2xl text-white/90 max-w-4xl mx-auto leading-relaxed font-light">
-                        Inspired by Spain's <span className="font-semibold text-blue-200">El Camino de Santiago</span>, 
+                        Inspired by Spain's <span className="font-semibold text-blue-200">El Camino de Santiago</span>,
                         <br className="hidden sm:block" />
-                        Finisterre Gardenz celebrates life and honors the pilgrimage we all make 
+                        Finisterre Gardenz celebrates life and honors the pilgrimage we all make
                         <br className="hidden sm:block" />
                         as we live life to the fullest.
                     </p>
@@ -67,8 +67,8 @@ export function HeroSection() {
                 {/* CTA Section */}
                 <div className="flex flex-col sm:flex-row items-center justify-center gap-6">
                     {/* Primary CTA */}
-                    <Button 
-                        asChild 
+                    <Button
+                        asChild
                         size="lg"
                         className="group relative overflow-hidden bg-gradient-to-r from-chart-4 to-chart-5 hover:from-chart-4 hover:to-chart-5 text-foreground dark:text-accent font-semibold px-8 py-4 rounded-full shadow-2xl hover:shadow-blue-500/25 transition-all duration-300 hover:scale-105 border-0"
                     >
@@ -78,10 +78,17 @@ export function HeroSection() {
                             <ArrowRight className="h-4 w-4 group-hover:translate-x-1 transition-transform duration-300" />
                         </Link>
                     </Button>
+                    <Button>
+                        <Link to="/mapLibre" aria-label="Explore Map" className="flex items-center gap-3">
+                            <MapPin className="h-5 w-5" />
+                            Explore Map Libre
+                            <ArrowRight className="h-4 w-4 group-hover:translate-x-1 transition-transform duration-300" />
+                        </Link>
+                    </Button>
 
                     {/* Secondary CTA */}
-                    <Button 
-                        variant="outline" 
+                    <Button
+                        variant="outline"
                         size="lg"
                         className="group bg-white/10 hover:bg-white/20 text-white border-white/30 hover:border-white/50 font-medium px-8 py-4 rounded-full backdrop-blur-md transition-all duration-300 hover:scale-105"
                         asChild
@@ -114,7 +121,7 @@ export function HeroSection() {
 
             {/* Bottom fade */}
             <div className="absolute bottom-0 left-0 right-0 h-48 bg-gradient-to-t from-background via-background/60 to-transparent z-[5]"></div>
-            
+
             {/* Custom animations */}
             <style>{`
                 @keyframes fade-in {
