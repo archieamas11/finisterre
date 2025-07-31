@@ -380,9 +380,9 @@ export function useRouting() {
           to: destination,
           ...privateData,
         });
-
         lastUserPositionRef.current = userLatLng;
         console.log("✅ Navigation routes calculated successfully");
+        startLiveTracking;
       } catch (error) {
         console.error("Navigation error:", error);
         setIsRecalculating(false);
