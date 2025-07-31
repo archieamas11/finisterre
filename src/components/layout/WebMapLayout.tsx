@@ -11,6 +11,12 @@ import type { MarkerData } from '@/data/geojson/markerData';
 import { createContext, useRef } from 'react';
 import { useState, useEffect } from 'react';
 import { PlotLocations } from './../WebMap.popup';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent } from '@/components/ui/card';
+import { Route, Timer, XCircle } from 'lucide-react';
+import { BiSolidChurch } from 'react-icons/bi';
+import { renderToStaticMarkup } from 'react-dom/server';
+import { GiOpenGate } from 'react-icons/gi';
 
 const DefaultIcon = L.icon({
   iconUrl,
@@ -239,6 +245,17 @@ export default function MapPage() {
         privateRouteData.polyline[0] = privateFrom;
       }
 
+      if (privateRouteData.polyline.length > 0) {
+        privateRouteData.polyline[0] = publicTo;
+        const lastIdx = privateRouteData.polyline.length - 1;
+        const lastPoint = privateRouteData.polyline[lastIdx];
+        // Only snap to destination if distance > 2 meters
+        const snapDistance = calculateDistance(lastPoint, privateTo);
+        if (snapDistance > 2) {
+          privateRouteData.polyline.push(privateTo);
+        }
+      }
+
       setPublicRoute({
         from: publicFrom,
         to: publicTo,
@@ -298,24 +315,43 @@ export default function MapPage() {
 
         {/* Navigation Control Panel */}
         {(publicRoute || privateRoute) && (
-          <div className="absolute top-4 left-1/2 z-[9999] -translate-x-1/2 flex flex-col items-center gap-2">
+          <div className="absolute top-6 md:top-20 lg:top-20 left-1/2 z-[9999] -translate-x-1/2 flex flex-col items-center gap-4">
             {/* Route Info */}
-            <div className="bg-white px-4 py-2 rounded shadow-lg">
-              <div className="text-sm font-medium">
-                Distance: {formatDistance(totalDistance)} |
-                Time: {Math.round(totalDuration / 60)} min
-              </div>
-            </div>
+            <Card className="flex shadow-lg backdrop-blur-sm min-w-[250px] bg-white/90 border border-stone-200 dark:bg-stone-800/90 dark:border-stone-700 py-3 rounded-xl transition-all duration-300 hover:shadow-xl">
+              <CardContent className="flex flex-col items-center w-full py-2 px-4">
+                <div className="flex items-center justify-between w-full">
+                  <div className="flex items-center gap-2">
+                    <div className="p-2 rounded-lg bg-blue-50 dark:bg-blue-900/30">
+                      <Route className="w-5 h-5 text-blue-600" />
+                    </div>
+                    <span className="font-semibold text-stone-800 dark:text-stone-200">
+                      {formatDistance(totalDistance)}
+                    </span>
+                  </div>
+
+                  <div className="h-5 w-px bg-stone-300 dark:bg-stone-600"></div>
+                  <div className="flex items-center gap-2">
+                    <div className="p-2 rounded-lg bg-green-50 dark:bg-green-900/30">
+                      <Timer className="w-5 h-5 text-green-600" />
+                    </div>
+                    <span className="font-semibold text-stone-800 dark:text-stone-200">
+                      {Math.round(totalDuration / 60)} min
+                    </span>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
 
             {/* Stop Navigation Button */}
-            <button
-              type="button"
-              className="bg-red-600 text-white px-4 py-2 rounded shadow hover:bg-red-700 transition"
+            <Button
+              variant="destructive"
+              className="flex items-center gap-2 px-6 py-3 rounded-xl shadow-md hover:bg-red-700 transition-all duration-300 transform hover:scale-105"
               aria-label="Stop Navigation"
               onClick={handleStopNavigation}
             >
-              Stop Navigation
-            </button>
+              <XCircle className="w-5 h-5" />
+              <span className="font-medium">Stop Navigation</span>
+            </Button>
           </div>
         )}
 
@@ -348,10 +384,13 @@ export default function MapPage() {
             <Polyline
               positions={publicRoute.polyline}
               pathOptions={{
-                color: '#FF6B6B', // Red for driving
-                weight: 6,
-                opacity: 0.8
+                color: '#4285F4',
+                weight: 8,
+                opacity: 1,
+                lineCap: 'round',
+                lineJoin: 'round'
               }}
+              className="animate-glow-pulse"
             />
           )}
 
@@ -360,24 +399,127 @@ export default function MapPage() {
             <Polyline
               positions={privateRoute.polyline}
               pathOptions={{
-                color: '#4ECDC4', // Teal for walking
-                weight: 6,
-                opacity: 0.8
+                color: '#34A853',
+                weight: 8,
+                opacity: 1,
+                lineCap: 'round',
+                lineJoin: 'round',
+                dashArray: '10, 10'
               }}
+              className="animate-dash-flow"
             />
           )}
 
-          {/* Cemetery Gate Marker */}
+          {/* Cemetery Entrance Marker */}
           <Marker
             position={[CEMETERY_GATE.lat, CEMETERY_GATE.lng]}
             icon={L.divIcon({
-              html: '<div style="background: #FFA500; border: 2px solid white; border-radius: 50%; width: 16px; height: 16px; box-shadow: 0 2px 4px rgba(0,0,0,0.3);"></div>',
-              className: 'gate-marker',
-              iconSize: [20, 20],
-              iconAnchor: [10, 10]
+              html: renderToStaticMarkup(
+                <div
+                  style={{
+                    background: '#000000',
+                    borderRadius: '50% 50% 50% 0',
+                    boxShadow: '0 0 8px rgba(0,0,0,0.15)',
+                    padding: '4px',
+                    border: '2px solid #fff',
+                    transform: 'rotate(-45deg)',
+                    display: 'inline-block'
+                  }}
+                >
+                  <GiOpenGate
+                    className='z-999 text-white'
+                    size={16}
+                    strokeWidth={2.5}
+                    style={{
+                      transform: 'rotate(45deg)'
+                    }}
+                  />
+                </div>
+              ),
+              className: 'destination-marker',
+              iconSize: [32, 32],
             })}
           >
-            <Popup>Cemetery Gate</Popup>
+            <Popup>
+              <div className="text-center">
+                <div className="font-semibold text-orange-600">🚪 Cemetery Gate</div>
+                <div className="text-xs text-gray-500 mt-1">Entry point for cemetery visitors</div>
+              </div>
+            </Popup>
+          </Marker>
+
+          {/* Cemetery Exit Marker */}
+          <Marker position={[10.248166481872728, 123.79754558858059]}
+            icon={L.divIcon({
+              html: renderToStaticMarkup(
+                <div
+                  style={{
+                    background: '#000000',
+                    borderRadius: '50% 50% 50% 0',
+                    boxShadow: '0 0 8px rgba(0,0,0,0.15)',
+                    padding: '4px',
+                    border: '2px solid #fff',
+                    transform: 'rotate(-45deg)',
+                    display: 'inline-block'
+                  }}
+                >
+                  <GiOpenGate
+                    className='z-999 text-white'
+                    size={16}
+                    strokeWidth={2.5}
+                    style={{
+                      transform: 'rotate(45deg)'
+                    }}
+                  />
+                </div>
+              ),
+              className: 'destination-marker',
+              iconSize: [32, 32],
+            })}
+          >
+            <Popup>
+              <div className="text-center">
+                <div className="font-semibold text-orange-600">🚪 Cemetery Gate</div>
+                <div className="text-xs text-gray-500 mt-1">Entry point for cemetery visitors</div>
+              </div>
+            </Popup>
+          </Marker>
+
+          {/* Cemetery Chapel Marker */}
+          <Marker position={[10.248435228156183, 123.79787795587316]}
+            icon={L.divIcon({
+              html: renderToStaticMarkup(
+                <div
+                  style={{
+                    background: '#FF9800',
+                    borderRadius: '50% 50% 50% 0',
+                    boxShadow: '0 0 8px rgba(0,0,0,0.15)',
+                    padding: '4px',
+                    border: '2px solid #fff',
+                    transform: 'rotate(-45deg)',
+                    display: 'inline-block'
+                  }}
+                >
+                  <BiSolidChurch
+                    className='z-999 text-white'
+                    size={16}
+                    strokeWidth={2.5}
+                    style={{
+                      transform: 'rotate(45deg)'
+                    }}
+                  />
+                </div>
+              ),
+              className: 'destination-marker',
+              iconSize: [32, 32],
+            })}
+          >
+            <Popup>
+              <div className="text-center">
+                <div className="font-semibold text-orange-600">🚪 Chapel</div>
+                <div className="text-xs text-gray-500 mt-1">Entry point for chapel visitors</div>
+              </div>
+            </Popup>
           </Marker>
 
           {markerData.map((marker: MarkerData, idx: number) => {
