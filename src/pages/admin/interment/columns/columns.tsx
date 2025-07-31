@@ -1,7 +1,7 @@
 import * as React from "react";
 
 import type { ColumnDef } from "@tanstack/react-table";
-import { MoreHorizontal, ClipboardCopy, Pencil, Eye, Archive, CirclePlus } from "lucide-react";
+import { MoreHorizontal, ClipboardCopy, Pencil, Eye, Archive } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -109,15 +109,12 @@ export const customerColumns: ColumnDef<Customer>[] = [
                             <DropdownMenuLabel>Actions</DropdownMenuLabel>
                             <DropdownMenuSeparator />
                             <DropdownMenuItem onClick={() => setNewLotOwnerOpen(true)}>
-                                <CirclePlus className="mr-2 h-4 w-4" />
                                 Add Plot Property
                             </DropdownMenuItem>
                             <DropdownMenuItem onClick={() => setOpen(true)}>
-                                <Pencil className="mr-2 h-4 w-4" />
                                 Edit Customer
                             </DropdownMenuItem>
                             <DropdownMenuItem onClick={() => setOpen(true)}>
-                                <Eye className="mr-2 h-4 w-4" />
                                 View Customer
                             </DropdownMenuItem>
                             <DropdownMenuSeparator />

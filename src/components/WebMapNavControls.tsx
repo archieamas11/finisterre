@@ -1,5 +1,4 @@
 import type { RouteData } from '@/hooks/WebMapRouting.hook';
-// Lucide icon imports
 import { MapPin, Timer, Car, Footprints, StopCircle, Loader2 } from 'lucide-react';
 
 interface NavigationControlProps {
