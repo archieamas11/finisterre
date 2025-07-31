@@ -1,4 +1,3 @@
-// utils/mapUtils.ts
 import L from 'leaflet';
 
 // Map configuration constants

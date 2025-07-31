@@ -24,6 +24,15 @@ import { useRouting } from '@/hooks/WebMapRouting.hook';
 import { type MarkerData } from '@/data/geojson/markerData';
 import { markerData } from '@/data/geojson/markerData';
 
+import {
+  MAP_CONFIG,
+  getGeolocationErrorMessage
+} from '../../utils/WebMap.utils';
+
+import type {
+  LocateContextValue,
+  Coordinate,
+} from '@/types/WebMap.types';
 
 // Fix Leaflet default icon
 const DefaultIcon = L.icon({
@@ -36,18 +45,13 @@ const DefaultIcon = L.icon({
 });
 L.Marker.prototype.options.icon = DefaultIcon;
 
-// Context to signal a locate request from navs to map
-export const LocateContext = createContext<{ requestLocate: () => void } | null>(null);
 
-// Map bounds
-const MAP_BOUNDS: [[number, number], [number, number]] = [
-  [10.247883800064669, 123.79691285546676],
-  [10.249302749341647, 123.7988598710129],
-];
+export const LocateContext = createContext<LocateContextValue | null>(null);
 
 export default function MapPage() {
   const [userPosition, setUserPosition] = useState<L.LatLng | null>(null);
   const [locationError, setLocationError] = useState<string | null>(null);
+  const [isLocating, setIsLocating] = useState(false);
   const locateRef = useRef<(() => void) | null>(null);
 
   // Use the routing hook
@@ -71,6 +75,7 @@ export default function MapPage() {
   const handleLocationFound = useCallback((position: L.LatLng) => {
     setUserPosition(position);
     setLocationError(null);
+    setIsLocating(false);
     handlePendingDestination(position);
 
     // Start live tracking if navigation is active
@@ -85,16 +90,11 @@ export default function MapPage() {
 
   // Handle location error
   const handleLocationError = useCallback((error: GeolocationPositionError) => {
-    const errorMessages: { [key: number]: string } = {
-      [error.PERMISSION_DENIED]: 'Location access denied. Please enable location services.',
-      [error.POSITION_UNAVAILABLE]: 'Location unavailable. Please check your connection.',
-      [error.TIMEOUT]: 'Location request timed out. Please try again.'
-    };
-
-    const message = errorMessages[error.code] || `Location error: ${error.message}`;
+    const message = getGeolocationErrorMessage(error);
     setLocationError(message);
+    setIsLocating(false);
     console.warn('Location error:', message);
-  }, []);
+  }, [getGeolocationErrorMessage]);
 
   // Expose locate function to context
   const handleExposeLocateFunction = useCallback((locateFunction: () => void) => {
@@ -102,20 +102,27 @@ export default function MapPage() {
   }, []);
 
   // Handle navigation start
-  const handleStartNavigation = useCallback(async (destination: [number, number]) => {
+  const handleStartNavigation = useCallback(async (destination: Coordinate) => {
     try {
       if (userPosition) {
         await startNavigation(userPosition, destination);
       } else {
         // Store destination and trigger location request
         setPendingDestination(destination);
+        setIsLocating(true);
         locateRef.current?.();
       }
     } catch (error) {
       console.error('Failed to start navigation:', error);
-      // Could show user-friendly error message here
+      setLocationError('Failed to calculate route. Please try again.');
     }
   }, [userPosition, startNavigation, setPendingDestination]);
+
+  const handleStopNavigation = useCallback(() => {
+    stopNavigation();
+    setIsLocating(false);
+    setLocationError(null);
+  }, [stopNavigation]);
 
   // Context value
   const requestLocate = useCallback(() => {
@@ -161,17 +168,34 @@ export default function MapPage() {
 
   return (
     <LocateContext.Provider value={{ requestLocate }}>
-      <WebMapNavs />
       <div className="h-screen w-full relative">
+        <WebMapNavs />
+
         {/* Location error notification */}
         {locationError && (
           <div className="absolute top-4 right-4 z-[9999] bg-red-100 border border-red-300 text-red-700 px-4 py-2 rounded-lg shadow-lg max-w-sm">
             <div className="flex items-start gap-2">
-              <span className="text-red-500">⚠️</span>
+              <span className="text-red-500 text-lg">⚠️</span>
               <div>
                 <div className="font-medium text-sm">Location Error</div>
                 <div className="text-xs mt-1">{locationError}</div>
+                <button
+                  onClick={() => setLocationError(null)}
+                  className="text-xs text-red-600 hover:text-red-800 mt-1 underline"
+                >
+                  Dismiss
+                </button>
               </div>
+            </div>
+          </div>
+        )}
+
+        {/* Loading indicator */}
+        {isLocating && (
+          <div className="absolute top-4 left-4 z-[9999] bg-blue-100 border border-blue-300 text-blue-700 px-4 py-2 rounded-lg shadow-lg">
+            <div className="flex items-center gap-2">
+              <div className="animate-spin w-4 h-4 border-2 border-blue-600 border-t-transparent rounded-full"></div>
+              <span className="text-sm font-medium">Finding your location...</span>
             </div>
           </div>
         )}
@@ -185,22 +209,23 @@ export default function MapPage() {
           isRecalculating={isRecalculating}
           formatDistance={formatDistance}
           formatDuration={formatDuration}
-          onStopNavigation={stopNavigation}
+          onStopNavigation={handleStopNavigation}
         />
 
         <MapContainer
-          bounds={MAP_BOUNDS}
-          zoom={20}
-          maxZoom={20}
+          bounds={MAP_CONFIG.BOUNDS}
+          zoom={18}
+          maxZoom={25}
           scrollWheelZoom={true}
           className="h-full w-full"
-          zoomControl={false}
+          zoomControl={true}
           attributionControl={true}
         >
           <TileLayer
             url="https://services.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"
-            maxNativeZoom={19}
+            maxNativeZoom={18}
             maxZoom={25}
+            attribution="&copy; Esri &mdash; Source: Esri, Maxar, GeoEye, Earthstar Geographics, CNES/Airbus DS, USDA, USGS, AeroGRID, IGN, and the GIS User Community"
           />
 
           {/* User location marker */}
@@ -209,15 +234,16 @@ export default function MapPage() {
             onLocationFound={handleLocationFound}
             onLocationError={handleLocationError}
             onExposeLocateFunction={handleExposeLocateFunction}
+            showAccuracyCircle={true}
           />
 
           {/* Route polylines */}
           <RoutePolylines
             publicRoute={publicRoute}
             privateRoute={privateRoute}
+            animated={true}
           />
 
-          {/* Destination marker (shows after private route is calculated) */}
           {privateRoute && (
             <Marker
               position={privateRoute.to}

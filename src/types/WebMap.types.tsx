@@ -1,5 +1,3 @@
-// types/mapTypes.ts
-
 // Base coordinate types
 export type Coordinate = [number, number]; // [lat, lng]
 export type Bounds = [Coordinate, Coordinate]; // [southWest, northEast]

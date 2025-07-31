@@ -42,23 +42,10 @@ function MapLibre() {
             // Dynamically import plugin to avoid SSR issues
             import('@maplibre/maplibre-gl-directions').then(({ default: MapLibreGlDirections }) => {
                 try {
-                    directionsRef.current = new MapLibreGldDirections(rawMap, {
+                    directionsRef.current = new MapLibreGlDirections(rawMap, {
                         // Configure the directions service
                         api: 'https://api.openrouteservice.org/v2/directions/driving-car',
                         profile: 'driving-car',
-                        alternatives: false,
-                        congestion: false,
-                        exclude_tollways: false,
-                        exclude_ferries: false,
-                        exclude_highways: false,
-                        exclude_unpaved: false,
-                        interactive: true,
-                        // You'll need to get a free API key from openrouteservice.org
-                        requestOptions: {
-                            headers: {
-                                'Authorization': 'YOUR_OPENROUTESERVICE_API_KEY' // Replace with actual key
-                            }
-                        }
                     });
 
                     rawMap.addControl(directionsRef.current, 'top-left');

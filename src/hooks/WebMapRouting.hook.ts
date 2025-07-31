@@ -1,4 +1,3 @@
-// hooks/useRouting.ts
 import { useState, useRef, useCallback, useEffect } from "react";
 import L from "leaflet";
 
@@ -127,11 +126,11 @@ export function useRouting() {
     [calculateDistance]
   );
 
-  // Start live GPS tracking
+  // Start live GPS tracking with dynamic route updates
   const startLiveTracking = useCallback(
     (
-      _userPosition: L.LatLng,
-      onPositionUpdate: (position: L.LatLng) => void,
+      initialPosition: L.LatLng,
+      onPositionUpdate: (position: L.LatLng, heading?: number) => void,
       onRecalculateRoute: (
         newPosition: L.LatLng,
         destination: [number, number]
@@ -140,6 +139,7 @@ export function useRouting() {
       if (!navigator.geolocation || watchIdRef.current) return;
 
       console.log("📡 Starting live GPS tracking...");
+      lastUserPositionRef.current = initialPosition;
 
       watchIdRef.current = navigator.geolocation.watchPosition(
         (position) => {
@@ -147,23 +147,58 @@ export function useRouting() {
             position.coords.latitude,
             position.coords.longitude
           );
-          onPositionUpdate(newLatLng);
+          const heading = position.coords.heading; // Device heading if available
 
-          // Check for significant drift and recalculate route if needed
+          // Calculate bearing if heading not available
+          let calculatedHeading = heading;
+          if (!heading && lastUserPositionRef.current) {
+            calculatedHeading = calculateBearing(
+              [
+                lastUserPositionRef.current.lat,
+                lastUserPositionRef.current.lng,
+              ],
+              [newLatLng.lat, newLatLng.lng]
+            );
+          }
+
+          onPositionUpdate(newLatLng, calculatedHeading || undefined);
+
+          // Dynamic route recalculation logic
           if (lastUserPositionRef.current && (publicRoute || privateRoute)) {
             const drift = newLatLng.distanceTo(lastUserPositionRef.current);
-            if (drift > ROUTING_CONFIG.DRIFT_THRESHOLD && !isRecalculating) {
+            const timeSinceLastUpdate =
+              Date.now() - (lastUserPositionRef.current as any).timestamp || 0;
+
+            // Recalculate if:
+            // 1. User drifted significantly from the route
+            // 2. It's been a while since last update (every 30 seconds during navigation)
+            // 3. User is moving in opposite direction
+            const shouldRecalculate =
+              drift > ROUTING_CONFIG.DRIFT_THRESHOLD ||
+              timeSinceLastUpdate > 30000 ||
+              (calculatedHeading &&
+                isMovingAwayFromRoute(newLatLng, calculatedHeading));
+
+            if (shouldRecalculate && !isRecalculating) {
               console.log(
-                `🚧 User drifted ${Math.round(drift)}m, recalculating route...`
+                `🚧 Recalculating route - drift: ${Math.round(
+                  drift
+                )}m, time: ${Math.round(timeSinceLastUpdate / 1000)}s`
               );
               setIsRecalculating(true);
 
-              // Recalculate route from new position
-              if (privateRoute) {
-                onRecalculateRoute(newLatLng, privateRoute.to);
+              // Determine which route to recalculate based on current position
+              const destination = privateRoute
+                ? privateRoute.to
+                : publicRoute?.to;
+              if (destination) {
+                onRecalculateRoute(newLatLng, destination);
               }
             }
           }
+
+          // Update position with timestamp
+          (newLatLng as any).timestamp = Date.now();
           lastUserPositionRef.current = newLatLng;
         },
         (error) => {
@@ -172,12 +207,74 @@ export function useRouting() {
         },
         {
           enableHighAccuracy: true,
-          timeout: 10000, // Increased timeout
-          maximumAge: 1000,
+          timeout: 10000,
+          maximumAge: 2000, // More frequent updates for live tracking
         }
       );
     },
     [publicRoute, privateRoute, isRecalculating]
+  );
+
+  // Calculate bearing between two points
+  const calculateBearing = useCallback(
+    (from: [number, number], to: [number, number]): number => {
+      const dLon = ((to[1] - from[1]) * Math.PI) / 180;
+      const lat1 = (from[0] * Math.PI) / 180;
+      const lat2 = (to[0] * Math.PI) / 180;
+
+      const y = Math.sin(dLon) * Math.cos(lat2);
+      const x =
+        Math.cos(lat1) * Math.sin(lat2) -
+        Math.sin(lat1) * Math.cos(lat2) * Math.cos(dLon);
+
+      let bearing = (Math.atan2(y, x) * 180) / Math.PI;
+      return (bearing + 360) % 360; // Normalize to 0-360
+    },
+    []
+  );
+
+  // Check if user is moving away from the route
+  const isMovingAwayFromRoute = useCallback(
+    (userPos: L.LatLng, heading: number): boolean => {
+      if (!publicRoute && !privateRoute) return false;
+
+      // Get the current active route
+      const activeRoute = publicRoute || privateRoute;
+      if (!activeRoute || activeRoute.polyline.length < 2) return false;
+
+      // Find the nearest point on the route
+      let nearestDistance = Infinity;
+      let nearestSegmentIndex = 0;
+
+      for (let i = 0; i < activeRoute.polyline.length - 1; i++) {
+        const segmentStart = activeRoute.polyline[i];
+        const distance = calculateDistance(
+          [userPos.lat, userPos.lng],
+          segmentStart
+        );
+        if (distance < nearestDistance) {
+          nearestDistance = distance;
+          nearestSegmentIndex = i;
+        }
+      }
+
+      // Get the direction of the route at the nearest segment
+      const routeSegmentStart = activeRoute.polyline[nearestSegmentIndex];
+      const routeSegmentEnd =
+        activeRoute.polyline[
+          Math.min(nearestSegmentIndex + 1, activeRoute.polyline.length - 1)
+        ];
+
+      const routeBearing = calculateBearing(routeSegmentStart, routeSegmentEnd);
+
+      // Calculate the difference between user heading and route direction
+      let bearingDiff = Math.abs(heading - routeBearing);
+      if (bearingDiff > 180) bearingDiff = 360 - bearingDiff;
+
+      // If user is heading more than 90 degrees away from route direction, they're moving away
+      return bearingDiff > 90;
+    },
+    [publicRoute, privateRoute, calculateDistance, calculateBearing]
   );
 
   // Stop live GPS tracking
@@ -189,7 +286,7 @@ export function useRouting() {
     }
   }, []);
 
-  // Start navigation with two-step routing
+  // Start navigation with two-step routing and dynamic updates
   const startNavigation = useCallback(
     async (
       userLatLng: L.LatLng,
@@ -198,47 +295,89 @@ export function useRouting() {
       try {
         setIsRecalculating(false);
 
-        const publicFrom: [number, number] = [userLatLng.lat, userLatLng.lng];
-        const publicTo: [number, number] = [
+        const userPos: [number, number] = [userLatLng.lat, userLatLng.lng];
+        const gatePos: [number, number] = [
           ROUTING_CONFIG.CEMETERY_GATE.lat,
           ROUTING_CONFIG.CEMETERY_GATE.lng,
         ];
-        const privateFrom: [number, number] = [
-          ROUTING_CONFIG.CEMETERY_GATE.lat,
-          ROUTING_CONFIG.CEMETERY_GATE.lng,
-        ];
-        const privateTo: [number, number] = destination;
 
-        // Fetch both routes concurrently
-        const [publicData, privateData] = await Promise.all([
-          fetchRoutePolyline(publicFrom, publicTo, "public"),
-          fetchRoutePolyline(privateFrom, privateTo, "private"),
-        ]);
+        // Determine if user is closer to gate or destination
+        const distanceToGate = calculateDistance(userPos, gatePos);
+        const distanceToDestination = calculateDistance(userPos, destination);
 
-        // Ensure route continuity at the gate
-        if (publicData.polyline.length > 0) {
-          publicData.polyline[publicData.polyline.length - 1] = publicTo;
+        let publicData: {
+          polyline: [number, number][];
+          distance: number;
+          duration: number;
+        };
+        let privateData: {
+          polyline: [number, number][];
+          distance: number;
+          duration: number;
+        };
+
+        if (distanceToGate < 50) {
+          // User is near the gate, skip public route
+          console.log("📍 User near gate, using walking route only");
+          publicData = {
+            polyline: [userPos, gatePos],
+            distance: distanceToGate,
+            duration: distanceToGate / ROUTING_CONFIG.SPEEDS.WALKING,
+          };
+          privateData = await fetchRoutePolyline(
+            gatePos,
+            destination,
+            "private"
+          );
+        } else if (distanceToDestination < distanceToGate) {
+          // User is already inside, use walking route only
+          console.log("📍 User inside cemetery, using walking route only");
+          publicData = { polyline: [], distance: 0, duration: 0 };
+          privateData = await fetchRoutePolyline(
+            userPos,
+            destination,
+            "private"
+          );
+        } else {
+          // Standard two-phase routing
+          [publicData, privateData] = await Promise.all([
+            fetchRoutePolyline(userPos, gatePos, "public"),
+            fetchRoutePolyline(gatePos, destination, "private"),
+          ]);
         }
+
+        // Ensure route continuity at the gate if both routes exist
+        if (publicData.polyline.length > 0 && privateData.polyline.length > 0) {
+          publicData.polyline[publicData.polyline.length - 1] = gatePos;
+          privateData.polyline[0] = gatePos;
+        }
+
         if (privateData.polyline.length > 0) {
-          privateData.polyline[0] = privateFrom;
+          privateData.polyline[0] = gatePos;
           const lastIdx = privateData.polyline.length - 1;
           const lastPoint = privateData.polyline[lastIdx];
           // Only snap to destination if distance > 2 meters
-          const snapDistance = calculateDistance(lastPoint, privateTo);
+          const snapDistance = calculateDistance(lastPoint, destination);
           if (snapDistance > 2) {
-            privateData.polyline.push(privateTo);
+            privateData.polyline.push(destination);
           }
         }
 
-        setPublicRoute({
-          from: publicFrom,
-          to: publicTo,
-          ...publicData,
-        });
+        // Update routes
+        if (publicData.polyline.length > 0) {
+          setPublicRoute({
+            from: userPos,
+            to: gatePos,
+            ...publicData,
+          });
+        } else {
+          setPublicRoute(null);
+        }
 
         setPrivateRoute({
-          from: privateFrom,
-          to: privateTo,
+          from:
+            privateData.polyline.length > 0 ? privateData.polyline[0] : userPos,
+          to: destination,
           ...privateData,
         });
 
@@ -247,10 +386,27 @@ export function useRouting() {
       } catch (error) {
         console.error("Navigation error:", error);
         setIsRecalculating(false);
-        throw error; // Re-throw to allow parent component to handle
+        throw error;
       }
     },
-    [fetchRoutePolyline]
+    [fetchRoutePolyline, calculateDistance]
+  );
+
+  // Dynamic route update as user moves
+  const updateRouteFromCurrentPosition = useCallback(
+    async (userLatLng: L.LatLng, destination: [number, number]) => {
+      if (isRecalculating) return;
+
+      try {
+        setIsRecalculating(true);
+        await startNavigation(userLatLng, destination);
+      } catch (error) {
+        console.error("Failed to update route:", error);
+      } finally {
+        setIsRecalculating(false);
+      }
+    },
+    [isRecalculating, startNavigation]
   );
 
   // Stop navigation and cleanup
@@ -327,10 +483,12 @@ export function useRouting() {
     stopLiveTracking,
     setPendingDestination,
     handlePendingDestination,
+    updateRouteFromCurrentPosition, // New dynamic update function
 
     // Utilities
     formatDistance,
     formatDuration,
+    calculateBearing,
 
     // Constants
     CEMETERY_GATE: ROUTING_CONFIG.CEMETERY_GATE,
