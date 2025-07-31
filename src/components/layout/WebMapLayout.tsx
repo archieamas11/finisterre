@@ -27,7 +27,7 @@ import { markerData } from '@/data/geojson/markerData';
 import {
   MAP_CONFIG,
   getGeolocationErrorMessage
-} from '../../utils/WebMap.utils';
+} from '@/utils/WebMap.utils';
 
 import type {
   LocateContextValue,
@@ -218,7 +218,7 @@ export default function MapPage() {
           maxZoom={25}
           scrollWheelZoom={true}
           className="h-full w-full"
-          zoomControl={true}
+          zoomControl={false}
           attributionControl={true}
         >
           <TileLayer
