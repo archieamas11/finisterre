@@ -1,4 +1,4 @@
-import { User, Settings, FileText, Shield, Bell, BellOff, ClipboardCheck, UserPlus } from "lucide-react";
+import { User, Settings, FileText, Shield, Bell, BellOff } from "lucide-react";
 import {
   Card,
   CardHeader,

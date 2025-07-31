@@ -4,7 +4,6 @@ import {
   ChartBar,
   type LucideIcon,
   MapIcon,
-  Users,
   PaintBucket,
   User,
   Home,
