@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 import DeceasedTable from "./DeceasedTable";
 import { getDeceasedRecords } from "@/api/users";
-import type { DeceasedRecords } from "@/types/IntermentTypes";
-import SpinnerCircle4 from "@/components/spinner-10";
+import type { DeceasedRecords } from "@/types/interment.types";
+import SpinnerCircle4 from "@/components/ui/spinner-10";
 
 export default function DeceasedTablePage() {
   const [deceasedRecords, setDeceasedRecords] = useState<DeceasedRecords[]>([]);

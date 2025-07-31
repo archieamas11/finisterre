@@ -7,7 +7,6 @@ import Layout from "@/auth/layout";
 import ForgotPassword from "@/auth/ForgotPassword";
 import LoginV2 from "@/auth/page";
 import Logout from "@/auth/Logout";
-import ManageAccounts from "@/pages/admin/accounts/ManageAccounts";
 import MapPage from "@/components/layout/WebMapLayout";
 import ResetPassword from "@/auth/ResetPassword";
 import UnauthorizedPage from "@/pages/UnauthorizedPage";
@@ -25,8 +24,7 @@ import UserDashboard from "@/pages/user/contents/UserDashboard";
 import UserMap from "@/pages/user/contents/Map";
 import UserProfile from "@/pages/user/contents/Profile";
 import UserServices from "@/pages/user/contents/Services";
-
-// ...existing code...
+import MapLibre from "./components/webmap/testing/MapLibre";
 
 export default function App() {
 	return (
@@ -36,6 +34,7 @@ export default function App() {
 					{/* Public Routes */}
 					<Route path="/" element={<LandingLayout />} />
 					<Route path="/map" element={<MapPage />} />
+					<Route path="/mapLibre" element={<MapLibre />} />
 					<Route path="/login" element={<Layout><LoginV2 /></Layout>} />
 					<Route path="/forgot-password" element={<ForgotPassword />} />
 					<Route path="/reset-password" element={<ResetPassword />} />
@@ -72,7 +71,6 @@ export default function App() {
 						</Route>
 						<Route path="map" element={<AdminMap />} />
 						<Route path="bookings" element={<Bookings />} />
-						<Route path="manage-accounts" element={<ManageAccounts />} />
 						<Route path="control-panel" element={<AdminControlPanel />} />
 					</Route>
 

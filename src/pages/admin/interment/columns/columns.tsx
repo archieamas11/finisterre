@@ -6,7 +6,7 @@ import { MoreHorizontal, ClipboardCopy, Pencil, Eye, Archive, CirclePlus } from 
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
-import type { LotOwners, Customer, DeceasedRecords } from "@/types/IntermentTypes";
+import type { LotOwners, Customer, DeceasedRecords } from "@/types/interment.types";
 
 import EditCustomerDialog from "../dialogs/customers-dialog/EditCustomer";
 import NewLotOwnerDialog from "../dialogs/lot-dialogs/NewLotOwner";

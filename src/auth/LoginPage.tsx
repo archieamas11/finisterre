@@ -15,6 +15,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { loginUser } from "@/api/auth";
 import { toast } from "sonner";
+import React from "react";
 
 const FormSchema = z.object({
   username: z.string().min(3, { message: "Property ID must be at least 3 characters." }),
@@ -32,6 +33,19 @@ export function LoginPage() {
       remember: false,
     },
   });
+
+  // Redirect if already authenticated
+  React.useEffect(() => {
+    const token = localStorage.getItem("token");
+    const isAdmin = localStorage.getItem("isAdmin") === "1";
+    if (token) {
+      if (isAdmin) {
+        navigate("/admin", { replace: true });
+      } else {
+        navigate("/user", { replace: true });
+      }
+    }
+  }, [navigate]);
 
   const onSubmit = async (data: z.infer<typeof FormSchema>) => {
     try {

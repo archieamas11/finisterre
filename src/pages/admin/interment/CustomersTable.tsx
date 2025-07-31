@@ -24,8 +24,8 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import type { Customer } from "@/types/IntermentTypes";
-import { ChevronDown, Columns2, Ghost, Search } from "lucide-react";
+import type { Customer } from "@/types/interment.types";
+import { ChevronDown, CircleUserRound, Columns2, Ghost, Search, UserCircle } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
 import { customerColumns } from './columns/columns';
@@ -80,7 +80,10 @@ export default function CustomersTable({ data }: CustomersTableProps) {
     return (
         <div>
             <div className="flex flex-col mb-2">
-                <h1 className="text-2xl font-bold leading-tight">Customer Management</h1>
+                <div className="flex items-center gap-2">
+                    <UserCircle strokeWidth={2.5} className="w-6 h-6 text-primary" />
+                    <h2 className="text-2xl font-bold text-primary">Customer Management</h2>
+                </div>
                 <p className="text-muted-foreground text-sm">View, search, and manage your customer records.</p>
             </div>
             <div className="flex items-center py-2 gap-4">

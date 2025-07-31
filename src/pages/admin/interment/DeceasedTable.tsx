@@ -23,8 +23,8 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import type { DeceasedRecords } from "@/types/IntermentTypes";
-import { ChevronDown, Columns2, Ghost, Search } from "lucide-react";
+import type { DeceasedRecords } from "@/types/interment.types";
+import { ChevronDown, Columns2, Ghost, Search, SkullIcon } from "lucide-react";
 import { deceasedRecordsColumns } from "./columns/columns";
 
 interface DeceasedRecordsTableProps {
@@ -76,7 +76,10 @@ export default function DeceasedRecordsTable({ data }: DeceasedRecordsTableProps
     return (
         <div>
             <div className="flex flex-col mb-2">
-                <h1 className="text-2xl font-bold leading-tight">Deceased Records Management</h1>
+                <div className="flex items-center gap-2">
+                    <SkullIcon strokeWidth={2.5} className="w-6 h-6 text-primary" />
+                    <h2 className="text-2xl font-bold text-primary">Deceased Records Management</h2>
+                </div>
                 <p className="text-muted-foreground text-sm">View, search, and manage your deceased records.</p>
             </div>
             <div className="flex items-center py-2">
