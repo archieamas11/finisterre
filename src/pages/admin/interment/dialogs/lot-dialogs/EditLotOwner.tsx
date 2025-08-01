@@ -1,6 +1,6 @@
 import { toast } from "sonner";
 import { useUpsertLotOwner } from '@/hooks/LotOwner.hooks';
-import LotForm from "./LotForm";
+import LotForm from "../../../../../components/forms/LotForm";
 import type { LotOwners } from "@/types/interment.types";
 
 interface EditLotOwnerDialogProps {
