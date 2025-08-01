@@ -64,3 +64,12 @@ export type DeceasedRecords = {
   plot_id: string;
   full_name?: string;
 };
+
+export type plots = {
+  plot_id: string;
+  block: string;
+  category: string;
+  status: string;
+  lable: string;
+  coordinates: string;
+};

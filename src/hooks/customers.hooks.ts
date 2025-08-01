@@ -1,12 +1,16 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { getCustomers, createCustomer, editCustomer } from "@/api/users";
+import { getCustomers, createCustomer, editCustomer } from "@/api/customers";
 import type { Customer } from "@/types/interment.types";
 
 // 1) Query for list
 export function useCustomers() {
   return useQuery({
     queryKey: ["customers"],
-    queryFn: () => getCustomers().then((r) => r.customers),
+    queryFn: async () => {
+      const r = await getCustomers();
+      // Always return a defined value; default to empty array if missing
+      return r.customers ?? [];
+    },
   });
 }
 

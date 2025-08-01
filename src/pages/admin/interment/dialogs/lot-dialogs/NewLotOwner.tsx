@@ -1,39 +1,36 @@
+import React from "react";
+import { Button } from "@/components/ui/button";
+import { Plus } from "lucide-react";
 import LotForm from "./LotForm";
 import { createLotOwner } from "@/api/LotOwner.api";
 import { toast } from "sonner";
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
-export interface NewLotOwnerDialogProps {
-    customer_id: string;
-    first_name: string;
-    last_name: string;
-    open: boolean;
-    onOpenChange: (open: boolean) => void;
-}
-
-export default function NewLotOwnerDialog({ customer_id, first_name, last_name, open, onOpenChange }: NewLotOwnerDialogProps) {
+export default function NewLotOwnerDialog() {
     const queryClient = useQueryClient();
+    const [open, setOpen] = React.useState(false);
     const { mutate, isPending } = useMutation({
         mutationFn: createLotOwner,
         onSuccess: () => {
             toast.success('Lot Owner has been saved');
-            onOpenChange(false);
-            queryClient.invalidateQueries({ queryKey: ['lotOwners'] });
+            setOpen(false);
+            queryClient.invalidateQueries({ queryKey: ['LotOwners'] });
         },
-        onError: (error) => {
-            toast.error('Error saving lot owner');
-            console.error("MUTATION ERROR:", error);
+        onError: () => {
+            toast.error('Error saving Lot Owner');
         },
     });
 
     return (
-        <LotForm
-            mode="add"
-            open={open}
-            onOpenChange={onOpenChange}
-            initialValues={{ customer_id, first_name, last_name }}
-            onSubmit={mutate}
-            isPending={isPending}
-        />
+        <>
+            <Button variant="outline" size="lg" onClick={() => setOpen(true)}><Plus />Add Lot Owner</Button>
+            <LotForm
+                mode="add"
+                open={open}
+                onOpenChange={setOpen}
+                onSubmit={mutate}
+                isPending={isPending}
+            />
+        </>
     );
 }

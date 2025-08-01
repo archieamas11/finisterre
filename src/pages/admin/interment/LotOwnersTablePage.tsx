@@ -1,37 +1,20 @@
-import { useEffect, useState } from "react";
 import LotOwnersTable from "./LotOwnersTable";
-import { getLotOwner } from "@/api/LotOwner.api";
-import type { LotOwners } from "@/types/interment.types";
 import SpinnerCircle4 from "@/components/ui/spinner-10";
+import { useLotOwners } from "@/hooks/LotOwner.hooks";
 
 export default function LotOwnersTablePage() {
-  const [lotOwners, setLotOwners] = useState<LotOwners[]>([]);
-  const [loading, setLoading] = useState(true);
+  const { data: lotOwners, isPending, isError } = useLotOwners();
 
-  useEffect(() => {
-    async function fetchData() {
-      setLoading(true);
-      try {
-        const response = await getLotOwner();
-        if (response && response.success && Array.isArray(response.lotOwners)) {
-          setLotOwners(response.lotOwners);
-        } else {
-          setLotOwners([]);
-        }
-      } catch (error) {
-        setLotOwners([]);
-      } finally {
-        setLoading(false);
-      }
-    }
-    fetchData();
-  }, []);
 
-  if (loading)
+  if (isPending)
     return (
       <div className="flex items-center justify-center h-full">
         <SpinnerCircle4 />
       </div>
     );
+
+  if (isError || !lotOwners) {
+    return <div className="p-4 text-center">Failed to load lot owners.</div>;
+  }
   return <LotOwnersTable data={lotOwners} />;
 }

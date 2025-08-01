@@ -9,11 +9,6 @@ export async function getCustomers() {
   return res.data;
 }
 
-export async function getDeceasedRecords() {
-  const res = await axios.post(APP_URL + "customers/get_deceased.php");
-  return res.data;
-}
-
 export async function createCustomer(data: any) {
   const res = await axios.post(APP_URL + "customers/create_customer.php", data);
   return res.data;
