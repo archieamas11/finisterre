@@ -1,6 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { getCustomers, createCustomer, editCustomer } from "@/api/customer.api";
 import type { Customer } from "@/types/interment.types";
+import type { CustomerFormData } from "@/pages/admin/interment/customer/customer.validation";
 
 // 1) Query for list
 export function useCustomers() {
@@ -8,7 +9,6 @@ export function useCustomers() {
     queryKey: ["customers"],
     queryFn: async () => {
       const r = await getCustomers();
-      // Always return a defined value; default to empty array if missing
       return r.customers ?? [];
     },
   });
@@ -25,12 +25,13 @@ export function useUpsertCustomer() {
         data.customer_id !== undefined &&
         data.customer_id !== null
       ) {
-        return await editCustomer(data);
+        return await editCustomer(data as CustomerFormData);
       }
-      return await createCustomer(data);
+      return await createCustomer(data as CustomerFormData);
     },
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ["customers"] });
     },
   });
 }
+export { editCustomer };

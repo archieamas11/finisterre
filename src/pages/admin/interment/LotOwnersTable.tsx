@@ -28,7 +28,6 @@ import { ChevronDown, Columns2, Ghost, LandPlot, Search } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../../../components/ui/select";
 import { Label } from "@/components/ui/label";
 import { lotOwnerColumns } from "./columns/columns";
-import NewLotOwnerDialog from "./dialogs/lot-dialogs/NewLotOwner";
 
 interface LotOwnersTableProps {
     data: LotOwners[];
@@ -122,7 +121,6 @@ export default function LotOwnersTable({ data }: LotOwnersTableProps) {
                         </DropdownMenuContent>
                     </DropdownMenu>
                     {/* New Lot Owner Dialog Button */}
-                    <NewLotOwnerDialog />
                 </div>
             </div>
             <div className="overflow-hidden rounded-md border">

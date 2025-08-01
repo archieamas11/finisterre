@@ -1,5 +1,5 @@
 "use client";
-import NewCustomerDialog from "./dialogs/customers-dialog/NewCustomer";
+
 import * as React from "react";
 import {
     useReactTable,
@@ -28,7 +28,8 @@ import type { Customer } from "@/types/interment.types";
 import { ChevronDown, Columns2, Ghost, Search, UserCircle } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
-import { customerColumns } from './columns/columns';
+import { customerColumns } from '@/pages/admin/interment/columns/columns';
+import CreateCustomer from "./CreateCustomer";
 
 
 interface CustomersTableProps {
@@ -123,7 +124,7 @@ export default function CustomersTable({ data }: CustomersTableProps) {
                                 ))}
                         </DropdownMenuContent>
                     </DropdownMenu>
-                    <NewCustomerDialog />
+                    <CreateCustomer />
                 </div>
             </div>
             <div className="overflow-hidden rounded-md border">

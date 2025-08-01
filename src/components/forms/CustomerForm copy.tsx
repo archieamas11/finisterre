@@ -1,3 +1,4 @@
+import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
@@ -9,7 +10,25 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { CalendarIcon } from "lucide-react";
 import { Calendar } from "@/components/ui/calendar";
 import React from "react";
-import { customerSchema } from "@/pages/admin/interment/customer/customer.validation";
+
+// Unified customer schema for both add and edit
+const CustomerSchema = z.object({
+    first_name: z.string().min(3, { message: "Invalid first name." }),
+    middle_name: z.string().optional(),
+    last_name: z.string().min(2, { message: "Invalid last name." }),
+    nickname: z.string().min(2, { message: "Invalid nickname." }),
+    address: z.string().min(6, { message: "Invalid address." }),
+    contact_number: z.string().min(11, { message: "Invalid contact number." }).regex(/^09\d{9}$/, { message: "Invalid contact number." }),
+    birth_date: z.string().min(1, { message: "Invalid birth date." }),
+    gender: z.string().min(1, { message: "Invalid gender." }),
+    religion: z.string().min(1, { message: "Invalid religion." }),
+    citizenship: z.string().min(1, { message: "Invalid citizenship." }),
+    occupation: z.string().min(1, { message: "Invalid occupation." }),
+    email: z.string().min(1, { message: "Invalid email." }).email({ message: "Invalid email address." }),
+    status: z.enum(["single", "married", "widowed", "divorced", "separated"], {
+        message: "Invalid status.",
+    }),
+});
 
 export type CustomerFormMode = "add" | "edit";
 
@@ -24,11 +43,12 @@ export interface CustomerFormProps {
 
 export default function CustomerForm({ mode, open, onOpenChange, initialValues, onSubmit, isPending }: CustomerFormProps) {
     const form = useForm<any>({
-        resolver: zodResolver(customerSchema),
+        resolver: zodResolver(CustomerSchema),
         defaultValues: initialValues || {
             first_name: "",
             middle_name: "",
             last_name: "",
+            nickname: "",
             address: "",
             contact_number: "",
             birth_date: "",
@@ -41,10 +61,8 @@ export default function CustomerForm({ mode, open, onOpenChange, initialValues, 
         }
     });
 
-    const handleSubmit = async (values: any) => {
-        await onSubmit(values);
-        form.reset();
-        onOpenChange(false);
+    const handleSubmit = (values: any) => {
+        onSubmit(values);
     };
 
     return (
@@ -82,6 +100,15 @@ export default function CustomerForm({ mode, open, onOpenChange, initialValues, 
                                     <FormLabel>Last Name<span className="text-red-500">*</span></FormLabel>
                                     <FormControl>
                                         <Input placeholder="Enter last name" {...field} />
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )} />
+                            <FormField control={form.control} name="nickname" render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>Nickname<span className="text-red-500">*</span></FormLabel>
+                                    <FormControl>
+                                        <Input placeholder="Enter nickname" {...field} />
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>
@@ -249,16 +276,8 @@ export default function CustomerForm({ mode, open, onOpenChange, initialValues, 
                                 </FormItem>
                             )} />
                         </div>
-                        <div className="flex justify-end pt-4 space-x-2">
-                            <Button
-                                type="button"
-                                variant="outline"
-                                disabled={isPending}
-                                onClick={() => form.reset()}
-                            >
-                                Clear
-                            </Button>
-                            <Button type="submit" disabled={isPending} >
+                        <div className="flex justify-end pt-4">
+                            <Button type="submit" disabled={isPending}>
                                 {isPending ? (mode === "add" ? "Saving..." : "Updating...") : (mode === "add" ? "Save" : "Update")}
                             </Button>
                         </div>

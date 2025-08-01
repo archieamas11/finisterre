@@ -5,7 +5,6 @@ import { useLotOwners } from "@/hooks/lot-owner-hooks/LotOwner.hooks";
 export default function LotOwnersTablePage() {
   const { data: lotOwners, isPending, isError } = useLotOwners();
 
-
   if (isPending)
     return (
       <div className="flex items-center justify-center h-full">
