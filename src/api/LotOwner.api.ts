@@ -1,22 +1,18 @@
-import axios from "axios";
-import { APP_URL } from "./axiosInstance";
+import { api } from "./axiosInstance";
 
 export async function getLotOwner() {
-  const res = await axios.post(APP_URL + "lot-owners/get_lot_owner.php");
+  const res = await api.post("lot-owners/get_lot_owner.php");
   return res.data;
 }
 
 export async function createLotOwner(data: unknown) {
   // Validate data before sending in actual usage
-  const res = await axios.post(
-    APP_URL + "lot-owners/create_lot_owner.php",
-    data
-  );
+  const res = await api.post("lot-owners/create_lot_owner.php", data);
   return res.data;
 }
 
 export async function editLotOwner(data: unknown) {
   // Validate data before sending in actual usage
-  const res = await axios.post(APP_URL + "lot-owners/edit_lot_owner.php", data);
+  const res = await api.post("lot-owners/edit_lot_owner.php", data);
   return res.data;
 }

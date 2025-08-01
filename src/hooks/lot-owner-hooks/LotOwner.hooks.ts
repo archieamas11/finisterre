@@ -1,5 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { createLotOwner, editLotOwner, getLotOwner } from "@/api/LotOwner.api";
+import { createLotOwner, editLotOwner, getLotOwner } from "@/api/lotOwner.api";
 import type { LotOwners } from "@/types/interment.types";
 
 // 1) Query for list
