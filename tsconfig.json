@@ -10,6 +10,7 @@
       "@/*": ["./src/*"],
       "@/components/ui/*": ["./src/components/ui/*"],
       "@/api/*": ["./src/api/*"]
-    }
+    },
+    "skipLibCheck": true
   }
 }
