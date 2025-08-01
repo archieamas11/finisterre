@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useNavigate, useLocation, Link } from "react-router-dom";
-import { resetPassword } from "@/api/auth";
+import { resetPassword } from "@/api/auth.api";
 import { MapPin } from "lucide-react";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";

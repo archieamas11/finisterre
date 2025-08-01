@@ -25,8 +25,8 @@ import {
     SelectContent,
     SelectItem,
 } from "@/components/ui/select";
-import { getPlots } from "@/api/plots";
-import { getCustomers } from "@/api/customers";
+import { getPlots } from "@/api/plots.api";
+import { getCustomers } from "@/api/customer.api";
 import type { Customer, plots } from "@/types/interment.types";
 import React from "react";
 

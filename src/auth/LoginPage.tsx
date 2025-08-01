@@ -13,7 +13,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { loginUser } from "@/api/auth";
+import { loginUser } from "@/api/auth.api";
 import { toast } from "sonner";
 import React from "react";
 

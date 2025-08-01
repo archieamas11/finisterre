@@ -1,5 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { getCustomers, createCustomer, editCustomer } from "@/api/customers";
+import { getCustomers, createCustomer, editCustomer } from "@/api/customer.api";
 import type { Customer } from "@/types/interment.types";
 
 // 1) Query for list

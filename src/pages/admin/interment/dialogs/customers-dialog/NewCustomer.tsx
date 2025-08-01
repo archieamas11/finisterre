@@ -2,7 +2,7 @@ import React from "react";
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
 import CustomerForm from "../../../../../components/forms/CustomerForm";
-import { createCustomer } from "@/api/customers";
+import { createCustomer } from "@/api/customer.api";
 import { toast } from "sonner";
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
