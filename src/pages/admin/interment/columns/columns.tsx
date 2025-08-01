@@ -93,9 +93,7 @@ export const customerColumns: ColumnDef<Customer>[] = [
         enableHiding: false,
         cell: ({ row }) => {
             const [open, setOpen] = React.useState(false);
-            const [newLotOwnerOpen, setNewLotOwnerOpen] = React.useState(false);
             if (!row || !row.original) return null;
-            const { customer_id, first_name, last_name } = row.original;
             return (
                 <>
                     <DropdownMenu>
@@ -108,9 +106,6 @@ export const customerColumns: ColumnDef<Customer>[] = [
                         <DropdownMenuContent align="end" className="z-50">
                             <DropdownMenuLabel>Actions</DropdownMenuLabel>
                             <DropdownMenuSeparator />
-                            <DropdownMenuItem onClick={() => setNewLotOwnerOpen(true)}>
-                                Add Plot Property
-                            </DropdownMenuItem>
                             <DropdownMenuItem onClick={() => setOpen(true)}>
                                 Edit Customer
                             </DropdownMenuItem>
@@ -125,13 +120,6 @@ export const customerColumns: ColumnDef<Customer>[] = [
                         </DropdownMenuContent>
                     </DropdownMenu>
                     <EditCustomerDialog open={open} onOpenChange={setOpen} customer={row.original} />
-                    <NewLotOwnerDialog
-                        open={newLotOwnerOpen}
-                        onOpenChange={setNewLotOwnerOpen}
-                        customer_id={customer_id}
-                        first_name={first_name}
-                        last_name={last_name}
-                    />
                 </>
             );
         },

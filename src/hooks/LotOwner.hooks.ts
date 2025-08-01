@@ -1,12 +1,16 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import type { LotOwners } from "@/types/interment.types";
 import { createLotOwner, editLotOwner, getLotOwner } from "@/api/LotOwner.api";
+import type { LotOwners } from "@/types/interment.types";
 
 // 1) Query for list
 export function useLotOwners() {
   return useQuery({
     queryKey: ["lotOwners"],
-    queryFn: () => getLotOwner().then((r) => r.lotOwners),
+    queryFn: async () => {
+      const r = await getLotOwner();
+      // Always return a defined value; default to empty array if missing
+      return r.lotOwners ?? [];
+    },
   });
 }
 

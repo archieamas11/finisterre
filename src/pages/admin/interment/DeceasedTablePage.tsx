@@ -1,37 +1,20 @@
-import { useEffect, useState } from "react";
-import DeceasedTable from "./DeceasedTable";
-import { getDeceasedRecords } from "@/api/users";
-import type { DeceasedRecords } from "@/types/interment.types";
+import DeceasedRecordsTable from "./DeceasedTable";
 import SpinnerCircle4 from "@/components/ui/spinner-10";
+import { useDeceasedRecords } from "@/hooks/DeceasedRecords.hooks";
 
 export default function DeceasedTablePage() {
-  const [deceasedRecords, setDeceasedRecords] = useState<DeceasedRecords[]>([]);
-  const [loading, setLoading] = useState(true);
+  const { data: deceasedRecords, isPending, isError } = useDeceasedRecords();
 
-  useEffect(() => {
-    async function fetchData() {
-      setLoading(true);
-      try {
-        const response = await getDeceasedRecords();
-        if (response && response.success && Array.isArray(response.deceased)) {
-          setDeceasedRecords(response.deceased);
-        } else {
-          setDeceasedRecords([]);
-        }
-      } catch (error) {
-        setDeceasedRecords([]);
-      } finally {
-        setLoading(false);
-      }
-    }
-    fetchData();
-  }, []);
 
-  if (loading)
+  if (isPending)
     return (
       <div className="flex items-center justify-center h-full">
         <SpinnerCircle4 />
       </div>
     );
-  return <DeceasedTable data={deceasedRecords} />;
+
+  if (isError || !deceasedRecords) {
+    return <div className="p-4 text-center">Failed to load deceased records.</div>;
+  }
+  return <DeceasedRecordsTable data={deceasedRecords} />;
 }

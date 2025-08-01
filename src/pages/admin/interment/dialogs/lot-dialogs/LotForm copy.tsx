@@ -1,14 +1,34 @@
+// LotForm.tsx
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
+import {
+    Dialog,
+    DialogContent,
+    DialogHeader,
+    DialogTitle,
+    DialogDescription,
+} from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { Form, FormField, FormItem, FormLabel, FormControl, FormMessage } from "@/components/ui/form";
-import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
+import {
+    Form,
+    FormField,
+    FormItem,
+    FormLabel,
+    FormControl,
+    FormMessage,
+} from "@/components/ui/form";
+import {
+    Select,
+    SelectTrigger,
+    SelectValue,
+    SelectContent,
+    SelectItem,
+} from "@/components/ui/select";
 import { getPlots } from "@/api/plots";
-import React from "react";
-import type { Customer, plots } from "@/types/interment.types";
 import { getCustomers } from "@/api/customers";
+import type { Customer, plots } from "@/types/interment.types";
+import React from "react";
 
 /* ------------------------------------------------------------------ */
 /* 1. Schema – customer_name -> customer_id                           */
@@ -80,18 +100,25 @@ export default function LotForm({
         );
     }, [open]);
 
+    /* ------------------ Render ------------------ */
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
             <DialogContent className="lg:max-w-[700px]">
                 <DialogHeader>
-                    <DialogTitle>{mode === "add" ? "Add New Lot Owner" : "Edit Lot Owner"}</DialogTitle>
+                    <DialogTitle>
+                        {mode === "add" ? "Add New Lot Owner" : "Edit Lot Owner"}
+                    </DialogTitle>
                     <DialogDescription>
-                        {mode === "add" ? "Click save when you're done." : "Edit lot owner details and save."}
+                        {mode === "add"
+                            ? "Click save when you're done."
+                            : "Edit lot owner details and save."}
                     </DialogDescription>
                 </DialogHeader>
+
                 <Form {...form}>
                     <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
                         <div className="grid grid-cols-2 gap-4">
+                            {/* Customer ------------------------------------------------ */}
                             <FormField
                                 control={form.control}
                                 name="customer_id"
@@ -126,77 +153,114 @@ export default function LotForm({
                                     </FormItem>
                                 )}
                             />
-                            <FormField control={form.control} name="plot_id" render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel>Plot ID<span className="text-red-500">*</span></FormLabel>
-                                    <FormControl>
-                                        <Select
-                                            onValueChange={field.onChange}
-                                            value={field.value ?? ""} // Always provide a string value
-                                        >
-                                            <SelectTrigger className="w-full">
-                                                <SelectValue placeholder="Select plot ID" />
-                                            </SelectTrigger>
-                                            <SelectContent>
-                                                {plots.length === 0 ? (
-                                                    <SelectItem value="no-plots" disabled>No plots available</SelectItem>
-                                                ) : (
-                                                    plots
-                                                        .filter(plot => plot.plot_id && plot.plot_id !== "")
-                                                        .map(plot => (
-                                                            <SelectItem key={plot.plot_id} value={String(plot.plot_id)}>
-                                                                {String(plot.plot_id)}
-                                                            </SelectItem>
-                                                        ))
-                                                )}
-                                            </SelectContent>
-                                        </Select>
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )} />
-                            <FormField control={form.control} name="payment_type" render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel>Payment Type<span className="text-red-500">*</span></FormLabel>
-                                    <FormControl>
+
+                            {/* Plot ---------------------------------------------------- */}
+                            <FormField
+                                control={form.control}
+                                name="plot_id"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>
+                                            Plot ID<span className="text-red-500">*</span>
+                                        </FormLabel>
                                         <Select
                                             onValueChange={field.onChange}
                                             defaultValue={field.value}
                                         >
-                                            <SelectTrigger className="w-full"><SelectValue placeholder="Select payment type" /></SelectTrigger>
+                                            <FormControl>
+                                                <SelectTrigger>
+                                                    <SelectValue placeholder="Select plot ID" />
+                                                </SelectTrigger>
+                                            </FormControl>
+                                            <SelectContent>
+                                                {plots.length === 0 && (
+                                                    <SelectItem disabled value="no-plots">
+                                                        No plots available
+                                                    </SelectItem>
+                                                )}
+                                                {plots.map((p) => (
+                                                    <SelectItem key={p.plot_id} value={p.plot_id}>
+                                                        {p.plot_id}
+                                                    </SelectItem>
+                                                ))}
+                                            </SelectContent>
+                                        </Select>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+
+                            {/* Payment Type ------------------------------------------- */}
+                            <FormField
+                                control={form.control}
+                                name="payment_type"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>
+                                            Payment Type<span className="text-red-500">*</span>
+                                        </FormLabel>
+                                        <Select
+                                            onValueChange={field.onChange}
+                                            defaultValue={field.value}
+                                        >
+                                            <FormControl>
+                                                <SelectTrigger>
+                                                    <SelectValue placeholder="Select payment type" />
+                                                </SelectTrigger>
+                                            </FormControl>
                                             <SelectContent>
                                                 <SelectItem value="installment">Installment</SelectItem>
                                                 <SelectItem value="full">One-time</SelectItem>
                                             </SelectContent>
                                         </Select>
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )} />
-                            <FormField control={form.control} name="payment_frequency" render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel>Payment Frequency<span className="text-red-500">*</span></FormLabel>
-                                    <FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+
+                            {/* Payment Frequency -------------------------------------- */}
+                            <FormField
+                                control={form.control}
+                                name="payment_frequency"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>
+                                            Payment Frequency
+                                            {paymentType !== "full" && (
+                                                <span className="text-red-500">*</span>
+                                            )}
+                                        </FormLabel>
                                         <Select
-                                            value={field.value ?? ""}
                                             onValueChange={field.onChange}
+                                            defaultValue={field.value}
                                             disabled={paymentType === "full"}
                                         >
-                                            <SelectTrigger className="w-full"><SelectValue placeholder="Select payment frequency" /></SelectTrigger>
+                                            <FormControl>
+                                                <SelectTrigger>
+                                                    <SelectValue placeholder="Select frequency" />
+                                                </SelectTrigger>
+                                            </FormControl>
                                             <SelectContent>
                                                 <SelectItem value="monthly">Monthly</SelectItem>
                                                 <SelectItem value="quarterly">Quarterly</SelectItem>
                                                 <SelectItem value="annually">Yearly</SelectItem>
                                             </SelectContent>
                                         </Select>
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )} />
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
                         </div>
+
                         <div className="flex justify-end pt-4">
                             <Button type="submit" disabled={isPending}>
-                                {isPending ? (mode === "add" ? "Saving..." : "Updating...") : (mode === "add" ? "Save" : "Update")}
+                                {isPending
+                                    ? mode === "add"
+                                        ? "Saving..."
+                                        : "Updating..."
+                                    : mode === "add"
+                                        ? "Save"
+                                        : "Update"}
                             </Button>
                         </div>
                     </form>
