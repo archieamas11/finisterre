@@ -1,7 +1,7 @@
 import React from "react";
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
-import LotForm from "./LotForm";
+import LotForm from "../../../../../components/forms/LotForm";
 import { createLotOwner } from "@/api/LotOwner.api";
 import { toast } from "sonner";
 import { useMutation, useQueryClient } from '@tanstack/react-query';
