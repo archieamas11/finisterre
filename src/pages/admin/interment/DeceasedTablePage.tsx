@@ -1,6 +1,6 @@
 import DeceasedRecordsTable from "./DeceasedTable";
 import SpinnerCircle4 from "@/components/ui/spinner-10";
-import { useDeceasedRecords } from "@/hooks/DeceasedRecords.hooks";
+import { useDeceasedRecords } from "@/hooks/deceased-hooks/DeceasedRecords.hooks";
 
 export default function DeceasedTablePage() {
   const { data: deceasedRecords, isPending, isError } = useDeceasedRecords();

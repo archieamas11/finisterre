@@ -1,5 +1,4 @@
-import axios from "axios";
-import { APP_URL } from "./axiosInstance";
+import { api } from "./axiosInstance";
 
 export interface LoginResponse {
   success: boolean;
@@ -13,7 +12,7 @@ export async function loginUser(
   password: string
 ): Promise<LoginResponse> {
   try {
-    const res = await axios.post<LoginResponse>(APP_URL + "auth/login.php", {
+    const res = await api.post<LoginResponse>("auth/login.php", {
       username,
       password,
     });
@@ -43,7 +42,7 @@ export async function loginUser(
 }
 
 export async function resetPassword(username: string, newPassword: string) {
-  const res = await axios.post(APP_URL + "auth/reset_password.php", {
+  const res = await api.post("auth/reset_password.php", {
     username,
     new_password: newPassword,
   });
@@ -51,7 +50,7 @@ export async function resetPassword(username: string, newPassword: string) {
 }
 
 export async function forgotPassword(username: string) {
-  const res = await axios.post(APP_URL + "auth/forgot_password.php", {
+  const res = await api.post("auth/forgot_password.php", {
     username,
   });
   return res.data;
