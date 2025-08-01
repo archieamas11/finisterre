@@ -1,7 +1,7 @@
 import { useNavigate, Link } from "react-router-dom";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { forgotPassword } from "@/api/auth";
+import { forgotPassword } from "@/api/auth.api";
 import { MapPin } from 'lucide-react';
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";

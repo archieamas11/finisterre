@@ -3,12 +3,27 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
+import {
+    Popover,
+    PopoverTrigger,
+    PopoverContent,
+} from "@/components/ui/popover";
+import {
+    Command,
+    CommandInput,
+    CommandList,
+    CommandEmpty,
+    CommandGroup,
+    CommandItem,
+} from "@/components/ui/command";
+import { ChevronsUpDown, Check } from "lucide-react";
+import { cn } from "@/lib/utils";
 import { Form, FormField, FormItem, FormLabel, FormControl, FormMessage } from "@/components/ui/form";
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
-import { getPlots } from "@/api/plots";
+import { getPlots } from "@/api/plots.api";
 import React from "react";
 import type { Customer, plots } from "@/types/interment.types";
-import { getCustomers } from "@/api/customers";
+import { getCustomers } from "@/api/customer.api";
 
 /* ------------------------------------------------------------------ */
 /* 1. Schema – customer_name -> customer_id                           */
@@ -82,7 +97,7 @@ export default function LotForm({
 
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
-            <DialogContent className="lg:max-w-[700px]">
+            <DialogContent className="lg:max-w-[700px] flex flex-col">
                 <DialogHeader>
                     <DialogTitle>{mode === "add" ? "Add New Lot Owner" : "Edit Lot Owner"}</DialogTitle>
                     <DialogDescription>
@@ -95,36 +110,75 @@ export default function LotForm({
                             <FormField
                                 control={form.control}
                                 name="customer_id"
-                                render={({ field }) => (
-                                    <FormItem>
-                                        <FormLabel>
-                                            Customer<span className="text-red-500">*</span>
-                                        </FormLabel>
-                                        <Select
-                                            onValueChange={field.onChange}
-                                            defaultValue={field.value}
-                                        >
-                                            <FormControl>
-                                                <SelectTrigger>
-                                                    <SelectValue placeholder="Select a customer" />
-                                                </SelectTrigger>
-                                            </FormControl>
-                                            <SelectContent>
-                                                {customers.length === 0 && (
-                                                    <SelectItem disabled value="no-customers">
-                                                        No customers available
-                                                    </SelectItem>
+                                render={({ field }) => {
+                                    // Use local state for combobox open/value, not form state
+                                    const [comboOpen, setComboOpen] = React.useState(false);
+                                    const [comboValue, setComboValue] = React.useState(field.value ?? "");
+                                    React.useEffect(() => {
+                                        setComboValue(field.value ?? "");
+                                    }, [field.value]);
+                                    const isEditMode = mode === "edit";
+                                    return (
+                                        <FormItem>
+                                            <FormLabel>
+                                                Customer<span className="text-red-500">*</span>
+                                            </FormLabel>
+                                            <Popover open={comboOpen} onOpenChange={isEditMode ? undefined : setComboOpen}>
+                                                <PopoverTrigger asChild>
+                                                    <Button
+                                                        variant="outline"
+                                                        role="combobox"
+                                                        aria-expanded={comboOpen}
+                                                        className="w-full justify-between"
+                                                        disabled={isEditMode}
+                                                    >
+                                                        {comboValue
+                                                            ? customers.find((c) => c.customer_id === comboValue)?.first_name +
+                                                            " " +
+                                                            customers.find((c) => c.customer_id === comboValue)?.last_name +
+                                                            " | ID: " +
+                                                            comboValue
+                                                            : "Select a customer"}
+                                                        <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                                                    </Button>
+                                                </PopoverTrigger>
+                                                {/* Only render popover content if not edit mode */}
+                                                {!isEditMode && (
+                                                    <PopoverContent className="w-full lg:w-80 p-0">
+                                                        <Command>
+                                                            <CommandInput placeholder="Search customer..." className="h-9" />
+                                                            <CommandList>
+                                                                <CommandEmpty>No customer found.</CommandEmpty>
+                                                                <CommandGroup>
+                                                                    {customers.map((c) => (
+                                                                        <CommandItem
+                                                                            key={c.customer_id}
+                                                                            value={c.customer_id}
+                                                                            onSelect={() => {
+                                                                                field.onChange(c.customer_id);
+                                                                                setComboValue(c.customer_id);
+                                                                                setComboOpen(false);
+                                                                            }}
+                                                                        >
+                                                                            {c.first_name} {c.last_name} | ID: {c.customer_id}
+                                                                            <Check
+                                                                                className={cn(
+                                                                                    "ml-auto",
+                                                                                    comboValue === c.customer_id ? "opacity-100" : "opacity-0"
+                                                                                )}
+                                                                            />
+                                                                        </CommandItem>
+                                                                    ))}
+                                                                </CommandGroup>
+                                                            </CommandList>
+                                                        </Command>
+                                                    </PopoverContent>
                                                 )}
-                                                {customers.map((c) => (
-                                                    <SelectItem key={c.customer_id} value={c.customer_id}>
-                                                        {c.first_name} {c.last_name} | ID: {c.customer_id}
-                                                    </SelectItem>
-                                                ))}
-                                            </SelectContent>
-                                        </Select>
-                                        <FormMessage />
-                                    </FormItem>
-                                )}
+                                            </Popover>
+                                            <FormMessage />
+                                        </FormItem>
+                                    );
+                                }}
                             />
                             <FormField control={form.control} name="plot_id" render={({ field }) => (
                                 <FormItem>

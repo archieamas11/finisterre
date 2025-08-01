@@ -1,4 +1,4 @@
-import { User, Settings, FileText, Shield, Bell, BellOff } from "lucide-react";
+import { User, Settings, FileText, Shield, Bell, BellOff, ArchiveIcon } from "lucide-react";
 import {
   Card,
   CardHeader,
@@ -16,7 +16,7 @@ export default function AdminControlPanel() {
         <Shield strokeWidth={2.5} className="w-6 h-6 text-primary" />
         <h2 className="text-2xl font-bold text-primary">Admin Control Panel</h2>
       </div>
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-6 flex-col">
         <Card>
           <CardHeader className="flex flex-row items-center gap-2">
             <User className="w-5 h-5 text-primary" />
@@ -62,6 +62,22 @@ export default function AdminControlPanel() {
           <CardFooter>
             <Button size="sm" variant="outline">
               View Logs
+            </Button>
+          </CardFooter>
+        </Card>
+        <Card className="border-red-400">
+          <CardHeader className="flex flex-row items-center gap-2">
+            <ArchiveIcon className="w-5 h-5 text-red-300" />
+            <CardTitle className="text-red-300">Archived</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p className="text-sm text-muted-foreground">
+              Manage and view archived data in all tables.
+            </p>
+          </CardContent>
+          <CardFooter>
+            <Button size="sm" variant="outline">
+              View archived data
             </Button>
           </CardFooter>
         </Card>
