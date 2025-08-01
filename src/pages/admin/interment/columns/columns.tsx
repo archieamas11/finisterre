@@ -1,3 +1,5 @@
+"use client";
+
 import * as React from "react";
 import type { ColumnDef } from "@tanstack/react-table";
 import { MoreHorizontal, ClipboardCopy, Pencil, Eye, Archive } from "lucide-react";
@@ -6,8 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import type { LotOwners, Customer, DeceasedRecords } from "@/types/interment.types";
-import EditCustomerDialog from "../dialogs/customers-dialog/EditCustomer";
-import EditLotOwnerDialog from "../dialogs/lot-dialogs/EditLotOwner";
+import EditCustomerDialog from "@/pages/admin/interment/customer/UpdateCustomer";
 
 function capitalizeWords(str: string) {
     return str.replace(/\b\w+/g, (word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase());
@@ -230,7 +231,7 @@ export const lotOwnerColumns: ColumnDef<LotOwners>[] =
                             </DropdownMenuItem>
                         </DropdownMenuContent>
                     </DropdownMenu>
-                        <EditLotOwnerDialog open={openLot} onOpenChange={setOpenLot} lotOwner={row.original} /></>
+                    </>
                 );
             },
         },

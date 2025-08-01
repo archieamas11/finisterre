@@ -13,7 +13,6 @@ import UnauthorizedPage from "@/pages/UnauthorizedPage";
 // Admin Imports 
 import AdminDashboard from "@/pages/admin/home/AdminDashboard";
 import AdminMap from "@/pages/admin/map4admin/AdminMap";
-import CustomersTablePage from "@/pages/admin/interment/CustomersTablePage";
 import LotOwnersTablePage from "@/pages/admin/interment/LotOwnersTablePage";
 import DeceasedTablePage from "@/pages/admin/interment/DeceasedTablePage";
 import Bookings from "@/pages/admin/bookings/ManageBookings";
@@ -25,6 +24,7 @@ import UserMap from "@/pages/user/contents/Map";
 import UserProfile from "@/pages/user/contents/Profile";
 import UserServices from "@/pages/user/contents/Services";
 import MapLibre from "./components/webmap/testing/MapLibre";
+import CustomersPage from "./pages/admin/interment/customer/CustomerPage";
 
 export default function App() {
 	return (
@@ -65,7 +65,7 @@ export default function App() {
 					}>
 						<Route index element={<AdminDashboard />} />
 						<Route path="interment-setup" element={<IntermentSetup />}>
-							<Route path="customers" element={<CustomersTablePage />} />
+							<Route path="customers" element={<CustomersPage />} />
 							<Route path="lot-owners" element={<LotOwnersTablePage />} />
 							<Route path="deceased-records" element={<DeceasedTablePage />} />
 						</Route>

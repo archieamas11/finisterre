@@ -1,6 +1,6 @@
 import { toast } from "sonner";
-import { useUpsertCustomer } from '@/hooks/customer-hooks/Customers.hooks';
-import CustomerForm from "../../../../../components/forms/CustomerForm";
+import { useUpsertCustomer } from '@/hooks/customer-hooks/customer.hooks';
+import CustomerForm from "@/components/forms/CustomerForm";
 import type { Customer } from "@/types/interment.types";
 
 interface EditCustomerDialogProps {
@@ -18,7 +18,6 @@ export default function EditCustomerDialog({ open, onOpenChange, customer }: Edi
             first_name: values.first_name.trim(),
             middle_name: values.middle_name?.trim() || "",
             last_name: values.last_name.trim(),
-            nickname: values.nickname?.trim() || "",
             address: values.address.trim(),
             contact_number: values.contact_number.trim(),
             email: values.email.trim(),
