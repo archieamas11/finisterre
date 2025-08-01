@@ -1,16 +1,11 @@
 import * as React from "react";
-
 import type { ColumnDef } from "@tanstack/react-table";
 import { MoreHorizontal, ClipboardCopy, Pencil, Eye, Archive } from "lucide-react";
-
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import type { LotOwners, Customer, DeceasedRecords } from "@/types/interment.types";
-
 import EditCustomerDialog from "../dialogs/customers-dialog/EditCustomer";
-import NewLotOwnerDialog from "../dialogs/lot-dialogs/NewLotOwner";
-
 
 function capitalizeWords(str: string) {
     return str.replace(/\b\w+/g, (word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase());
