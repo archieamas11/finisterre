@@ -16,19 +16,27 @@ export default function NewLotOwnerDialog() {
             setOpen(false);
             queryClient.invalidateQueries({ queryKey: ['LotOwners'] });
         },
-        onError: () => {
+        onError: (error) => {
             toast.error('Error saving Lot Owner');
+            console.error('Mutation error:', error); // Log the error for debugging
         },
     });
 
+    const handleSubmit = (values: any) => {
+        console.log('Submitting values:', values); // Debug: Log the form values
+        mutate(values);
+    };
+
     return (
         <>
-            <Button variant="outline" size="lg" onClick={() => setOpen(true)}><Plus />Add Lot Owner</Button>
+            <Button variant="outline" size="lg" onClick={() => setOpen(true)}>
+                <Plus />Add Lot Owner
+            </Button>
             <LotForm
                 mode="add"
                 open={open}
                 onOpenChange={setOpen}
-                onSubmit={mutate}
+                onSubmit={handleSubmit} // Pass the handler
                 isPending={isPending}
             />
         </>
