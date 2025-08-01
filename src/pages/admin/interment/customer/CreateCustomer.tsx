@@ -12,7 +12,6 @@ export default function CreateCustomer() {
   const { mutate, isPending } = useMutation({
     mutationFn: createCustomer,
     onSuccess: () => {
-      toast.success('Customer has been saved');
       setOpen(false);
       queryClient.invalidateQueries({ queryKey: ['customers'] });
     },

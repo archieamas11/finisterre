@@ -31,13 +31,10 @@ export default function EditCustomerDialog({ open, onOpenChange, customer }: Edi
         try {
             const result = await mutateAsync(payload);
             if ((result as any)?.success) {
-                toast.success("Customer edited successfully");
                 onOpenChange(false);
-            } else {
-                toast.error("Failed to edit customer: " + payload.first_name + " " + payload.last_name);
             }
         } catch (error) {
-            toast.error("Failed to edit customer: " + payload.first_name + " " + payload.last_name);
+            console.error("Error updating customer:", error);
         }
     }
 
