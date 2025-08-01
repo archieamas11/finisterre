@@ -1,5 +1,10 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { createLotOwner, editLotOwner, getLotOwner } from "@/api/lotOwner.api";
+// 🛠️ Changed import to relative path to fix module resolution error
+import {
+  createLotOwner,
+  editLotOwner,
+  getLotOwner,
+} from "../../api/lotOwner.api";
 import type { LotOwners } from "@/types/interment.types";
 
 // 1) Query for list

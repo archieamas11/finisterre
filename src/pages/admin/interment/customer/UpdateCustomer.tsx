@@ -1,4 +1,3 @@
-import { toast } from "sonner";
 import { useUpsertCustomer } from '@/hooks/customer-hooks/customer.hooks';
 import CustomerForm from "@/components/forms/CustomerForm";
 import type { Customer } from "@/types/interment.types";

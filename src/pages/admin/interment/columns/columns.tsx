@@ -208,7 +208,7 @@ export const lotOwnerColumns: ColumnDef<LotOwners>[] =
             id: "actions",
             enableHiding: false,
             cell: ({ row }) => {
-                const [openLot, setOpenLot] = React.useState(false);
+                // const [openLot, setOpenLot] = React.useState(false);
                 if (!row || !row.original) return null;
                 return (
                     <><DropdownMenu>
@@ -221,7 +221,7 @@ export const lotOwnerColumns: ColumnDef<LotOwners>[] =
                         <DropdownMenuContent align="end" className="z-50">
                             <DropdownMenuLabel>Actions</DropdownMenuLabel>
                             <DropdownMenuSeparator />
-                            <DropdownMenuItem onClick={() => setOpenLot(true)}>
+                            <DropdownMenuItem>
                                 Edit lot owner
                             </DropdownMenuItem>
                             <DropdownMenuItem>
