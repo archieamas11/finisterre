@@ -8,7 +8,6 @@ export function useLotOwners() {
     queryKey: ["lotOwners"],
     queryFn: async () => {
       const r = await getLotOwner();
-      // Always return a defined value; default to empty array if missing
       return r.lotOwners ?? [];
     },
   });
@@ -19,7 +18,6 @@ export function useUpsertLotOwner() {
   const qc = useQueryClient();
   return useMutation<LotOwners, Error, Partial<LotOwners>>({
     mutationFn: async (data) => {
-      // Only call editLotOwner if data.lotOwner_id exists and is not undefined/null
       if (
         "lot_id" in data &&
         data.lot_id !== undefined &&
