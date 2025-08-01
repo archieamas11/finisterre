@@ -9,6 +9,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import type { LotOwners, Customer, DeceasedRecords } from "@/types/interment.types";
 import EditCustomerDialog from "@/pages/admin/interment/customer/UpdateCustomer";
+import ViewCustomerDialog from "../customer/ViewCustomer";
 
 function capitalizeWords(str: string) {
     return str.replace(/\b\w+/g, (word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase());
@@ -95,6 +96,7 @@ export const customerColumns: ColumnDef<Customer>[] = [
         enableHiding: false,
         cell: ({ row }) => {
             const [open, setOpen] = React.useState(false);
+            const [viewOpen, setViewOpen] = React.useState(false);
             if (!row || !row.original) return null;
             return (
                 <>
@@ -111,7 +113,7 @@ export const customerColumns: ColumnDef<Customer>[] = [
                             <DropdownMenuItem onClick={() => setOpen(true)}>
                                 Edit Customer
                             </DropdownMenuItem>
-                            <DropdownMenuItem onClick={() => setOpen(true)}>
+                            <DropdownMenuItem onClick={() => setViewOpen(true)}>
                                 View Customer
                             </DropdownMenuItem>
                             <DropdownMenuSeparator />
@@ -122,6 +124,7 @@ export const customerColumns: ColumnDef<Customer>[] = [
                         </DropdownMenuContent>
                     </DropdownMenu>
                     <EditCustomerDialog open={open} onOpenChange={setOpen} customer={row.original} />
+                    <ViewCustomerDialog open={viewOpen} onOpenChange={setViewOpen} customer={row.original} />
                 </>
             );
         },
