@@ -1,1 +1,2 @@
-POST http://localhost/finisterre_backend/customers/get_customer.php
+POST http://localhost/finisterre_backend/plots/get_plot_category.php
+Content-Type: application/json
