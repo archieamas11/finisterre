@@ -7,12 +7,13 @@ import iconRetinaUrl from 'leaflet/dist/images/marker-icon-2x.png';
 import shadowUrl from 'leaflet/dist/images/marker-shadow.png';
 import { createContext, useRef } from 'react';
 import { PlotLocations } from '@/pages/admin/map4admin/AdminMapPopup';
+import { ColumbariumPopup } from '@/pages/admin/map4admin/ColumbariumPopup';
 import { BiSolidChurch } from 'react-icons/bi';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { GiOpenGate } from 'react-icons/gi';
-import { usePlots } from '@/hooks/plots-hooks/plot.hooks';
-import type { ConvertedMarker } from '@/types/map.types';
-import { convertPlotToMarker, getCategoryBackgroundColor, getStatusColor } from '@/types/map.types';
+import { useColPlots, usePlots } from '@/hooks/plots-hooks/plot.hooks';
+import type { ConvertedMarker, multiplePlots } from '@/types/map.types';
+import { convertPlotToMarker, convertColPlotToMarker, getCategoryBackgroundColor, getStatusColor } from '@/types/map.types';
 
 const DefaultIcon = L.icon({
   iconUrl,
@@ -29,6 +30,7 @@ export const LocateContext = createContext<{ requestLocate: () => void } | null>
 export default function AdminMapLayout() {
   // 🎣 Fetch real plot data from backend
   const { data: plotsData, isLoading, error } = usePlots();
+  const { data: colPlotsData, isLoading: colLoading, error: colError } = useColPlots();
 
   const bounds: [[number, number], [number, number]] = [
     [10.247883800064669, 123.79691285546676],
@@ -46,11 +48,13 @@ export default function AdminMapLayout() {
 
   // 🔄 Convert database plots to marker format
   const markers = plotsData?.map(convertPlotToMarker) || [];
+  const colMarkers = colPlotsData?.map(convertColPlotToMarker) || [];
 
   console.log('🗺️ Plots data loaded:', { plotsCount: markers.length, isLoading, error });
+  console.log('🏛️ Col Plots data loaded:', { colPlotsCount: colMarkers.length, colLoading, colError });
 
   // 🔄 Show loading state while fetching plots
-  if (isLoading) {
+  if (isLoading || colLoading) {
     return (
       <div className="h-screen w-full relative flex items-center justify-center">
         <div className="text-center">
@@ -62,13 +66,13 @@ export default function AdminMapLayout() {
   }
 
   // ❌ Show error state if plots failed to load
-  if (error) {
-    console.error('🚨 Error loading plots:', error);
+  if (error || colError) {
+    console.error('🚨 Error loading plots:', { error, colError });
     return (
       <div className="h-screen w-full relative flex items-center justify-center">
         <div className="text-center">
           <p className="text-red-600 mb-2">Error loading plot data</p>
-          <p className="text-gray-600 text-sm">{error.message}</p>
+          <p className="text-gray-600 text-sm">{error?.message || colError?.message || 'Unknown error'}</p>
         </div>
       </div>
     );
@@ -230,6 +234,31 @@ export default function AdminMapLayout() {
               <Marker key={`plot-${marker.plot_id}`} position={marker.position} icon={circleIcon}>
                 <Popup className='w-75'>
                   <PlotLocations marker={marker} backgroundColor={backgroundColor} />
+                </Popup>
+              </Marker>
+            );
+          })}
+
+          {colMarkers.map((marker: multiplePlots) => {
+            // 🗺️ Coordinates are already converted to [lat, lng] format
+            const position: [number, number] = marker.coordinates;
+            const circleIcon = L.divIcon({
+              html: `<div style="
+                width: 20px;
+                height: 20px;
+                border-radius: 50%;
+                background: #8b5cf6;
+                border: 2px solid #fff;
+                box-shadow: 0 0 4px rgba(0,0,0,0.15);
+                "></div>`,
+              className: '',
+              iconSize: [24, 24],
+            });
+
+            return (
+              <Marker key={`col-plot-${marker.col_id}`} position={position} icon={circleIcon}>
+                <Popup className='w-100'>
+                  <ColumbariumPopup marker={marker} />
                 </Popup>
               </Marker>
             );

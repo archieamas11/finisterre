@@ -369,6 +369,7 @@ export default function MapPage() {
           zoom={18}
           maxZoom={25}
           scrollWheelZoom={true}
+          zoomControl={false}
           className="h-full w-full"
         >
           <TileLayer

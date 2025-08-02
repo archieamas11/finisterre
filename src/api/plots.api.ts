@@ -6,8 +6,16 @@ export async function getPlots() {
   const res = await api.post("plots/get_plots.php");
   if (!res.data || !Array.isArray(res.data.plots)) {
     throw new Error("Invalid response format");
-    console.error("Invalid response format:", res.data);
-    toast.error("Failed to fetch plots. Please try again later.");
+  } else {
+    console.log("Fetched plots:", res.data.plots);
+  }
+  return res.data;
+}
+
+export async function getColPlots() {
+  const res = await api.post("plots/get_col_plots.php");
+  if (!res.data || !Array.isArray(res.data.plots)) {
+    throw new Error("Invalid response format");
   } else {
     console.log("Fetched plots:", res.data.plots);
   }
@@ -17,6 +25,10 @@ export async function getPlots() {
 export async function editPlots(data: plots) {
   // 🛠️ Accepts plot data to update plot details
   const res = await api.post("plots/update_plot.php", data);
+  if (!res.data || !res.data.success) {
+    toast.error("Failed to update plot details");
+    throw new Error("Failed to update plot details");
+  }
   return res.data;
 }
 

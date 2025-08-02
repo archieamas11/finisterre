@@ -22,7 +22,9 @@ import { Form, FormField, FormItem, FormLabel, FormControl, FormMessage } from "
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
 import { getPlots } from "@/api/plots.api";
 import React from "react";
-import type { Customer, plots } from "@/types/interment.types";
+import type { Customer } from "@/types/interment.types";
+import type { plots } from "@/types/map.types";
+
 import { getCustomers } from "@/api/customer.api";
 
 /* ------------------------------------------------------------------ */
