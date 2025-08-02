@@ -1,5 +1,5 @@
 import { useEditPlots } from '@/hooks/plots-hooks/plot.hooks';
-import type { plots } from "@/types/interment.types";
+import type { plots } from "@/types/map.types";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
@@ -13,6 +13,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { ImageIcon, Trash2, Edit3 } from 'lucide-react';
 import Dropzone from 'react-dropzone';
 import { cn } from '@/lib/utils';
+import { toast } from 'sonner';
 
 // 🧩 Zod schema for form validation
 const editPlotSchema = z.object({
@@ -32,7 +33,9 @@ interface EditMapDialogProps {
     onOpenChange: (open: boolean) => void;
     plots: Partial<EditPlotFormValues> & {
         plot_id: string;
-        file_name?: string | string[];
+        file_name?: string[];
+        block?: string;
+        coordinates?: [number, number];
     };
 }
 
@@ -43,11 +46,11 @@ export default function EditMapDialog({ open, onOpenChange, plots }: EditMapDial
 
     // 🖼️ Initialize images from plot data
     React.useEffect(() => {
-        if (plots.file_name) {
-            const images = Array.isArray(plots.file_name)
-                ? plots.file_name
-                : plots.file_name ? [plots.file_name] : [];
-            setPlotImages(images);
+        console.log("🔍 Initializing images from plot data:", plots);
+        if (plots.file_name && Array.isArray(plots.file_name)) {
+            setPlotImages(plots.file_name.filter(Boolean));
+        } else if (plots.file_name && typeof plots.file_name === 'string') {
+            setPlotImages([plots.file_name]);
         } else {
             setPlotImages([]);
         }
@@ -72,27 +75,32 @@ export default function EditMapDialog({ open, onOpenChange, plots }: EditMapDial
 
     async function handleSubmit(values: EditPlotFormValues) {
         const payload: plots = {
+            plot_id: plots.plot_id,
+            block: plots.block || "",
             category: values.category.trim(),
             length: values.length.toString(),
             width: values.width.toString(),
             area: values.area.toString(),
             status: values.status.trim(),
             label: (values.label ?? "").trim(),
-            file_name: plotImages.join(','), // 🛠 Join images as comma-separated string
-            block: "",
-            coordinates: "",
-            plot_id: plots.plot_id
+            coordinates: plots.coordinates || [0, 0],
+            file_names: plotImages, // Use current plotImages state
+            file_names_array: plotImages, // Include both for compatibility
         };
+
         try {
             console.log("🔄 Updating plot with payload:", payload);
             const result = await mutateAsync(payload);
             console.log("✅ Plot updated successfully:", result);
+            toast.success("Plot updated successfully!");
+
+            // 🔄 Close dialog on successful update
             if ((result as any)?.success !== false) {
                 onOpenChange(false);
             }
         } catch (error) {
-            // 🐞 Log error for debugging
             console.error("❌ Error updating plot:", error);
+            toast.error("Failed to update plot. Please try again.");
         }
     }
 
@@ -130,6 +138,19 @@ export default function EditMapDialog({ open, onOpenChange, plots }: EditMapDial
     const handleImageUpload = (file: File) => {
         if (plotImages.length >= 2) {
             console.log("⚠️ Maximum 2 images allowed");
+            toast.warning("Maximum 2 images allowed per plot");
+            return;
+        }
+
+        // 🔍 Validate file type
+        if (!file.type.startsWith('image/')) {
+            toast.error("Please select a valid image file");
+            return;
+        }
+
+        // 📏 Validate file size (max 5MB)
+        if (file.size > 5 * 1024 * 1024) {
+            toast.error("Image size must be less than 5MB");
             return;
         }
 
@@ -138,6 +159,7 @@ export default function EditMapDialog({ open, onOpenChange, plots }: EditMapDial
         setPlotImages(newImages);
         form.setValue('file_name', newImages);
         console.log("📸 Image uploaded:", imageUrl);
+        toast.success("Image added successfully");
     };
 
     const handleImageRemove = (index: number) => {
@@ -145,20 +167,34 @@ export default function EditMapDialog({ open, onOpenChange, plots }: EditMapDial
         setPlotImages(newImages);
         form.setValue('file_name', newImages);
         console.log("🗑️ Image removed at index:", index);
+        toast.success("Image removed successfully");
     };
 
     const handleImageReplace = (index: number, file: File) => {
+        // 🔍 Validate file type
+        if (!file.type.startsWith('image/')) {
+            toast.error("Please select a valid image file");
+            return;
+        }
+
+        // 📏 Validate file size (max 5MB)
+        if (file.size > 5 * 1024 * 1024) {
+            toast.error("Image size must be less than 5MB");
+            return;
+        }
+
         const imageUrl = URL.createObjectURL(file);
         const newImages = [...plotImages];
         newImages[index] = imageUrl;
         setPlotImages(newImages);
         form.setValue('file_name', newImages);
         console.log("🔄 Image replaced at index:", index);
+        toast.success("Image replaced successfully");
     };
 
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
-            <DialogContent>
+            <DialogContent className="lg:max-w-[400px]">
                 <DialogHeader>
                     <DialogTitle>Edit Plot</DialogTitle>
                     <DialogDescription>Edit Plot Details</DialogDescription>
@@ -300,14 +336,14 @@ export default function EditMapDialog({ open, onOpenChange, plots }: EditMapDial
                                             <div className="space-y-4">
                                                 {/* 🖼️ Display existing images */}
                                                 {plotImages.length > 0 && (
-                                                    <div className="grid grid-cols-2 gap-4">
+                                                    <div className="grid grid-cols-2 gap-2 justify-between w-full">
                                                         {plotImages.map((imageUrl, index) => (
-                                                            <div key={index} className="relative group">
-                                                                <div className="relative aspect-square">
+                                                            <div key={index} className="relative group w-full">
+                                                                <div className="w-full h-30 flex justify-between">
                                                                     <img
                                                                         src={imageUrl}
                                                                         alt={`Plot image ${index + 1}`}
-                                                                        className="border border-border h-full w-full rounded-md object-cover"
+                                                                        className="border border-border w-full h-full rounded-md object-cover"
                                                                     />
                                                                     {/* 🎯 Hover overlay with actions */}
                                                                     <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity rounded-md flex items-center justify-center gap-2">
@@ -373,7 +409,7 @@ export default function EditMapDialog({ open, onOpenChange, plots }: EditMapDial
                                                             <div
                                                                 {...getRootProps()}
                                                                 className={cn(
-                                                                    "border-2 border-dashed flex items-center justify-center aspect-square rounded-md focus:outline-none focus:border-primary cursor-pointer hover:bg-gray-50 transition-colors",
+                                                                    "w-full border-2 border-dashed flex items-center justify-center aspect-square rounded-md focus:outline-none focus:border-primary cursor-pointer hover:bg-gray-50 transition-colors",
                                                                     {
                                                                         "border-primary bg-blue-50": isDragActive && isDragAccept,
                                                                         "border-red-500 bg-red-50": isDragActive && isDragReject,

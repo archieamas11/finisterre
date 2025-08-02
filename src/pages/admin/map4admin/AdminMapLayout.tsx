@@ -228,7 +228,7 @@ export default function AdminMapLayout() {
 
             return (
               <Marker key={`plot-${marker.plot_id}`} position={marker.position} icon={circleIcon}>
-                <Popup>
+                <Popup className='w-75'>
                   <PlotLocations marker={marker} backgroundColor={backgroundColor} />
                 </Popup>
               </Marker>

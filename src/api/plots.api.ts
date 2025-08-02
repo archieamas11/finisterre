@@ -1,11 +1,13 @@
+import { toast } from "sonner";
 import { api } from "./axiosInstance";
-import type { plots } from "@/types/interment.types";
+import type { plots } from "@/types/map.types";
 
 export async function getPlots() {
   const res = await api.post("plots/get_plots.php");
   if (!res.data || !Array.isArray(res.data.plots)) {
     throw new Error("Invalid response format");
     console.error("Invalid response format:", res.data);
+    toast.error("Failed to fetch plots. Please try again later.");
   } else {
     console.log("Fetched plots:", res.data.plots);
   }
@@ -14,7 +16,7 @@ export async function getPlots() {
 
 export async function editPlots(data: plots) {
   // 🛠️ Accepts plot data to update plot details
-  const res = await api.post("plots/edit_plot.php", data);
+  const res = await api.post("plots/update_plot.php", data);
   return res.data;
 }
 

@@ -1,5 +1,3 @@
-// 🗺️ Types for map-related data structures
-
 export type ConvertedMarker = {
   plot_id: string;
   position: [number, number];
@@ -14,6 +12,7 @@ export type ConvertedMarker = {
   block: string;
   label: string | null;
   file_name?: string[];
+  file_names_array?: string[];
 };
 
 export type plots = {
@@ -25,8 +24,9 @@ export type plots = {
   area: string;
   status: string;
   label: string;
-  coordinates: string;
-  file_name?: string[] | string; // 🔧 Support both formats
+  coordinates: [number, number];
+  file_names: string[];
+  file_names_array?: string[];
 };
 
 // 🔧 Map utility functions
@@ -40,26 +40,44 @@ export const convertPlotToMarker = (plot: {
   status: string;
   label: string | null;
   coordinates: string;
-  file_name?: string[] | string; // 🔧 Handle both array and string format
+  file_name?: string[];
+  file_names_array?: string[];
 }): ConvertedMarker => {
   // 📍 Parse coordinates from database format "lng, lat" to [lat, lng]
   const [lng, lat] = plot.coordinates.split(", ").map(Number);
 
   // 🖼️ Handle file_name conversion - ensure it's always an array
   let fileNames: string[] = [];
-  if (plot.file_name) {
+
+  // 🔍 Check multiple sources for image files
+  if (plot.file_names_array && Array.isArray(plot.file_names_array)) {
+    fileNames = plot.file_names_array.filter(Boolean); // Remove empty strings
+  } else if (plot.file_name) {
     if (Array.isArray(plot.file_name)) {
-      fileNames = plot.file_name;
+      fileNames = plot.file_name.filter(Boolean);
     } else if (typeof plot.file_name === "string") {
-      // 🔧 Handle case where backend sends JSON string
+      // 🔧 Handle case where backend sends JSON string or comma-separated
       try {
         const parsed = JSON.parse(plot.file_name);
-        fileNames = Array.isArray(parsed) ? parsed : [plot.file_name];
+        fileNames = Array.isArray(parsed)
+          ? parsed.filter(Boolean)
+          : [plot.file_name];
       } catch {
-        fileNames = [plot.file_name];
+        // 📝 Might be comma-separated string
+        fileNames = (plot.file_name as string)
+          .split(",")
+          .map((s: string) => s.trim())
+          .filter(Boolean);
       }
     }
   }
+
+  console.log("🔄 Converting plot:", {
+    plot_id: plot.plot_id,
+    original_file_name: plot.file_name,
+    original_file_names_array: plot.file_names_array,
+    converted_fileNames: fileNames,
+  });
 
   return {
     plot_id: plot.plot_id,
@@ -75,6 +93,7 @@ export const convertPlotToMarker = (plot: {
     block: plot.block,
     label: plot.label,
     file_name: fileNames.length > 0 ? fileNames : undefined,
+    file_names_array: fileNames.length > 0 ? fileNames : undefined,
   };
 };
 
@@ -90,7 +109,7 @@ export const getCategoryBackgroundColor = (category: string): string => {
     case "diamond":
       return "#cc6688";
     default:
-      return "#6b7280"; // Default gray
+      return "#6b7280";
   }
 };
 
