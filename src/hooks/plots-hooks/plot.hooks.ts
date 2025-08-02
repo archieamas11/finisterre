@@ -1,6 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { getPlots, createPlots, editPlots } from "@/api/plots.api";
-import type { plots } from "@/types/interment.types";
+import type { plots } from "@/types/map.types";
 
 // 1) Query for list
 export function usePlots() {
