@@ -69,7 +69,11 @@ export type plots = {
   plot_id: string;
   block: string;
   category: string;
+  length: string;
+  width: string;
+  area: string;
   status: string;
-  lable: string;
+  label: string;
   coordinates: string;
+  file_name?: string;
 };
