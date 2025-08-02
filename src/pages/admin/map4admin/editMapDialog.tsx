@@ -318,7 +318,7 @@ export default function EditMapDialog({ open, onOpenChange, plots }: EditMapDial
                                 name="label"
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Label<span className="text-red-500">*</span></FormLabel>
+                                        <FormLabel>Label</FormLabel>
                                         <FormControl>
                                             <Input placeholder="Enter label" {...field} />
                                         </FormControl>

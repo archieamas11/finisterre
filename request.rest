@@ -1,2 +1,2 @@
-POST http://localhost/finisterre_backend/plots/get_plot_category.php
+POST http://localhost/finisterre_backend/plots/get_col_plots.php
 Content-Type: application/json

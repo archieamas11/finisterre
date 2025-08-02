@@ -33,9 +33,9 @@ export function PlotLocations({ marker, backgroundColor }: PlotLocationsProps) {
     return (
         <div className="mt-5">
             <div className='p-3 rounded-t-lg flex items-stretch gap-2' style={{ background: backgroundColor }}>
-                <Button className="flex-1 flex items-center justify-center bg-foreground rounded-sm" onClick={handleEdit}><Edit /></Button>
-                <Button className="flex-1 flex items-center justify-center bg-foreground rounded-sm" onClick={handleAdd}><Plus /></Button>
-                <Button className="flex-1 flex items-center justify-center bg-foreground rounded-sm" onClick={handleView}><Eye /></Button>
+                <Button className="flex-1 flex items-center justify-center bg-white rounded-md" onClick={handleEdit}><Edit /></Button>
+                <Button className="flex-1 flex items-center justify-center bg-white rounded-md" onClick={handleAdd}><Plus /></Button>
+                <Button className="flex-1 flex items-center justify-center bg-white rounded-md" onClick={handleView}><Eye /></Button>
             </div>
             <div className='bg-gray-100 p-3 rounded-b-lg mb-3'>
                 <div className="flex items-center justify-between gap-1 bg-white/80 p-2 rounded-lg shadow-sm">

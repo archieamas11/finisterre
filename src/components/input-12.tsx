@@ -3,12 +3,10 @@
 import { Label } from "@/components/ui/label";
 import { cn } from "@/lib/utils";
 import { ImageIcon, XCircleIcon } from "lucide-react";
-import Image from "next/image";
 import { useState } from "react";
 import Dropzone from "react-dropzone";
 
 const ImagePreview = ({
-  url,
   onRemove,
 }: {
   url: string;
@@ -21,13 +19,6 @@ const ImagePreview = ({
     >
       <XCircleIcon className="h-5 w-5 fill-primary text-primary-foreground" />
     </button>
-    <Image
-      src={url}
-      height={500}
-      width={500}
-      alt=""
-      className="border border-border h-full w-full rounded-md object-cover"
-    />
   </div>
 );
 
