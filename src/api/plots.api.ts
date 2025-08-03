@@ -52,3 +52,14 @@ export async function editLotOwner(data: plots) {
   const res = await api.post("plots/edit_lot_owner.php", data);
   return res.data;
 }
+
+// Chambers api
+export async function getNiche() {
+  const res = await api.post("plots/get_niche_data.php");
+  if (!res.data || !Array.isArray(res.data.plots)) {
+    throw new Error("Invalid response format");
+  } else {
+    console.log("Fetched niche:", res.data.plots);
+  }
+  return res.data;
+}
