@@ -120,7 +120,9 @@ export default function LotOwnersTable({ data }: LotOwnersTableProps) {
                                 ))}
                         </DropdownMenuContent>
                     </DropdownMenu>
-                    {/* New Lot Owner Dialog Button */}
+                    <Button variant="outline" size="lg" className="hidden lg:flex">
+                        <span className="hidden lg:inline">Add Lot Owner</span>
+                    </Button>
                 </div>
             </div>
             <div className="overflow-hidden rounded-md border">

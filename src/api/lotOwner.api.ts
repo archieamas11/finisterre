@@ -2,6 +2,8 @@ import { api } from "./axiosInstance";
 
 export async function getLotOwner() {
   const res = await api.post("lot-owners/get_lot_owner.php");
+  // 🖨️ Log the fetched data for debugging/inspection
+  console.log(res.data);
   return res.data;
 }
 

@@ -32,13 +32,15 @@ export type LotOwners = {
   lot_status?: string;
   created_at: string;
   updated_at: string;
-
   // Join fields
   customer_name?: string;
 
   // Location data
   plot_id: string;
   block?: string;
+  category: string;
+  niche_id?: string;
+  niche_number?: string;
 };
 
 export type DeceasedRecords = {

@@ -63,7 +63,7 @@ export const customerColumns: ColumnDef<Customer>[] = [
     },
     {
         header: "Full Name",
-        accessorFn: (row) => capitalizeWords(`${row.first_name} ${row.last_name}`),
+        accessorFn: (row) => capitalizeWords(`${row.first_name} ${row.middle_name} ${row.last_name}`),
         id: "full_name",
     },
     {
@@ -82,17 +82,8 @@ export const customerColumns: ColumnDef<Customer>[] = [
         cell: ({ row }) => row.original.email ? row.original.email : (<Badge variant="secondary" asChild={false}><span>N/A</span></Badge>),
     },
     {
-        accessorKey: "religion",
-        header: "Religion",
-        cell: ({ row }) => row.original.religion ? row.original.religion : (<Badge variant="secondary" asChild={false}><span>N/A</span></Badge>),
-    },
-    {
-        accessorKey: "status",
-        header: "Status",
-        cell: ({ row }) => row.original.status ? row.original.status : (<Badge variant="secondary" asChild={false}><span>N/A</span></Badge>),
-    },
-    {
         id: "actions",
+        header: "Action",
         enableHiding: false,
         cell: ({ row }) => {
             const [open, setOpen] = React.useState(false);
@@ -166,46 +157,45 @@ export const lotOwnerColumns: ColumnDef<LotOwners>[] =
             accessorFn: (row) =>
                 row.block && row.plot_id
                     ? `Block ${row.block} • Grave ${row.plot_id}`
-                    : "N/A",
+                    : (row.category && row.niche_id
+                        ? `${row.category} • Niche ${row.niche_id}`
+                        : null),
             id: "location",
-        },
-        {
-            accessorKey: "type",
-            header: "Type",
-            cell: ({ row }) => row.original.type ? row.original.type : (<Badge variant="secondary" asChild={false}><span>N/A</span></Badge>),
-        },
-        {
-            accessorKey: "payment_type",
-            header: "Payment Type",
-            cell: ({ row }) => row.original.payment_type ? row.original.payment_type : (<Badge variant="secondary" asChild={false}><span>N/A</span></Badge>),
-        },
-        {
-            accessorKey: "payment_frequency",
-            header: "Payment Frequency",
-            cell: ({ row }) => row.original.payment_frequency ? row.original.payment_frequency : (<Badge variant="secondary" asChild={false}><span>N/A</span></Badge>),
-        },
-        {
-            accessorKey: "start_date",
-            header: "Start Date",
-            cell: ({ row }) => row.original.start_date ? row.original.start_date : (<Badge variant="secondary" asChild={false}><span>N/A</span></Badge>),
-        },
-        {
-            accessorKey: "last_payment_date",
-            header: "Last Payment Date",
-            cell: ({ row }) => row.original.last_payment_date ? row.original.last_payment_date : (<Badge variant="secondary" asChild={false}><span>N/A</span></Badge>),
-        },
-        {
-            accessorKey: "next_due_date",
-            header: "Next Due Date",
-            cell: ({ row }) => row.original.next_due_date ? row.original.next_due_date : (<Badge variant="secondary" asChild={false}><span>N/A</span></Badge>),
+            cell: ({ row }) => {
+                // 🧩 Show block/plot if present, else category/niche_id, else N/A badge
+                if (row.original.block && row.original.plot_id) {
+                    return `Block ${row.original.block} • Grave ${row.original.plot_id}`;
+                }
+                if (row.original.category && row.original.niche_id) {
+                    return `${row.original.category} ${row.original.plot_id} • Niche ${row.original.niche_number}`;
+                }
+                return (<Badge variant="secondary" asChild={false}><span>N/A</span></Badge>);
+            },
         },
         {
             accessorKey: "lot_status",
             header: "Status",
-            cell: ({ row }) => row.original.lot_status ? row.original.lot_status : (<Badge variant="secondary" asChild={false}><span>N/A</span></Badge>),
+            cell: ({ row }) => {
+                // 🟡 Show colored badge based on status value
+                const status = row.original.lot_status?.toLowerCase();
+                if (!status) {
+                    return (<Badge variant="secondary" asChild={false}><span>N/A</span></Badge>);
+                }
+                if (status === "active") {
+                    return (<Badge className="bg-yellow-400 text-black" asChild={false}><span>Active</span></Badge>);
+                }
+                if (status === "canceled") {
+                    return (<Badge className="bg-red-500 text-white" asChild={false}><span>Canceled</span></Badge>);
+                }
+                if (status === "completed") {
+                    return (<Badge className="bg-green-500 text-white" asChild={false}><span>Completed</span></Badge>);
+                }
+                return (<Badge variant="secondary" asChild={false}><span>{row.original.lot_status}</span></Badge>);
+            },
         },
         {
             id: "actions",
+            header: "Actions",
             enableHiding: false,
             cell: ({ row }) => {
                 // const [openLot, setOpenLot] = React.useState(false);
