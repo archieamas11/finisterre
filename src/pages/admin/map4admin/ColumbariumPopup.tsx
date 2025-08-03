@@ -279,7 +279,7 @@ export function ColumbariumPopup({ marker }: ColumbariumPopupProps) {
             </div>
 
             {/* Media display */}
-            {(() => {
+            {/* {(() => {
                 // 🖼️ Check both file_names_array and file_name properties
                 const images = marker.file_names_array || marker.file_name || [];
                 console.log("🖼️ Images to display:", images, "from marker:", marker);
@@ -304,12 +304,9 @@ export function ColumbariumPopup({ marker }: ColumbariumPopupProps) {
                 ) : (
                     <div className="text-center text-xs text-gray-400 mt-5">
                         No photos available
-                        {/* <div className="text-xs text-gray-300 mt-1">
-                            Debug: {JSON.stringify({ file_names_array: marker.file_names_array, file_name: marker.file_name })}
-                        </div> */}
                     </div>
                 );
-            })()}
+            })()} */}
 
             {/* 🔍 Niche Detail Dialog */}
             <Dialog open={isDetailOpen} onOpenChange={setIsDetailOpen}>

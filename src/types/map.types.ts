@@ -98,37 +98,6 @@ export const convertPlotToMarker = (plot: {
   };
 };
 
-// export type multiplePlots = {
-//   col_id: string;
-//   rows: string;
-//   columns: string;
-//   coordinates: [number, number];
-// };
-
-// // 🔄 Convert multiple plots data to marker format
-// export const convertColPlotToMarker = (plot: {
-//   col_id: string;
-//   rows: string;
-//   columns: string;
-//   coordinates: string;
-// }): multiplePlots => {
-//   // 📍 Parse coordinates from database format "lng, lat" to [lat, lng]
-//   const [lng, lat] = plot.coordinates.split(", ").map(Number);
-
-//   console.log("🔄 Converting col plot:", {
-//     col_id: plot.col_id,
-//     coordinates: plot.coordinates,
-//     parsed: [lat, lng],
-//   });
-
-//   return {
-//     col_id: plot.col_id,
-//     rows: plot.rows,
-//     columns: plot.columns,
-//     coordinates: [lat, lng] as [number, number],
-//   };
-// };
-
 // 🎨 Get background color based on plot category
 export const getCategoryBackgroundColor = (category: string): string => {
   switch (category.toLowerCase()) {

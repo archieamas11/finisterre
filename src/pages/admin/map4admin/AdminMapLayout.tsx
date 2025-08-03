@@ -6,7 +6,7 @@ import iconUrl from 'leaflet/dist/images/marker-icon.png';
 import iconRetinaUrl from 'leaflet/dist/images/marker-icon-2x.png';
 import shadowUrl from 'leaflet/dist/images/marker-shadow.png';
 import { createContext, useRef } from 'react';
-import { PlotLocations } from '@/pages/admin/map4admin/AdminMapPopup';
+import { PlotLocations } from '@/pages/admin/map4admin/SinglePlotPopup';
 import { ColumbariumPopup } from '@/pages/admin/map4admin/ColumbariumPopup';
 import { BiSolidChurch } from 'react-icons/bi';
 import { renderToStaticMarkup } from 'react-dom/server';
@@ -230,11 +230,11 @@ export default function AdminMapLayout() {
             return (
               <Marker key={`plot-${marker.plot_id}`} position={marker.position} icon={circleIcon}>
                 {marker.rows && marker.columns ? (
-                  <Popup className="w-100">
+                  <Popup className="w-100 leaflet-theme-popup">
                     <ColumbariumPopup marker={marker} />
                   </Popup>
                 ) : (
-                  <Popup className="w-75">
+                  <Popup className="w-75 leaflet-theme-popup">
                     <PlotLocations marker={marker} backgroundColor={backgroundColor} />
                   </Popup>
                 )}

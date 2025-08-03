@@ -209,3 +209,9 @@
 .animate-glow-pulse {
   animation: glowPulse 2s ease-in-out infinite;
 }
+
+/* global.css or tailwind.css */
+.leaflet-theme-popup .leaflet-popup-content-wrapper,
+.leaflet-theme-popup .leaflet-popup-tip {
+  @apply bg-background text-foreground dark:bg-background dark:text-foreground;
+}

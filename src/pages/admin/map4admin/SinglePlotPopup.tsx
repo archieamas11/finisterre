@@ -10,7 +10,7 @@ interface PlotLocationsProps {
     backgroundColor?: string;
 }
 
-export function PlotLocations({ marker, backgroundColor }: PlotLocationsProps) {
+export function PlotLocations({ marker }: PlotLocationsProps) {
     // 🔧 State for edit dialog
     const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
 
@@ -31,17 +31,17 @@ export function PlotLocations({ marker, backgroundColor }: PlotLocationsProps) {
     };
 
     return (
-        <div className="mt-5">
-            <div className='p-3 rounded-t-lg flex items-stretch gap-2' style={{ background: backgroundColor }}>
-                <Button className="flex-1 flex items-center justify-center bg-white rounded-md" onClick={handleEdit}><Edit /></Button>
-                <Button className="flex-1 flex items-center justify-center bg-white rounded-md" onClick={handleAdd}><Plus /></Button>
-                <Button className="flex-1 flex items-center justify-center bg-white rounded-md" onClick={handleView}><Eye /></Button>
-            </div>
-            <div className='bg-gray-100 p-3 rounded-b-lg mb-3'>
-                <div className="flex items-center justify-between gap-1 bg-white/80 p-2 rounded-lg shadow-sm">
+        <div className="mt-6">
+            <div className='bg-card p-3 rounded-lg mb-3 shadow-lg'>
+                <div className='rounded-lg flex items-stretch gap-3 mb-2'>
+                    <Button className="flex-1 flex items-center justify-center bg-accent rounded-md text-accent-foreground" onClick={handleEdit}><Edit /></Button>
+                    <Button className="flex-1 flex items-center justify-center bg-accent rounded-md text-accent-foreground" onClick={handleAdd}><Plus /></Button>
+                    <Button className="flex-1 flex items-center justify-center bg-accent rounded-md text-accent-foreground" onClick={handleView}><Eye /></Button>
+                </div>
+                <div className="flex items-center justify-between gap-1 bg-accent p-2 rounded-lg shadow-sm">
                     <div className='flex items-center gap-2'>
-                        <FaMapMarkerAlt className="text-gray-500" size={16} />
-                        <span className="text-xs text-gray-500 font-medium">{marker.location}</span>
+                        <FaMapMarkerAlt className="text-accent-foreground" size={14} />
+                        <span className="text-xs text-accent-foreground font-medium">{marker.location}</span>
                     </div>
                     <span
                         className={
@@ -53,15 +53,15 @@ export function PlotLocations({ marker, backgroundColor }: PlotLocationsProps) {
                         }
                     >
                         {/* 🏅 Use react-icons for badge */}
-                        <FaCertificate className="inline" size={12} />
+                        <FaCertificate className="inline" size={14} />
                         <span className="capitalize text-xs">{marker.plotStatus}</span>
                     </span>
                 </div>
-                <div className="flex items-center justify-between gap-2 bg-white/80 p-2 rounded-lg shadow-sm mt-2">
+                <div className="flex items-center justify-between gap-2 bg-accent p-2 rounded-lg shadow-sm mt-2">
                     <div className='flex item-center gap-2'>
                         {/* ℹ️ Use react-icons for info */}
-                        <FaInfoCircle className="text-gray-500" size={16} />
-                        <span className="text-xs text-gray-500">Plot Category</span>
+                        <FaInfoCircle className="text-accent-foreground" size={14} />
+                        <span className="text-xs text-accent-foreground">Plot Category</span>
                     </div>
                     <span
                         className={
@@ -78,31 +78,31 @@ export function PlotLocations({ marker, backgroundColor }: PlotLocationsProps) {
                         }
                     >
                         {/* 🏆 Use react-icons for award */}
-                        <FaAward className="inline" size={12} />
+                        <FaAward className="inline" size={14} />
                         <span className="ml-1">{marker.category.charAt(0).toUpperCase() + marker.category.slice(1)}</span>
                     </span>
                 </div>
                 {/* 🧑‍💼 Customer Info */}
-                <div className="flex items-center justify-between mt-2 bg-white/80 p-2 rounded-lg shadow-sm">
+                <div className="flex items-center justify-between mt-2 bg-accent p-2 rounded-lg shadow-sm">
                     <div className="flex items-center gap-2">
-                        <FaUser className="text-blue-500" size={16} />
-                        <span className="text-xs text-gray-500 font-medium">Juan Dela Cruz</span>
+                        <FaUser className="text-accent-foreground" size={14} />
+                        <span className="text-xs text-accent-foreground font-medium">Juan Dela Cruz</span>
                     </div>
                     <div className="flex items-center gap-2">
-                        <FaCalendarAlt className="text-green-500" size={16} />
-                        <span className="text-xs text-gray-500 font-medium">2023-10-15</span>
+                        <FaCalendarAlt className="text-accent-foreground" size={14} />
+                        <span className="text-xs text-accent-foreground font-medium">2023-10-15</span>
                     </div>
                 </div>
             </div>
             {/* Plot Dimension */}
-            <div className="flex gap-2 mb-3">
-                <div className="flex-1 bg-gray-100 rounded-lg p-2">
+            <div className="flex gap-2 mb-5">
+                <div className="flex-1 bg-card rounded-lg p-2 shadow-lg">
                     <div className="flex items-center gap-1 mb-1">
                         <Ruler size={16} className="text-blue-500" />
-                        <span className="text-xs font-semibold text-gray-500">Dimension</span>
+                        <span className="text-xs font-semibold text-accent-foreground">Dimension</span>
                     </div>
                     <div className="flex flex-col items-center">
-                        <div className="text-xs text-gray-700 font-bold">
+                        <div className="text-xs text-accent-foreground font-bold">
                             {/* 🧮 Show N/A if length or width is missing or not a number */}
                             {isNaN(marker.dimensions.length) || marker.dimensions.length === undefined || marker.dimensions.length === null
                                 ? "N/A"
@@ -110,7 +110,7 @@ export function PlotLocations({ marker, backgroundColor }: PlotLocationsProps) {
                                     ? "N/A"
                                     : marker.dimensions.width} m<br />
                         </div>
-                        <span className="text-xs text-gray-500">
+                        <span className="text-xs text-accent-foreground">
                             {/* 🧮 Show N/A if area is missing or not a number */}
                             {isNaN(marker.dimensions.area) || marker.dimensions.area === undefined || marker.dimensions.area === null
                                 ? "N/A"
@@ -119,38 +119,31 @@ export function PlotLocations({ marker, backgroundColor }: PlotLocationsProps) {
                     </div>
                 </div>
             </div>
-            {/* Media display */}
-            {(() => {
-                // 🖼️ Check both file_names_array and file_name properties
-                const images = marker.file_names_array || marker.file_name || [];
-                console.log("🖼️ Images to display:", images, "from marker:", marker);
-                return Array.isArray(images) && images.length > 0 ? (
-                    <div className="grid grid-cols-2 gap-2 mt-2">
-                        {images.map((imageUrl, idx) => (
-                            <img
-                                key={idx}
-                                src={imageUrl}
-                                alt={`Plot media ${idx + 1}`}
-                                className="w-full h-30 object-cover rounded hover:transform hover:scale-105 transition-transform duration-200"
-                                onError={(e) => {
-                                    console.log("🖼️ Image failed to load:", imageUrl);
-                                    e.currentTarget.style.display = 'none';
-                                }}
-                                onLoad={() => {
-                                    console.log("✅ Image loaded successfully:", imageUrl);
-                                }}
-                            />
-                        ))}
-                    </div>
-                ) : (
-                    <div className="text-center text-xs text-gray-400 mt-2">
-                        No photos available
-                        {/* <div className="text-xs text-gray-300 mt-1">
-                            Debug: {JSON.stringify({ file_names_array: marker.file_names_array, file_name: marker.file_name })}
-                        </div> */}
-                    </div>
-                );
-            })()}
+            {/* Media display
+            // {(() => {
+            //     // 🖼️ Check both file_names_array and file_name properties
+            //     const images = marker.file_names_array || marker.file_name || [];
+            //     console.log("🖼️ Images to display:", images, "from marker:", marker);
+            //     return Array.isArray(images) && images.length > 0 ? (
+            //         <div className="grid grid-cols-2 gap-2 mt-2">
+            //             {images.map((imageUrl, idx) => (
+            //                 <img
+            //                     key={idx}
+            //                     src={imageUrl}
+            //                     alt={`Plot media ${idx + 1}`}
+            //                     className="w-full h-30 object-cover rounded hover:transform hover:scale-105 transition-transform duration-200"
+            //                     onError={(e) => {
+            //                         console.log("🖼️ Image failed to load:", imageUrl);
+            //                         e.currentTarget.style.display = 'none';
+            //                     }}
+            //                 />
+            //             ))}
+            //         </div>
+            //     ) : (
+            //         <div className="text-center text-xs text-gray-400 mt-2">
+            //         </div>
+            //     );
+            // })()} */}
 
             {/* 🔧 Edit Dialog */}
             <EditMapDialog
