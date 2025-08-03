@@ -12,7 +12,7 @@ import ResetPassword from "@/auth/ResetPassword";
 import UnauthorizedPage from "@/pages/UnauthorizedPage";
 // Admin Imports 
 import AdminDashboard from "@/pages/admin/home/AdminDashboard";
-import AdminMap from "@/pages/admin/map4admin/AdminMap";
+import AdminMapLayout from "@/pages/admin/map4admin/AdminMapLayout";
 import LotOwnersTablePage from "@/pages/admin/interment/LotOwnersTablePage";
 import DeceasedTablePage from "@/pages/admin/interment/DeceasedTablePage";
 import Bookings from "@/pages/admin/bookings/ManageBookings";
@@ -69,7 +69,7 @@ export default function App() {
 							<Route path="lot-owners" element={<LotOwnersTablePage />} />
 							<Route path="deceased-records" element={<DeceasedTablePage />} />
 						</Route>
-						<Route path="map" element={<AdminMap />} />
+						<Route path="map" element={<AdminMapLayout />} />
 						<Route path="bookings" element={<Bookings />} />
 						<Route path="control-panel" element={<AdminControlPanel />} />
 					</Route>

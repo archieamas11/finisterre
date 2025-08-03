@@ -1,8 +1,7 @@
 import { lazy } from "react";
-
 const LandingLayout = lazy(() => import("@/components/layout/LandingLayout"));
 const IntermentSetup = lazy(() => import("@/pages/admin/interment/IntermentSetup"));
-const AdminMap = lazy(() => import("@/pages/admin/map4admin/AdminMap"));
+const AdminMapLayout = lazy(() => import("@/pages/admin/map4admin/AdminMapLayout"));
 const Bookings = lazy(() => import("@/pages/admin/bookings/ManageBookings"));
 const MapPage = lazy(() => import("@/components/layout/WebMapLayout"));
 const MapLibre = lazy(() => import("@/components/webmap/testing/MapLibre"));
@@ -42,7 +41,7 @@ export const routes = [
           },
         ],
       },
-      { path: "map", element: <AdminMap /> },
+      { path: "map", element: <AdminMapLayout /> },
       { path: "bookings", element: <Bookings /> },
       { path: "control-panel", element: <AdminControlPanel /> },
     ],

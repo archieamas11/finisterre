@@ -34,7 +34,7 @@ interface NicheData {
     };
 }
 
-export function ColumbariumPopup({ marker }: ColumbariumPopupProps) {
+export default function ColumbariumPopup({ marker }: ColumbariumPopupProps) {
     const [selectedNiche, setSelectedNiche] = useState<NicheData | null>(null);
     const [isDetailOpen, setIsDetailOpen] = useState(false);
     const [nicheData, setNicheData] = useState<NicheData[]>([]);
