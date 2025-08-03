@@ -5,7 +5,6 @@ const IntermentSetup = lazy(() => import("@/pages/admin/interment/IntermentSetup
 const AdminMap = lazy(() => import("@/pages/admin/map4admin/AdminMap"));
 const Bookings = lazy(() => import("@/pages/admin/bookings/ManageBookings"));
 const MapPage = lazy(() => import("@/components/layout/WebMapLayout"));
-const MapLibre = lazy(() => import("@/components/webmap/testing/MapLibre"));
 const AdminControlPanel = lazy(() => import("@/pages/admin/control/AdminControlPanel"));
 const DashboardLayout = lazy(() => import("@/components/layout/DashboardLayout"));
 
@@ -59,7 +58,6 @@ export const routes = [
     ],
   },
   { path: "/map", element: <MapPage /> },
-  { path: "/mapLibre", element: <MapLibre /> },
 
   // auth page
   {

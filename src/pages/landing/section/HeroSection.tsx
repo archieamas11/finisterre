@@ -78,14 +78,6 @@ export function HeroSection() {
                             <ArrowRight className="h-4 w-4 group-hover:translate-x-1 transition-transform duration-300" />
                         </Link>
                     </Button>
-                    <Button>
-                        <Link to="/mapLibre" aria-label="Explore Map" className="flex items-center gap-3">
-                            <MapPin className="h-5 w-5" />
-                            Explore Map Libre
-                            <ArrowRight className="h-4 w-4 group-hover:translate-x-1 transition-transform duration-300" />
-                        </Link>
-                    </Button>
-
                     {/* Secondary CTA */}
                     <Button
                         variant="outline"
