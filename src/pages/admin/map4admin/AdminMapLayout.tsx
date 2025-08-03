@@ -74,7 +74,7 @@ export default function AdminMapLayout() {
 
   return (
     <LocateContext.Provider value={{ requestLocate }}>
-      <div className="h-screen w-full relative">
+      <div className="relative w-full" style={{ maxHeight: '100%', height: '100%' }}>
         <MapContainer
           bounds={bounds}
           zoom={18}
@@ -83,7 +83,8 @@ export default function AdminMapLayout() {
           zoomAnimation={true}
           zoomControl={false}
           markerZoomAnimation={true}
-          className="h-full w-full"
+          fadeAnimation={false}
+          className="h-full w-full rounded-lg"
         >
           <TileLayer
             url="https://services.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"
