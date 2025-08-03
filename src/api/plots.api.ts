@@ -53,13 +53,49 @@ export async function editLotOwner(data: plots) {
   return res.data;
 }
 
-// Chambers api
-export async function getNiche() {
-  const res = await api.post("plots/get_niche_data.php");
-  if (!res.data || !Array.isArray(res.data.plots)) {
+// // Chambers api
+// export async function getNiche() {
+//   const res = await api.post("plots/get_niche_data.php");
+//   if (!res.data || !Array.isArray(res.data.plots)) {
+//     throw new Error("Invalid response format");
+//   } else {
+//     console.log("Fetched niche:", res.data.plots);
+//   }
+//   return res.data;
+// }
+
+// 🏛️ Get niches for specific plot/columbarium
+export async function getNichesByPlot(plot_id: string) {
+  const res = await api.post("plots/get_niche_data.php", { plot_id });
+  if (!res.data || !res.data.success) {
+    throw new Error(res.data?.message || "Failed to fetch niche data");
+  }
+  if (!Array.isArray(res.data.nicheData)) {
+    throw new Error("Invalid response format - nicheData should be an array");
+  } else {
+    console.log("🚀 Fetched niches for plot:", plot_id, res.data.nicheData);
+  }
+  return res.data;
+}
+
+// 🏛️ Get detailed niches with owner and deceased info for specific plot
+export async function generateNicheGrid() {
+  const res = await api.post("plots/make_niche_grids.php");
+  if (!res.data) {
     throw new Error("Invalid response format");
   } else {
-    console.log("Fetched niche:", res.data.plots);
+    console.log("🔍 Fetched detailed niches for plot:", res.data);
+  }
+  return res.data;
+}
+
+// 🏗️ Get all plots with valid rows and columns for grid generation
+export async function getPlotsWithGrids() {
+  const res = await api.post("plots/get_plots_with_grids.php");
+  if (!res.data || !res.data.success) {
+    throw new Error(res.data?.message || "Failed to fetch plots with grids");
+  } else {
+    console.log("🏗️ Fetched plots with grids:", res.data.plots);
   }
   return res.data;
 }

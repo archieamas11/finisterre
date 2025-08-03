@@ -1,2 +1,6 @@
-POST http://localhost/finisterre_backend/plots/get_col_plots.php
+POST http://localhost/finisterre_backend/plots/get_niche_data.php
 Content-Type: application/json
+
+{
+  "plot_id": "15"
+}
