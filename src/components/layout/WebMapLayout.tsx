@@ -7,8 +7,8 @@ import iconRetinaUrl from 'leaflet/dist/images/marker-icon-2x.png';
 import shadowUrl from 'leaflet/dist/images/marker-shadow.png';
 import WebMapNavs from '@/pages/webmap/WebMapNavs';
 import { createContext, useRef } from 'react';
-import { useState, useEffect } from 'react';
-import { PlotLocations } from '../WebMap.popup';
+import { useState, useEffect, Suspense, lazy } from 'react';
+const PlotLocations = lazy(() => import('../WebMap.popup').then(mod => ({ default: mod.PlotLocations })));
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Route, Timer, XCircle } from 'lucide-react';
@@ -17,6 +17,7 @@ import { renderToStaticMarkup } from 'react-dom/server';
 import { GiOpenGate } from 'react-icons/gi';
 import { usePlots } from '@/hooks/plots-hooks/plot.hooks';
 import { convertPlotToMarker, getCategoryBackgroundColor, getStatusColor } from '@/types/map.types';
+import { Skeleton } from '../ui/skeleton';
 
 
 const DefaultIcon = L.icon({
@@ -339,7 +340,7 @@ export default function MapPage() {
         {(publicRoute || privateRoute) && (
           <div className="absolute top-6 md:top-20 lg:top-20 left-1/2 z-[9999] -translate-x-1/2 flex flex-col items-center gap-4">
             {/* Route Info */}
-            <Card className="flex shadow-lg backdrop-blur-sm min-w-[250px] bg-white/90 border border-stone-200 dark:bg-stone-800/90 dark:border-stone-700 py-3 rounded-xl transition-all duration-300 hover:shadow-xl">
+            <Card className="flex shadow-lg backdrop-blur-sm min-w-[230px] bg-white/90 border border-stone-200 dark:bg-stone-800/90 dark:border-stone-700 py-3 rounded-xl transition-all duration-300 hover:shadow-xl">
               <CardContent className="flex flex-col items-center w-full py-2 px-4">
                 <div className="flex items-center justify-between w-full">
                   <div className="flex items-center gap-2">
@@ -429,7 +430,7 @@ export default function MapPage() {
                 lineJoin: 'round',
                 dashArray: '10, 10'
               }}
-              className="animate-dash-flow"
+              className="animate-dash-flow z-99999"
             />
           )}
 
@@ -574,12 +575,51 @@ export default function MapPage() {
 
             return (
               <Marker key={`plot-${markers.plot_id}`} position={markers.position} icon={circleIcon}>
-                <Popup>
-                  <PlotLocations
-                    marker={markers}
-                    backgroundColor={getCategoryBackgroundColor(markers.category)}
-                    onDirectionClick={handleDirectionClick}
-                  />
+                <Popup className='w-70'>
+                  <Suspense fallback=
+                    {
+                      <>
+                        {/* Header Section */}
+                        <div className="flex items-center justify-between mb-4">
+                          <Skeleton className="w-48 h-[20px] rounded" /> {/* Block A + Plot 10 */}
+                          <Skeleton className="w-24 h-[20px] rounded bg-yellow-500 text-white" /> {/* Reserved */}
+                        </div>
+
+                        {/* Content Section */}
+                        <div className="mb-4">
+                          <div className="flex items-center mb-2">
+                            <Skeleton className="w-6 h-6 rounded-full bg-gray-500 mr-2" /> {/* Icon */}
+                            <Skeleton className="w-full h-[16px] rounded ml-2" /> {/* Plot Category */}
+                          </div>
+                          <div className="flex items-center mb-2">
+                            <Skeleton className="w-6 h-6 rounded-full bg-gray-500 mr-2" /> {/* Icon */}
+                            <Skeleton className="w-full h-[16px] rounded ml-2" /> {/* Juan Dela Cruz */}
+                          </div>
+                          <div className="flex items-center">
+                            <Skeleton className="w-6 h-6 rounded-full bg-gray-500 mr-2" /> {/* Icon */}
+                            <Skeleton className="w-full h-[16px] rounded ml-2" /> {/* Date */}
+                          </div>
+                        </div>
+
+                        {/* Dimension Section */}
+                        <div className="mt-4">
+                          <div className="flex items-center mb-2">
+                            <Skeleton className="w-6 h-6 rounded-full bg-blue-500 mr-2" /> {/* Icon */}
+                            <Skeleton className="w-full h-[16px] rounded ml-2" /> {/* Label */}
+                          </div>
+                          <div className="text-center">
+                            <Skeleton className="w-32 h-[20px] rounded mb-2" /> {/* N/A m × N/A m */}
+                            <Skeleton className="w-full h-[16px] rounded" /> {/* N/A m² */}
+                          </div>
+                        </div>
+                      </>
+                    }>
+                    <PlotLocations
+                      marker={markers}
+                      backgroundColor={getCategoryBackgroundColor(markers.category)}
+                      onDirectionClick={handleDirectionClick}
+                    />
+                  </Suspense>
                 </Popup>
               </Marker>
             );

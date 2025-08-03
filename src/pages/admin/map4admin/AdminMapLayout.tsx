@@ -266,7 +266,7 @@ export default function AdminMapLayout() {
                               {/* Content Section */}
                               <div className="mb-4">
                                 <div className="flex items-center mb-2">
-                                  <Skeleton className="w75 h-6 rounded-full bg-gray-500 mr-2" /> {/* Icon */}
+                                  <Skeleton className="w-6 h-6 rounded-full bg-gray-500 mr-2" /> {/* Icon */}
                                   <Skeleton className="w-75 h-[16px] rounded ml-2" /> {/* Plot Category */}
                                 </div>
                                 <div className="flex items-center mb-2">
