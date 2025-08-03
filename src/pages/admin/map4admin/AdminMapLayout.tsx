@@ -19,9 +19,6 @@ const DefaultIcon = L.icon({
   iconUrl,
   iconRetinaUrl,
   shadowUrl,
-  iconSize: [25, 41],
-  iconAnchor: [12, 41],
-  popupAnchor: [1, -34],
 });
 L.Marker.prototype.options.icon = DefaultIcon;
 
@@ -230,7 +227,7 @@ export default function AdminMapLayout() {
             return (
               <Marker key={`plot-${marker.plot_id}`} position={marker.position} icon={circleIcon}>
                 {marker.rows && marker.columns ? (
-                  <Popup className="w-100 leaflet-theme-popup">
+                  <Popup className="w-120 leaflet-theme-popup">
                     <ColumbariumPopup marker={marker} />
                   </Popup>
                 ) : (

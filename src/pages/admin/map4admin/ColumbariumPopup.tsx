@@ -187,12 +187,12 @@ export function ColumbariumPopup({ marker }: ColumbariumPopupProps) {
     }
 
     return (
-        <div className="p-2 w-89">
+        <div className="p-2 w-110">
             <div className="mb-3">
-                <h3 className="flex items-center gap-2 font-bold text-lg mb-1 text-secondary">
+                <h3 className="flex items-center gap-2 font-bold text-lg mb-1 text-accent-foreground">
                     <ImLibrary /> Chamber {marker.plot_id}
                 </h3>
-                <div className="flex gap-2 text-sm text-gray-600">
+                <div className="flex gap-2 text-sm text-secondary-foreground">
                     <span><span className="font-medium">Rows:</span> {marker.rows}</span>
                     <span><span className="font-medium">Columns:</span> {marker.columns}</span>
                     <span><span className="font-medium">Total:</span> {rows * cols} niches</span>
@@ -201,12 +201,12 @@ export function ColumbariumPopup({ marker }: ColumbariumPopupProps) {
 
             {/* 🔢 Grid layout for niches */}
             <div className="mb-3">
-                <h4 className="text-sm font-medium mb-2 text-gray-700">Niche Layout:</h4>
+                <h4 className="text-sm font-medium mb-2 text-secondary-foreground">Niche Layout:</h4>
                 <div
-                    className="grid gap-1 border rounded p-2 bg-gray-50 w-85"
+                    className="grid gap-1 border rounded p-2 bg-card w-105"
                     style={{
                         gridTemplateColumns: `repeat(${Math.min(cols, 9)}, minmax(0, 1fr))`,
-                        fontSize: '10px',
+                        fontSize: '20px',
                         scrollbarWidth: 'thin',
                     }}
                 >
@@ -215,68 +215,63 @@ export function ColumbariumPopup({ marker }: ColumbariumPopupProps) {
                             key={niche.id}
                             onClick={() => handleNicheClick(niche)}
                             className={` aspect-square border rounded text-center p-1 transition-all duration-200 cursor-pointer
-                                    flex flex-col items-center justify-center min-h-[28px] hover:scale-105 hover:shadow-sm
+                                    flex flex-col items-center justify-center min-h-[40px] hover:scale-105 hover:shadow-sm
                                     ${getNicheStatusStyle(niche.status)}
                                 `}
                             title={`${niche.id} - ${niche.status}${niche.owner ? ` (${niche.owner.name})` : ''}`}
                         >
-                            <span className="font-mono text-[6px] leading-none">
+                            <span className="font-mono text-[10px] leading-tight">
                                 N{niche.niche_number}
                             </span>
-                            <span className="font-mono text-[7px] leading-none">
+                            <span className="font-mono text-[11px] leading-tight">
                                 R{niche.row}C{niche.col}
                             </span>
-                            {niche.status === 'occupied' && (
-                                <span className="text-[6px] leading-none">👤</span>
-                            )}
-                            {niche.status === 'reserved' && (
-                                <span className="text-[6px] leading-none">📝</span>
-                            )}
                         </button>
-                    ))}
-                </div>
-            </div>
+                    ))
+                    }
+                </div >
+            </div >
 
             {/* 🎨 Legend */}
-            <div className="mb-3">
-                <h4 className="text-sm font-medium mb-2 text-gray-700">Legend:</h4>
-                <div className="flex gap-2 text-xs justify-between">
+            < div className="mb-3" >
+                <h4 className="text-sm font-medium mb-2 text-accent-foreground">Legend:</h4>
+                <div className="flex gap-4 text-xs">
                     <div className="flex items-center gap-1">
                         <div className="w-3 h-3 bg-green-100 border border-green-300 rounded"></div>
-                        <span>Available</span>
+                        <span className="text-secondary-foreground">Available</span>
                     </div>
                     <div className="flex items-center gap-1">
                         <div className="w-3 h-3 bg-yellow-100 border border-yellow-300 rounded"></div>
-                        <span>Reserved</span>
+                        <span className="text-secondary-foreground">Reserved</span>
                     </div>
                     <div className="flex items-center gap-1">
                         <div className="w-3 h-3 bg-red-100 border border-red-300 rounded"></div>
-                        <span>Occupied</span>
+                        <span className="text-secondary-foreground">Occupied</span>
                     </div>
                 </div>
-            </div>
+            </div >
 
             {/* 📊 Summary stats */}
-            <div className="grid grid-cols-3 gap-2 text-xs">
-                <div className="text-center p-2 bg-green-50 rounded">
+            < div className="grid grid-cols-3 gap-2 text-xs" >
+                <div className="text-center p-2 bg-green-50 dark:bg-green-200 rounded">
                     <div className="font-semibold text-green-700">
                         {nicheData.filter(n => n.status === 'available').length}
                     </div>
                     <div className="text-green-600">Available</div>
                 </div>
-                <div className="text-center p-2 bg-yellow-50 rounded">
+                <div className="text-center p-2 bg-yellow-50 dark:bg-yellow-200 rounded">
                     <div className="font-semibold text-yellow-700">
                         {nicheData.filter(n => n.status === 'reserved').length}
                     </div>
                     <div className="text-yellow-600">Reserved</div>
                 </div>
-                <div className="text-center p-2 bg-red-50 rounded">
+                <div className="text-center p-2 bg-red-50 dark:bg-red-200 rounded">
                     <div className="font-semibold text-red-700">
                         {nicheData.filter(n => n.status === 'occupied').length}
                     </div>
                     <div className="text-red-600">Occupied</div>
                 </div>
-            </div>
+            </div >
 
             {/* Media display */}
             {/* {(() => {
@@ -428,7 +423,7 @@ export function ColumbariumPopup({ marker }: ColumbariumPopupProps) {
                     )}
                 </DialogContent>
             </Dialog>
-        </div>
+        </div >
     );
 }
 
