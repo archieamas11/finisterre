@@ -11,7 +11,7 @@ const SLIDER_IMAGES = [
   "https://picsum.photos/id/1055/600/400",
 ];
 
-export function AboutSection() {
+export default function AboutSection() {
   const [current, setCurrent] = useState(0);
   const images = useMemo(() => SLIDER_IMAGES, []);
 
@@ -66,7 +66,7 @@ export function AboutSection() {
               Founded on the principles of respect, innovation, and accessibility, we serve families across generations with tools that preserve legacies while simplifying complex processes.
             </p>
           </div>
-          
+
           {/* Right: Image Slider */}
           <div className="flex-1 flex flex-col items-center w-full">
             <div className="relative w-full max-w-md">
@@ -80,7 +80,7 @@ export function AboutSection() {
                     draggable={false}
                   />
                 </div>
-                
+
                 {/* Slider Controls */}
                 <Button
                   variant="secondary"
@@ -101,15 +101,14 @@ export function AboutSection() {
                   <ChevronRight className="h-5 w-5" />
                 </Button>
               </Card>
-              
+
               {/* Dots Indicator */}
               <div className="flex gap-2 mt-4 justify-center" role="tablist" aria-label="Image slides">
                 {images.map((_, idx) => (
                   <button
                     key={idx}
-                    className={`w-3 h-3 rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-primary ${
-                      idx === current ? 'bg-primary' : 'bg-muted-foreground/30'
-                    }`}
+                    className={`w-3 h-3 rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-primary ${idx === current ? 'bg-primary' : 'bg-muted-foreground/30'
+                      }`}
                     aria-label={`Go to slide ${idx + 1}`}
                     aria-selected={idx === current}
                     onClick={() => setCurrent(idx)}

@@ -10,7 +10,7 @@ interface PlotLocationsProps {
     backgroundColor?: string;
 }
 
-export default function PlotLocations({ marker }: PlotLocationsProps) {
+export default function SinglePlotLocations({ marker }: PlotLocationsProps) {
     // 🔧 State for edit dialog
     const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
 

@@ -1,13 +1,15 @@
 import { Link } from "react-router-dom";
 import { MapPin } from 'lucide-react';
 import { useNavigate } from "react-router-dom";
+import { Suspense, lazy } from "react";
 
-import { AboutSection } from "@/pages/landing/section/AboutSection";
 import { Button } from "@/components/ui/button";
-import { HeroSection } from "@/pages/landing/section/HeroSection";
 import { NavigationMenuSection } from "@/pages/landing/section/NavigationMenu";
-import { OurServicesSection } from "@/pages/landing/section/OurServicesSection";
 import { ThemeToggleAdvanced } from "@/components/ThemeToggleAdvanced";
+
+const HeroSection = lazy(() => import("@/pages/landing/section/HeroSection"));
+const OurServicesSection = lazy(() => import("@/pages/landing/section/OurServicesSection"));
+const AboutSection = lazy(() => import("@/pages/landing/section/AboutSection"));
 
 export default function LandingLayout() {
     const navigate = useNavigate();
@@ -40,9 +42,11 @@ export default function LandingLayout() {
                     </Link>
                 </div>
             </nav>
-            <HeroSection />
-            <OurServicesSection />
-            <AboutSection />
+            <Suspense fallback={null}>
+                <HeroSection />
+                <OurServicesSection />
+                <AboutSection />
+            </Suspense>
         </div>
     );
 }

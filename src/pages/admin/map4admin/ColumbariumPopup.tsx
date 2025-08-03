@@ -1,159 +1,33 @@
 import { ImLibrary } from "react-icons/im";
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { User, Calendar, Crown, Phone, MapPin, Loader2 } from 'lucide-react';
-import { getNichesByPlot } from '@/api/plots.api';
+import { useNichesByPlot } from '@/hooks/plots-hooks/niche.hooks';
 import type { ConvertedMarker } from '@/types/map.types';
+import type { nicheData } from '@/types/niche.types';
 
 interface ColumbariumPopupProps {
     marker: ConvertedMarker;
 }
 
-// 🗂️ Niche data structure matching database schema
-interface NicheData {
-    id: string;
-    niche_number: number;
-    row: number;
-    col: number;
-    status: 'available' | 'occupied' | 'reserved';
-    owner?: {
-        customer_id: string;
-        name: string;
-        phone: string;
-        email: string;
-    };
-    deceased?: {
-        deceased_id: string;
-        name: string;
-        dateOfBirth: string;
-        dateOfDeath: string;
-        dateOfInterment: string;
-    };
-}
-
 export default function ColumbariumPopup({ marker }: ColumbariumPopupProps) {
-    const [selectedNiche, setSelectedNiche] = useState<NicheData | null>(null);
+    const [selectedNiche, setSelectedNiche] = useState<nicheData | null>(null);
     const [isDetailOpen, setIsDetailOpen] = useState(false);
-    const [nicheData, setNicheData] = useState<NicheData[]>([]);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState<string | null>(null);
 
     const rows = parseInt(marker.rows);
     const cols = parseInt(marker.columns);
 
-    // 🔄 Fetch real niche data from database
-    useEffect(() => {
-        const fetchNicheData = async () => {
-            try {
-                setLoading(true);
-                setError(null);
-                console.log('🚀 Fetching niche data for plot:', marker.plot_id);
+    // 🔄 Fetch niche data using React Query
+    const {
+        data: nicheData = [],
+        isLoading: loading,
+        error
+    } = useNichesByPlot(marker.plot_id, rows, cols);
 
-                // 🏗️ Try to get existing niche data first
-                let existingNiches: any[] = [];
-                try {
-                    const response = await getNichesByPlot(marker.plot_id);
-                    existingNiches = response.nicheData || [];
-                    console.log('✅ Found existing niche data:', existingNiches);
-                } catch (nicheError) {
-                    console.log('ℹ️ No existing niche data found, will generate empty grid');
-                    existingNiches = [];
-                }
-
-                // 🎯 Map existing niche data to our interface
-                const plotNiches = existingNiches.map((niche: any) => ({
-                    id: niche.niche_id || niche.id,
-                    niche_number: parseInt(niche.niche_number) || 0,
-                    row: parseInt(niche.row) || 0,
-                    col: parseInt(niche.col) || 0,
-                    status: niche.status || 'available',
-                    owner: niche.customer_id ? {
-                        customer_id: niche.customer_id,
-                        name: niche.customer_name || '',
-                        phone: niche.contact_number || '',
-                        email: niche.email || ''
-                    } : undefined,
-                    deceased: niche.deceased_id ? {
-                        deceased_id: niche.deceased_id,
-                        name: niche.dead_fullname || '',
-                        dateOfBirth: niche.dead_birth_date || '',
-                        dateOfDeath: niche.dead_date_death || '',
-                        dateOfInterment: niche.dead_interment || ''
-                    } : undefined
-                }));
-
-                console.log('🔍 Existing niches:', existingNiches);
-                console.log('🎯 Mapped plotNiches:', plotNiches);
-                console.log('📏 Grid dimensions:', { rows, cols, total: rows * cols });
-
-                // 🧮 Generate grid positions for niches that don't have row/col data
-                const completeNiches = generateGridPositions(plotNiches, rows, cols, marker.plot_id);
-
-                setNicheData(completeNiches);
-                console.log('✅ Niche data loaded:', completeNiches);
-            } catch (err) {
-                console.error('❌ Error fetching niche data:', err);
-                const errorMessage = err instanceof Error ? err.message : 'Failed to load niche data';
-                setError(errorMessage);
-            } finally {
-                setLoading(false);
-            }
-        };
-
-        fetchNicheData();
-    }, [marker.plot_id, rows, cols]);
-
-    // 🧮 Generate grid positions and fill empty niches  
-    const generateGridPositions = (fetchedNiches: NicheData[], totalRows: number, totalCols: number, plotId: string): NicheData[] => {
-        const result: NicheData[] = [];
-
-        // 📊 Create a map of existing niches by niche_number
-        const nicheMap = new Map<number, NicheData>();
-        fetchedNiches.forEach(niche => {
-            if (niche.niche_number) {
-                nicheMap.set(niche.niche_number, niche);
-            }
-        });
-
-        console.log('🗺️ Creating grid for plot:', plotId, 'with dimensions:', totalRows, 'x', totalCols);
-        console.log('🔍 Existing niches to map:', fetchedNiches);
-
-        let nicheCounter = 1;
-        for (let row = 1; row <= totalRows; row++) {
-            for (let col = 1; col <= totalCols; col++) {
-                const existingNiche = nicheMap.get(nicheCounter);
-
-                if (existingNiche) {
-                    // 🎯 Use existing niche data but ensure row/col are correct for grid positioning
-                    result.push({
-                        ...existingNiche,
-                        row,
-                        col,
-                        niche_number: nicheCounter
-                    });
-                    console.log(`✅ Mapped existing niche ${nicheCounter} with data:`, existingNiche.owner?.name || 'No owner');
-                } else {
-                    // 🆕 Create empty niche for positions without data
-                    result.push({
-                        id: `${plotId}-N-${nicheCounter}-R${row}C${col}`,
-                        niche_number: nicheCounter,
-                        row,
-                        col,
-                        status: 'available'
-                    });
-                }
-                nicheCounter++;
-            }
-        }
-
-        console.log('🏁 Final grid result:', result.length, 'niches generated');
-        return result;
-    };
-
-    const handleNicheClick = (niche: NicheData) => {
+    const handleNicheClick = (niche: nicheData) => {
         console.log('🎯 Niche selected:', niche);
         setSelectedNiche(niche);
         setIsDetailOpen(true);
@@ -173,7 +47,7 @@ export default function ColumbariumPopup({ marker }: ColumbariumPopupProps) {
     if (error) {
         return (
             <div className="p-4 text-red-600">
-                <p>Error: {error}</p>
+                <p>Error: {error.message || 'Failed to load niche data'}</p>
                 <Button
                     onClick={() => window.location.reload()}
                     variant="outline"
@@ -216,9 +90,9 @@ export default function ColumbariumPopup({ marker }: ColumbariumPopupProps) {
                             onClick={() => handleNicheClick(niche)}
                             className={` aspect-square border rounded text-center p-1 transition-all duration-200 cursor-pointer
                                     flex flex-col items-center justify-center min-h-[40px] hover:scale-105 hover:shadow-sm
-                                    ${getNicheStatusStyle(niche.status)}
+                                    ${getNicheStatusStyle(niche.niche_status)}
                                 `}
-                            title={`${niche.id} - ${niche.status}${niche.owner ? ` (${niche.owner.name})` : ''}`}
+                            title={`${niche.id} - ${niche.niche_status}${niche.owner ? ` (${niche.owner.name})` : ''}`}
                         >
                             <span className="font-mono text-[10px] leading-tight">
                                 N{niche.niche_number}
@@ -255,19 +129,19 @@ export default function ColumbariumPopup({ marker }: ColumbariumPopupProps) {
             < div className="grid grid-cols-3 gap-2 text-xs" >
                 <div className="text-center p-2 bg-green-50 dark:bg-green-200 rounded">
                     <div className="font-semibold text-green-700">
-                        {nicheData.filter(n => n.status === 'available').length}
+                        {nicheData.filter(n => n.niche_status === 'available').length}
                     </div>
                     <div className="text-green-600">Available</div>
                 </div>
                 <div className="text-center p-2 bg-yellow-50 dark:bg-yellow-200 rounded">
                     <div className="font-semibold text-yellow-700">
-                        {nicheData.filter(n => n.status === 'reserved').length}
+                        {nicheData.filter(n => n.niche_status === 'reserved').length}
                     </div>
                     <div className="text-yellow-600">Reserved</div>
                 </div>
                 <div className="text-center p-2 bg-red-50 dark:bg-red-200 rounded">
                     <div className="font-semibold text-red-700">
-                        {nicheData.filter(n => n.status === 'occupied').length}
+                        {nicheData.filter(n => n.niche_status === 'occupied').length}
                     </div>
                     <div className="text-red-600">Occupied</div>
                 </div>
@@ -320,8 +194,8 @@ export default function ColumbariumPopup({ marker }: ColumbariumPopupProps) {
                         <div className="space-y-4">
                             {/* Status Badge */}
                             <div className="flex items-center gap-2">
-                                <Badge className={getStatusBadgeVariant(selectedNiche.status)}>
-                                    {selectedNiche.status.toUpperCase()}
+                                <Badge className={getStatusBadgeVariant(selectedNiche.niche_status)}>
+                                    {selectedNiche.niche_status.toUpperCase()}
                                 </Badge>
                                 <span className="text-sm text-gray-600">
                                     Niche #{selectedNiche.niche_number} - Row {selectedNiche.row}, Column {selectedNiche.col}
@@ -387,7 +261,7 @@ export default function ColumbariumPopup({ marker }: ColumbariumPopupProps) {
                             )}
 
                             {/* Available niche message */}
-                            {selectedNiche.status === 'available' && (
+                            {selectedNiche.niche_status === 'available' && (
                                 <Card className="bg-green-50 border-green-200">
                                     <CardContent className="pt-4">
                                         <p className="text-sm text-green-800 text-center">
@@ -398,7 +272,7 @@ export default function ColumbariumPopup({ marker }: ColumbariumPopupProps) {
                             )}
 
                             {/* Action buttons for available niches */}
-                            {selectedNiche.status === 'available' && (
+                            {selectedNiche.niche_status === 'available' && (
                                 <div className="flex gap-2">
                                     <Button size="sm" className="flex-1">
                                         Reserve
@@ -409,7 +283,7 @@ export default function ColumbariumPopup({ marker }: ColumbariumPopupProps) {
                                 </div>
                             )}
                             {/* Action buttons for reserved niches */}
-                            {selectedNiche.status === 'reserved' && (
+                            {selectedNiche.niche_status === 'reserved' && (
                                 <div className="flex gap-2">
                                     <Button size="sm" className="flex-1">
                                         Add Record
@@ -428,7 +302,7 @@ export default function ColumbariumPopup({ marker }: ColumbariumPopupProps) {
 }
 
 // 🎨 Get status styling for niche grid items
-const getNicheStatusStyle = (status: NicheData['status']) => {
+const getNicheStatusStyle = (status: nicheData['niche_status']) => {
     switch (status) {
         case 'available':
             return 'bg-green-100 hover:bg-green-200 border-green-300 text-green-800';
@@ -442,7 +316,7 @@ const getNicheStatusStyle = (status: NicheData['status']) => {
 };
 
 // 🎯 Get status badge styling
-const getStatusBadgeVariant = (status: NicheData['status']) => {
+const getStatusBadgeVariant = (status: nicheData['niche_status']) => {
     switch (status) {
         case 'available':
             return 'bg-green-500 text-white';

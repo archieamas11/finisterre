@@ -2,7 +2,7 @@ import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import { MapPin, ArrowRight, Sparkles, Heart } from 'lucide-react';
 
-export function HeroSection() {
+export default function HeroSection() {
     return (
         <main className="relative flex flex-1 items-center justify-center overflow-hidden pt-24 mb-16 min-h-[100vh]">
             {/* Video Background */}

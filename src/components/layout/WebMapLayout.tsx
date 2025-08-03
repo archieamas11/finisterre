@@ -6,8 +6,6 @@ import iconUrl from 'leaflet/dist/images/marker-icon.png';
 import iconRetinaUrl from 'leaflet/dist/images/marker-icon-2x.png';
 import shadowUrl from 'leaflet/dist/images/marker-shadow.png';
 import WebMapNavs from '@/pages/webmap/WebMapNavs';
-import { markerData } from '@/data/geojson/markerData';
-import type { MarkerData } from '@/data/geojson/markerData';
 import { createContext, useRef } from 'react';
 import { useState, useEffect } from 'react';
 import { PlotLocations } from '../WebMap.popup';
@@ -17,6 +15,9 @@ import { Route, Timer, XCircle } from 'lucide-react';
 import { BiSolidChurch } from 'react-icons/bi';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { GiOpenGate } from 'react-icons/gi';
+import { usePlots } from '@/hooks/plots-hooks/plot.hooks';
+import { convertPlotToMarker, getCategoryBackgroundColor, getStatusColor } from '@/types/map.types';
+
 
 const DefaultIcon = L.icon({
   iconUrl,
@@ -30,7 +31,6 @@ L.Marker.prototype.options.icon = DefaultIcon;
 
 // Context to signal a locate request from navs to map
 export const LocateContext = createContext<{ requestLocate: () => void } | null>(null);
-
 // Route interface
 interface RouteData {
   from: [number, number];
@@ -45,29 +45,26 @@ export default function MapPage() {
     [10.247883800064669, 123.79691285546676],
     [10.249302749341647, 123.7988598710129],
   ];
+
+  // 🎣 All hooks must be called at the top level before any early returns
+  const { data: plotsData, isLoading, error } = usePlots();
   const locateRef = useRef<(() => void) | null>(null);
   const [userPosition, setUserPosition] = useState<L.LatLng | null>(null);
+  const [publicRoute, setPublicRoute] = useState<RouteData | null>(null);
+  const [privateRoute, setPrivateRoute] = useState<RouteData | null>(null);
+  const pendingDestinationRef = useRef<[number, number] | null>(null);
+  const lastUserPositionRef = useRef<L.LatLng | null>(null);
+  const [isRecalculating, setIsRecalculating] = useState(false);
+  const watchIdRef = useRef<number | null>(null);
+
+  // 📊 Process data after hooks
+  const markers = plotsData?.map(convertPlotToMarker) || [];
+  console.log('🗺️ Plots data loaded:', { plotsCount: markers.length, isLoading, error });
 
   // Cemetery entrance constant for routing
   const CEMETERY_GATE = L.latLng(10.248107820799307, 123.797607547609545);
 
-  // Two-step route state
-  const [publicRoute, setPublicRoute] = useState<RouteData | null>(null);
-  const [privateRoute, setPrivateRoute] = useState<RouteData | null>(null);
-
-  // Store pending destination if user location is not yet available
-  const pendingDestinationRef = useRef<[number, number] | null>(null);
-
-  // Track last user position for drift detection
-  const lastUserPositionRef = useRef<L.LatLng | null>(null);
-
-  // Track if recalculating route
-  const [isRecalculating, setIsRecalculating] = useState(false);
-
-  // GPS watch ID for cleanup
-  const watchIdRef = useRef<number | null>(null);
-
-  // Start live GPS tracking when navigation is active
+  // 🎣 Start live GPS tracking when navigation is active
   useEffect(() => {
     if (publicRoute || privateRoute) {
       startLiveTracking();
@@ -77,6 +74,31 @@ export default function MapPage() {
 
     return () => stopLiveTracking();
   }, [publicRoute, privateRoute]);
+
+  // 🔄 Show loading state while fetching plots
+  if (isLoading) {
+    return (
+      <div className="h-screen w-full relative flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
+          <p className="text-gray-600">Loading plot data...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // ❌ Show error state if plots failed to load
+  if (error) {
+    console.error('🚨 Error loading plots:', { error });
+    return (
+      <div className="h-screen w-full relative flex items-center justify-center">
+        <div className="text-center">
+          <p className="text-red-600 mb-2">Error loading plot data</p>
+          <p className="text-gray-600 text-sm">{error?.message || 'Unknown error'}</p>
+        </div>
+      </div>
+    );
+  }
 
   function startLiveTracking() {
     if (!navigator.geolocation) {
@@ -523,15 +545,8 @@ export default function MapPage() {
             </Popup>
           </Marker>
 
-          {markerData.map((marker: MarkerData, idx: number) => {
-            const statusColor =
-              marker.plotStatus === 'Available'
-                ? '#22c55e'
-                : marker.plotStatus === 'Occupied'
-                  ? '#ef4444'
-                  : marker.plotStatus === 'Reserved'
-                    ? '#facc15'
-                    : '#a3a3a3';
+          {markers.map((markers: any) => {
+            const statusColor = getStatusColor(markers.plotStatus);
 
             const circleIcon = L.divIcon({
               html: `<div style="
@@ -546,31 +561,23 @@ export default function MapPage() {
               iconSize: [24, 24],
             });
 
-            // Type-safe background color assignment
-            const backgroundColor: string | undefined =
-              marker.category === 'Bronze' ? '#7d7d7d' :
-                marker.category === 'Silver' ? '#b00020' :
-                  marker.category === 'Platinum' ? '#d4af37' :
-                    marker.category === 'Diamond' ? '#cc6688' :
-                      undefined;
-
             // When direction is requested, start navigation with two-step route
             const handleDirectionClick = () => {
               if (userPosition) {
-                handleStartNavigation(userPosition, marker.position as [number, number]);
+                handleStartNavigation(userPosition, markers.position as [number, number]);
               } else {
                 // Store destination and trigger location request
-                pendingDestinationRef.current = marker.position as [number, number];
+                pendingDestinationRef.current = markers.position as [number, number];
                 if (locateRef.current) locateRef.current();
               }
             };
 
             return (
-              <Marker key={idx} position={marker.position} icon={circleIcon}>
+              <Marker key={`plot-${markers.plot_id}`} position={markers.position} icon={circleIcon}>
                 <Popup>
                   <PlotLocations
-                    marker={marker}
-                    backgroundColor={backgroundColor}
+                    marker={markers}
+                    backgroundColor={getCategoryBackgroundColor(markers.category)}
                     onDirectionClick={handleDirectionClick}
                   />
                 </Popup>

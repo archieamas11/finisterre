@@ -12,16 +12,6 @@ export async function getPlots() {
   return res.data;
 }
 
-export async function getColPlots() {
-  const res = await api.post("plots/get_col_plots.php");
-  if (!res.data || !Array.isArray(res.data.plots)) {
-    throw new Error("Invalid response format");
-  } else {
-    console.log("Fetched plots:", res.data.plots);
-  }
-  return res.data;
-}
-
 export async function editPlots(data: plots) {
   // 🛠️ Accepts plot data to update plot details
   const res = await api.post("plots/update_plot.php", data);
@@ -54,16 +44,6 @@ export async function editLotOwner(data: plots) {
 }
 
 // // Chambers api
-// export async function getNiche() {
-//   const res = await api.post("plots/get_niche_data.php");
-//   if (!res.data || !Array.isArray(res.data.plots)) {
-//     throw new Error("Invalid response format");
-//   } else {
-//     console.log("Fetched niche:", res.data.plots);
-//   }
-//   return res.data;
-// }
-
 // 🏛️ Get niches for specific plot/columbarium
 export async function getNichesByPlot(plot_id: string) {
   const res = await api.post("plots/get_niche_data.php", { plot_id });

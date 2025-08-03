@@ -28,7 +28,7 @@ const services = [
     },
 ];
 
-export function OurServicesSection() {
+export default function OurServicesSection() {
     return (
         <section
             className="w-full py-16"

@@ -15,8 +15,8 @@ import type { ConvertedMarker } from '@/types/map.types';
 import { convertPlotToMarker, getCategoryBackgroundColor, getStatusColor } from '@/types/map.types';
 import { Card } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
-const ColumbariumPopup = lazy(() => import("@/pages/admin/map4admin/ColumbariumPopup"));
-const PlotLocations = lazy(() => import("@/pages/admin/map4admin/SinglePlotPopup"));
+const ColumbariumPopup = lazy(() => import("@/pages/admin/map4admin/columbariumPopup"));
+const SinglePlotLocations = lazy(() => import("@/pages/admin/map4admin/SinglePlotPopup"));
 
 
 const DefaultIcon = L.icon({
@@ -293,7 +293,7 @@ export default function AdminMapLayout() {
                             </>
                           }
                         >
-                          <PlotLocations marker={marker} backgroundColor={backgroundColor} />
+                          <SinglePlotLocations marker={marker} backgroundColor={backgroundColor} />
                         </Suspense>
                       </Popup>
                     )}
