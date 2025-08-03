@@ -1,14 +1,14 @@
 import { ImLibrary } from "react-icons/im";
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { User, Calendar, Crown, Phone, MapPin } from 'lucide-react';
-import type { multiplePlots } from '@/types/map.types';
+import type { ConvertedMarker } from '@/types/map.types';
 
 interface ColumbariumPopupProps {
-    marker: multiplePlots;
+    marker: ConvertedMarker;
 }
 
 // 🗂️ Mock niche data structure
@@ -109,7 +109,7 @@ export function ColumbariumPopup({ marker }: ColumbariumPopupProps) {
 
     // 🎭 Generate mock niche data
     // TODO: Replace with real API call to fetch niche data by columbarium ID
-    const nicheData = generateMockNicheData(rows, cols, marker.col_id);
+    const nicheData = generateMockNicheData(rows, cols, marker.plot_id);
 
     const handleNicheClick = (niche: NicheData) => {
         console.log('🎯 Niche selected:', niche);
@@ -121,7 +121,7 @@ export function ColumbariumPopup({ marker }: ColumbariumPopupProps) {
         <div className="p-2 w-89">
             <div className="mb-3">
                 <h3 className="flex items-center gap-2 font-bold text-lg mb-1 text-secondary">
-                    <ImLibrary /> Columbarium {marker.col_id}
+                    <ImLibrary /> Chamber {marker.plot_id}
                 </h3>
                 <div className="flex gap-2 text-sm text-gray-600">
                     <span><span className="font-medium">Rows:</span> {marker.rows}</span>
@@ -215,10 +215,13 @@ export function ColumbariumPopup({ marker }: ColumbariumPopupProps) {
                     <DialogHeader>
                         <DialogTitle className="flex items-center gap-2">
                             <Crown className="w-5 h-5 text-purple-600" />
-                            Columbarium {selectedNiche?.id}
+                            Chamber {selectedNiche?.id}
                         </DialogTitle>
+                        {/* ✅ Proper location for description */}
+                        <DialogDescription className="sr-only">
+                            Details and actions for the selected chambers niche.
+                        </DialogDescription>
                     </DialogHeader>
-
                     {selectedNiche && (
                         <div className="space-y-4">
                             {/* Status Badge */}

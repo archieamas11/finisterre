@@ -8,6 +8,8 @@ export type ConvertedMarker = {
     width: number;
     area: number;
   };
+  rows: string;
+  columns: string;
   category: string;
   block: string;
   label: string | null;
@@ -22,6 +24,8 @@ export type plots = {
   length: string;
   width: string;
   area: string;
+  rows: string;
+  columns: string;
   status: string;
   label: string;
   coordinates: [number, number];
@@ -37,6 +41,8 @@ export const convertPlotToMarker = (plot: {
   length: string;
   width: string;
   area: string;
+  rows: string;
+  columns: string;
   status: string;
   label: string | null;
   coordinates: string;
@@ -72,13 +78,6 @@ export const convertPlotToMarker = (plot: {
     }
   }
 
-  console.log("🔄 Converting plot:", {
-    plot_id: plot.plot_id,
-    original_file_name: plot.file_name,
-    original_file_names_array: plot.file_names_array,
-    converted_fileNames: fileNames,
-  });
-
   return {
     plot_id: plot.plot_id,
     position: [lat, lng] as [number, number],
@@ -89,6 +88,8 @@ export const convertPlotToMarker = (plot: {
       width: parseFloat(plot.width),
       area: parseFloat(plot.area),
     },
+    rows: plot.rows,
+    columns: plot.columns,
     category: plot.category,
     block: plot.block,
     label: plot.label,
@@ -97,36 +98,36 @@ export const convertPlotToMarker = (plot: {
   };
 };
 
-export type multiplePlots = {
-  col_id: string;
-  rows: string;
-  columns: string;
-  coordinates: [number, number];
-};
+// export type multiplePlots = {
+//   col_id: string;
+//   rows: string;
+//   columns: string;
+//   coordinates: [number, number];
+// };
 
-// 🔄 Convert multiple plots data to marker format
-export const convertColPlotToMarker = (plot: {
-  col_id: string;
-  rows: string;
-  columns: string;
-  coordinates: string;
-}): multiplePlots => {
-  // 📍 Parse coordinates from database format "lng, lat" to [lat, lng]
-  const [lng, lat] = plot.coordinates.split(", ").map(Number);
+// // 🔄 Convert multiple plots data to marker format
+// export const convertColPlotToMarker = (plot: {
+//   col_id: string;
+//   rows: string;
+//   columns: string;
+//   coordinates: string;
+// }): multiplePlots => {
+//   // 📍 Parse coordinates from database format "lng, lat" to [lat, lng]
+//   const [lng, lat] = plot.coordinates.split(", ").map(Number);
 
-  console.log("🔄 Converting col plot:", {
-    col_id: plot.col_id,
-    coordinates: plot.coordinates,
-    parsed: [lat, lng],
-  });
+//   console.log("🔄 Converting col plot:", {
+//     col_id: plot.col_id,
+//     coordinates: plot.coordinates,
+//     parsed: [lat, lng],
+//   });
 
-  return {
-    col_id: plot.col_id,
-    rows: plot.rows,
-    columns: plot.columns,
-    coordinates: [lat, lng] as [number, number],
-  };
-};
+//   return {
+//     col_id: plot.col_id,
+//     rows: plot.rows,
+//     columns: plot.columns,
+//     coordinates: [lat, lng] as [number, number],
+//   };
+// };
 
 // 🎨 Get background color based on plot category
 export const getCategoryBackgroundColor = (category: string): string => {
@@ -139,14 +140,18 @@ export const getCategoryBackgroundColor = (category: string): string => {
       return "#d4af37";
     case "diamond":
       return "#cc6688";
+    case "chambers":
+      return "#a3a3";
+    case "columbarium":
+      return "#a3a3";
     default:
       return "#6b7280";
   }
 };
 
 // 🟢 Get status color for map markers
-export const getStatusColor = (status: string): string => {
-  switch (status.toLowerCase()) {
+export const getStatusColor = (plotStatus: string): string => {
+  switch (plotStatus) {
     case "available":
       return "#22c55e";
     case "occupied":
