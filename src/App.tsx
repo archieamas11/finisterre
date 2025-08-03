@@ -23,7 +23,6 @@ import UserDashboard from "@/pages/user/contents/UserDashboard";
 import UserMap from "@/pages/user/contents/Map";
 import UserProfile from "@/pages/user/contents/Profile";
 import UserServices from "@/pages/user/contents/Services";
-import MapLibre from "./components/webmap/testing/MapLibre";
 import CustomersPage from "./pages/admin/interment/customer/CustomerPage";
 
 export default function App() {
@@ -34,7 +33,6 @@ export default function App() {
 					{/* Public Routes */}
 					<Route path="/" element={<LandingLayout />} />
 					<Route path="/map" element={<MapPage />} />
-					<Route path="/mapLibre" element={<MapLibre />} />
 					<Route path="/login" element={<Layout><LoginV2 /></Layout>} />
 					<Route path="/forgot-password" element={<ForgotPassword />} />
 					<Route path="/reset-password" element={<ResetPassword />} />
