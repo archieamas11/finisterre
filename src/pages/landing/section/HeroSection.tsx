@@ -35,7 +35,7 @@ export default function HeroSection() {
             </div>
 
             {/* Main Content Container */}
-            <div className="relative z-10 w-full max-w-6xl mx-auto px-6 sm:px-8">
+            <div className="relative z-10 w-full max-w-6xl mx-auto mb-20 px-6 sm:px-8">
                 {/* Premium badge */}
                 <div className="flex justify-center mb-8 animate-fade-in">
                     <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-white/90 text-sm font-medium">
