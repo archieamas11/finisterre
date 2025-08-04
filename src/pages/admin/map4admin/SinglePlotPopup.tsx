@@ -3,7 +3,7 @@ import { Button } from '@/components/ui/button';
 import type { ConvertedMarker } from '@/types/map.types';
 import { useState } from 'react';
 import EditMapDialog from './editMapDialog';
-import { FaUser, FaCalendarAlt, FaMapMarkerAlt, FaCertificate, FaInfoCircle, FaAward, FaHourglassStart } from 'react-icons/fa';
+import { FaUser, FaCalendarAlt, FaMapMarkerAlt, FaInfoCircle, FaAward, FaHourglassStart } from 'react-icons/fa';
 import { BiCheckCircle, BiXCircle } from 'react-icons/bi';
 
 interface PlotLocationsProps {

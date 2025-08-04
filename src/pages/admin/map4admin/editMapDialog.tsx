@@ -85,7 +85,9 @@ export default function EditMapDialog({ open, onOpenChange, plots }: EditMapDial
             label: (values.label ?? "").trim(),
             coordinates: plots.coordinates || [0, 0],
             file_names: plotImages, // Use current plotImages state
-            file_names_array: plotImages, // Include both for compatibility
+            file_names_array: plotImages,
+            rows: '',
+            columns: ''
         };
 
         try {

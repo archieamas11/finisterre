@@ -12,8 +12,7 @@ export function useDeceasedRecords() {
     queryKey: ["deceasedRecords"],
     queryFn: async () => {
       const r = await getDeceasedRecords();
-      // Always return a defined value; default to empty array if missing
-      return r.deceasedRecords ?? [];
+      return r.deceased ?? [];
     },
   });
 }

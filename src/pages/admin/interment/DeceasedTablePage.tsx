@@ -5,7 +5,6 @@ import { useDeceasedRecords } from "@/hooks/deceased-hooks/DeceasedRecords.hooks
 export default function DeceasedTablePage() {
   const { data: deceasedRecords, isPending, isError } = useDeceasedRecords();
 
-
   if (isPending)
     return (
       <div className="flex items-center justify-center h-full">

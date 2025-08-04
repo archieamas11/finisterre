@@ -24,7 +24,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import type { LotOwners } from "@/types/interment.types";
-import { ChevronDown, Columns2, Ghost, LandPlot, Search } from "lucide-react";
+import { ChevronDown, Columns2, Ghost, LandPlot, Plus, Search } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../../../components/ui/select";
 import { Label } from "@/components/ui/label";
 import { lotOwnerColumns } from "./columns/columns";
@@ -120,8 +120,8 @@ export default function LotOwnersTable({ data }: LotOwnersTableProps) {
                                 ))}
                         </DropdownMenuContent>
                     </DropdownMenu>
-                    <Button variant="outline" size="lg" className="hidden lg:flex">
-                        <span className="hidden lg:inline">Add Lot Owner</span>
+                    <Button variant="outline" size="lg">
+                        <Plus className="h-4 w-4" /> Add Lot Owner
                     </Button>
                 </div>
             </div>

@@ -61,8 +61,9 @@ export type DeceasedRecords = {
 
   // Join fields
   lot_id: string;
-  type: string;
   block: string;
   plot_id: string;
   full_name?: string;
+  niche_number?: string;
+  category: string;
 };

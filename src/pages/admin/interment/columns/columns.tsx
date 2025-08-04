@@ -10,10 +10,7 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel,
 import type { LotOwners, Customer, DeceasedRecords } from "@/types/interment.types";
 import EditCustomerDialog from "@/pages/admin/interment/customer/UpdateCustomer";
 import ViewCustomerDialog from "../customer/ViewCustomer";
-
-function capitalizeWords(str: string) {
-    return str.replace(/\b\w+/g, (word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase());
-}
+import { capitalizeWords } from "@/lib/stringUtils";
 
 // Fix: Checkbox with indeterminate state for header
 function SelectAllCheckbox({ table }: { table: any }) {
@@ -157,19 +154,19 @@ export const lotOwnerColumns: ColumnDef<LotOwners>[] =
             accessorFn: (row) =>
                 row.block && row.plot_id
                     ? `Block ${row.block} • Grave ${row.plot_id}`
-                    : (row.category && row.niche_id
-                        ? `${row.category} • Niche ${row.niche_id}`
+                    : (row.category && row.niche_number
+                        ? `${capitalizeWords(row.category)} • Niche ${row.niche_number}`
                         : null),
             id: "location",
             cell: ({ row }) => {
                 // 🧩 Show block/plot if present, else category/niche_id, else N/A badge
                 if (row.original.block && row.original.plot_id) {
                     return `Block ${row.original.block} • Grave ${row.original.plot_id}`;
+                } else if (row.original.category && row.original.niche_number) {
+                    return `${capitalizeWords(row.original.category)} • Niche ${row.original.niche_number}`;
+                } else {
+                    return (<Badge variant="secondary" asChild={false}><span>N/A</span></Badge>);
                 }
-                if (row.original.category && row.original.niche_id) {
-                    return `${row.original.category} ${row.original.plot_id} • Niche ${row.original.niche_number}`;
-                }
-                return (<Badge variant="secondary" asChild={false}><span>N/A</span></Badge>);
             },
         },
         {
@@ -266,15 +263,21 @@ export const deceasedRecordsColumns: ColumnDef<DeceasedRecords>[] =
         {
             header: "Buried Location",
             accessorFn: (row) =>
-                row.block && row.plot_id && row.type
-                    ? `Block ${(row.block)} • Grave ${row.plot_id} • ${row.type}`
-                    : null,
+                row.block && row.plot_id
+                    ? `Block ${row.block} • Grave ${row.plot_id}`
+                    : (row.category && row.niche_number
+                        ? `${capitalizeWords(row.category)} • Niche ${row.niche_number}`
+                        : null),
             id: "location",
             cell: ({ row }) => {
-                const value = row.original.block && row.original.plot_id && row.original.type
-                    ? `Block ${row.original.block} • Grave ${row.original.plot_id} • ${row.original.type}`
-                    : null;
-                return value ? value : (<Badge variant="secondary" asChild={false}><span>N/A</span></Badge>);
+                // 🧩 Show block/plot if present, else category/niche_id, else N/A badge
+                if (row.original.block && row.original.plot_id) {
+                    return `Block ${row.original.block} • Grave ${row.original.plot_id}`;
+                } else if (row.original.category && row.original.niche_number) {
+                    return `${capitalizeWords(row.original.category)} • Niche ${row.original.niche_number}`;
+                } else {
+                    return (<Badge variant="secondary" asChild={false}><span>N/A</span></Badge>);
+                }
             },
         },
         {
@@ -327,16 +330,12 @@ export const deceasedRecordsColumns: ColumnDef<DeceasedRecords>[] =
                             <DropdownMenuLabel>Actions</DropdownMenuLabel>
                             <DropdownMenuSeparator />
                             <DropdownMenuItem onClick={() => navigator.clipboard.writeText(deceasedRecord.deceased_id)}>
-                                <ClipboardCopy className="mr-2 h-4 w-4" />
-                                Copy deceased record ID
-                            </DropdownMenuItem>
-                            <DropdownMenuItem>
                                 <Pencil className="mr-2 h-4 w-4" />
                                 Edit deceased record
                             </DropdownMenuItem>
                             <DropdownMenuItem>
                                 <Eye className="mr-2 h-4 w-4" />
-                                View lot owner detail
+                                View deceased record
                             </DropdownMenuItem>
                         </DropdownMenuContent>
                     </DropdownMenu>

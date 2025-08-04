@@ -2,6 +2,7 @@ import { api } from "./axiosInstance";
 
 export async function getDeceasedRecords() {
   const res = await api.post("deceased-records/get_deceased.php");
+  console.log(res.data);
   return res.data;
 }
 

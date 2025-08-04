@@ -24,7 +24,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import type { DeceasedRecords } from "@/types/interment.types";
-import { ChevronDown, Columns2, Ghost, Search, SkullIcon } from "lucide-react";
+import { ChevronDown, Columns2, Ghost, Plus, Search, SkullIcon } from "lucide-react";
 import { deceasedRecordsColumns } from "./columns/columns";
 
 interface DeceasedRecordsTableProps {
@@ -119,6 +119,9 @@ export default function DeceasedRecordsTable({ data }: DeceasedRecordsTableProps
                                 ))}
                         </DropdownMenuContent>
                     </DropdownMenu>
+                    <Button variant="outline" size="lg">
+                        <Plus className="h-4 w-4" /> Add Deceased Record
+                    </Button>
                 </div>
             </div>
             <div className="overflow-hidden rounded-md border">
