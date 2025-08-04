@@ -581,7 +581,9 @@ export default function MapPage() {
                         </>
                       }
                     >
-                      <ColumbariumPopup marker={markers} />
+                      <ColumbariumPopup marker={markers}
+                        onDirectionClick={handleDirectionClick}
+                      />
                     </Suspense>
                   </Popup>
                 ) : (

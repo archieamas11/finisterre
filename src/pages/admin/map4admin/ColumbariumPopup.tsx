@@ -4,17 +4,19 @@ import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { User, Calendar, Crown, Phone, MapPin, Loader2 } from 'lucide-react';
+import { User, Calendar, Crown, Phone, MapPin } from 'lucide-react';
 import { useNichesByPlot } from '@/hooks/plots-hooks/niche.hooks';
 import type { ConvertedMarker } from '@/types/map.types';
 import type { nicheData } from '@/types/niche.types';
 import { isAdmin } from '@/utils/Auth.utils';
+import { FaDirections } from "react-icons/fa";
 
 interface ColumbariumPopupProps {
     marker: ConvertedMarker;
+    onDirectionClick?: () => void;
 }
 
-export default function ColumbariumPopup({ marker }: ColumbariumPopupProps) {
+export default function ColumbariumPopup({ marker, onDirectionClick }: ColumbariumPopupProps) {
     const [selectedNiche, setSelectedNiche] = useState<nicheData | null>(null);
     const [isDetailOpen, setIsDetailOpen] = useState(false);
 
@@ -24,7 +26,6 @@ export default function ColumbariumPopup({ marker }: ColumbariumPopupProps) {
     // 🔄 Fetch niche data using React Query
     const {
         data: nicheData = [],
-        isLoading: loading,
         error
     } = useNichesByPlot(marker.plot_id, rows, cols);
 
@@ -39,16 +40,6 @@ export default function ColumbariumPopup({ marker }: ColumbariumPopupProps) {
         setSelectedNiche(niche);
         setIsDetailOpen(true);
     };
-
-    // 🔄 Show loading state
-    if (loading) {
-        return (
-            <div className="p-4 flex items-center justify-center">
-                <Loader2 className="h-6 w-6 animate-spin" />
-                <span className="ml-2">Loading niche data...</span>
-            </div>
-        );
-    }
 
     // ❌ Show error state
     if (error) {
@@ -68,21 +59,33 @@ export default function ColumbariumPopup({ marker }: ColumbariumPopupProps) {
     }
 
     return (
-        <div className="p-2 w-110">
-            <div className="mb-3">
-                <h3 className="flex items-center gap-2 font-bold text-lg mb-1 text-accent-foreground">
-                    <ImLibrary /> Chamber {marker.plot_id}
-                </h3>
-                <div className="flex gap-2 text-sm text-secondary-foreground">
-                    <span><span className="font-medium">Rows:</span> {marker.rows}</span>
-                    <span><span className="font-medium">Columns:</span> {marker.columns}</span>
-                    <span><span className="font-medium">Total:</span> {rows * cols} niches</span>
+        <div className="p-2 w-109">
+            <div className="mb-3 border flex items-center justify-between p-3 rounded-lg bg-background dark:bg-muted">
+                <div>
+                    <h3 className="flex items-center gap-2 font-bold text-lg mb-1 text-accent-foreground">
+                        <ImLibrary /> Chamber {marker.plot_id}
+                    </h3>
+                    <div className="flex gap-2 text-sm text-secondary-foreground">
+                        <span><span className="font-medium">Rows:</span> {marker.rows}</span>
+                        <span><span className="font-medium">Columns:</span> {marker.columns}</span>
+                        <span><span className="font-medium">Total:</span> {rows * cols} niches</span>
+                    </div>
                 </div>
+                {/* Only show directions button if NOT admin */}
+                {!isAdmin() && (
+                    <Button
+                        className="h-12 w-12 flex justify-center items-center rounded-full shadow-md transition-colors p-0"
+                        onClick={onDirectionClick}
+                        variant="secondary"
+                        style={{ minWidth: '2rem', minHeight: '2rem' }}
+                    >
+                        <FaDirections className="text-white text-base" />
+                    </Button>
+                )}
             </div>
-
             {/* 🔢 Grid layout for niches */}
             <div className="mb-3">
-                <h4 className="text-sm font-medium mb-2 text-secondary-foreground">Niche Layout:</h4>
+                <h4 className="text-sm font-medium mb-2 text-secondary-foreground border rounded-lg bg-background dark:bg-muted p-3">Niche Layout:</h4>
                 <div
                     className="grid gap-1 border rounded p-2 bg-card w-105"
                     style={{
@@ -114,75 +117,79 @@ export default function ColumbariumPopup({ marker }: ColumbariumPopupProps) {
             </div >
 
             {/* 🎨 Legend */}
-            < div className="mb-3" >
-                <h4 className="text-sm font-medium mb-2 text-accent-foreground">Legend:</h4>
-                <div className="flex gap-4 text-xs">
-                    <div className="flex items-center gap-1">
-                        <div className="w-3 h-3 bg-green-100 border border-green-300 rounded"></div>
-                        <span className="text-secondary-foreground">Available</span>
+            <div className="mb-3 border p-3 rounded-lg bg-background dark:bg-muted">
+                <div className="mb-3" >
+                    <h4 className="text-sm font-medium mb-2 text-accent-foreground">Legend:</h4>
+                    <div className="flex gap-4 text-xs">
+                        <div className="flex items-center gap-1">
+                            <div className="w-3 h-3 bg-green-100 border border-green-300 rounded"></div>
+                            <span className="text-secondary-foreground">Available</span>
+                        </div>
+                        <div className="flex items-center gap-1">
+                            <div className="w-3 h-3 bg-yellow-100 border border-yellow-300 rounded"></div>
+                            <span className="text-secondary-foreground">Reserved</span>
+                        </div>
+                        <div className="flex items-center gap-1">
+                            <div className="w-3 h-3 bg-red-100 border border-red-300 rounded"></div>
+                            <span className="text-secondary-foreground">Occupied</span>
+                        </div>
                     </div>
-                    <div className="flex items-center gap-1">
-                        <div className="w-3 h-3 bg-yellow-100 border border-yellow-300 rounded"></div>
-                        <span className="text-secondary-foreground">Reserved</span>
-                    </div>
-                    <div className="flex items-center gap-1">
-                        <div className="w-3 h-3 bg-red-100 border border-red-300 rounded"></div>
-                        <span className="text-secondary-foreground">Occupied</span>
-                    </div>
-                </div>
-            </div >
+                </div >
 
-            {/* 📊 Summary stats */}
-            < div className="grid grid-cols-3 gap-2 text-xs" >
-                <div className="text-center p-2 bg-green-50 dark:bg-green-200 rounded">
-                    <div className="font-semibold text-green-700">
-                        {nicheData.filter(n => n.niche_status === 'available').length}
+                {/* 📊 Summary stats */}
+                < div className="grid grid-cols-3 gap-2 text-xs" >
+                    <div className="text-center p-2 bg-green-50 dark:bg-green-200 rounded">
+                        <div className="font-semibold text-green-700">
+                            {nicheData.filter(n => n.niche_status === 'available').length}
+                        </div>
+                        <div className="text-green-600">Available</div>
                     </div>
-                    <div className="text-green-600">Available</div>
-                </div>
-                <div className="text-center p-2 bg-yellow-50 dark:bg-yellow-200 rounded">
-                    <div className="font-semibold text-yellow-700">
-                        {nicheData.filter(n => n.niche_status === 'reserved').length}
+                    <div className="text-center p-2 bg-yellow-50 dark:bg-yellow-200 rounded">
+                        <div className="font-semibold text-yellow-700">
+                            {nicheData.filter(n => n.niche_status === 'reserved').length}
+                        </div>
+                        <div className="text-yellow-600">Reserved</div>
                     </div>
-                    <div className="text-yellow-600">Reserved</div>
-                </div>
-                <div className="text-center p-2 bg-red-50 dark:bg-red-200 rounded">
-                    <div className="font-semibold text-red-700">
-                        {nicheData.filter(n => n.niche_status === 'occupied').length}
+                    <div className="text-center p-2 bg-red-50 dark:bg-red-200 rounded">
+                        <div className="font-semibold text-red-700">
+                            {nicheData.filter(n => n.niche_status === 'occupied').length}
+                        </div>
+                        <div className="text-red-600">Occupied</div>
                     </div>
-                    <div className="text-red-600">Occupied</div>
-                </div>
-            </div >
+                </div >
+            </div>
 
             {/* Media display */}
-            {/* {(() => {
+            {(() => {
                 // 🖼️ Check both file_names_array and file_name properties
                 const images = marker.file_names_array || marker.file_name || [];
                 console.log("🖼️ Images to display:", images, "from marker:", marker);
-                return Array.isArray(images) && images.length > 0 ? (
-                    <div className="grid grid-cols-2 gap-2 mt-5">
-                        {images.map((imageUrl, idx) => (
-                            <img
-                                key={idx}
-                                src={imageUrl}
-                                alt={`Plot media ${idx + 1}`}
-                                className="w-full h-30 object-cover rounded hover:transform hover:scale-105 transition-transform duration-200"
-                                onError={(e) => {
-                                    console.log("🖼️ Image failed to load:", imageUrl);
-                                    e.currentTarget.style.display = 'none';
-                                }}
-                                onLoad={() => {
-                                    console.log("✅ Image loaded successfully:", imageUrl);
-                                }}
-                            />
-                        ))}
-                    </div>
-                ) : (
-                    <div className="text-center text-xs text-gray-400 mt-5">
-                        No photos available
-                    </div>
-                );
-            })()} */}
+                if (!isAdmin()) {
+                    return Array.isArray(images) && images.length > 0 ? (
+                        <div className="grid grid-cols-2 gap-2 mt-5">
+                            {images.map((imageUrl, idx) => (
+                                <img
+                                    key={idx}
+                                    src={imageUrl}
+                                    alt={`Plot media ${idx + 1}`}
+                                    className="w-full h-30 object-cover rounded hover:transform hover:scale-105 transition-transform duration-200"
+                                    onError={(e) => {
+                                        console.log("🖼️ Image failed to load:", imageUrl);
+                                        e.currentTarget.style.display = 'none';
+                                    }}
+                                    onLoad={() => {
+                                        console.log("✅ Image loaded successfully:", imageUrl);
+                                    }}
+                                />
+                            ))}
+                        </div>
+                    ) : (
+                        <div className="text-center text-xs text-gray-400 mt-5">
+                            No photos available
+                        </div>
+                    );
+                }
+            })()}
 
             {/* 🔍 Niche Detail Dialog */}
             <Dialog open={isDetailOpen} onOpenChange={setIsDetailOpen}>
@@ -191,6 +198,7 @@ export default function ColumbariumPopup({ marker }: ColumbariumPopupProps) {
                         <DialogTitle className="flex items-center gap-2">
                             <Crown className="w-5 h-5 text-purple-600" />
                             Chamber {selectedNiche?.id}
+
                         </DialogTitle>
                         {/* ✅ Proper location for description */}
                         <DialogDescription className="sr-only">

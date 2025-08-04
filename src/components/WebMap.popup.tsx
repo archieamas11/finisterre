@@ -6,6 +6,7 @@ import { CardDescription, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Award, Info, MapPin, Ruler } from 'lucide-react';
 import { type ConvertedMarker } from '@/types/map.types';
+import { isAdmin } from "@/utils/Auth.utils";
 
 interface PlotLocationsProps {
     marker: ConvertedMarker;
@@ -97,7 +98,36 @@ export function PlotLocations({ marker, backgroundColor, onDirectionClick }: Plo
                     </span>
                 </div>
             </div>
-            <div className="text-center text-xs text-muted-foreground mt-2">No photos available</div>
+            {(() => {
+                // 🖼️ Check both file_names_array and file_name properties
+                const images = marker.file_names_array || marker.file_name || [];
+                console.log("🖼️ Images to display:", images, "from marker:", marker);
+                if (!isAdmin()) {
+                    return Array.isArray(images) && images.length > 0 ? (
+                        <div className="grid grid-cols-2 gap-2 mt-5">
+                            {images.map((imageUrl, idx) => (
+                                <img
+                                    key={idx}
+                                    src={imageUrl}
+                                    alt={`Plot media ${idx + 1}`}
+                                    className="w-full h-30 object-cover rounded hover:transform hover:scale-105 transition-transform duration-200"
+                                    onError={(e) => {
+                                        console.log("🖼️ Image failed to load:", imageUrl);
+                                        e.currentTarget.style.display = 'none';
+                                    }}
+                                    onLoad={() => {
+                                        console.log("✅ Image loaded successfully:", imageUrl);
+                                    }}
+                                />
+                            ))}
+                        </div>
+                    ) : (
+                        <div className="text-center text-xs text-gray-400 mt-5">
+                            No photos available
+                        </div>
+                    );
+                }
+            })()}
         </div>
     );
 }

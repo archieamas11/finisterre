@@ -5,6 +5,7 @@ import { useState } from 'react';
 import EditMapDialog from './editMapDialog';
 import { FaUser, FaCalendarAlt, FaMapMarkerAlt, FaInfoCircle, FaAward, FaHourglassStart } from 'react-icons/fa';
 import { BiCheckCircle, BiXCircle } from 'react-icons/bi';
+import { isAdmin } from '@/utils/Auth.utils';
 
 interface PlotLocationsProps {
     marker: ConvertedMarker;
@@ -123,31 +124,36 @@ export default function SinglePlotLocations({ marker }: PlotLocationsProps) {
                     </div>
                 </div>
             </div>
-            {/* Media display
-            // {(() => {
-            //     // 🖼️ Check both file_names_array and file_name properties
-            //     const images = marker.file_names_array || marker.file_name || [];
-            //     console.log("🖼️ Images to display:", images, "from marker:", marker);
-            //     return Array.isArray(images) && images.length > 0 ? (
-            //         <div className="grid grid-cols-2 gap-2 mt-2">
-            //             {images.map((imageUrl, idx) => (
-            //                 <img
-            //                     key={idx}
-            //                     src={imageUrl}
-            //                     alt={`Plot media ${idx + 1}`}
-            //                     className="w-full h-30 object-cover rounded hover:transform hover:scale-105 transition-transform duration-200"
-            //                     onError={(e) => {
-            //                         console.log("🖼️ Image failed to load:", imageUrl);
-            //                         e.currentTarget.style.display = 'none';
-            //                     }}
-            //                 />
-            //             ))}
-            //         </div>
-            //     ) : (
-            //         <div className="text-center text-xs text-gray-400 mt-2">
-            //         </div>
-            //     );
-            // })()} */}
+            {(() => {
+                // 🖼️ Check both file_names_array and file_name properties
+                const images = marker.file_names_array || marker.file_name || [];
+                console.log("🖼️ Images to display:", images, "from marker:", marker);
+                if (!isAdmin()) {
+                    return Array.isArray(images) && images.length > 0 ? (
+                        <div className="grid grid-cols-2 gap-2 mt-5">
+                            {images.map((imageUrl, idx) => (
+                                <img
+                                    key={idx}
+                                    src={imageUrl}
+                                    alt={`Plot media ${idx + 1}`}
+                                    className="w-full h-30 object-cover rounded hover:transform hover:scale-105 transition-transform duration-200"
+                                    onError={(e) => {
+                                        console.log("🖼️ Image failed to load:", imageUrl);
+                                        e.currentTarget.style.display = 'none';
+                                    }}
+                                    onLoad={() => {
+                                        console.log("✅ Image loaded successfully:", imageUrl);
+                                    }}
+                                />
+                            ))}
+                        </div>
+                    ) : (
+                        <div className="text-center text-xs text-gray-400 mt-5">
+                            No photos available
+                        </div>
+                    );
+                }
+            })()}
 
             {/* 🔧 Edit Dialog */}
             <EditMapDialog
