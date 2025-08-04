@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import type { ColumnDef } from "@tanstack/react-table";
-import { MoreHorizontal, ClipboardCopy, Pencil, Eye, Archive } from "lucide-react";
+import { MoreHorizontal, Pencil, Eye, Archive } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
