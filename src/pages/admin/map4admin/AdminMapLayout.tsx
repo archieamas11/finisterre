@@ -15,7 +15,7 @@ import type { ConvertedMarker } from '@/types/map.types';
 import { convertPlotToMarker, getCategoryBackgroundColor, getStatusColor } from '@/types/map.types';
 import { Card } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
-const ColumbariumPopup = lazy(() => import("@/pages/admin/map4admin/columbariumPopup"));
+const ColumbariumPopup = lazy(() => import("@/pages/admin/map4admin/ColumbariumPopup"));
 const SinglePlotLocations = lazy(() => import("@/pages/admin/map4admin/SinglePlotPopup"));
 
 

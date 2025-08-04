@@ -18,6 +18,7 @@ import { GiOpenGate } from 'react-icons/gi';
 import { usePlots } from '@/hooks/plots-hooks/plot.hooks';
 import { convertPlotToMarker, getCategoryBackgroundColor, getStatusColor } from '@/types/map.types';
 import { Skeleton } from '../ui/skeleton';
+const ColumbariumPopup = lazy(() => import("@/pages/admin/map4admin/ColumbariumPopup"));
 
 
 const DefaultIcon = L.icon({
@@ -548,16 +549,9 @@ export default function MapPage() {
 
           {markers.map((markers: any) => {
             const statusColor = getStatusColor(markers.plotStatus);
-
             const circleIcon = L.divIcon({
-              html: `<div style="
-                width: 20px;
-                height: 20px;
-                border-radius: 50%;
-                background: ${statusColor};
-                border: 2px solid #fff;
-                box-shadow: 0 0 4px rgba(0,0,0,0.15);
-                "></div>`,
+              html: `
+              <div style="width: 20px; height: 20px; border-radius: 50%; background: ${statusColor}; border: 2px solid #fff;"></div>`,
               className: '',
               iconSize: [24, 24],
             });
@@ -575,57 +569,74 @@ export default function MapPage() {
 
             return (
               <Marker key={`plot-${markers.plot_id}`} position={markers.position} icon={circleIcon}>
-                <Popup className='w-70'>
-                  <Suspense fallback=
-                    {
-                      <>
-                        {/* Header Section */}
-                        <div className="flex items-center justify-between mb-4">
-                          <Skeleton className="w-48 h-[20px] rounded" /> {/* Block A + Plot 10 */}
-                          <Skeleton className="w-24 h-[20px] rounded bg-yellow-500 text-white" /> {/* Reserved */}
-                        </div>
+                {markers.rows && markers.columns ? (
+                  <Popup className="w-120 leaflet-theme-popup">
+                    <Suspense
+                      fallback={
+                        <>
+                          <Skeleton className="w-110 h-[24px] rounded mb-2" />
+                          <Skeleton className="w-110 h-[18px] rounded mb-2" />
+                          <Skeleton className="w-110 h-[200px] rounded mb-3" />
+                          <Skeleton className="w-110 h-[36px] rounded" />
+                        </>
+                      }
+                    >
+                      <ColumbariumPopup marker={markers} />
+                    </Suspense>
+                  </Popup>
+                ) : (
+                  <Popup className="w-70 leaflet-theme-popup">
+                    <Suspense fallback=
+                      {
+                        <>
+                          {/* Header Section */}
+                          <div className="flex items-center justify-between mb-4">
+                            <Skeleton className="w-48 h-[20px] rounded" /> {/* Block A + Plot 10 */}
+                            <Skeleton className="w-24 h-[20px] rounded bg-yellow-500 text-white" /> {/* Reserved */}
+                          </div>
 
-                        {/* Content Section */}
-                        <div className="mb-4">
-                          <div className="flex items-center mb-2">
-                            <Skeleton className="w-6 h-6 rounded-full bg-gray-500 mr-2" /> {/* Icon */}
-                            <Skeleton className="w-full h-[16px] rounded ml-2" /> {/* Plot Category */}
+                          {/* Content Section */}
+                          <div className="mb-4">
+                            <div className="flex items-center mb-2">
+                              <Skeleton className="w-6 h-6 rounded-full bg-gray-500 mr-2" /> {/* Icon */}
+                              <Skeleton className="w-full h-[16px] rounded ml-2" /> {/* Plot Category */}
+                            </div>
+                            <div className="flex items-center mb-2">
+                              <Skeleton className="w-6 h-6 rounded-full bg-gray-500 mr-2" /> {/* Icon */}
+                              <Skeleton className="w-full h-[16px] rounded ml-2" /> {/* Juan Dela Cruz */}
+                            </div>
+                            <div className="flex items-center">
+                              <Skeleton className="w-6 h-6 rounded-full bg-gray-500 mr-2" /> {/* Icon */}
+                              <Skeleton className="w-full h-[16px] rounded ml-2" /> {/* Date */}
+                            </div>
                           </div>
-                          <div className="flex items-center mb-2">
-                            <Skeleton className="w-6 h-6 rounded-full bg-gray-500 mr-2" /> {/* Icon */}
-                            <Skeleton className="w-full h-[16px] rounded ml-2" /> {/* Juan Dela Cruz */}
-                          </div>
-                          <div className="flex items-center">
-                            <Skeleton className="w-6 h-6 rounded-full bg-gray-500 mr-2" /> {/* Icon */}
-                            <Skeleton className="w-full h-[16px] rounded ml-2" /> {/* Date */}
-                          </div>
-                        </div>
 
-                        {/* Dimension Section */}
-                        <div className="mt-4">
-                          <div className="flex items-center mb-2">
-                            <Skeleton className="w-6 h-6 rounded-full bg-blue-500 mr-2" /> {/* Icon */}
-                            <Skeleton className="w-full h-[16px] rounded ml-2" /> {/* Label */}
+                          {/* Dimension Section */}
+                          <div className="mt-4">
+                            <div className="flex items-center mb-2">
+                              <Skeleton className="w-6 h-6 rounded-full bg-blue-500 mr-2" /> {/* Icon */}
+                              <Skeleton className="w-full h-[16px] rounded ml-2" /> {/* Label */}
+                            </div>
+                            <div className="text-center">
+                              <Skeleton className="w-32 h-[20px] rounded mb-2" /> {/* N/A m × N/A m */}
+                              <Skeleton className="w-full h-[16px] rounded" /> {/* N/A m² */}
+                            </div>
                           </div>
-                          <div className="text-center">
-                            <Skeleton className="w-32 h-[20px] rounded mb-2" /> {/* N/A m × N/A m */}
-                            <Skeleton className="w-full h-[16px] rounded" /> {/* N/A m² */}
-                          </div>
-                        </div>
-                      </>
-                    }>
-                    <PlotLocations
-                      marker={markers}
-                      backgroundColor={getCategoryBackgroundColor(markers.category)}
-                      onDirectionClick={handleDirectionClick}
-                    />
-                  </Suspense>
-                </Popup>
+                        </>
+                      }>
+                      <PlotLocations
+                        marker={markers}
+                        backgroundColor={getCategoryBackgroundColor(markers.category)}
+                        onDirectionClick={handleDirectionClick}
+                      />
+                    </Suspense>
+                  </Popup>
+                )}
               </Marker>
             );
           })}
-        </MapContainer>
-      </div>
-    </LocateContext.Provider>
+        </MapContainer >
+      </div >
+    </LocateContext.Provider >
   );
 }

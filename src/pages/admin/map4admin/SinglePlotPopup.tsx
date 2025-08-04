@@ -3,7 +3,8 @@ import { Button } from '@/components/ui/button';
 import type { ConvertedMarker } from '@/types/map.types';
 import { useState } from 'react';
 import EditMapDialog from './editMapDialog';
-import { FaUser, FaCalendarAlt, FaMapMarkerAlt, FaCertificate, FaInfoCircle, FaAward } from 'react-icons/fa';
+import { FaUser, FaCalendarAlt, FaMapMarkerAlt, FaCertificate, FaInfoCircle, FaAward, FaHourglassStart } from 'react-icons/fa';
+import { BiCheckCircle, BiXCircle } from 'react-icons/bi';
 
 interface PlotLocationsProps {
     marker: ConvertedMarker;
@@ -52,8 +53,11 @@ export default function SinglePlotLocations({ marker }: PlotLocationsProps) {
                                     : 'flex items-center gap-1 bg-green-100 text-green-800 px-1.5 py-0.5 rounded text-xs font-semibold'
                         }
                     >
-                        {/* 🏅 Use react-icons for badge */}
-                        <FaCertificate className="inline" size={14} />
+                        {/* 🟢 Show only the relevant icon for each plotStatus */}
+                        {marker.plotStatus === 'reserved' && <FaHourglassStart size={10} />}
+                        {marker.plotStatus === 'occupied' && <BiXCircle size={14} />}
+                        {marker.plotStatus === 'available' && <BiCheckCircle size={14} />}
+                        {!['reserved', 'occupied', 'available'].includes(marker.plotStatus)}
                         <span className="capitalize text-xs">{marker.plotStatus}</span>
                     </span>
                 </div>

@@ -119,8 +119,8 @@ export const getCategoryBackgroundColor = (category: string): string => {
 };
 
 // 🟢 Get status color for map markers
-export const getStatusColor = (plotStatus: string): string => {
-  switch (plotStatus) {
+export const getStatusColor = (status: string): string => {
+  switch (status) {
     case "available":
       return "#22c55e";
     case "occupied":
