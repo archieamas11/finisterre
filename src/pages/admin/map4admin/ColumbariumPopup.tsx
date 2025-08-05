@@ -1,15 +1,25 @@
+import { FaSkull } from "react-icons/fa";
+import { BsFillPatchCheckFill } from "react-icons/bs";
 import { ImLibrary } from "react-icons/im";
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { User, Calendar, Crown, Phone, MapPin } from 'lucide-react';
+import { User, Calendar, Crown, Phone, Mail, X, Save } from 'lucide-react';
 import { useNichesByPlot } from '@/hooks/plots-hooks/niche.hooks';
+import { useQueryClient } from '@tanstack/react-query';
+import { useCustomers } from '@/hooks/customer-hooks/customer.hooks';
+import { createLotOwner } from '@/api/lotOwner.api';
 import type { ConvertedMarker } from '@/types/map.types';
 import type { nicheData } from '@/types/niche.types';
 import { isAdmin } from '@/utils/Auth.utils';
 import { FaDirections } from "react-icons/fa";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command";
+import { Check, ChevronsUpDown } from "lucide-react";
+import { cn } from "@/lib/utils";
+import { toast } from "sonner";
 
 interface ColumbariumPopupProps {
     marker: ConvertedMarker;
@@ -17,16 +27,78 @@ interface ColumbariumPopupProps {
 }
 
 export default function ColumbariumPopup({ marker, onDirectionClick }: ColumbariumPopupProps) {
+    // � Fetch customers data using React Query
+    const { data: customersData, isLoading: isLoadingCustomers } = useCustomers();
+    const customers = customersData || [];
+
     const [selectedNiche, setSelectedNiche] = useState<nicheData | null>(null);
     const [isDetailOpen, setIsDetailOpen] = useState(false);
-
+    const [showCustomerCombo, setShowCustomerCombo] = useState(false);
+    const [comboOpen, setComboOpen] = useState(false);
+    const [selectedCustomer, setSelectedCustomer] = useState<string>("");
+    const [isReservationStep, setIsReservationStep] = useState(false);
+    const [isSaving, setIsSaving] = useState(false);
     const rows = parseInt(marker.rows);
     const cols = parseInt(marker.columns);
+
+    // 🔄 Handle customer selection from combobox
+    const handleCustomerSelect = (customerId: string) => {
+        console.log("👤 Customer selected:", customerId);
+        setSelectedCustomer(customerId);
+        setComboOpen(false);
+        setIsReservationStep(true);
+    };
+
+    // ❌ Handle cancellation of reservation
+    const handleCancelReservation = () => {
+        console.log("❌ Reservation cancelled");
+        setSelectedCustomer("");
+        setShowCustomerCombo(false);
+        setIsReservationStep(false);
+    };
+
+    // 💾 Handle saving the reservation
+    const queryClient = useQueryClient();
+    const handleSaveReservation = async () => {
+        if (!selectedNiche || !selectedCustomer) {
+            toast.error("Missing required data for reservation");
+            return;
+        }
+
+        setIsSaving(true);
+        const lotOwnerData = {
+            customer_id: selectedCustomer,
+            plot_id: marker.plot_id,
+            selected: 1, // 🎯 Assuming 1 means selected/reserved
+            niche_number: selectedNiche.niche_number,
+        };
+
+        createLotOwner(lotOwnerData)
+            .then((result) => {
+                if (result.success) {
+                    toast.success("🎉 Niche reserved successfully!");
+                    // 🔄 Refetch niche data so user sees the update
+                    queryClient.invalidateQueries({ queryKey: ["niches", marker.plot_id, rows, cols] });
+                    handleCancelReservation();
+                    setIsDetailOpen(false);
+                } else {
+                    toast.error(result.message || "Failed to reserve niche");
+                }
+            })
+            .catch((error) => {
+                console.error("❌ Error saving reservation:", error);
+                toast.error("Failed to save reservation");
+            })
+            .finally(() => {
+                setIsSaving(false);
+            });
+    };
 
     // 🔄 Fetch niche data using React Query
     const {
         data: nicheData = [],
-        error
+        error,
+        isLoading,
     } = useNichesByPlot(marker.plot_id, rows, cols);
 
     const handleNicheClick = (niche: nicheData) => {
@@ -48,6 +120,14 @@ export default function ColumbariumPopup({ marker, onDirectionClick }: Columbari
                 >
                     Retry
                 </Button>
+            </div>
+        );
+    }
+
+    if (isLoading) {
+        return (
+            <div className="col-span-full text-center text-gray-500">
+                Loading niches...
             </div>
         );
     }
@@ -90,13 +170,13 @@ export default function ColumbariumPopup({ marker, onDirectionClick }: Columbari
                 >
                     {nicheData.map((niche, index) => (
                         <button
-                            key={`${niche.id}-${niche.row}-${niche.col}-${index}`}
+                            key={`${niche.lot_id}-${niche.row}-${niche.col}-${index}`}
                             {...(isAdmin() ? { onClick: () => handleNicheClick(niche) } : {})}
                             className={` aspect-square border rounded text-center p-1 transition-all duration-200 cursor-pointer
                                     flex flex-col items-center justify-center min-h-[40px] hover:scale-105 hover:shadow-sm
                                     ${getNicheStatusStyle(niche.niche_status)}
                                 `}
-                            title={`${niche.id} - ${niche.niche_status}${niche.owner ? ` (${niche.owner.name})` : ''}`}
+                            title={`${niche.lot_id} - ${niche.niche_status}${niche.owner ? ` (${niche.owner.name})` : ''}`}
                         >
                             <span className="font-mono text-[10px] leading-tight">
                                 N{niche.niche_number}
@@ -157,7 +237,6 @@ export default function ColumbariumPopup({ marker, onDirectionClick }: Columbari
             {(() => {
                 // 🖼️ Check both file_names_array and file_name properties
                 const images = marker.file_names_array || marker.file_name || [];
-                console.log("🖼️ Images to display:", images, "from marker:", marker);
                 if (!isAdmin()) {
                     return Array.isArray(images) && images.length > 0 ? (
                         <div className="grid grid-cols-2 gap-2 mt-5">
@@ -170,9 +249,6 @@ export default function ColumbariumPopup({ marker, onDirectionClick }: Columbari
                                     onError={(e) => {
                                         console.log("🖼️ Image failed to load:", imageUrl);
                                         e.currentTarget.style.display = 'none';
-                                    }}
-                                    onLoad={() => {
-                                        console.log("✅ Image loaded successfully:", imageUrl);
                                     }}
                                 />
                             ))}
@@ -191,8 +267,7 @@ export default function ColumbariumPopup({ marker, onDirectionClick }: Columbari
                     <DialogHeader>
                         <DialogTitle className="flex items-center gap-2">
                             <Crown className="w-5 h-5 text-purple-600" />
-                            Chamber {selectedNiche?.id}
-
+                            Chamber {selectedNiche?.lot_id}
                         </DialogTitle>
                         {/* ✅ Proper location for description */}
                         <DialogDescription className="sr-only">
@@ -230,7 +305,7 @@ export default function ColumbariumPopup({ marker, onDirectionClick }: Columbari
                                             <span className="text-sm">{selectedNiche.owner.phone}</span>
                                         </div>
                                         <div className="flex items-center gap-2">
-                                            <MapPin className="w-3 h-3 text-gray-500" />
+                                            <Mail className="w-3 h-3 text-gray-500" />
                                             <span className="text-sm">{selectedNiche.owner.email}</span>
                                         </div>
                                     </CardContent>
@@ -247,8 +322,9 @@ export default function ColumbariumPopup({ marker, onDirectionClick }: Columbari
                                         </CardTitle>
                                     </CardHeader>
                                     <CardContent className="pt-0 space-y-2">
-                                        <div>
-                                            <span className="font-medium text-sm">{selectedNiche.deceased.name}</span>
+                                        <div className="flex items-center gap-2">
+                                            <FaSkull className="w-3 h-3 text-gray-500" />
+                                            <span className="text-sm">{selectedNiche.deceased.name}</span>
                                         </div>
                                         <div className="grid grid-cols-2 gap-2 text-xs text-gray-600">
                                             <div>
@@ -269,36 +345,129 @@ export default function ColumbariumPopup({ marker, onDirectionClick }: Columbari
                                 </Card>
                             )}
 
-                            {/* Available niche message */}
                             {selectedNiche.niche_status === 'available' && (
-                                <Card className="bg-green-50 border-green-200">
-                                    <CardContent className="pt-4">
-                                        <p className="text-sm text-green-800 text-center">
-                                            🎯 This niche is available for purchase or reservation.
-                                        </p>
-                                    </CardContent>
-                                </Card>
+                                <>
+                                    {/* Available niche message */}
+                                    <Card className="bg-green-50 border-green-200">
+                                        <CardContent>
+                                            <div className="text-sm text-green-800 text-center flex items-center gap-2 justify-center">
+                                                <BsFillPatchCheckFill /> This niche is available for purchase or reservation.
+                                            </div>
+                                        </CardContent>
+                                    </Card>
+
+                                    {/* Action buttons for available niches */}
+                                    <div className="flex gap-2">
+                                        <Button
+                                            size="sm"
+                                            className="flex-1"
+                                            onClick={() => setShowCustomerCombo(true)}
+                                        >
+                                            Reserve
+                                        </Button>
+                                    </div>
+
+                                    {/* Customer combobox shown when Reserve is clicked */}
+                                    {showCustomerCombo && (
+                                        <div className="mt-4 p-4 border rounded-lg bg-muted/50">
+                                            <h4 className="font-medium mb-3 text-sm text-muted-foreground">
+                                                Select Customer for Reservation
+                                            </h4>
+
+                                            {!isReservationStep ? (
+                                                <Popover open={comboOpen} onOpenChange={setComboOpen}>
+                                                    <PopoverTrigger asChild>
+                                                        <Button
+                                                            variant="outline"
+                                                            role="combobox"
+                                                            aria-expanded={comboOpen}
+                                                            className="w-full justify-between"
+                                                            disabled={isLoadingCustomers}
+                                                        >
+                                                            {selectedCustomer
+                                                                ? (() => {
+                                                                    const customer = customers.find((c: any) => c.customer_id === selectedCustomer);
+                                                                    return customer ? `${customer.first_name} ${customer.last_name} | ID: ${customer.customer_id}` : "Select a customer";
+                                                                })()
+                                                                : isLoadingCustomers ? "Loading customers..." : "Select a customer"}
+                                                            <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                                                        </Button>
+                                                    </PopoverTrigger>
+                                                    <PopoverContent className="w-full lg:w-80 p-0">
+                                                        <Command>
+                                                            <CommandInput placeholder="Search customer..." className="h-9" />
+                                                            <CommandList>
+                                                                <CommandEmpty>
+                                                                    {isLoadingCustomers ? "Loading customers..." : "No customer found."}
+                                                                </CommandEmpty>
+                                                                <CommandGroup>
+                                                                    {customers.map((customer: any) => (
+                                                                        <CommandItem
+                                                                            key={customer.customer_id}
+                                                                            value={`${customer.first_name} ${customer.last_name} ${customer.customer_id}`}
+                                                                            onSelect={() => handleCustomerSelect(customer.customer_id)}
+                                                                        >
+                                                                            {customer.first_name} {customer.last_name} | ID: {customer.customer_id}
+                                                                            <Check
+                                                                                className={cn(
+                                                                                    "ml-auto h-4 w-4",
+                                                                                    selectedCustomer === customer.customer_id ? "opacity-100" : "opacity-0"
+                                                                                )}
+                                                                            />
+                                                                        </CommandItem>
+                                                                    ))}
+                                                                </CommandGroup>
+                                                            </CommandList>
+                                                        </Command>
+                                                    </PopoverContent>
+                                                </Popover>
+                                            ) : (
+                                                // 🎯 Show selected customer and action buttons
+                                                <div className="space-y-3">
+                                                    <div className="p-3 bg-background border rounded-lg">
+                                                        <p className="text-sm font-medium">Selected Customer:</p>
+                                                        <p className="text-sm text-muted-foreground">
+                                                            {(() => {
+                                                                const customer = customers.find((c: any) => c.customer_id === selectedCustomer);
+                                                                return customer ? `${customer.first_name} ${customer.last_name} (ID: ${customer.customer_id})` : "Unknown Customer";
+                                                            })()}
+                                                        </p>
+                                                    </div>
+
+                                                    <div className="flex gap-2">
+                                                        <Button
+                                                            variant="outline"
+                                                            size="sm"
+                                                            onClick={handleCancelReservation}
+                                                            disabled={isSaving}
+                                                            className="flex-1"
+                                                        >
+                                                            <X className="h-4 w-4 mr-1" />
+                                                            Cancel
+                                                        </Button>
+                                                        <Button
+                                                            size="sm"
+                                                            onClick={handleSaveReservation}
+                                                            disabled={isSaving}
+                                                            className="flex-1"
+                                                        >
+                                                            <Save className="h-4 w-4 mr-1" />
+                                                            {isSaving ? "Saving..." : "Save"}
+                                                        </Button>
+                                                    </div>
+                                                </div>
+                                            )}
+                                        </div>
+                                    )}
+                                </>
                             )}
 
-                            {/* Action buttons for available niches */}
-                            {selectedNiche.niche_status === 'available' && (
-                                <div className="flex gap-2">
-                                    <Button size="sm" className="flex-1">
-                                        Reserve
-                                    </Button>
-                                    <Button size="sm" variant="outline" className="flex-1">
-                                        More Info
-                                    </Button>
-                                </div>
-                            )}
+
                             {/* Action buttons for reserved niches */}
                             {selectedNiche.niche_status === 'reserved' && (
                                 <div className="flex gap-2">
                                     <Button size="sm" className="flex-1">
                                         Add Record
-                                    </Button>
-                                    <Button size="sm" variant="outline" className="flex-1">
-                                        More Info
                                     </Button>
                                 </div>
                             )}

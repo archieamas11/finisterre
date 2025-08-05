@@ -52,7 +52,7 @@ export default function LandingLayout() {
                     <ThemeToggleAdvanced />
                     <Link to="/login">
                         <Button
-                            variant="gradient"
+                            variant="default"
                             className="rounded-full text-foreground hover:bg-muted transition"
                             aria-label="Login"
                         >

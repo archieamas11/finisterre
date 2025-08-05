@@ -22,8 +22,8 @@ export function PlotLocations({ marker, backgroundColor, onDirectionClick }: Plo
                 className='p-3 rounded-t-lg transition-colors bg-background dark:bg-muted'
                 style={backgroundColor ? { background: backgroundColor } : {}}
             >
-                <CardDescription className="text-primary/70 dark:text-primary/80">Finisterre</CardDescription>
-                <CardTitle className="text-primary dark:text-primary">Plot Information</CardTitle>
+                <CardDescription className="text-primary-background">Finisterre</CardDescription>
+                <CardTitle className="text-primary-background">Plot Information</CardTitle>
             </div>
             <div className='bg-accent/60 dark:bg-accent/80 p-2 rounded-b-lg mb-3 transition-colors'>
                 <div className="flex items-center justify-between gap-1">
@@ -42,7 +42,7 @@ export function PlotLocations({ marker, backgroundColor, onDirectionClick }: Plo
                 </div>
             </div>
             {/* Plot Status */}
-            <div className="flex items-center justify-between gap-2 mb-3 bg-muted/70 dark:bg-muted/80 p-2 rounded-lg transition-colors">
+            <div className="flex items-center justify-between gap-2 mb-3 bg-accent/40 dark:bg-accent/60 rounded-lg p-2 transition-colors shadow-sm">
                 <div className="flex items-center gap-1">
                     <Info size={16} className="text-primary/80 dark:text-primary" />
                     <span className="text-sm text-foreground">Plot Status</span>
@@ -122,7 +122,7 @@ export function PlotLocations({ marker, backgroundColor, onDirectionClick }: Plo
                             ))}
                         </div>
                     ) : (
-                        <div className="text-center text-xs text-gray-400 mt-5">
+                        <div className="text-center text-xs text-gray-400 mt-2">
                             No photos available
                         </div>
                     );

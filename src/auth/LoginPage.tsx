@@ -150,7 +150,7 @@ export function LoginPage() {
             </FormItem>
           )}
         />
-        <Button className="w-full mt-2" type="submit" variant={"gradient"}>
+        <Button className="w-full mt-2" type="submit" variant={"default"}>
           Login
         </Button>
         <Button

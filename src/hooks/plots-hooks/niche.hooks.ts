@@ -3,10 +3,11 @@ import { getNichesByPlot } from "@/api/plots.api";
 
 // 🗂️ Niche data structure matching database schema
 interface NicheData {
-  id: string;
+  lot_id: string;
   niche_number: number;
   row: number;
   col: number;
+  customer_id?: string;
   niche_status: "available" | "occupied" | "reserved";
   owner?: {
     customer_id: string;
@@ -70,7 +71,7 @@ const generateGridPositions = (
       } else {
         // � Create empty niche for positions without data
         result.push({
-          id: `${plotId}-N-${nicheCounter}-R${row}C${col}`,
+          lot_id: `${plotId}-N-${nicheCounter}-R${row}C${col}`,
           niche_number: nicheCounter,
           row,
           col,
@@ -107,7 +108,7 @@ export function useNichesByPlot(plotId: string, rows: number, cols: number) {
 
       // 🎯 Map existing niche data to our interface
       const plotNiches: NicheData[] = existingNiches.map((niche: any) => ({
-        id: niche.niche_id || niche.id,
+        lot_id: niche.lot_id || niche.lot_id,
         niche_number: parseInt(niche.niche_number) || 0,
         row: parseInt(niche.row) || 0,
         col: parseInt(niche.col) || 0,

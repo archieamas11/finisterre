@@ -8,10 +8,12 @@ export async function getLotOwner() {
 
 export async function createLotOwner(data: any) {
   const res = await api.post("lot-owners/create_lot_owner.php", data);
+  console.log("createLotOwner called with response:", res.data);
   return res.data;
 }
 
 export async function editLotOwner(data: any) {
   const res = await api.post("lot-owners/edit_lot_owner.php", data);
+  console.log("editLotOwner called with response:", res.data);
   return res.data;
 }

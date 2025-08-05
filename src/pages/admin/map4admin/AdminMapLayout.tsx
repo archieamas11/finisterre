@@ -15,6 +15,7 @@ import type { ConvertedMarker } from '@/types/map.types';
 import { convertPlotToMarker, getCategoryBackgroundColor, getStatusColor } from '@/types/map.types';
 import { Card } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
+import WebMapNavs from '@/pages/webmap/WebMapNavs';
 const ColumbariumPopup = lazy(() => import("@/pages/admin/map4admin/ColumbariumPopup"));
 const SinglePlotLocations = lazy(() => import("@/pages/admin/map4admin/SinglePlotPopup"));
 
@@ -37,10 +38,8 @@ export default function AdminMapLayout() {
   ];
 
   const locateRef = useRef<(() => void) | null>(null);
-
   // Cemetery entrance constant for routing
   const CEMETERY_GATE = L.latLng(10.248107820799307, 123.797607547609545);
-
   // Provide context to navs
   const requestLocate = () => {
     if (locateRef.current) locateRef.current();
@@ -48,9 +47,7 @@ export default function AdminMapLayout() {
 
   // 🔄 Convert database plots to marker format
   const markers = plotsData?.map(convertPlotToMarker) || [];
-
   console.log('🗺️ Plots data loaded:', { plotsCount: markers.length, isLoading, error });
-
   // 🔄 Show loading state while fetching plots
   if (isLoading || isLoading) {
     return (
@@ -81,6 +78,7 @@ export default function AdminMapLayout() {
       <Card className="p-2 shadow-lg w-full" style={{ height: 'calc(97vh - 55px)', maxHeight: 'calc(100vh - 64px)', overflow: 'hidden' }}>
         <LocateContext.Provider value={{ requestLocate }}>
           <div className="relative w-full" style={{ maxHeight: '100%', height: '100%' }}>
+            <WebMapNavs />
             <MapContainer
               bounds={bounds}
               zoom={18}
@@ -92,6 +90,7 @@ export default function AdminMapLayout() {
               fadeAnimation={false}
               className="h-full w-full rounded-lg"
             >
+
               <TileLayer
                 url="https://services.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"
                 maxNativeZoom={18}

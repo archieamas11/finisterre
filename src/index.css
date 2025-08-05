@@ -215,3 +215,7 @@
 .leaflet-theme-popup .leaflet-popup-tip {
   @apply bg-background text-foreground dark:bg-background dark:text-foreground;
 }
+
+.leaflet-container a.leaflet-popup-close-button {
+  display: none;
+}

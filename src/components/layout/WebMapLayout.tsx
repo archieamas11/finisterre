@@ -17,7 +17,8 @@ import { renderToStaticMarkup } from 'react-dom/server';
 import { GiOpenGate } from 'react-icons/gi';
 import { usePlots } from '@/hooks/plots-hooks/plot.hooks';
 import { convertPlotToMarker, getCategoryBackgroundColor, getStatusColor } from '@/types/map.types';
-import { Skeleton } from '../ui/skeleton';
+import { Skeleton } from '@/components/ui/skeleton';
+import ReactLeafletDriftMarker from "react-leaflet-drift-marker"
 const ColumbariumPopup = lazy(() => import("@/pages/admin/map4admin/ColumbariumPopup"));
 
 
@@ -159,6 +160,9 @@ export default function MapPage() {
   }
 
   // Live GPS tracking and drift detection
+  // 🛰️ Use DriftMarker for smooth user position transitions
+  // 🛰️ Use DriftMarker for smooth user position transitions
+
   function LocationMarker() {
     const map = useMapEvents({
       locationfound(e) {
@@ -175,9 +179,12 @@ export default function MapPage() {
 
     locateRef.current = () => map.locate();
 
-    return userPosition === null ? null : (
-      <Marker
+    if (userPosition === null) return null;
+
+    return (
+      <ReactLeafletDriftMarker
         position={userPosition}
+        duration={800}
         icon={L.divIcon({
           html: '<div style="background: #4285f4; border: 3px solid white; border-radius: 50%; width: 20px; height: 20px; box-shadow: 0 2px 6px rgba(0,0,0,0.3);"></div>',
           className: 'custom-user-marker',
@@ -186,7 +193,7 @@ export default function MapPage() {
         })}
       >
         <Popup>You are here</Popup>
-      </Marker>
+      </ReactLeafletDriftMarker>
     );
   }
 

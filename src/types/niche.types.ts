@@ -1,8 +1,9 @@
 export type nicheData = {
-  id: string;
+  lot_id: string;
   niche_number: number;
   row: number;
   col: number;
+  customer_id?: string;
   niche_status: "available" | "occupied" | "reserved";
   owner?: {
     customer_id: string;
