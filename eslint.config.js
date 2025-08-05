@@ -18,13 +18,22 @@ export default tseslint.config([
       ...tseslint.configs.strictTypeChecked,
       ...tseslint.configs.stylisticTypeChecked,
     ],
+    plugins: {
+      "react-naming-convention": reactNamingConvention,
+    },
     languageOptions: {
+      parser: tseslint.parser,
       parserOptions: {
+        projectService: true,
         project: ['./tsconfig.node.json', './tsconfig.app.json'],
         tsconfigRootDir: import.meta.dirname,
       },
       ecmaVersion: 2020,
       globals: globals.browser,
+    },
+    rules: {
+      "react-naming-convention/component-name": "warn",
+      "react-x/no-class-component": "warn",
     },
   },
 ])
