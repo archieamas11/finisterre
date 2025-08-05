@@ -30,12 +30,6 @@ export default function ColumbariumPopup({ marker, onDirectionClick }: Columbari
     } = useNichesByPlot(marker.plot_id, rows, cols);
 
     const handleNicheClick = (niche: nicheData) => {
-        // 🔒 Only allow admin users to interact with niches
-        if (!isAdmin()) {
-            console.log('🚫 Access denied: User is not admin');
-            return;
-        }
-
         console.log('🎯 Niche selected:', niche);
         setSelectedNiche(niche);
         setIsDetailOpen(true);
@@ -97,7 +91,7 @@ export default function ColumbariumPopup({ marker, onDirectionClick }: Columbari
                     {nicheData.map((niche, index) => (
                         <button
                             key={`${niche.id}-${niche.row}-${niche.col}-${index}`}
-                            onClick={() => handleNicheClick(niche)}
+                            {...(isAdmin() ? { onClick: () => handleNicheClick(niche) } : {})}
                             className={` aspect-square border rounded text-center p-1 transition-all duration-200 cursor-pointer
                                     flex flex-col items-center justify-center min-h-[40px] hover:scale-105 hover:shadow-sm
                                     ${getNicheStatusStyle(niche.niche_status)}

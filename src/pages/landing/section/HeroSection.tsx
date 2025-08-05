@@ -78,7 +78,7 @@ export default function HeroSection() {
                             <ArrowRight className="h-4 w-4 group-hover:translate-x-1 transition-transform duration-300" />
                         </Link>
                     </Button>
-                    <Button>
+                    <Button size={"lg"} className="group relative overflow-hidden bg-gradient-to-r from-chart-4 to-chart-5 hover:from-chart-4 hover:to-chart-5 text-foreground dark:text-accent font-semibold px-8 py-4 rounded-full shadow-2xl hover:shadow-blue-500/25 transition-all duration-300 hover:scale-105 border-0">
                         <Link to="/mapLibre" aria-label="Explore Map" className="flex items-center gap-3">
                             <MapPin className="h-5 w-5" />
                             Explore Map Libre
