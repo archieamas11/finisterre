@@ -22,7 +22,7 @@ const FormSchema = z
     password: z.string().min(3, {
       message: "Password must be at least 3 characters.",
     }),
-    confirm: z.string().min(3, {
+    confirm: z.string().min(2, {
       message: "Please confirm your password.",
     }),
   })

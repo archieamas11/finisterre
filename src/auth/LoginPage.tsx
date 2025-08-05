@@ -18,7 +18,7 @@ import { toast } from "sonner";
 import React from "react";
 
 const FormSchema = z.object({
-  username: z.string().min(3, { message: "Property ID must be at least 3 characters." }),
+  username: z.string().min(2, { message: "Property ID must be at least 2 characters." }),
   password: z.string().min(4, { message: "Password must be at least 4 characters." }),
   remember: z.boolean().optional(),
 });
