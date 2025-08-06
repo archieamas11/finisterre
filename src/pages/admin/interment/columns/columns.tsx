@@ -23,7 +23,8 @@ function SelectAllCheckbox({ table }: { table: any }) {
     React.useEffect(() => {
         if (wrapperRef.current) {
             const input = wrapperRef.current.querySelector('input[type="checkbox"]');
-            if (input) {
+            // 🛡️ Only set indeterminate if input is HTMLInputElement
+            if (input instanceof HTMLInputElement) {
                 input.indeterminate = table.getIsSomePageRowsSelected() && !table.getIsAllPageRowsSelected();
             }
         }
