@@ -8,7 +8,10 @@ export async function editCustomer(data: CustomerFormData) {
   try {
     const res = await api.post("customers/edit_customer.php", data);
     if (res.data.success) {
+      console.log("✅ Customer edited successfully");
       toast.success("Customer edited successfully");
+      // Return the updated customer data to update the cache
+      return res.data.customer || res.data;
     } else {
       toast.error(res.data.message);
     }
@@ -23,6 +26,7 @@ export async function createCustomer(data: CustomerFormData) {
   try {
     const res = await api.post("customers/create_customer.php", data);
     if (res.data.success) {
+      console.log("✅ Customer created successfully");
       toast.success("Customer created successfully");
     } else {
       toast.error(res.data.message);
