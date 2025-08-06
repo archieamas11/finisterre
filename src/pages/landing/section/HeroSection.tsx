@@ -16,6 +16,8 @@ export default function HeroSection() {
             autoPlay
             muted
             loop
+            controls
+            preload="metadata"
           >
             <source
               src="C:\Users\Administrator\Downloads\Finisterre-Masterplan-Actual-Development.mp4"
