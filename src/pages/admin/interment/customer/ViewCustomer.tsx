@@ -1,6 +1,6 @@
 import type { Customer } from "@/types/interment.types";
 
-import CustomerForm from "@/components/forms/CustomerForm";
+import CustomerForm from "@/pages/admin/interment/forms/CustomerForm";
 
 interface ViewCustomerDialogProps {
   open: boolean;
@@ -31,7 +31,7 @@ export default function ViewCustomerDialog({
     <CustomerForm
       initialValues={initialValues}
       onOpenChange={onOpenChange}
-      onSubmit={() => {}}
+      onSubmit={() => { }}
       mode="view"
       open={open}
     />

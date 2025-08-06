@@ -51,6 +51,7 @@ import {
   SelectItem,
   Select,
 } from "../../../components/ui/select";
+import CreateLotOwner from "./lot-owner/createLotOwner";
 
 interface LotOwnersTableProps {
   data: LotOwners[];
@@ -160,9 +161,7 @@ export default function LotOwnersTable({ data }: LotOwnersTableProps) {
                 ))}
             </DropdownMenuContent>
           </DropdownMenu>
-          <Button variant="outline" size="lg">
-            <Plus className="h-4 w-4" /> Add Lot Owner
-          </Button>
+          <CreateLotOwner />
         </div>
       </div>
       <div className="overflow-hidden rounded-md border">
@@ -175,9 +174,9 @@ export default function LotOwnersTable({ data }: LotOwnersTableProps) {
                     {header.isPlaceholder
                       ? null
                       : flexRender(
-                          header.column.columnDef.header,
-                          header.getContext(),
-                        )}
+                        header.column.columnDef.header,
+                        header.getContext(),
+                      )}
                   </TableHead>
                 ))}
               </TableRow>

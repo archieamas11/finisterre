@@ -5,7 +5,7 @@ import { useQueryClient, useMutation } from "@tanstack/react-query";
 
 import { Button } from "@/components/ui/button";
 import { createCustomer } from "@/api/customer.api";
-import CustomerForm from "@/components/forms/CustomerForm";
+import CustomerForm from "@/pages/admin/interment/forms/CustomerForm";
 
 export default function CreateCustomer() {
   const queryClient = useQueryClient();

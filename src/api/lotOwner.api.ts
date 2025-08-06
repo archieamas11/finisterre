@@ -17,3 +17,9 @@ export async function getLotOwner() {
   console.log(res.data);
   return res.data;
 }
+
+export async function getLotOwnerById(id: string) {
+  const res = await api.post("lot-owners/get_lot_owner.php", { id });
+  console.log(res.data);
+  return res.data;
+}

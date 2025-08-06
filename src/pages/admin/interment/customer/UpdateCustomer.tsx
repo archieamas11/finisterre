@@ -1,6 +1,6 @@
 import type { Customer } from "@/types/interment.types";
 
-import CustomerForm from "@/components/forms/CustomerForm";
+import CustomerForm from "@/pages/admin/interment/forms/CustomerForm";
 import { useUpsertCustomer } from "@/hooks/customer-hooks/customer.hooks";
 
 interface EditCustomerDialogProps {

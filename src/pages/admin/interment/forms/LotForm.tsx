@@ -47,28 +47,12 @@ import {
   Command,
 } from "@/components/ui/command";
 
-/* ------------------------------------------------------------------ */
-/* 1. Schema – customer_name -> customer_id                           */
-/* ------------------------------------------------------------------ */
 const LotSchema = z
   .object({
-    type: z.string().min(2, "Invalid type"),
-    payment_frequency: z.string().optional(),
     plot_id: z.string().min(1, "Plot ID is required"),
     customer_id: z.string().min(1, "Customer is required"),
-    payment_type: z.string().min(2, "Invalid payment type"),
   })
-  .refine(
-    (data) =>
-      data.payment_type === "full"
-        ? true
-        : typeof data.payment_frequency === "string" &&
-          data.payment_frequency.length >= 2,
-    {
-      path: ["payment_frequency"],
-      message: "Invalid payment frequency",
-    },
-  );
+  ;
 
 export interface LotFormProps {
   open: boolean;
@@ -78,9 +62,7 @@ export interface LotFormProps {
   onOpenChange: (open: boolean) => void;
   onSubmit: (values: any) => Promise<void> | void;
 }
-/* ------------------------------------------------------------------ */
-/* 2. Component                                                       */
-/* ------------------------------------------------------------------ */
+
 export type LotFormMode = "edit" | "add";
 
 export default function LotForm({
@@ -95,15 +77,11 @@ export default function LotForm({
   const form = useForm<z.infer<typeof LotSchema>>({
     resolver: zodResolver(LotSchema),
     defaultValues: initialValues || {
-      type: "",
       plot_id: "",
       customer_id: "",
-      payment_type: "",
-      payment_frequency: "",
     },
   });
 
-  const paymentType = form.watch("payment_type");
 
   /* ------------------ Data ------------------ */
   const [plots, setPlots] = React.useState<plots[]>([]);
@@ -165,14 +143,14 @@ export default function LotForm({
                           >
                             {comboValue
                               ? customers.find(
-                                  (c) => c.customer_id === comboValue,
-                                )?.first_name +
-                                " " +
-                                customers.find(
-                                  (c) => c.customer_id === comboValue,
-                                )?.last_name +
-                                " | ID: " +
-                                comboValue
+                                (c) => c.customer_id === comboValue,
+                              )?.first_name +
+                              " " +
+                              customers.find(
+                                (c) => c.customer_id === comboValue,
+                              )?.last_name +
+                              " | ID: " +
+                              comboValue
                               : "Select a customer"}
                             <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                           </Button>
@@ -228,6 +206,7 @@ export default function LotForm({
                   <FormItem>
                     <FormLabel>
                       Plot ID<span className="text-red-500">*</span>
+                      <span className="text-xs text-gray-400">Please refer to map</span>
                     </FormLabel>
                     <FormControl>
                       <Select
@@ -237,7 +216,8 @@ export default function LotForm({
                         <SelectTrigger className="w-full">
                           <SelectValue placeholder="Select plot ID" />
                         </SelectTrigger>
-                        <SelectContent>
+                        {/* 🧩 Set side="bottom" so popup always appears below the trigger */}
+                        <SelectContent side="bottom" position="popper" align="start">
                           {plots.length === 0 ? (
                             <SelectItem value="no-plots" disabled>
                               No plots available
@@ -264,62 +244,6 @@ export default function LotForm({
                 )}
                 control={form.control}
                 name="plot_id"
-              />
-              <FormField
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>
-                      Payment Type<span className="text-red-500">*</span>
-                    </FormLabel>
-                    <FormControl>
-                      <Select
-                        onValueChange={field.onChange}
-                        defaultValue={field.value}
-                      >
-                        <SelectTrigger className="w-full">
-                          <SelectValue placeholder="Select payment type" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="installment">
-                            Installment
-                          </SelectItem>
-                          <SelectItem value="full">One-time</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-                control={form.control}
-                name="payment_type"
-              />
-              <FormField
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>
-                      Payment Frequency<span className="text-red-500">*</span>
-                    </FormLabel>
-                    <FormControl>
-                      <Select
-                        disabled={paymentType === "full"}
-                        onValueChange={field.onChange}
-                        value={field.value ?? ""}
-                      >
-                        <SelectTrigger className="w-full">
-                          <SelectValue placeholder="Select payment frequency" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="monthly">Monthly</SelectItem>
-                          <SelectItem value="quarterly">Quarterly</SelectItem>
-                          <SelectItem value="annually">Yearly</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-                name="payment_frequency"
-                control={form.control}
               />
             </div>
             <div className="flex justify-end pt-4">

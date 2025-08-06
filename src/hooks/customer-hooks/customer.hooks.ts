@@ -15,24 +15,15 @@ export function useUpsertCustomer() {
         data.customer_id !== undefined &&
         data.customer_id !== null
       ) {
-        console.log("🔧 Editing existing customer");
         return await editCustomer(data as CustomerFormData);
       }
-      console.log("➕ Creating new customer");
       return await createCustomer(data as CustomerFormData);
     },
     onSuccess: (_, variables) => {
-      console.log("🔄 Invalidating customers cache after mutation");
-
       // Force refetch to ensure we have the latest data
       qc.invalidateQueries({ queryKey: ["customers"] });
-
       // If editing, also optimistically update the cache
       if ("customer_id" in variables && variables.customer_id) {
-        console.log(
-          "🎯 Optimistically updating cache for customer:",
-          variables.customer_id,
-        );
         qc.setQueryData<Customer[]>(["customers"], (oldData) => {
           if (!oldData) return oldData;
 

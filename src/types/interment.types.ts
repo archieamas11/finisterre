@@ -1,6 +1,5 @@
 export interface DeceasedRecords {
   block: string;
-  // Join fields
   lot_id: string;
   plot_id: string;
   category: string;
@@ -24,27 +23,17 @@ export interface DeceasedRecords {
 }
 
 export interface LotOwners {
-  type: string;
   lot_id: string;
   block?: string;
-  select: boolean;
-  // Location data
   plot_id: string;
   category: string;
-  niche_id?: string;
-  start_date: string;
   created_at: string;
   updated_at: string;
   customer_id: string;
   lot_status?: string;
-  payment_type: string;
-
-  next_due_date: string;
+  niche_status?: string;
   niche_number?: string;
-  // Join fields
   customer_name?: string;
-  payment_frequency: string;
-  last_payment_date: string;
 }
 
 export interface Customer {
