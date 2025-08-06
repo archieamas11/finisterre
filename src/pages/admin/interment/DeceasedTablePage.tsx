@@ -8,13 +8,15 @@ export default function DeceasedTablePage() {
 
   if (isPending)
     return (
-      <div className="flex items-center justify-center h-full">
+      <div className="flex h-full items-center justify-center">
         <SpinnerCircle4 />
       </div>
     );
 
   if (isError || !deceasedRecords) {
-    return <div className="p-4 text-center">Failed to load deceased records.</div>;
+    return (
+      <div className="p-4 text-center">Failed to load deceased records.</div>
+    );
   }
   return <DeceasedRecordsTable data={deceasedRecords} />;
 }

@@ -30,7 +30,7 @@ const generateGridPositions = (
   fetchedNiches: NicheData[],
   totalRows: number,
   totalCols: number,
-  plotId: string
+  plotId: string,
 ): NicheData[] => {
   const result: NicheData[] = [];
 
@@ -48,7 +48,7 @@ const generateGridPositions = (
     "with dimensions:",
     totalRows,
     "x",
-    totalCols
+    totalCols,
   );
   console.log("🔍 Existing niches to map:", fetchedNiches);
 
@@ -67,7 +67,7 @@ const generateGridPositions = (
         });
         console.log(
           `✅ Mapped existing niche ${nicheCounter} with data:`,
-          existingNiche.owner?.name || "No owner"
+          existingNiche.owner?.name || "No owner",
         );
       } else {
         // � Create empty niche for positions without data
@@ -105,7 +105,7 @@ export function useNichesByPlot(plotId: string, rows: number, cols: number) {
         console.log("✅ Found existing niche data:", existingNiches);
       } catch (nicheError) {
         console.log(
-          "ℹ️ No existing niche data found, will generate empty grid"
+          "ℹ️ No existing niche data found, will generate empty grid",
         );
         existingNiches = [];
       }
@@ -145,7 +145,7 @@ export function useNichesByPlot(plotId: string, rows: number, cols: number) {
         plotNiches,
         rows,
         cols,
-        plotId
+        plotId,
       );
 
       console.log("✅ Niche data loaded:", completeNiches);

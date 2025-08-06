@@ -49,7 +49,7 @@ export function useRouting() {
       const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
       return R * c;
     },
-    []
+    [],
   );
 
   // Fetch route polyline from OSRM API with error handling
@@ -57,7 +57,7 @@ export function useRouting() {
     async (
       from: [number, number],
       to: [number, number],
-      type: "private" | "public"
+      type: "private" | "public",
     ): Promise<{
       polyline: [number, number][];
       distance: number;
@@ -93,7 +93,7 @@ export function useRouting() {
               Array.isArray(c) &&
               c.length >= 2 &&
               typeof c[0] === "number" &&
-              typeof c[1] === "number"
+              typeof c[1] === "number",
           )
           .map((c: number[]) => [c[1], c[0]]);
 
@@ -123,7 +123,7 @@ export function useRouting() {
         };
       }
     },
-    [calculateDistance]
+    [calculateDistance],
   );
 
   // Start live GPS tracking with dynamic route updates
@@ -133,8 +133,8 @@ export function useRouting() {
       onPositionUpdate: (position: L.LatLng, heading?: number) => void,
       onRecalculateRoute: (
         newPosition: L.LatLng,
-        destination: [number, number]
-      ) => void
+        destination: [number, number],
+      ) => void,
     ) => {
       if (!navigator.geolocation || watchIdRef.current) return;
 
@@ -145,7 +145,7 @@ export function useRouting() {
         (position) => {
           const newLatLng = L.latLng(
             position.coords.latitude,
-            position.coords.longitude
+            position.coords.longitude,
           );
           const heading = position.coords.heading; // Device heading if available
 
@@ -157,7 +157,7 @@ export function useRouting() {
                 lastUserPositionRef.current.lat,
                 lastUserPositionRef.current.lng,
               ],
-              [newLatLng.lat, newLatLng.lng]
+              [newLatLng.lat, newLatLng.lng],
             );
           }
 
@@ -182,8 +182,8 @@ export function useRouting() {
             if (shouldRecalculate && !isRecalculating) {
               console.log(
                 `🚧 Recalculating route - drift: ${Math.round(
-                  drift
-                )}m, time: ${Math.round(timeSinceLastUpdate / 1000)}s`
+                  drift,
+                )}m, time: ${Math.round(timeSinceLastUpdate / 1000)}s`,
               );
               setIsRecalculating(true);
 
@@ -209,10 +209,10 @@ export function useRouting() {
           timeout: 10000,
           maximumAge: 2000, // More frequent updates for live tracking
           enableHighAccuracy: true,
-        }
+        },
       );
     },
-    [publicRoute, privateRoute, isRecalculating]
+    [publicRoute, privateRoute, isRecalculating],
   );
 
   // Calculate bearing between two points
@@ -230,7 +230,7 @@ export function useRouting() {
       const bearing = (Math.atan2(y, x) * 180) / Math.PI;
       return (bearing + 360) % 360; // Normalize to 0-360
     },
-    []
+    [],
   );
 
   // Check if user is moving away from the route
@@ -250,7 +250,7 @@ export function useRouting() {
         const segmentStart = activeRoute.polyline[i];
         const distance = calculateDistance(
           [userPos.lat, userPos.lng],
-          segmentStart
+          segmentStart,
         );
         if (distance < nearestDistance) {
           nearestDistance = distance;
@@ -274,7 +274,7 @@ export function useRouting() {
       // If user is heading more than 90 degrees away from route direction, they're moving away
       return bearingDiff > 90;
     },
-    [publicRoute, privateRoute, calculateDistance, calculateBearing]
+    [publicRoute, privateRoute, calculateDistance, calculateBearing],
   );
 
   // Stop live GPS tracking
@@ -290,7 +290,7 @@ export function useRouting() {
   const startNavigation = useCallback(
     async (
       userLatLng: L.LatLng,
-      destination: [number, number]
+      destination: [number, number],
     ): Promise<void> => {
       try {
         setIsRecalculating(false);
@@ -327,7 +327,7 @@ export function useRouting() {
           privateData = await fetchRoutePolyline(
             gatePos,
             destination,
-            "private"
+            "private",
           );
         } else if (distanceToDestination < distanceToGate) {
           // User is already inside, use walking route only
@@ -336,7 +336,7 @@ export function useRouting() {
           privateData = await fetchRoutePolyline(
             userPos,
             destination,
-            "private"
+            "private",
           );
         } else {
           // Standard two-phase routing
@@ -389,7 +389,7 @@ export function useRouting() {
         throw error;
       }
     },
-    [fetchRoutePolyline, calculateDistance]
+    [fetchRoutePolyline, calculateDistance],
   );
 
   // Dynamic route update as user moves
@@ -406,7 +406,7 @@ export function useRouting() {
         setIsRecalculating(false);
       }
     },
-    [isRecalculating, startNavigation]
+    [isRecalculating, startNavigation],
   );
 
   // Stop navigation and cleanup
@@ -428,7 +428,7 @@ export function useRouting() {
         pendingDestinationRef.current = null;
       }
     },
-    [startNavigation]
+    [startNavigation],
   );
 
   // Set pending destination for later processing

@@ -40,16 +40,16 @@ export default function Bookings() {
   return (
     <div className="flex flex-1 flex-col p-4 lg:p-8">
       {/* Header with icon and title */}
-      <div className="flex items-center gap-3 mb-6">
-        <CalendarCheck2 className="w-7 h-7 text-primary" />
+      <div className="mb-6 flex items-center gap-3">
+        <CalendarCheck2 className="text-primary h-7 w-7" />
         <h2 className="text-2xl font-bold">Manage Bookings</h2>
       </div>
 
       {/* Search/filter bar */}
-      <div className="flex gap-2 mb-4">
+      <div className="mb-4 flex gap-2">
         <Input placeholder="Search bookings..." className="max-w-xs" />
         <Button aria-label="Search" variant="outline" size="icon">
-          <Search className="w-5 h-5" />
+          <Search className="h-5 w-5" />
         </Button>
         <Button variant="default">Add Booking</Button>
       </div>
@@ -84,15 +84,15 @@ export default function Bookings() {
                   {booking.status}
                 </span>
               </TableCell>
-              <TableCell className="flex gap-2 justify-end">
+              <TableCell className="flex justify-end gap-2">
                 <Button aria-label="View" variant="ghost" size="icon">
-                  <Eye className="w-4 h-4" />
+                  <Eye className="h-4 w-4" />
                 </Button>
                 <Button aria-label="Edit" variant="ghost" size="icon">
-                  <Pencil className="w-4 h-4" />
+                  <Pencil className="h-4 w-4" />
                 </Button>
                 <Button aria-label="Delete" variant="ghost" size="icon">
-                  <Trash2 className="w-4 h-4 text-red-600" />
+                  <Trash2 className="h-4 w-4 text-red-600" />
                 </Button>
               </TableCell>
             </TableRow>

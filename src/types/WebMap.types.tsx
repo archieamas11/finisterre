@@ -18,12 +18,18 @@ export interface UseRoutingReturn {
 
   handlePendingDestination: (userPosition: L.LatLng) => void;
   // Actions
-  startNavigation: (userPosition: L.LatLng, destination: Coordinate) => Promise<void>;
+  startNavigation: (
+    userPosition: L.LatLng,
+    destination: Coordinate,
+  ) => Promise<void>;
 
   startLiveTracking: (
     userPosition: L.LatLng,
     onPositionUpdate: (position: L.LatLng) => void,
-    onRecalculateRoute: (newPosition: L.LatLng, destination: Coordinate) => void
+    onRecalculateRoute: (
+      newPosition: L.LatLng,
+      destination: Coordinate,
+    ) => void,
   ) => void;
 }
 // API response types
@@ -134,7 +140,10 @@ export interface NavigationState {
 export interface NavigationControls {
   stop: () => void;
   start: (destination: Coordinate) => Promise<void>;
-  recalculate: (newPosition: Coordinate, destination: Coordinate) => Promise<void>;
+  recalculate: (
+    newPosition: Coordinate,
+    destination: Coordinate,
+  ) => Promise<void>;
 }
 
 // Route-related types
@@ -144,7 +153,7 @@ export interface RouteData {
   distance?: number;
   duration?: number;
   polyline: Coordinate[];
-  mode?: 'driving' | 'walking' | 'cycling';
+  mode?: "driving" | "walking" | "cycling";
 }
 
 export interface OSRMResponse {
@@ -167,7 +176,7 @@ export interface PlotLocationsProps {
 // Error types
 export interface RoutingError extends Error {
   details?: unknown;
-  code?: 'INVALID_COORDINATES' | 'NETWORK_ERROR' | 'API_ERROR' | 'NO_ROUTE';
+  code?: "INVALID_COORDINATES" | "NETWORK_ERROR" | "API_ERROR" | "NO_ROUTE";
 }
 
 export interface LocationOptions {
@@ -208,7 +217,7 @@ export interface RouteResponse {
 export interface RouteRequest {
   to: Coordinate;
   from: Coordinate;
-  mode: 'private' | 'public';
+  mode: "private" | "public";
 }
 
 // Utility types
@@ -223,11 +232,11 @@ export interface LocateContextValue {
 }
 
 // Plot/Marker types
-export type PlotStatus = 'Maintenance' | 'Available' | 'Occupied' | 'Reserved';
+export type PlotStatus = "Maintenance" | "Available" | "Occupied" | "Reserved";
 
 export type Optional<T, K extends keyof T> = Partial<Pick<T, K>> & Omit<T, K>;
 
-export type PlotCategory = 'Platinum' | 'Diamond' | 'Bronze' | 'Silver';
+export type PlotCategory = "Platinum" | "Diamond" | "Bronze" | "Silver";
 
 export type RequiredBy<T, K extends keyof T> = Required<Pick<T, K>> & T;
 

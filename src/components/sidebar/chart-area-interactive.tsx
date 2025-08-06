@@ -1,26 +1,23 @@
-"use client"
+"use client";
 
-import * as React from "react"
-import { CartesianGrid, AreaChart, XAxis, Area } from "recharts"
+import * as React from "react";
+import { CartesianGrid, AreaChart, XAxis, Area } from "recharts";
 
-import { useIsMobile } from "@/hooks/use-mobile"
-import {
-  ToggleGroupItem,
-  ToggleGroup,
-} from "@/components/ui/toggle-group"
+import { useIsMobile } from "@/hooks/use-mobile";
+import { ToggleGroupItem, ToggleGroup } from "@/components/ui/toggle-group";
 import {
   SelectContent,
   SelectTrigger,
   SelectValue,
   SelectItem,
   Select,
-} from "@/components/ui/select"
+} from "@/components/ui/select";
 import {
   ChartTooltipContent,
   type ChartConfig,
   ChartContainer,
   ChartTooltip,
-} from "@/components/ui/chart"
+} from "@/components/ui/chart";
 import {
   CardDescription,
   CardContent,
@@ -28,9 +25,9 @@ import {
   CardHeader,
   CardTitle,
   Card,
-} from "@/components/ui/card"
+} from "@/components/ui/card";
 
-export const description = "An interactive area chart"
+export const description = "An interactive area chart";
 
 const chartData = [
   { mobile: 150, desktop: 222, date: "2024-04-01" },
@@ -124,7 +121,7 @@ const chartData = [
   { mobile: 200, desktop: 149, date: "2024-06-28" },
   { mobile: 160, desktop: 103, date: "2024-06-29" },
   { mobile: 400, desktop: 446, date: "2024-06-30" },
-]
+];
 
 const chartConfig = {
   visitors: {
@@ -138,31 +135,31 @@ const chartConfig = {
     label: "Desktop",
     color: "var(--primary)",
   },
-} satisfies ChartConfig
+} satisfies ChartConfig;
 
 export function ChartAreaInteractive() {
-  const isMobile = useIsMobile()
-  const [timeRange, setTimeRange] = React.useState("90d")
+  const isMobile = useIsMobile();
+  const [timeRange, setTimeRange] = React.useState("90d");
 
   React.useEffect(() => {
     if (isMobile) {
-      setTimeRange("7d")
+      setTimeRange("7d");
     }
-  }, [isMobile])
+  }, [isMobile]);
 
   const filteredData = chartData.filter((item) => {
-    const date = new Date(item.date)
-    const referenceDate = new Date("2024-06-30")
-    let daysToSubtract = 90
+    const date = new Date(item.date);
+    const referenceDate = new Date("2024-06-30");
+    let daysToSubtract = 90;
     if (timeRange === "30d") {
-      daysToSubtract = 30
+      daysToSubtract = 30;
     } else if (timeRange === "7d") {
-      daysToSubtract = 7
+      daysToSubtract = 7;
     }
-    const startDate = new Date(referenceDate)
-    startDate.setDate(startDate.getDate() - daysToSubtract)
-    return date >= startDate
-  })
+    const startDate = new Date(referenceDate);
+    startDate.setDate(startDate.getDate() - daysToSubtract);
+    return date >= startDate;
+  });
 
   return (
     <Card className="@container/card">
@@ -243,11 +240,11 @@ export function ChartAreaInteractive() {
             <CartesianGrid vertical={false} />
             <XAxis
               tickFormatter={(value) => {
-                const date = new Date(value)
+                const date = new Date(value);
                 return date.toLocaleDateString("en-US", {
                   month: "short",
                   day: "numeric",
-                })
+                });
               }}
               tickLine={false}
               axisLine={false}
@@ -262,7 +259,7 @@ export function ChartAreaInteractive() {
                     return new Date(value).toLocaleDateString("en-US", {
                       month: "short",
                       day: "numeric",
-                    })
+                    });
                   }}
                   indicator="dot"
                 />
@@ -288,5 +285,5 @@ export function ChartAreaInteractive() {
         </ChartContainer>
       </CardContent>
     </Card>
-  )
+  );
 }

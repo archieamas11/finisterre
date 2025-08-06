@@ -4,7 +4,7 @@ interface GenericTableProps<T> {
   loadingMessage?: string;
   extractData: (response: unknown) => T[];
   TableComponent: React.ComponentType<{ data: T[] }>;
-  fetchData: () => Promise<{ [key: string]: unknown; success: boolean; }>;
+  fetchData: () => Promise<{ [key: string]: unknown; success: boolean }>;
 }
 
 export function GenericTable<T>({

@@ -1,12 +1,20 @@
 import { lazy } from "react";
 const LandingLayout = lazy(() => import("@/components/layout/LandingLayout"));
-const IntermentSetup = lazy(() => import("@/pages/admin/interment/IntermentSetup"));
-const AdminMapLayout = lazy(() => import("@/pages/admin/map4admin/AdminMapLayout"));
+const IntermentSetup = lazy(
+  () => import("@/pages/admin/interment/IntermentSetup"),
+);
+const AdminMapLayout = lazy(
+  () => import("@/pages/admin/map4admin/AdminMapLayout"),
+);
 const Bookings = lazy(() => import("@/pages/admin/bookings/ManageBookings"));
 const MapPage = lazy(() => import("@/components/layout/WebMapLayout"));
 const MapLibre = lazy(() => import("@/components/webmap/testing/MapLibre"));
-const AdminControlPanel = lazy(() => import("@/pages/admin/control/AdminControlPanel"));
-const DashboardLayout = lazy(() => import("@/components/layout/DashboardLayout"));
+const AdminControlPanel = lazy(
+  () => import("@/pages/admin/control/AdminControlPanel"),
+);
+const DashboardLayout = lazy(
+  () => import("@/components/layout/DashboardLayout"),
+);
 
 import LoginV2 from "@/auth/page";
 import Logout from "@/auth/Logout";
@@ -16,7 +24,9 @@ import ForgotPassword from "@/auth/ForgotPassword";
 
 const AdminDashboard = lazy(() => import("@/pages/admin/home/AdminDashboard"));
 const UserDashboard = lazy(() => import("@/pages/user/contents/UserDashboard"));
-const UserOrdersStatus = lazy(() => import("@/pages/user/contents/OrdersStatus"));
+const UserOrdersStatus = lazy(
+  () => import("@/pages/user/contents/OrdersStatus"),
+);
 const UserServices = lazy(() => import("@/pages/user/contents/Services"));
 const UserMap = lazy(() => import("@/pages/user/contents/Map"));
 const UnauthorizedPage = lazy(() => import("@/pages/UnauthorizedPage"));

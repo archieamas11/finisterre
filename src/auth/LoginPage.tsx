@@ -20,8 +20,12 @@ import {
 
 const FormSchema = z.object({
   remember: z.boolean().optional(),
-  password: z.string().min(4, { message: "Password must be at least 4 characters." }),
-  username: z.string().min(2, { message: "Property ID must be at least 2 characters." }),
+  password: z
+    .string()
+    .min(4, { message: "Password must be at least 4 characters." }),
+  username: z
+    .string()
+    .min(2, { message: "Property ID must be at least 2 characters." }),
 });
 
 export function LoginPage() {
@@ -75,7 +79,7 @@ export function LoginPage() {
         } else if (res.message === "Invalid password") {
           form.setError("password", {
             type: "manual",
-            message: "Incorrect Property ID or Password"
+            message: "Incorrect Property ID or Password",
           });
         } else {
           toast.error("Something went wrong. Please try again later.");
@@ -131,7 +135,10 @@ export function LoginPage() {
         <FormField
           render={({ field }) => (
             <FormItem className="flex flex-row items-center justify-between">
-              <FormLabel className="cursor-pointer flex items-center gap-2" htmlFor="login-remember">
+              <FormLabel
+                className="flex cursor-pointer items-center gap-2"
+                htmlFor="login-remember"
+              >
                 <Checkbox
                   onCheckedChange={field.onChange}
                   checked={field.value}
@@ -141,7 +148,7 @@ export function LoginPage() {
                 Remember me
               </FormLabel>
               <Link
-                className="text-xs text-muted-foreground hover:underline block mt-1"
+                className="text-muted-foreground mt-1 block text-xs hover:underline"
                 to="/forgot-password"
               >
                 Forgot your password?
@@ -151,7 +158,7 @@ export function LoginPage() {
           control={form.control}
           name="remember"
         />
-        <Button className="w-full mt-2" variant={"default"} type="submit">
+        <Button className="mt-2 w-full" variant={"default"} type="submit">
           Login
         </Button>
         <Button

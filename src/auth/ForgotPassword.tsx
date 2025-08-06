@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { toast } from "sonner";
 import { useState } from "react";
-import { MapPin } from 'lucide-react';
+import { MapPin } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { useNavigate, Link } from "react-router-dom";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -9,11 +9,18 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { forgotPassword } from "@/api/auth.api";
-import { FormControl, FormMessage, FormField, FormLabel, FormItem, Form } from "@/components/ui/form";
+import {
+  FormControl,
+  FormMessage,
+  FormField,
+  FormLabel,
+  FormItem,
+  Form,
+} from "@/components/ui/form";
 
 const FormSchema = z.object({
   username: z.string().min(3, {
-    message: "Property ID must be at least 3 characters."
+    message: "Property ID must be at least 3 characters.",
   }),
 });
 
@@ -38,7 +45,7 @@ export default function ForgotPassword() {
 
       if (res.success) {
         navigate("/reset-password", {
-          state: { username: data.username }
+          state: { username: data.username },
         });
         toast.success("Property ID verified successfully!", {
           closeButton: true,
@@ -58,21 +65,22 @@ export default function ForgotPassword() {
     }
   };
 
-
   return (
-    <div className="flex items-center justify-center min-h-screen p-12">
+    <div className="flex min-h-screen items-center justify-center p-12">
       <div className="mx-auto flex flex-col justify-center space-y-8 sm:w-[350px]">
         <div className="space-y-2 text-center">
           <div className="flex justify-center">
             <Link
-              className="flex items-center justify-center border border-primary/10 bg-primary/10 rounded-full p-3 w-16 h-16 aspect-square mb-5"
+              className="border-primary/10 bg-primary/10 mb-5 flex aspect-square h-16 w-16 items-center justify-center rounded-full border p-3"
               to="/"
             >
               <MapPin className="h-20 w-20" />
             </Link>
           </div>
           <h1 className="text-3xl font-medium">Forgot Password</h1>
-          <p className="text-muted-foreground text-sm">Please enter your property id to verify your account.</p>
+          <p className="text-muted-foreground text-sm">
+            Please enter your property id to verify your account.
+          </p>
         </div>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
@@ -96,7 +104,7 @@ export default function ForgotPassword() {
               name="username"
             />
             <Button
-              className="w-full mt-2"
+              className="mt-2 w-full"
               disabled={isSubmitting}
               type="submit"
             >

@@ -31,7 +31,7 @@ export function AppSidebar({
           <SidebarMenuItem>
             <SidebarMenuButton size="lg" asChild>
               <div className="flex items-center gap-2">
-                <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground mr-2">
+                <div className="bg-sidebar-primary text-sidebar-primary-foreground mr-2 flex aspect-square size-8 items-center justify-center rounded-lg">
                   <MapPin />
                 </div>
                 <div className="grid flex-1 text-left text-sm leading-tight">
@@ -46,7 +46,9 @@ export function AppSidebar({
       <SidebarContent>
         {items.map((group) => (
           <SidebarGroup key={group.id}>
-            {group.label && <SidebarGroupLabel>{group.label}</SidebarGroupLabel>}
+            {group.label && (
+              <SidebarGroupLabel>{group.label}</SidebarGroupLabel>
+            )}
             <NavMain items={group.items} />
           </SidebarGroup>
         ))}

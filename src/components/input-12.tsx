@@ -7,18 +7,13 @@ import { XCircleIcon, ImageIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Label } from "@/components/ui/label";
 
-const ImagePreview = ({
-  onRemove,
-}: {
-  onRemove: () => void;
-  url: string;
-}) => (
+const ImagePreview = ({ onRemove }: { onRemove: () => void; url: string }) => (
   <div className="relative aspect-square">
     <button
       className="absolute top-0 right-0 translate-x-1/2 -translate-y-1/2"
       onClick={onRemove}
     >
-      <XCircleIcon className="h-5 w-5 fill-primary text-primary-foreground" />
+      <XCircleIcon className="fill-primary text-primary-foreground h-5 w-5" />
     </button>
   </div>
 );
@@ -32,7 +27,9 @@ export default function InputDemo() {
       <div className="mt-1 w-full">
         {profilePicture ? (
           <ImagePreview
-            onRemove={() => { setProfilePicture(null); }}
+            onRemove={() => {
+              setProfilePicture(null);
+            }}
             url={profilePicture}
           />
         ) : (
@@ -59,12 +56,12 @@ export default function InputDemo() {
               <div
                 {...getRootProps()}
                 className={cn(
-                  "border border-dashed flex items-center justify-center aspect-square rounded-md focus:outline-none focus:border-primary",
+                  "focus:border-primary flex aspect-square items-center justify-center rounded-md border border-dashed focus:outline-none",
                   {
                     "border-primary bg-secondary": isDragActive && isDragAccept,
                     "border-destructive bg-destructive/20":
                       isDragActive && isDragReject,
-                  }
+                  },
                 )}
               >
                 <input {...getInputProps()} id="profile" />

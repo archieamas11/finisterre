@@ -129,7 +129,7 @@ export const getSidebarItems = (isAdmin: boolean): NavGroup[] => {
  */
 export function findSidebarItemByPath(
   pathname: string,
-  isAdmin: boolean
+  isAdmin: boolean,
 ): {
   mainItem: NavMainItem;
   subItem?: NavSubItem;

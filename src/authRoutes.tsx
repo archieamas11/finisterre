@@ -28,7 +28,9 @@ export function useAuth(): AuthState {
       });
     };
     window.addEventListener("storage", handleStorage);
-    return () => { window.removeEventListener("storage", handleStorage); };
+    return () => {
+      window.removeEventListener("storage", handleStorage);
+    };
   }, []);
 
   return auth;

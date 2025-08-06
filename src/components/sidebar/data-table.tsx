@@ -1,15 +1,15 @@
-import { z } from "zod"
-import * as React from "react"
-import { toast } from "sonner"
-import { CSS } from "@dnd-kit/utilities"
-import { restrictToVerticalAxis } from "@dnd-kit/modifiers"
-import { CartesianGrid, AreaChart, XAxis, Area } from "recharts"
+import { z } from "zod";
+import * as React from "react";
+import { toast } from "sonner";
+import { CSS } from "@dnd-kit/utilities";
+import { restrictToVerticalAxis } from "@dnd-kit/modifiers";
+import { CartesianGrid, AreaChart, XAxis, Area } from "recharts";
 import {
   verticalListSortingStrategy,
   SortableContext,
   useSortable,
   arrayMove,
-} from "@dnd-kit/sortable"
+} from "@dnd-kit/sortable";
 import {
   type UniqueIdentifier,
   type DragEndEvent,
@@ -20,7 +20,7 @@ import {
   DndContext,
   useSensors,
   useSensor,
-} from "@dnd-kit/core"
+} from "@dnd-kit/core";
 import {
   IconCircleCheckFilled,
   IconChevronsRight,
@@ -34,7 +34,7 @@ import {
   IconTrendingUp,
   IconLoader,
   IconPlus,
-} from "@tabler/icons-react"
+} from "@tabler/icons-react";
 import {
   type ColumnFiltersState,
   getFacetedUniqueValues,
@@ -49,34 +49,29 @@ import {
   useReactTable,
   flexRender,
   type Row,
-} from "@tanstack/react-table"
+} from "@tanstack/react-table";
 
-import { Badge } from "@/components/ui/badge"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Button } from "@/components/ui/button"
-import { useIsMobile } from "@/hooks/use-mobile"
-import { Checkbox } from "@/components/ui/checkbox"
-import { Separator } from "@/components/ui/separator"
-import {
-  TabsContent,
-  TabsTrigger,
-  TabsList,
-  Tabs,
-} from "@/components/ui/tabs"
+import { Badge } from "@/components/ui/badge";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Button } from "@/components/ui/button";
+import { useIsMobile } from "@/hooks/use-mobile";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Separator } from "@/components/ui/separator";
+import { TabsContent, TabsTrigger, TabsList, Tabs } from "@/components/ui/tabs";
 import {
   SelectContent,
   SelectTrigger,
   SelectValue,
   SelectItem,
   Select,
-} from "@/components/ui/select"
+} from "@/components/ui/select";
 import {
   ChartTooltipContent,
   type ChartConfig,
   ChartContainer,
   ChartTooltip,
-} from "@/components/ui/chart"
+} from "@/components/ui/chart";
 import {
   TableHeader,
   TableBody,
@@ -84,7 +79,7 @@ import {
   TableHead,
   TableRow,
   Table,
-} from "@/components/ui/table"
+} from "@/components/ui/table";
 import {
   DrawerDescription,
   DrawerContent,
@@ -94,7 +89,7 @@ import {
   DrawerClose,
   DrawerTitle,
   Drawer,
-} from "@/components/ui/drawer"
+} from "@/components/ui/drawer";
 import {
   DropdownMenuCheckboxItem,
   DropdownMenuSeparator,
@@ -102,7 +97,7 @@ import {
   DropdownMenuTrigger,
   DropdownMenuItem,
   DropdownMenu,
-} from "@/components/ui/dropdown-menu"
+} from "@/components/ui/dropdown-menu";
 
 export const schema = z.object({
   id: z.number(),
@@ -112,13 +107,13 @@ export const schema = z.object({
   status: z.string(),
   target: z.string(),
   reviewer: z.string(),
-})
+});
 
 // Create a separate component for the drag handle
 function DragHandle({ id }: { id: number }) {
   const { listeners, attributes } = useSortable({
     id,
-  })
+  });
 
   return (
     <Button
@@ -131,7 +126,7 @@ function DragHandle({ id }: { id: number }) {
       <IconGripVertical className="text-muted-foreground size-3" />
       <span className="sr-only">Drag to reorder</span>
     </Button>
-  )
+  );
 }
 
 const columns: ColumnDef<z.infer<typeof schema>>[] = [
@@ -147,7 +142,9 @@ const columns: ColumnDef<z.infer<typeof schema>>[] = [
     cell: ({ row }) => (
       <div className="flex items-center justify-center">
         <Checkbox
-          onCheckedChange={(value) => { row.toggleSelected(!!value); }}
+          onCheckedChange={(value) => {
+            row.toggleSelected(!!value);
+          }}
           checked={row.getIsSelected()}
           aria-label="Select row"
         />
@@ -160,7 +157,9 @@ const columns: ColumnDef<z.infer<typeof schema>>[] = [
             table.getIsAllPageRowsSelected() ||
             (table.getIsSomePageRowsSelected() && "indeterminate")
           }
-          onCheckedChange={(value) => { table.toggleAllPageRowsSelected(!!value); }}
+          onCheckedChange={(value) => {
+            table.toggleAllPageRowsSelected(!!value);
+          }}
           aria-label="Select all"
         />
       </div>
@@ -171,7 +170,7 @@ const columns: ColumnDef<z.infer<typeof schema>>[] = [
     enableHiding: false,
     accessorKey: "header",
     cell: ({ row }) => {
-      return <TableCellViewer item={row.original} />
+      return <TableCellViewer item={row.original} />;
     },
   },
   {
@@ -205,12 +204,12 @@ const columns: ColumnDef<z.infer<typeof schema>>[] = [
     cell: ({ row }) => (
       <form
         onSubmit={(e) => {
-          e.preventDefault()
+          e.preventDefault();
           toast.promise(new Promise((resolve) => setTimeout(resolve, 1000)), {
             error: "Error",
             success: "Done",
             loading: `Saving ${row.original.header}`,
-          })
+          });
         }}
       >
         <Label htmlFor={`${row.original.id}-target`} className="sr-only">
@@ -230,12 +229,12 @@ const columns: ColumnDef<z.infer<typeof schema>>[] = [
     cell: ({ row }) => (
       <form
         onSubmit={(e) => {
-          e.preventDefault()
+          e.preventDefault();
           toast.promise(new Promise((resolve) => setTimeout(resolve, 1000)), {
             error: "Error",
             success: "Done",
             loading: `Saving ${row.original.header}`,
-          })
+          });
         }}
       >
         <Label htmlFor={`${row.original.id}-limit`} className="sr-only">
@@ -253,10 +252,10 @@ const columns: ColumnDef<z.infer<typeof schema>>[] = [
     header: "Reviewer",
     accessorKey: "reviewer",
     cell: ({ row }) => {
-      const isAssigned = row.original.reviewer !== "Assign reviewer"
+      const isAssigned = row.original.reviewer !== "Assign reviewer";
 
       if (isAssigned) {
-        return row.original.reviewer
+        return row.original.reviewer;
       }
 
       return (
@@ -280,7 +279,7 @@ const columns: ColumnDef<z.infer<typeof schema>>[] = [
             </SelectContent>
           </Select>
         </>
-      )
+      );
     },
   },
   {
@@ -307,36 +306,36 @@ const columns: ColumnDef<z.infer<typeof schema>>[] = [
       </DropdownMenu>
     ),
   },
-]
+];
 
 export function DataTable({
   data: initialData,
 }: {
-  data: z.infer<typeof schema>[]
+  data: z.infer<typeof schema>[];
 }) {
-  const [data, setData] = React.useState(() => initialData)
-  const [rowSelection, setRowSelection] = React.useState({})
+  const [data, setData] = React.useState(() => initialData);
+  const [rowSelection, setRowSelection] = React.useState({});
   const [columnVisibility, setColumnVisibility] =
-    React.useState<VisibilityState>({})
+    React.useState<VisibilityState>({});
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
-    []
-  )
-  const [sorting, setSorting] = React.useState<SortingState>([])
+    [],
+  );
+  const [sorting, setSorting] = React.useState<SortingState>([]);
   const [pagination, setPagination] = React.useState({
     pageIndex: 0,
     pageSize: 10,
-  })
-  const sortableId = React.useId()
+  });
+  const sortableId = React.useId();
   const sensors = useSensors(
     useSensor(MouseSensor, {}),
     useSensor(TouchSensor, {}),
-    useSensor(KeyboardSensor, {})
-  )
+    useSensor(KeyboardSensor, {}),
+  );
 
   const dataIds = React.useMemo<UniqueIdentifier[]>(
     () => data?.map(({ id }) => id) || [],
-    [data]
-  )
+    [data],
+  );
 
   const table = useReactTable({
     data,
@@ -361,16 +360,16 @@ export function DataTable({
       columnFilters,
       columnVisibility,
     },
-  })
+  });
 
   function handleDragEnd(event: DragEndEvent) {
-    const { over, active } = event
+    const { over, active } = event;
     if (active && over && active.id !== over.id) {
       setData((data) => {
-        const oldIndex = dataIds.indexOf(active.id)
-        const newIndex = dataIds.indexOf(over.id)
-        return arrayMove(data, oldIndex, newIndex)
-      })
+        const oldIndex = dataIds.indexOf(active.id);
+        const newIndex = dataIds.indexOf(over.id);
+        return arrayMove(data, oldIndex, newIndex);
+      });
     }
   }
 
@@ -424,21 +423,21 @@ export function DataTable({
                 .filter(
                   (column) =>
                     typeof column.accessorFn !== "undefined" &&
-                    column.getCanHide()
+                    column.getCanHide(),
                 )
                 .map((column) => {
                   return (
                     <DropdownMenuCheckboxItem
-                      onCheckedChange={(value) =>
-                        { column.toggleVisibility(!!value); }
-                      }
+                      onCheckedChange={(value) => {
+                        column.toggleVisibility(!!value);
+                      }}
                       checked={column.getIsVisible()}
                       className="capitalize"
                       key={column.id}
                     >
                       {column.id}
                     </DropdownMenuCheckboxItem>
-                  )
+                  );
                 })}
             </DropdownMenuContent>
           </DropdownMenu>
@@ -470,11 +469,11 @@ export function DataTable({
                           {header.isPlaceholder
                             ? null
                             : flexRender(
-                              header.column.columnDef.header,
-                              header.getContext()
-                            )}
+                                header.column.columnDef.header,
+                                header.getContext(),
+                              )}
                         </TableHead>
-                      )
+                      );
                     })}
                   </TableRow>
                 ))}
@@ -515,7 +514,7 @@ export function DataTable({
               </Label>
               <Select
                 onValueChange={(value) => {
-                  table.setPageSize(Number(value))
+                  table.setPageSize(Number(value));
                 }}
                 value={`${table.getState().pagination.pageSize}`}
               >
@@ -539,7 +538,9 @@ export function DataTable({
             </div>
             <div className="ml-auto flex items-center gap-2 lg:ml-0">
               <Button
-                onClick={() => { table.setPageIndex(0); }}
+                onClick={() => {
+                  table.setPageIndex(0);
+                }}
                 className="hidden h-8 w-8 p-0 lg:flex"
                 disabled={!table.getCanPreviousPage()}
                 variant="outline"
@@ -548,7 +549,9 @@ export function DataTable({
                 <IconChevronsLeft />
               </Button>
               <Button
-                onClick={() => { table.previousPage(); }}
+                onClick={() => {
+                  table.previousPage();
+                }}
                 disabled={!table.getCanPreviousPage()}
                 className="size-8"
                 variant="outline"
@@ -558,7 +561,9 @@ export function DataTable({
                 <IconChevronLeft />
               </Button>
               <Button
-                onClick={() => { table.nextPage(); }}
+                onClick={() => {
+                  table.nextPage();
+                }}
                 disabled={!table.getCanNextPage()}
                 className="size-8"
                 variant="outline"
@@ -568,7 +573,9 @@ export function DataTable({
                 <IconChevronRight />
               </Button>
               <Button
-                onClick={() => { table.setPageIndex(table.getPageCount() - 1); }}
+                onClick={() => {
+                  table.setPageIndex(table.getPageCount() - 1);
+                }}
                 disabled={!table.getCanNextPage()}
                 className="hidden size-8 lg:flex"
                 variant="outline"
@@ -597,13 +604,13 @@ export function DataTable({
         <div className="aspect-video w-full flex-1 rounded-lg border border-dashed"></div>
       </TabsContent>
     </Tabs>
-  )
+  );
 }
 
 function DraggableRow({ row }: { row: Row<z.infer<typeof schema>> }) {
   const { transform, transition, setNodeRef, isDragging } = useSortable({
     id: row.original.id,
-  })
+  });
 
   return (
     <TableRow
@@ -622,7 +629,7 @@ function DraggableRow({ row }: { row: Row<z.infer<typeof schema>> }) {
         </TableCell>
       ))}
     </TableRow>
-  )
+  );
 }
 
 const chartData = [
@@ -632,7 +639,7 @@ const chartData = [
   { desktop: 73, mobile: 190, month: "April" },
   { mobile: 130, month: "May", desktop: 209 },
   { mobile: 140, desktop: 214, month: "June" },
-]
+];
 
 const chartConfig = {
   mobile: {
@@ -643,10 +650,10 @@ const chartConfig = {
     label: "Desktop",
     color: "var(--primary)",
   },
-} satisfies ChartConfig
+} satisfies ChartConfig;
 
 function TableCellViewer({ item }: { item: z.infer<typeof schema> }) {
-  const isMobile = useIsMobile()
+  const isMobile = useIsMobile();
 
   return (
     <Drawer direction={isMobile ? "bottom" : "right"}>
@@ -801,5 +808,5 @@ function TableCellViewer({ item }: { item: z.infer<typeof schema> }) {
         </DrawerFooter>
       </DrawerContent>
     </Drawer>
-  )
+  );
 }

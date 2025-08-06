@@ -1,12 +1,7 @@
-"use client"
+"use client";
 
-import { useNavigate } from "react-router-dom"
-import {
-  ChevronsUpDown,
-  BadgeCheck,
-  LogOut,
-  Bell,
-} from "lucide-react"
+import { useNavigate } from "react-router-dom";
+import { ChevronsUpDown, BadgeCheck, LogOut, Bell } from "lucide-react";
 
 import { AvatarFallback, AvatarImage, Avatar } from "@/components/ui/avatar";
 import {
@@ -14,7 +9,7 @@ import {
   SidebarMenuItem,
   SidebarMenu,
   useSidebar,
-} from "@/components/ui/sidebar"
+} from "@/components/ui/sidebar";
 import {
   DropdownMenuSeparator,
   DropdownMenuContent,
@@ -29,18 +24,17 @@ export function NavUser({
   user,
 }: {
   user: {
-    avatar: string
-    email: string
-    name: string
-  }
+    avatar: string;
+    email: string;
+    name: string;
+  };
 }) {
-  const { isMobile } = useSidebar()
+  const { isMobile } = useSidebar();
 
   const navigate = useNavigate();
   const handleLogout = () => {
     navigate("/logout");
   };
-
 
   return (
     <SidebarMenu>
@@ -100,5 +94,5 @@ export function NavUser({
         </DropdownMenu>
       </SidebarMenuItem>
     </SidebarMenu>
-  )
+  );
 }

@@ -3,15 +3,15 @@ import { useGetCustomers } from "@/hooks/customer-hooks/useGetCustomer";
 import CustomersTable from "@/pages/admin/interment/customer/CustomersTable";
 
 export default function CustomersPage() {
-    const { isError, isPending, data: customers } = useGetCustomers();
+  const { isError, isPending, data: customers } = useGetCustomers();
 
-    if (isPending)
-        return (
-            <div className="flex items-center justify-center h-full">
-                <SpinnerCircle4 />
-            </div>
-        );
-    if (isError) return <p>Failed to load customers</p>;
+  if (isPending)
+    return (
+      <div className="flex h-full items-center justify-center">
+        <SpinnerCircle4 />
+      </div>
+    );
+  if (isError) return <p>Failed to load customers</p>;
 
-    return <CustomersTable data={customers} />;
+  return <CustomersTable data={customers} />;
 }
