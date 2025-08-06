@@ -1,8 +1,8 @@
+import { RiListSettingsFill } from "react-icons/ri";
 import { useContext } from "react";
 import { Link } from "react-router-dom";
 import {
   RefreshCw,
-  Settings,
   Search,
   Filter,
   Locate,
@@ -33,7 +33,7 @@ export default function WebMapNavs() {
         className="dark:bg-primary-foreground rounded-full border border-stone-300 bg-white/80 shadow hover:bg-white/90 dark:border-stone-700 dark:hover:bg-stone-800/90"
         size="icon"
       >
-        <Settings className="h-6 w-6 text-stone-700 dark:text-stone-200" />
+        <RiListSettingsFill className="h-6 w-6 text-stone-700 dark:text-stone-200" />
       </Button>
       <Button
         className="dark:bg-primary-foreground rounded-full border border-stone-300 bg-white/80 shadow hover:bg-white/90 dark:border-stone-700 dark:hover:bg-stone-800/90"
@@ -76,3 +76,4 @@ export default function WebMapNavs() {
     </nav>
   );
 }
+
