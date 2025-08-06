@@ -1,28 +1,30 @@
 import { Suspense } from "react";
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
-import { RequireAuth, RequireAdmin, RequireUser } from "@/authRoutes";
-import DashboardLayout from "@/components/layout/DashboardLayout";
-import LandingLayout from "@/components/layout/LandingLayout";
-import Layout from "@/auth/layout";
-import ForgotPassword from "@/auth/ForgotPassword";
+import { BrowserRouter, Navigate, Routes, Route } from "react-router-dom";
+
 import LoginV2 from "@/auth/page";
+import Layout from "@/auth/layout";
 import Logout from "@/auth/Logout";
-import MapPage from "@/components/layout/WebMapLayout";
-import ResetPassword from "@/auth/ResetPassword";
-import UnauthorizedPage from "@/pages/UnauthorizedPage";
-// Admin Imports 
-import AdminDashboard from "@/pages/admin/home/AdminDashboard";
-import AdminMapLayout from "@/pages/admin/map4admin/AdminMapLayout";
-import LotOwnersTablePage from "@/pages/admin/interment/LotOwnersTablePage";
-import DeceasedTablePage from "@/pages/admin/interment/DeceasedTablePage";
-import Bookings from "@/pages/admin/bookings/ManageBookings";
-import AdminControlPanel from '@/pages/admin/control/AdminControlPanel';
-import IntermentSetup from "@/pages/admin/interment/IntermentSetup";
-// User Imports
-import UserDashboard from "@/pages/user/contents/UserDashboard";
 import UserMap from "@/pages/user/contents/Map";
+import ResetPassword from "@/auth/ResetPassword";
+import ForgotPassword from "@/auth/ForgotPassword";
+import MapPage from "@/components/layout/WebMapLayout";
+import UnauthorizedPage from "@/pages/UnauthorizedPage";
 import UserProfile from "@/pages/user/contents/Profile";
 import UserServices from "@/pages/user/contents/Services";
+import Bookings from "@/pages/admin/bookings/ManageBookings";
+import LandingLayout from "@/components/layout/LandingLayout";
+// Admin Imports 
+import AdminDashboard from "@/pages/admin/home/AdminDashboard";
+// User Imports
+import UserDashboard from "@/pages/user/contents/UserDashboard";
+import DashboardLayout from "@/components/layout/DashboardLayout";
+import AdminMapLayout from "@/pages/admin/map4admin/AdminMapLayout";
+import IntermentSetup from "@/pages/admin/interment/IntermentSetup";
+import { RequireAdmin, RequireAuth, RequireUser } from "@/authRoutes";
+import AdminControlPanel from '@/pages/admin/control/AdminControlPanel';
+import DeceasedTablePage from "@/pages/admin/interment/DeceasedTablePage";
+import LotOwnersTablePage from "@/pages/admin/interment/LotOwnersTablePage";
+
 import MapLibre from "./components/webmap/testing/MapLibre";
 import CustomersPage from "./pages/admin/interment/customer/CustomerPage";
 
@@ -32,50 +34,50 @@ export default function App() {
 			<Suspense fallback={<div>Loading...</div>}>
 				<Routes>
 					{/* Public Routes */}
-					<Route path="/" element={<LandingLayout />} />
-					<Route path="/map" element={<MapPage />} />
-					<Route path="/mapLibre" element={<MapLibre />} />
-					<Route path="/login" element={<Layout><LoginV2 /></Layout>} />
-					<Route path="/forgot-password" element={<ForgotPassword />} />
-					<Route path="/reset-password" element={<ResetPassword />} />
-					<Route path="/logout" element={<Logout />} />
-					<Route path="/unauthorized" element={<UnauthorizedPage />} />
+					<Route element={<LandingLayout />} path="/" />
+					<Route element={<MapPage />} path="/map" />
+					<Route element={<MapLibre />} path="/mapLibre" />
+					<Route element={<Layout><LoginV2 /></Layout>} path="/login" />
+					<Route element={<ForgotPassword />} path="/forgot-password" />
+					<Route element={<ResetPassword />} path="/reset-password" />
+					<Route element={<Logout />} path="/logout" />
+					<Route element={<UnauthorizedPage />} path="/unauthorized" />
 
 					{/* User Protected Routes */}
-					<Route path="/user" element={
+					<Route element={
 						<RequireAuth>
 							<RequireUser>
 								<DashboardLayout role="user" />
 							</RequireUser>
 						</RequireAuth>
-					}>
-						<Route index element={<UserDashboard />} />
-						<Route path="profile" element={<UserProfile />} />
-						<Route path="services" element={<UserServices />} />
-						<Route path="map" element={<UserMap />} />
+					} path="/user">
+						<Route element={<UserDashboard />} index />
+						<Route element={<UserProfile />} path="profile" />
+						<Route element={<UserServices />} path="services" />
+						<Route element={<UserMap />} path="map" />
 					</Route>
 
 					{/* Admin Protected Routes */}
-					<Route path="/admin" element={
+					<Route element={
 						<RequireAuth>
 							<RequireAdmin>
 								<DashboardLayout role="admin" />
 							</RequireAdmin>
 						</RequireAuth>
-					}>
-						<Route index element={<AdminDashboard />} />
-						<Route path="interment-setup" element={<IntermentSetup />}>
-							<Route path="customers" element={<CustomersPage />} />
-							<Route path="lot-owners" element={<LotOwnersTablePage />} />
-							<Route path="deceased-records" element={<DeceasedTablePage />} />
+					} path="/admin">
+						<Route element={<AdminDashboard />} index />
+						<Route element={<IntermentSetup />} path="interment-setup">
+							<Route element={<CustomersPage />} path="customers" />
+							<Route element={<LotOwnersTablePage />} path="lot-owners" />
+							<Route element={<DeceasedTablePage />} path="deceased-records" />
 						</Route>
-						<Route path="map" element={<AdminMapLayout />} />
-						<Route path="bookings" element={<Bookings />} />
-						<Route path="control-panel" element={<AdminControlPanel />} />
+						<Route element={<AdminMapLayout />} path="map" />
+						<Route element={<Bookings />} path="bookings" />
+						<Route element={<AdminControlPanel />} path="control-panel" />
 					</Route>
 
 					{/* Catch all unmatched routes */}
-					<Route path="*" element={<Navigate to="/" />} />
+					<Route element={<Navigate to="/" />} path="*" />
 				</Routes>
 			</Suspense>
 		</BrowserRouter>

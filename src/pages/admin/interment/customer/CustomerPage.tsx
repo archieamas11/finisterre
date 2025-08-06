@@ -3,7 +3,7 @@ import { useGetCustomers } from "@/hooks/customer-hooks/useGetCustomer";
 import CustomersTable from "@/pages/admin/interment/customer/CustomersTable";
 
 export default function CustomersPage() {
-    const { data: customers, isPending, isError } = useGetCustomers();
+    const { isError, isPending, data: customers } = useGetCustomers();
 
     if (isPending)
         return (

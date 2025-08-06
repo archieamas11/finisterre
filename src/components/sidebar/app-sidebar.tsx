@@ -1,22 +1,24 @@
 // src/components/sidebar/app-sidebar.tsx
 import * as React from "react";
+import { MapPin } from "lucide-react";
+
+import { rootUser } from "@/data/users";
 import { NavMain } from "@/components/sidebar/nav-main";
+import { type NavGroup } from "@/navigation/sidebar/sidebar-items";
 import {
-  Sidebar,
-  SidebarContent,
-  SidebarFooter,
-  SidebarGroup,
   SidebarGroupLabel,
-  SidebarHeader,
-  SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
+  SidebarContent,
+  SidebarFooter,
+  SidebarHeader,
+  SidebarGroup,
+  SidebarMenu,
   SidebarRail,
+  Sidebar,
 } from "@/components/ui/sidebar";
-import { type NavGroup } from "@/navigation/sidebar/sidebar-items";
-import { rootUser } from "@/data/users";
+
 import { NavUser } from "./nav-user";
-import { MapPin } from "lucide-react";
 
 export function AppSidebar({
   items,

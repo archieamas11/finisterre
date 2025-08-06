@@ -1,31 +1,33 @@
 import 'leaflet/dist/leaflet.css';
-import { MapContainer, TileLayer, Marker, Popup, useMapEvents, Polyline } from 'react-leaflet';
 import L from 'leaflet';
+import { createContext, useRef } from 'react';
 // Fix default icon paths so markers actually show up
 import iconUrl from 'leaflet/dist/images/marker-icon.png';
-import iconRetinaUrl from 'leaflet/dist/images/marker-icon-2x.png';
+import { useEffect, useState, Suspense, lazy } from 'react';
 import shadowUrl from 'leaflet/dist/images/marker-shadow.png';
+import iconRetinaUrl from 'leaflet/dist/images/marker-icon-2x.png';
+import { MapContainer, useMapEvents, TileLayer, Polyline, Marker, Popup } from 'react-leaflet';
+
 import WebMapNavs from '@/pages/webmap/WebMapNavs';
-import { createContext, useRef } from 'react';
-import { useState, useEffect, Suspense, lazy } from 'react';
 const PlotLocations = lazy(() => import('../WebMap.popup').then(mod => ({ default: mod.PlotLocations })));
-import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
-import { Route, Timer, XCircle } from 'lucide-react';
-import { BiSolidChurch } from 'react-icons/bi';
-import { renderToStaticMarkup } from 'react-dom/server';
 import { GiOpenGate } from 'react-icons/gi';
-import { usePlots } from '@/hooks/plots-hooks/plot.hooks';
-import { convertPlotToMarker, getCategoryBackgroundColor, getStatusColor } from '@/types/map.types';
-import { Skeleton } from '@/components/ui/skeleton';
+import { BiSolidChurch } from 'react-icons/bi';
+import { XCircle, Route, Timer } from 'lucide-react';
+import { renderToStaticMarkup } from 'react-dom/server';
 import ReactLeafletDriftMarker from "react-leaflet-drift-marker"
+
+import { Button } from '@/components/ui/button';
+import { Skeleton } from '@/components/ui/skeleton';
+import { CardContent, Card } from '@/components/ui/card';
+import { usePlots } from '@/hooks/plots-hooks/plot.hooks';
+import { getCategoryBackgroundColor, convertPlotToMarker, getStatusColor } from '@/types/map.types';
 const ColumbariumPopup = lazy(() => import("@/pages/admin/map4admin/ColumbariumPopup"));
 
 
 const DefaultIcon = L.icon({
   iconUrl,
-  iconRetinaUrl,
   shadowUrl,
+  iconRetinaUrl,
   iconSize: [25, 41],
   iconAnchor: [12, 41],
   popupAnchor: [1, -34],
@@ -36,11 +38,11 @@ L.Marker.prototype.options.icon = DefaultIcon;
 export const LocateContext = createContext<{ requestLocate: () => void } | null>(null);
 // Route interface
 interface RouteData {
-  from: [number, number];
-  to: [number, number];
-  polyline: [number, number][];
   distance?: number;
   duration?: number;
+  to: [number, number];
+  from: [number, number];
+  polyline: [number, number][];
 }
 
 export default function MapPage() {
@@ -50,7 +52,7 @@ export default function MapPage() {
   ];
 
   // 🎣 All hooks must be called at the top level before any early returns
-  const { data: plotsData, isLoading, error } = usePlots();
+  const { error, isLoading, data: plotsData } = usePlots();
   const locateRef = useRef<(() => void) | null>(null);
   const [userPosition, setUserPosition] = useState<L.LatLng | null>(null);
   const [publicRoute, setPublicRoute] = useState<RouteData | null>(null);
@@ -62,7 +64,7 @@ export default function MapPage() {
 
   // 📊 Process data after hooks
   const markers = plotsData?.map(convertPlotToMarker) || [];
-  console.log('🗺️ Plots data loaded:', { plotsCount: markers.length, isLoading, error });
+  console.log('🗺️ Plots data loaded:', { error, isLoading, plotsCount: markers.length });
 
   // Cemetery entrance constant for routing
   const CEMETERY_GATE = L.latLng(10.248107820799307, 123.797607547609545);
@@ -75,7 +77,7 @@ export default function MapPage() {
       stopLiveTracking();
     }
 
-    return () => stopLiveTracking();
+    return () => { stopLiveTracking(); };
   }, [publicRoute, privateRoute]);
 
   // 🔄 Show loading state while fetching plots
@@ -138,9 +140,9 @@ export default function MapPage() {
         console.warn('Live tracking error:', error);
       },
       {
-        enableHighAccuracy: true,
         timeout: 5000,
-        maximumAge: 1000
+        maximumAge: 1000,
+        enableHighAccuracy: true
       }
     );
 
@@ -183,14 +185,14 @@ export default function MapPage() {
 
     return (
       <ReactLeafletDriftMarker
+        icon={L.divIcon({
+          iconSize: [26, 26],
+          iconAnchor: [13, 13],
+          className: 'custom-user-marker',
+          html: '<div style="background: #4285f4; border: 3px solid white; border-radius: 50%; width: 20px; height: 20px; box-shadow: 0 2px 6px rgba(0,0,0,0.3);"></div>'
+        })}
         position={userPosition}
         duration={800}
-        icon={L.divIcon({
-          html: '<div style="background: #4285f4; border: 3px solid white; border-radius: 50%; width: 20px; height: 20px; box-shadow: 0 2px 6px rgba(0,0,0,0.3);"></div>',
-          className: 'custom-user-marker',
-          iconSize: [26, 26],
-          iconAnchor: [13, 13]
-        })}
       >
         <Popup>You are here</Popup>
       </ReactLeafletDriftMarker>
@@ -201,7 +203,7 @@ export default function MapPage() {
   async function fetchRoutePolyline(
     from: [number, number],
     to: [number, number],
-    type: 'public' | 'private'
+    type: 'private' | 'public'
   ): Promise<{ polyline: [number, number][]; distance: number; duration: number }> {
     const serviceUrl = type === 'private'
       ? 'https://finisterreosm-production.up.railway.app/route/v1/foot'
@@ -214,7 +216,7 @@ export default function MapPage() {
       if (!response.ok) throw new Error('Route API error');
 
       const data = await response.json();
-      if (!data.routes || !data.routes[0]) throw new Error('No route found');
+      if (!data.routes?.[0]) throw new Error('No route found');
 
       const route = data.routes[0];
       // Convert [lng,lat] to [lat,lng]
@@ -230,8 +232,8 @@ export default function MapPage() {
       // Fallback: straight line with estimated distance/duration
       const distance = calculateDistance(from, to);
       return {
-        polyline: [from, to],
         distance,
+        polyline: [from, to],
         duration: type === 'private' ? distance / 1.4 : distance / 13.89 // Walking ~1.4 m/s, driving ~50 km/h
       };
     }
@@ -288,16 +290,16 @@ export default function MapPage() {
       }
 
       setPublicRoute({
-        from: publicFrom,
         to: publicTo,
+        from: publicFrom,
         polyline: publicRouteData.polyline,
         distance: publicRouteData.distance,
         duration: publicRouteData.duration
       });
 
       setPrivateRoute({
-        from: privateFrom,
         to: privateTo,
+        from: privateFrom,
         polyline: privateRouteData.polyline,
         distance: privateRouteData.distance,
         duration: privateRouteData.duration
@@ -375,10 +377,10 @@ export default function MapPage() {
 
             {/* Stop Navigation Button */}
             <Button
-              variant="destructive"
               className="flex items-center gap-2 px-6 py-3 rounded-xl shadow-md hover:bg-red-700 transition-all duration-300 transform hover:scale-105"
-              aria-label="Stop Navigation"
               onClick={handleStopNavigation}
+              aria-label="Stop Navigation"
+              variant="destructive"
             >
               <XCircle className="w-5 h-5" />
               <span className="font-medium">Stop Navigation</span>
@@ -396,12 +398,12 @@ export default function MapPage() {
         )}
 
         <MapContainer
-          bounds={bounds}
-          zoom={18}
-          maxZoom={25}
+          className="h-full w-full"
           scrollWheelZoom={true}
           zoomControl={false}
-          className="h-full w-full"
+          bounds={bounds}
+          maxZoom={25}
+          zoom={18}
         >
           <TileLayer
             url="https://services.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"
@@ -414,14 +416,14 @@ export default function MapPage() {
           {/* Show public route polyline (user to gate) - Blue */}
           {publicRoute && (
             <Polyline
-              positions={publicRoute.polyline}
               pathOptions={{
-                color: '#4285F4',
                 weight: 8,
                 opacity: 1,
+                color: '#4285F4',
                 lineCap: 'round',
                 lineJoin: 'round'
               }}
+              positions={publicRoute.polyline}
               className="animate-glow-pulse"
             />
           )}
@@ -429,48 +431,48 @@ export default function MapPage() {
           {/* Show private route polyline (gate to marker) - Green */}
           {privateRoute && (
             <Polyline
-              positions={privateRoute.polyline}
               pathOptions={{
-                color: '#34A853',
                 weight: 8,
                 opacity: 1,
+                color: '#34A853',
                 lineCap: 'round',
                 lineJoin: 'round',
                 dashArray: '10, 10'
               }}
               className="animate-dash-flow z-99999"
+              positions={privateRoute.polyline}
             />
           )}
 
           {/* Cemetery Entrance Marker */}
           <Marker
-            position={[CEMETERY_GATE.lat, CEMETERY_GATE.lng]}
             icon={L.divIcon({
+              iconSize: [32, 32],
+              className: 'destination-marker',
               html: renderToStaticMarkup(
                 <div
                   style={{
-                    background: '#000000',
-                    borderRadius: '50% 50% 50% 0',
-                    boxShadow: '0 0 8px rgba(0,0,0,0.15)',
                     padding: '4px',
+                    background: '#000000',
+                    display: 'inline-block',
                     border: '2px solid #fff',
                     transform: 'rotate(-45deg)',
-                    display: 'inline-block'
+                    borderRadius: '50% 50% 50% 0',
+                    boxShadow: '0 0 8px rgba(0,0,0,0.15)'
                   }}
                 >
                   <GiOpenGate
-                    className='z-999 text-white'
-                    size={16}
-                    strokeWidth={2.5}
                     style={{
                       transform: 'rotate(45deg)'
                     }}
+                    className='z-999 text-white'
+                    strokeWidth={2.5}
+                    size={16}
                   />
                 </div>
               ),
-              className: 'destination-marker',
-              iconSize: [32, 32],
             })}
+            position={[CEMETERY_GATE.lat, CEMETERY_GATE.lng]}
           >
             <Popup>
               <div className="text-center">
@@ -481,33 +483,33 @@ export default function MapPage() {
           </Marker>
 
           {/* Cemetery Exit Marker */}
-          <Marker position={[10.248166481872728, 123.79754558858059]}
-            icon={L.divIcon({
+          <Marker icon={L.divIcon({
+              iconSize: [32, 32],
+              className: 'destination-marker',
               html: renderToStaticMarkup(
                 <div
                   style={{
-                    background: '#000000',
-                    borderRadius: '50% 50% 50% 0',
-                    boxShadow: '0 0 8px rgba(0,0,0,0.15)',
                     padding: '4px',
+                    background: '#000000',
+                    display: 'inline-block',
                     border: '2px solid #fff',
                     transform: 'rotate(-45deg)',
-                    display: 'inline-block'
+                    borderRadius: '50% 50% 50% 0',
+                    boxShadow: '0 0 8px rgba(0,0,0,0.15)'
                   }}
                 >
                   <GiOpenGate
-                    className='z-999 text-white'
-                    size={16}
-                    strokeWidth={2.5}
                     style={{
                       transform: 'rotate(45deg)'
                     }}
+                    className='z-999 text-white'
+                    strokeWidth={2.5}
+                    size={16}
                   />
                 </div>
               ),
-              className: 'destination-marker',
-              iconSize: [32, 32],
             })}
+            position={[10.248166481872728, 123.79754558858059]}
           >
             <Popup>
               <div className="text-center">
@@ -518,33 +520,33 @@ export default function MapPage() {
           </Marker>
 
           {/* Cemetery Chapel Marker */}
-          <Marker position={[10.248435228156183, 123.79787795587316]}
-            icon={L.divIcon({
+          <Marker icon={L.divIcon({
+              iconSize: [32, 32],
+              className: 'destination-marker',
               html: renderToStaticMarkup(
                 <div
                   style={{
-                    background: '#FF9800',
-                    borderRadius: '50% 50% 50% 0',
-                    boxShadow: '0 0 8px rgba(0,0,0,0.15)',
                     padding: '4px',
+                    background: '#FF9800',
+                    display: 'inline-block',
                     border: '2px solid #fff',
                     transform: 'rotate(-45deg)',
-                    display: 'inline-block'
+                    borderRadius: '50% 50% 50% 0',
+                    boxShadow: '0 0 8px rgba(0,0,0,0.15)'
                   }}
                 >
                   <BiSolidChurch
-                    className='z-999 text-white'
-                    size={16}
-                    strokeWidth={2.5}
                     style={{
                       transform: 'rotate(45deg)'
                     }}
+                    className='z-999 text-white'
+                    strokeWidth={2.5}
+                    size={16}
                   />
                 </div>
               ),
-              className: 'destination-marker',
-              iconSize: [32, 32],
             })}
+            position={[10.248435228156183, 123.79787795587316]}
           >
             <Popup>
               <div className="text-center">
@@ -557,10 +559,10 @@ export default function MapPage() {
           {markers.map((markers: any) => {
             const statusColor = getStatusColor(markers.plotStatus);
             const circleIcon = L.divIcon({
-              html: `
-              <div style="width: 20px; height: 20px; border-radius: 50%; background: ${statusColor}; border: 2px solid #fff;"></div>`,
               className: '',
               iconSize: [24, 24],
+              html: `
+              <div style="width: 20px; height: 20px; border-radius: 50%; background: ${statusColor}; border: 2px solid #fff;"></div>`,
             });
 
             // When direction is requested, start navigation with two-step route
@@ -588,8 +590,8 @@ export default function MapPage() {
                         </>
                       }
                     >
-                      <ColumbariumPopup marker={markers}
-                        onDirectionClick={handleDirectionClick}
+                      <ColumbariumPopup onDirectionClick={handleDirectionClick}
+                        marker={markers}
                       />
                     </Suspense>
                   </Popup>
@@ -634,9 +636,9 @@ export default function MapPage() {
                         </>
                       }>
                       <PlotLocations
-                        marker={markers}
                         backgroundColor={getCategoryBackgroundColor(markers.category)}
                         onDirectionClick={handleDirectionClick}
+                        marker={markers}
                       />
                     </Suspense>
                   </Popup>

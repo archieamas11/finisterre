@@ -1,16 +1,17 @@
 "use client";
 
-import { Label } from "@/components/ui/label";
-import { cn } from "@/lib/utils";
-import { ImageIcon, XCircleIcon } from "lucide-react";
 import { useState } from "react";
 import Dropzone from "react-dropzone";
+import { XCircleIcon, ImageIcon } from "lucide-react";
+
+import { cn } from "@/lib/utils";
+import { Label } from "@/components/ui/label";
 
 const ImagePreview = ({
   onRemove,
 }: {
-  url: string;
   onRemove: () => void;
+  url: string;
 }) => (
   <div className="relative aspect-square">
     <button
@@ -31,8 +32,8 @@ export default function InputDemo() {
       <div className="mt-1 w-full">
         {profilePicture ? (
           <ImagePreview
+            onRemove={() => { setProfilePicture(null); }}
             url={profilePicture}
-            onRemove={() => setProfilePicture(null)}
           />
         ) : (
           <Dropzone
@@ -50,10 +51,10 @@ export default function InputDemo() {
           >
             {({
               getRootProps,
-              getInputProps,
               isDragActive,
               isDragAccept,
               isDragReject,
+              getInputProps,
             }) => (
               <div
                 {...getRootProps()}

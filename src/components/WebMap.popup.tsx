@@ -1,12 +1,13 @@
-import { FaHourglassStart } from "react-icons/fa";
-import { BiCheckCircle } from "react-icons/bi";
 import { BiXCircle } from "react-icons/bi";
 import { FaDirections } from "react-icons/fa";
-import { CardDescription, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Award, Info, MapPin, Ruler } from 'lucide-react';
-import { type ConvertedMarker } from '@/types/map.types';
+import { BiCheckCircle } from "react-icons/bi";
+import { FaHourglassStart } from "react-icons/fa";
+import { MapPin, Award, Ruler, Info } from 'lucide-react';
+
 import { isAdmin } from "@/utils/Auth.utils";
+import { Button } from '@/components/ui/button';
+import { type ConvertedMarker } from '@/types/map.types';
+import { CardDescription, CardTitle } from '@/components/ui/card';
 
 interface PlotLocationsProps {
     marker: ConvertedMarker;
@@ -28,7 +29,7 @@ export function PlotLocations({ marker, backgroundColor, onDirectionClick }: Plo
             <div className='bg-accent/60 dark:bg-accent/80 p-2 rounded-b-lg mb-3 transition-colors'>
                 <div className="flex items-center justify-between gap-1">
                     <div className='flex items-center gap-1'>
-                        <MapPin size={16} className="text-primary/80 dark:text-primary" />
+                        <MapPin className="text-primary/80 dark:text-primary" size={16} />
                         <span className="text-sm text-foreground font-medium">{marker.location}</span>
                     </div>
                     <Button
@@ -44,7 +45,7 @@ export function PlotLocations({ marker, backgroundColor, onDirectionClick }: Plo
             {/* Plot Status */}
             <div className="flex items-center justify-between gap-2 mb-3 bg-accent/40 dark:bg-accent/60 rounded-lg p-2 transition-colors shadow-sm">
                 <div className="flex items-center gap-1">
-                    <Info size={16} className="text-primary/80 dark:text-primary" />
+                    <Info className="text-primary/80 dark:text-primary" size={16} />
                     <span className="text-sm text-foreground">Plot Status</span>
                 </div>
                 <span
@@ -68,7 +69,7 @@ export function PlotLocations({ marker, backgroundColor, onDirectionClick }: Plo
             <div className="flex gap-2 mb-3">
                 <div className="flex-1 bg-accent/40 dark:bg-accent/60 rounded-lg p-2 transition-colors shadow-sm">
                     <div className="flex items-center gap-1 mb-1">
-                        <Ruler size={16} className="text-blue-600 dark:text-blue-300" />
+                        <Ruler className="text-blue-600 dark:text-blue-300" size={16} />
                         <span className="text-xs font-semibold text-blue-700 dark:text-blue-200">Dimension</span>
                     </div>
                     <div className="flex flex-col items-center">
@@ -82,7 +83,7 @@ export function PlotLocations({ marker, backgroundColor, onDirectionClick }: Plo
                 </div>
                 <div className="flex-1 bg-accent/40 dark:bg-accent/60 rounded-lg p-2 transition-colors shadow-sm">
                     <div className="flex items-center gap-1 mb-1">
-                        <Info size={16} className="text-primary/80 dark:text-primary" />
+                        <Info className="text-primary/80 dark:text-primary" size={16} />
                         <span className="text-xs font-semibold text-foreground">Details</span>
                     </div>
                     <span className={
@@ -93,7 +94,7 @@ export function PlotLocations({ marker, backgroundColor, onDirectionClick }: Plo
                                 : 'bg-yellow-200 dark:bg-yellow-900 text-yellow-900 dark:text-yellow-200')
                         + ' flex items-center justify-center px-2 py-1 rounded text-xs font-semibold shadow'
                     }>
-                        <Award size={14} className="inline" />
+                        <Award className="inline" size={14} />
                         {marker.category}
                     </span>
                 </div>
@@ -107,10 +108,6 @@ export function PlotLocations({ marker, backgroundColor, onDirectionClick }: Plo
                         <div className="grid grid-cols-2 gap-2 mt-5">
                             {images.map((imageUrl, idx) => (
                                 <img
-                                    key={idx}
-                                    src={imageUrl}
-                                    alt={`Plot media ${idx + 1}`}
-                                    className="w-full h-30 object-cover rounded hover:transform hover:scale-105 transition-transform duration-200"
                                     onError={(e) => {
                                         console.log("🖼️ Image failed to load:", imageUrl);
                                         e.currentTarget.style.display = 'none';
@@ -118,6 +115,10 @@ export function PlotLocations({ marker, backgroundColor, onDirectionClick }: Plo
                                     onLoad={() => {
                                         console.log("✅ Image loaded successfully:", imageUrl);
                                     }}
+                                    className="w-full h-30 object-cover rounded hover:transform hover:scale-105 transition-transform duration-200"
+                                    alt={`Plot media ${idx + 1}`}
+                                    src={imageUrl}
+                                    key={idx}
                                 />
                             ))}
                         </div>

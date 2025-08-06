@@ -1,7 +1,8 @@
+import { useEffect, useState, useMemo } from "react";
+import { ChevronRight, ChevronLeft } from "lucide-react";
+
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { useState, useEffect, useMemo } from "react";
-import { ChevronLeft, ChevronRight } from "lucide-react";
 
 const SLIDER_IMAGES = [
   "https://picsum.photos/id/1015/600/400",
@@ -15,15 +16,15 @@ export default function AboutSection() {
   const [current, setCurrent] = useState(0);
   const images = useMemo(() => SLIDER_IMAGES, []);
 
-  const nextImage = () => setCurrent((prev) => (prev + 1) % images.length);
-  const prevImage = () => setCurrent((prev) => (prev - 1 + images.length) % images.length);
+  const nextImage = () => { setCurrent((prev) => (prev + 1) % images.length); };
+  const prevImage = () => { setCurrent((prev) => (prev - 1 + images.length) % images.length); };
 
   // Auto-advance slider
   useEffect(() => {
     const interval = setInterval(() => {
       nextImage();
     }, 5000);
-    return () => clearInterval(interval);
+    return () => { clearInterval(interval); };
   }, [current]);
 
   // Handle keyboard navigation
@@ -34,13 +35,13 @@ export default function AboutSection() {
     };
 
     window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
+    return () => { window.removeEventListener("keydown", handleKeyDown); };
   }, []);
 
   return (
     <section
-      className="w-full py-16 bg-background"
       aria-labelledby="about-section-heading"
+      className="w-full py-16 bg-background"
       id="about-section"
     >
       <div className="max-w-6xl mx-auto px-4 sm:px-6">
@@ -51,8 +52,8 @@ export default function AboutSection() {
               ABOUT FINISTERRE GARDENS
             </span>
             <h2
-              id="about-section-heading"
               className="text-3xl sm:text-4xl font-extrabold mb-4 text-foreground tracking-tight"
+              id="about-section-heading"
             >
               Preserving Memories with Modern Technology
             </h2>
@@ -73,45 +74,45 @@ export default function AboutSection() {
               <Card className="w-full aspect-[3/2] overflow-hidden rounded-2xl shadow-lg relative">
                 <div className="absolute inset-0">
                   <img
-                    src={images[current]}
-                    alt={`Finisterre Gardens view ${current + 1}`}
                     className="w-full h-full object-cover transition-all duration-500"
-                    loading="lazy"
+                    alt={`Finisterre Gardens view ${current + 1}`}
+                    src={images[current]}
                     draggable={false}
+                    loading="lazy"
                   />
                 </div>
 
                 {/* Slider Controls */}
                 <Button
-                  variant="secondary"
-                  size="icon"
                   className="absolute left-4 top-1/2 -translate-y-1/2 rounded-full w-10 h-10 shadow-md z-10"
                   aria-label="Previous image"
+                  variant="secondary"
                   onClick={prevImage}
+                  size="icon"
                 >
                   <ChevronLeft className="h-5 w-5" />
                 </Button>
                 <Button
-                  variant="secondary"
-                  size="icon"
                   className="absolute right-4 top-1/2 -translate-y-1/2 rounded-full w-10 h-10 shadow-md z-10"
                   aria-label="Next image"
+                  variant="secondary"
                   onClick={nextImage}
+                  size="icon"
                 >
                   <ChevronRight className="h-5 w-5" />
                 </Button>
               </Card>
 
               {/* Dots Indicator */}
-              <div className="flex gap-2 mt-4 justify-center" role="tablist" aria-label="Image slides">
+              <div className="flex gap-2 mt-4 justify-center" aria-label="Image slides" role="tablist">
                 {images.map((_, idx) => (
                   <button
-                    key={idx}
                     className={`w-3 h-3 rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-primary ${idx === current ? 'bg-primary' : 'bg-muted-foreground/30'
                       }`}
                     aria-label={`Go to slide ${idx + 1}`}
+                    onClick={() => { setCurrent(idx); }}
                     aria-selected={idx === current}
-                    onClick={() => setCurrent(idx)}
+                    key={idx}
                   />
                 ))}
               </div>

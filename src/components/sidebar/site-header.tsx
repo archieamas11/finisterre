@@ -1,12 +1,14 @@
 
-import { Button } from "@/components/ui/button";
-import { Separator } from "@/components/ui/separator";
-import { SidebarTrigger } from "@/components/ui/sidebar";
-import { Breadcrumb, BreadcrumbItem, BreadcrumbList, BreadcrumbPage, BreadcrumbLink, BreadcrumbSeparator } from "@/components/ui/breadcrumb";
-import { ThemeToggleAdvanced } from "../ThemeToggleAdvanced";
 import { BellIcon } from "lucide-react";
 
 import type { NavMainItem, NavSubItem } from "@/navigation/sidebar/sidebar-items";
+
+import { Button } from "@/components/ui/button";
+import { Separator } from "@/components/ui/separator";
+import { SidebarTrigger } from "@/components/ui/sidebar";
+import { BreadcrumbSeparator, BreadcrumbItem, BreadcrumbList, BreadcrumbPage, BreadcrumbLink, Breadcrumb } from "@/components/ui/breadcrumb";
+
+import { ThemeToggleAdvanced } from "../ThemeToggleAdvanced";
 
 interface SiteHeaderProps {
   breadcrumbItem?: {
@@ -21,8 +23,8 @@ export function SiteHeader({ breadcrumbItem }: SiteHeaderProps) {
       <div className="flex w-full items-center gap-1 px-4 lg:gap-2 lg:px-6">
         <SidebarTrigger className="-ml-1" />
         <Separator
-          orientation="vertical"
           className="mx-2 data-[orientation=vertical]:h-4"
+          orientation="vertical"
         />
         <Breadcrumb>
           <BreadcrumbList>
@@ -57,7 +59,7 @@ export function SiteHeader({ breadcrumbItem }: SiteHeaderProps) {
         </Breadcrumb>
         <div className="ml-auto flex items-center gap-2">
           <ThemeToggleAdvanced />
-          <Button variant="ghost" size="sm" className="hidden sm:flex border border-transparent hover:border-accent-foreground hover:bg-transparent focus:bg-transparent cursor-pointer" aria-label="Notifications">
+          <Button className="hidden sm:flex border border-transparent hover:border-accent-foreground hover:bg-transparent focus:bg-transparent cursor-pointer" aria-label="Notifications" variant="ghost" size="sm">
             <BellIcon className="h-4 w-4" />
           </Button>
         </div>

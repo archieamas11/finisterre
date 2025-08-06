@@ -2,41 +2,41 @@ import L from 'leaflet';
 
 // Map configuration constants
 export const MAP_CONFIG = {
+    MAX_ZOOM: 25,
+
+    DEFAULT_ZOOM: 18,
+    CEMETERY_GATE: {
+        LAT: 10.248107820799307,
+        LNG: 123.797607547609545
+    },
+
     BOUNDS: [
         [10.247883800064669, 123.79691285546676],
         [10.249302749341647, 123.7988598710129],
     ] as [[number, number], [number, number]],
 
-    DEFAULT_ZOOM: 18,
-    MAX_ZOOM: 25,
-
     TILE_LAYER: {
-        URL: "https://services.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
         MAX_NATIVE_ZOOM: 18,
+        URL: "https://services.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
         ATTRIBUTION: "&copy; Esri &mdash; Source: Esri, Maxar, GeoEye, Earthstar Geographics, CNES/Airbus DS, USDA, USGS, AeroGRID, IGN, and the GIS User Community"
-    },
-
-    CEMETERY_GATE: {
-        LAT: 10.248107820799307,
-        LNG: 123.797607547609545
     }
 };
 
 // Plot status color mapping
 export const PLOT_STATUS_COLORS = {
-    'Available': '#22c55e',
+    'default': '#a3a3a3',
     'Occupied': '#ef4444',
     'Reserved': '#facc15',
-    'Maintenance': '#6b7280',
-    'default': '#a3a3a3'
+    'Available': '#22c55e',
+    'Maintenance': '#6b7280'
 } as const;
 
 // Category background colors
 export const CATEGORY_COLORS = {
     'Bronze': '#7d7d7d',
     'Silver': '#b00020',
-    'Platinum': '#d4af37',
-    'Diamond': '#cc6688'
+    'Diamond': '#cc6688',
+    'Platinum': '#d4af37'
 } as const;
 
 // Icon creation utilities
@@ -56,6 +56,9 @@ export const createUserLocationIcon = (withPulse = true): L.DivIcon => {
   ` : '';
 
     return L.divIcon({
+        iconSize: [26, 26],
+        iconAnchor: [13, 13],
+        className: 'custom-user-marker',
         html: `
       <div style="
         background: #4285f4; 
@@ -75,10 +78,7 @@ export const createUserLocationIcon = (withPulse = true): L.DivIcon => {
           100% { transform: scale(1.4); opacity: 0; }
         }
       </style>
-    `,
-        className: 'custom-user-marker',
-        iconSize: [26, 26],
-        iconAnchor: [13, 13]
+    `
     });
 };
 
@@ -86,6 +86,10 @@ export const createPlotStatusIcon = (status: string, size = 20): L.DivIcon => {
     const color = PLOT_STATUS_COLORS[status as keyof typeof PLOT_STATUS_COLORS] || PLOT_STATUS_COLORS.default;
 
     return L.divIcon({
+        className: 'plot-marker',
+        popupAnchor: [0, -(size / 2)],
+        iconSize: [size + 4, size + 4],
+        iconAnchor: [(size + 4) / 2, (size + 4) / 2],
         html: `<div style="
       width: ${size}px;
       height: ${size}px;
@@ -95,16 +99,16 @@ export const createPlotStatusIcon = (status: string, size = 20): L.DivIcon => {
       box-shadow: 0 0 4px rgba(0,0,0,0.15);
       cursor: pointer;
       transition: transform 0.2s ease;
-    " onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'"></div>`,
-        className: 'plot-marker',
-        iconSize: [size + 4, size + 4],
-        iconAnchor: [(size + 4) / 2, (size + 4) / 2],
-        popupAnchor: [0, -(size / 2)]
+    " onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'"></div>`
     });
 };
 
 export const createGateIcon = (): L.DivIcon => {
     return L.divIcon({
+        iconSize: [20, 20],
+        iconAnchor: [10, 10],
+        popupAnchor: [0, -10],
+        className: 'gate-marker',
         html: `<div style="
       background: #FFA500; 
       border: 2px solid white; 
@@ -125,11 +129,7 @@ export const createGateIcon = (): L.DivIcon => {
         border-radius: 50%;
         opacity: 0.3;
       "></div>
-    </div>`,
-        className: 'gate-marker',
-        iconSize: [20, 20],
-        iconAnchor: [10, 10],
-        popupAnchor: [0, -10]
+    </div>`
     });
 };
 
@@ -195,9 +195,9 @@ export const getCurrentPosition = (options?: PositionOptions): Promise<Geolocati
         }
 
         navigator.geolocation.getCurrentPosition(resolve, reject, {
-            enableHighAccuracy: true,
             timeout: 10000,
             maximumAge: 60000, // Cache for 1 minute
+            enableHighAccuracy: true,
             ...options
         });
     });
@@ -220,9 +220,9 @@ export const isWithinBounds = (
 // Error handling utilities
 export const getGeolocationErrorMessage = (error: GeolocationPositionError): string => {
     const errorMessages: Record<string, string> = {
-        '1': 'Location access denied. Please enable location services in your browser settings.',
+        '3': 'Location request timed out. Please try again.',
         '2': 'Location information is unavailable. Please check your internet connection.',
-        '3': 'Location request timed out. Please try again.'
+        '1': 'Location access denied. Please enable location services in your browser settings.'
     };
 
     return errorMessages[String(error.code)] || `Location error: ${error.message}`;

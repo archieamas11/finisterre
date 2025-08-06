@@ -6,9 +6,9 @@ const ICON = `M215.7 499.2C267 435 384 279.4 384 192C384 86 298 0 192 0S0 86 0 1
 function CustomMarker() {
     return (
         <svg
-            height={30}
+            style={{ fill: "#DBA726", cursor: "pointer" }}
             viewBox="0 0 384 512"
-            style={{ cursor: "pointer", fill: "#DBA726" }}
+            height={30}
         >
             <path d={ICON} />
         </svg>

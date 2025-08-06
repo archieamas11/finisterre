@@ -1,41 +1,42 @@
 import { z } from "zod";
+import React from "react";
 import { useForm } from "react-hook-form";
+import { ChevronsUpDown, Check } from "lucide-react";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
+
+import type { plots } from "@/types/map.types";
+import type { Customer } from "@/types/interment.types";
+
+import { cn } from "@/lib/utils";
+import { getPlots } from "@/api/plots.api";
 import { Button } from "@/components/ui/button";
+import { getCustomers } from "@/api/customer.api";
 import {
-    Popover,
     PopoverTrigger,
     PopoverContent,
+    Popover,
 } from "@/components/ui/popover";
+import { FormControl, FormMessage, FormField, FormLabel, FormItem, Form } from "@/components/ui/form";
+import { SelectTrigger, SelectContent, SelectValue, SelectItem, Select } from "@/components/ui/select";
+import { DialogDescription, DialogContent, DialogHeader, DialogTitle, Dialog } from "@/components/ui/dialog";
 import {
-    Command,
     CommandInput,
-    CommandList,
     CommandEmpty,
     CommandGroup,
+    CommandList,
     CommandItem,
+    Command,
 } from "@/components/ui/command";
-import { ChevronsUpDown, Check } from "lucide-react";
-import { cn } from "@/lib/utils";
-import { Form, FormField, FormItem, FormLabel, FormControl, FormMessage } from "@/components/ui/form";
-import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
-import { getPlots } from "@/api/plots.api";
-import React from "react";
-import type { Customer } from "@/types/interment.types";
-import type { plots } from "@/types/map.types";
-
-import { getCustomers } from "@/api/customer.api";
 
 /* ------------------------------------------------------------------ */
 /* 1. Schema – customer_name -> customer_id                           */
 /* ------------------------------------------------------------------ */
 const LotSchema = z.object({
-    customer_id: z.string().min(1, "Customer is required"),
-    plot_id: z.string().min(1, "Plot ID is required"),
     type: z.string().min(2, "Invalid type"),
-    payment_type: z.string().min(2, "Invalid payment type"),
     payment_frequency: z.string().optional(),
+    plot_id: z.string().min(1, "Plot ID is required"),
+    customer_id: z.string().min(1, "Customer is required"),
+    payment_type: z.string().min(2, "Invalid payment type"),
 }).refine(
     (data) =>
         data.payment_type === "full"
@@ -43,39 +44,39 @@ const LotSchema = z.object({
             : typeof data.payment_frequency === "string" &&
             data.payment_frequency.length >= 2,
     {
-        message: "Invalid payment frequency",
         path: ["payment_frequency"],
+        message: "Invalid payment frequency",
     }
 );
 
+export interface LotFormProps {
+    open: boolean;
+    mode: LotFormMode;
+    initialValues?: any;
+    isPending?: boolean;
+    onOpenChange: (open: boolean) => void;
+    onSubmit: (values: any) => Promise<void> | void;
+}
 /* ------------------------------------------------------------------ */
 /* 2. Component                                                       */
 /* ------------------------------------------------------------------ */
-export type LotFormMode = "add" | "edit";
-export interface LotFormProps {
-    mode: LotFormMode;
-    open: boolean;
-    onOpenChange: (open: boolean) => void;
-    initialValues?: any;
-    onSubmit: (values: any) => Promise<void> | void;
-    isPending?: boolean;
-}
+export type LotFormMode = "edit" | "add";
 
 export default function LotForm({
     mode,
     open,
-    onOpenChange,
-    initialValues,
     onSubmit,
     isPending,
+    onOpenChange,
+    initialValues,
 }: LotFormProps) {
     /* ------------------ Form ------------------ */
     const form = useForm<z.infer<typeof LotSchema>>({
         resolver: zodResolver(LotSchema),
         defaultValues: initialValues || {
-            customer_id: "",
-            plot_id: "",
             type: "",
+            plot_id: "",
+            customer_id: "",
             payment_type: "",
             payment_frequency: "",
         },
@@ -90,15 +91,15 @@ export default function LotForm({
     React.useEffect(() => {
         if (!open) return;
         getPlots().then((res) =>
-            setPlots(Array.isArray(res) ? res : res?.plots || [])
+            { setPlots(Array.isArray(res) ? res : res?.plots || []); }
         );
         getCustomers().then((res) =>
-            setCustomers(Array.isArray(res) ? res : res?.customers || [])
+            { setCustomers(Array.isArray(res) ? res : res?.customers || []); }
         );
     }, [open]);
 
     return (
-        <Dialog open={open} onOpenChange={onOpenChange}>
+        <Dialog onOpenChange={onOpenChange} open={open}>
             <DialogContent className="lg:max-w-[700px] flex flex-col">
                 <DialogHeader>
                     <DialogTitle>{mode === "add" ? "Add New Lot Owner" : "Edit Lot Owner"}</DialogTitle>
@@ -110,8 +111,6 @@ export default function LotForm({
                     <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
                         <div className="grid grid-cols-2 gap-4">
                             <FormField
-                                control={form.control}
-                                name="customer_id"
                                 render={({ field }) => {
                                     // Use local state for combobox open/value, not form state
                                     const [comboOpen, setComboOpen] = React.useState(false);
@@ -125,14 +124,14 @@ export default function LotForm({
                                             <FormLabel>
                                                 Customer<span className="text-red-500">*</span>
                                             </FormLabel>
-                                            <Popover open={comboOpen} onOpenChange={isEditMode ? undefined : setComboOpen}>
+                                            <Popover onOpenChange={isEditMode ? undefined : setComboOpen} open={comboOpen}>
                                                 <PopoverTrigger asChild>
                                                     <Button
+                                                        className="w-full justify-between"
+                                                        aria-expanded={comboOpen}
+                                                        disabled={isEditMode}
                                                         variant="outline"
                                                         role="combobox"
-                                                        aria-expanded={comboOpen}
-                                                        className="w-full justify-between"
-                                                        disabled={isEditMode}
                                                     >
                                                         {comboValue
                                                             ? customers.find((c) => c.customer_id === comboValue)?.first_name +
@@ -154,13 +153,13 @@ export default function LotForm({
                                                                 <CommandGroup>
                                                                     {customers.map((c) => (
                                                                         <CommandItem
-                                                                            key={c.customer_id}
-                                                                            value={c.customer_id}
                                                                             onSelect={() => {
                                                                                 field.onChange(c.customer_id);
                                                                                 setComboValue(c.customer_id);
                                                                                 setComboOpen(false);
                                                                             }}
+                                                                            value={c.customer_id}
+                                                                            key={c.customer_id}
                                                                         >
                                                                             {c.first_name} {c.last_name} | ID: {c.customer_id}
                                                                             <Check
@@ -181,8 +180,10 @@ export default function LotForm({
                                         </FormItem>
                                     );
                                 }}
+                                control={form.control}
+                                name="customer_id"
                             />
-                            <FormField control={form.control} name="plot_id" render={({ field }) => (
+                            <FormField render={({ field }) => (
                                 <FormItem>
                                     <FormLabel>Plot ID<span className="text-red-500">*</span></FormLabel>
                                     <FormControl>
@@ -200,7 +201,7 @@ export default function LotForm({
                                                     plots
                                                         .filter(plot => plot.plot_id && plot.plot_id !== "")
                                                         .map(plot => (
-                                                            <SelectItem key={plot.plot_id} value={String(plot.plot_id)}>
+                                                            <SelectItem value={String(plot.plot_id)} key={plot.plot_id}>
                                                                 {String(plot.plot_id)}
                                                             </SelectItem>
                                                         ))
@@ -210,8 +211,8 @@ export default function LotForm({
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>
-                            )} />
-                            <FormField control={form.control} name="payment_type" render={({ field }) => (
+                            )} control={form.control} name="plot_id" />
+                            <FormField render={({ field }) => (
                                 <FormItem>
                                     <FormLabel>Payment Type<span className="text-red-500">*</span></FormLabel>
                                     <FormControl>
@@ -228,15 +229,15 @@ export default function LotForm({
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>
-                            )} />
-                            <FormField control={form.control} name="payment_frequency" render={({ field }) => (
+                            )} control={form.control} name="payment_type" />
+                            <FormField render={({ field }) => (
                                 <FormItem>
                                     <FormLabel>Payment Frequency<span className="text-red-500">*</span></FormLabel>
                                     <FormControl>
                                         <Select
-                                            value={field.value ?? ""}
-                                            onValueChange={field.onChange}
                                             disabled={paymentType === "full"}
+                                            onValueChange={field.onChange}
+                                            value={field.value ?? ""}
                                         >
                                             <SelectTrigger className="w-full"><SelectValue placeholder="Select payment frequency" /></SelectTrigger>
                                             <SelectContent>
@@ -248,10 +249,10 @@ export default function LotForm({
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>
-                            )} />
+                            )} name="payment_frequency" control={form.control} />
                         </div>
                         <div className="flex justify-end pt-4">
-                            <Button type="submit" disabled={isPending}>
+                            <Button disabled={isPending} type="submit">
                                 {isPending ? (mode === "add" ? "Saving..." : "Updating...") : (mode === "add" ? "Save" : "Update")}
                             </Button>
                         </div>

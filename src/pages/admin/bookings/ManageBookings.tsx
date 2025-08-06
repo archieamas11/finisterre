@@ -1,14 +1,15 @@
+import { CalendarCheck2, Search, Pencil, Trash2, Eye } from "lucide-react";
+
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import {
-  Table,
   TableHeader,
-  TableRow,
   TableHead,
   TableBody,
   TableCell,
+  TableRow,
+  Table,
 } from "@/components/ui/table";
-import { Search, Eye, Pencil, Trash2, CalendarCheck2 } from "lucide-react";
 
 export default function Bookings() {
   // Sample bookings data for demonstration
@@ -16,23 +17,23 @@ export default function Bookings() {
     {
       id: 1,
       user: "Alice",
-      service: "Garden Cleanup",
-      date: "2024-06-10",
       status: "Pending",
+      date: "2024-06-10",
+      service: "Garden Cleanup",
     },
     {
       id: 2,
       user: "Bob",
-      service: "Lawn Mowing",
       date: "2024-06-12",
       status: "Confirmed",
+      service: "Lawn Mowing",
     },
     {
       id: 3,
       user: "Charlie",
-      service: "Tree Pruning",
       date: "2024-06-15",
       status: "Completed",
+      service: "Tree Pruning",
     },
   ];
 
@@ -47,7 +48,7 @@ export default function Bookings() {
       {/* Search/filter bar */}
       <div className="flex gap-2 mb-4">
         <Input placeholder="Search bookings..." className="max-w-xs" />
-        <Button variant="outline" size="icon" aria-label="Search">
+        <Button aria-label="Search" variant="outline" size="icon">
           <Search className="w-5 h-5" />
         </Button>
         <Button variant="default">Add Booking</Button>
@@ -84,13 +85,13 @@ export default function Bookings() {
                 </span>
               </TableCell>
               <TableCell className="flex gap-2 justify-end">
-                <Button variant="ghost" size="icon" aria-label="View">
+                <Button aria-label="View" variant="ghost" size="icon">
                   <Eye className="w-4 h-4" />
                 </Button>
-                <Button variant="ghost" size="icon" aria-label="Edit">
+                <Button aria-label="Edit" variant="ghost" size="icon">
                   <Pencil className="w-4 h-4" />
                 </Button>
-                <Button variant="ghost" size="icon" aria-label="Delete">
+                <Button aria-label="Delete" variant="ghost" size="icon">
                   <Trash2 className="w-4 h-4 text-red-600" />
                 </Button>
               </TableCell>

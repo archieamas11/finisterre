@@ -1,6 +1,7 @@
-import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
-import { MapPin, ArrowRight, Sparkles, Heart } from 'lucide-react';
+import { ArrowRight, Sparkles, MapPin, Heart } from 'lucide-react';
+
+import { Button } from "@/components/ui/button";
 
 export default function HeroSection() {
     return (
@@ -9,12 +10,12 @@ export default function HeroSection() {
             <div className="absolute inset-0 z-0 overflow-hidden">
                 <div className="absolute inset-0">
                     <video
-                        autoPlay
-                        loop
-                        muted
-                        playsInline
                         className="min-h-full min-w-full object-cover scale-105"
                         aria-label="Background video"
+                        playsInline
+                        autoPlay
+                        muted
+                        loop
                     >
                         <source src="https://www.w3schools.com/html/mov_bbb.mp4" type="video/mp4" />
                         Your browser does not support the video tag.
@@ -68,18 +69,18 @@ export default function HeroSection() {
                 <div className="flex flex-col sm:flex-row items-center justify-center gap-6">
                     {/* Primary CTA */}
                     <Button
-                        asChild
-                        size="lg"
                         className="group relative overflow-hidden bg-gradient-to-r from-chart-4 to-chart-5 hover:from-chart-4 hover:to-chart-5 text-foreground dark:text-accent font-semibold px-8 py-4 rounded-full shadow-2xl hover:shadow-blue-500/25 transition-all duration-300 hover:scale-105 border-0"
+                        size="lg"
+                        asChild
                     >
-                        <Link to="/map" aria-label="Explore Map" className="flex items-center gap-3">
+                        <Link className="flex items-center gap-3" aria-label="Explore Map" to="/map">
                             <MapPin className="h-5 w-5" />
                             Explore Sacred Grounds
                             <ArrowRight className="h-4 w-4 group-hover:translate-x-1 transition-transform duration-300" />
                         </Link>
                     </Button>
-                    <Button size={"lg"} className="group relative overflow-hidden bg-gradient-to-r from-chart-4 to-chart-5 hover:from-chart-4 hover:to-chart-5 text-foreground dark:text-accent font-semibold px-8 py-4 rounded-full shadow-2xl hover:shadow-blue-500/25 transition-all duration-300 hover:scale-105 border-0">
-                        <Link to="/mapLibre" aria-label="Explore Map" className="flex items-center gap-3">
+                    <Button className="group relative overflow-hidden bg-gradient-to-r from-chart-4 to-chart-5 hover:from-chart-4 hover:to-chart-5 text-foreground dark:text-accent font-semibold px-8 py-4 rounded-full shadow-2xl hover:shadow-blue-500/25 transition-all duration-300 hover:scale-105 border-0" size={"lg"}>
+                        <Link className="flex items-center gap-3" aria-label="Explore Map" to="/mapLibre">
                             <MapPin className="h-5 w-5" />
                             Explore Map Libre
                             <ArrowRight className="h-4 w-4 group-hover:translate-x-1 transition-transform duration-300" />
@@ -88,12 +89,12 @@ export default function HeroSection() {
 
                     {/* Secondary CTA */}
                     <Button
+                        className="group bg-white/10 hover:bg-white/20 text-white border-white/30 hover:border-white/50 font-medium px-8 py-4 rounded-full backdrop-blur-md transition-all duration-300 hover:scale-105"
                         variant="outline"
                         size="lg"
-                        className="group bg-white/10 hover:bg-white/20 text-white border-white/30 hover:border-white/50 font-medium px-8 py-4 rounded-full backdrop-blur-md transition-all duration-300 hover:scale-105"
                         asChild
                     >
-                        <Link to="/about" className="flex items-center gap-2">
+                        <Link className="flex items-center gap-2" to="/about">
                             <Heart className="h-4 w-4" />
                             Our Story
                         </Link>

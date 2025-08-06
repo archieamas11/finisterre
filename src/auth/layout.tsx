@@ -1,9 +1,8 @@
+import { MapPin } from "lucide-react";
 import { type ReactNode } from "react";
 
-import { MapPin } from "lucide-react";
-
-import { Separator } from "@/components/ui/separator";
 import { APP_CONFIG } from "@/config/app-config";
+import { Separator } from "@/components/ui/separator";
 
 export default function Layout({ children }: Readonly<{ children: ReactNode }>) {
   return (
@@ -23,7 +22,7 @@ export default function Layout({ children }: Readonly<{ children: ReactNode }>) 
                 Discover serene memorial options and manage arrangements with ease and dignity.
               </p>
             </div>
-            <Separator orientation="vertical" className="mx-3 !h-auto" />
+            <Separator className="mx-3 !h-auto" orientation="vertical" />
             <div className="text-primary-foreground flex-1 space-y-1">
               <h2 className="font-medium">Need assistance?</h2>
               <p className="text-sm">

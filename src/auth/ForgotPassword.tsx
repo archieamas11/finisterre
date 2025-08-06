@@ -1,14 +1,15 @@
+import { z } from "zod";
+import { toast } from "sonner";
+import { useState } from "react";
+import { MapPin } from 'lucide-react';
+import { useForm } from "react-hook-form";
 import { useNavigate, Link } from "react-router-dom";
+import { zodResolver } from "@hookform/resolvers/zod";
+
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { forgotPassword } from "@/api/auth.api";
-import { MapPin } from 'lucide-react';
-import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
-import { useForm } from "react-hook-form";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
-import { useState } from "react";
-import { toast } from "sonner";
+import { FormControl, FormMessage, FormField, FormLabel, FormItem, Form } from "@/components/ui/form";
 
 const FormSchema = z.object({
   username: z.string().min(3, {
@@ -44,8 +45,8 @@ export default function ForgotPassword() {
         });
       } else {
         toast.error(res.message || "Failed to process request", {
-          description: "Please check your Property ID and try again.",
           closeButton: true,
+          description: "Please check your Property ID and try again.",
         });
       }
     } catch (err: any) {
@@ -64,8 +65,8 @@ export default function ForgotPassword() {
         <div className="space-y-2 text-center">
           <div className="flex justify-center">
             <Link
-              to="/"
               className="flex items-center justify-center border border-primary/10 bg-primary/10 rounded-full p-3 w-16 h-16 aspect-square mb-5"
+              to="/"
             >
               <MapPin className="h-20 w-20" />
             </Link>
@@ -76,36 +77,36 @@ export default function ForgotPassword() {
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
             <FormField
-              control={form.control}
-              name="username"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Property ID</FormLabel>
                   <FormControl>
                     <Input
-                      id="username"
-                      type="text"
                       placeholder="Enter your property ID"
                       autoComplete="username"
+                      id="username"
+                      type="text"
                       {...field}
                     />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
+              control={form.control}
+              name="username"
             />
             <Button
               className="w-full mt-2"
-              type="submit"
               disabled={isSubmitting}
+              type="submit"
             >
               {isSubmitting ? "Verifying..." : "Verify"}
             </Button>
             <Button
-              className="w-full"
-              type="button"
-              variant="outline"
               onClick={() => navigate(-1)}
+              className="w-full"
+              variant="outline"
+              type="button"
             >
               Back
             </Button>

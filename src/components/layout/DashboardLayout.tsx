@@ -1,10 +1,11 @@
 import { useEffect } from "react";
-import { Outlet, useLocation, useNavigate } from "react-router-dom";
+import { useLocation, useNavigate, Outlet } from "react-router-dom";
+
 import { AppSidebar } from "@/components/sidebar/app-sidebar";
-import { SidebarProvider, SidebarInset } from "@/components/ui/sidebar";
 import { SiteHeader } from "@/components/sidebar/site-header";
-import { getSidebarItems, findSidebarItemByPath } from "@/navigation/sidebar/sidebar-items";
 import { isAuthenticated, isAdmin } from "@/utils/Auth.utils";
+import { SidebarProvider, SidebarInset } from "@/components/ui/sidebar";
+import { findSidebarItemByPath, getSidebarItems } from "@/navigation/sidebar/sidebar-items";
 
 interface DashboardLayoutProps {
   role: 'admin' | 'user';

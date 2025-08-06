@@ -2,20 +2,22 @@ import "maplibre-theme/icons.default.css";
 import "maplibre-theme/modern.css";
 import "maplibre-react-components/style.css";
 import { FaDirections } from "react-icons/fa";
-
-import { GeolocateControl, type StyleSpecification } from "maplibre-gl";
-import { markerData } from "@/data/geojson/markerData";
-import type { MarkerData } from "@/data/geojson/markerData";
-import {
-    RMap,
-    RMarker,
-    RNavigationControl,
-    RPopup,
-} from "maplibre-react-components";
-import { useState, useRef, useEffect, useCallback } from "react";
-import { Button } from "@/components/ui/button";
-import CustomMarker from "./CustomerMarker";
+import { useCallback, useEffect, useState, useRef } from "react";
 import MapLibreGLDirections from "@maplibre/maplibre-gl-directions";
+import { type StyleSpecification, GeolocateControl } from "maplibre-gl";
+import {
+    RNavigationControl,
+    RMarker,
+    RPopup,
+    RMap,
+} from "maplibre-react-components";
+
+import type { MarkerData } from "@/data/geojson/markerData";
+
+import { Button } from "@/components/ui/button";
+import { markerData } from "@/data/geojson/markerData";
+
+import CustomMarker from "./CustomerMarker";
 
 const MAP_BOUNDS: [number, number] = [123.79792022538493, 10.24892453527049];
 
@@ -107,9 +109,9 @@ function MapLibre() {
                 try {
                     const position = await new Promise<GeolocationPosition>((resolve, reject) => {
                         navigator.geolocation.getCurrentPosition(resolve, reject, {
-                            enableHighAccuracy: true,
                             timeout: 10000,
-                            maximumAge: 60000
+                            maximumAge: 60000,
+                            enableHighAccuracy: true
                         });
                     });
 
@@ -147,11 +149,11 @@ function MapLibre() {
                     await new Promise(resolve => setTimeout(resolve, 500)); // Wait 500ms
 
                     const directions = new MapLibreGLDirections(mapRef.current.map, {
-                        api: "https://router.project-osrm.org/route/v1",
                         profile: "driving",
+                        api: "https://router.project-osrm.org/route/v1",
                         requestOptions: {
-                            alternatives: "false",
-                            overview: "full"
+                            overview: "full",
+                            alternatives: "false"
                         }
                     });
                     directions.interactive = false;
@@ -164,11 +166,11 @@ function MapLibre() {
                     setTimeout(() => {
                         try {
                             const directions = new MapLibreGLDirections(mapRef.current.map, {
-                                api: "https://router.project-osrm.org/route/v1",
                                 profile: "driving",
+                                api: "https://router.project-osrm.org/route/v1",
                                 requestOptions: {
-                                    alternatives: "false",
-                                    overview: "full"
+                                    overview: "full",
+                                    alternatives: "false"
                                 }
                             });
                             directions.interactive = false;
@@ -222,9 +224,9 @@ function MapLibre() {
                         setDirectionsError("Location tracking failed. Please check your permissions.");
                     },
                     {
-                        enableHighAccuracy: true,
                         timeout: 10000,
-                        maximumAge: 2000 // 🔄 Update every 2 seconds
+                        maximumAge: 2000, // 🔄 Update every 2 seconds
+                        enableHighAccuracy: true
                     }
                 );
             }
@@ -242,37 +244,29 @@ function MapLibre() {
     // Esri imagery as a valid typed MapLibre style
     const esriImageryStyle: StyleSpecification = {
         version: 8,
+        layers: [
+            {
+                minzoom: 1,
+                maxzoom: 19,
+                type: "raster",
+                source: "esri",
+                id: "esri-layer",
+            },
+        ],
         sources: {
             esri: {
+                tileSize: 256,
                 type: "raster",
                 tiles: [
                     "https://services.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
                 ],
-                tileSize: 256,
             },
         },
-        layers: [
-            {
-                id: "esri-layer",
-                type: "raster",
-                source: "esri",
-                minzoom: 1,
-                maxzoom: 19,
-            },
-        ],
     };
 
     return (
         <div className="h-screen w-full">
             <RMap
-                ref={mapRef}
-                maxZoom={18}
-                minZoom={6}
-                initialZoom={19}
-                initialCenter={MAP_BOUNDS}
-                initialAttributionControl={false}
-                mapStyle={esriImageryStyle}
-                onClick={() => setSelectedMarker(null)}
                 onLoad={() => {
                     console.log("🗺️ Map loaded successfully");
                     setIsMapReady(true);
@@ -281,25 +275,33 @@ function MapLibre() {
                     if (mapRef.current?.map && !geolocateControlRef.current) {
                         // 🧭 Create and add the geolocate control to the map
                         geolocateControlRef.current = new GeolocateControl({
-                            positionOptions: { enableHighAccuracy: true },
                             trackUserLocation: true,
                             showAccuracyCircle: true,
+                            positionOptions: { enableHighAccuracy: true },
                         });
                         mapRef.current.map.addControl(geolocateControlRef.current, "top-left");
                         console.log("✅ Geolocate control added");
                     }
                 }}
+                onClick={() => { setSelectedMarker(null); }}
+                initialAttributionControl={false}
+                mapStyle={esriImageryStyle}
+                initialCenter={MAP_BOUNDS}
+                initialZoom={19}
+                ref={mapRef}
+                maxZoom={18}
+                minZoom={6}
             >
                 {/* Render all markers from markerData */}
                 {markerData.map((marker, idx) => (
                     <RMarker
-                        key={idx}
-                        longitude={marker.position[1]}
-                        latitude={marker.position[0]}
                         onClick={e => {
                             e.stopPropagation();
                             setSelectedMarker(marker);
                         }}
+                        longitude={marker.position[1]}
+                        latitude={marker.position[0]}
+                        key={idx}
                     >
                         <CustomMarker />
                     </RMarker>
@@ -310,9 +312,9 @@ function MapLibre() {
                     <RPopup
                         longitude={selectedMarker.position[1]}
                         latitude={selectedMarker.position[0]}
-                        offset={5}
-                        maxWidth="120%"
                         className="bg-red"
+                        maxWidth="120%"
+                        offset={5}
                     >
                         <div className="w-72 rounded-lg shadow-lg bg-white border border-gray-200">
                             {/* Header */}
@@ -338,10 +340,10 @@ function MapLibre() {
                                 {/* Directions button */}
                                 <div className="pt-2 border-t border-gray-200">
                                     <Button
-                                        onClick={handleDirectionsClick}
-                                        disabled={isLoadingDirections || !directionsControl}
-                                        size="sm"
                                         className="w-full bg-blue-600 hover:bg-blue-700 text-white disabled:bg-gray-400"
+                                        disabled={isLoadingDirections || !directionsControl}
+                                        onClick={handleDirectionsClick}
+                                        size="sm"
                                     >
                                         <FaDirections className="mr-2 h-3 w-3" />
                                         {isLoadingDirections

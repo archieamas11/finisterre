@@ -1,30 +1,33 @@
 "use client";
 import * as React from "react";
+import { ChevronDown, SkullIcon, Columns2, Search, Ghost, Plus } from "lucide-react";
 import {
-    useReactTable,
-    getCoreRowModel,
-    getPaginationRowModel,
-    getSortedRowModel,
-    getFilteredRowModel,
-    flexRender,
-    type SortingState,
     type ColumnFiltersState,
-    type VisibilityState,
     type RowSelectionState,
+    getPaginationRowModel,
+    type VisibilityState,
+    getFilteredRowModel,
+    getSortedRowModel,
+    type SortingState,
+    getCoreRowModel,
+    useReactTable,
+    flexRender,
 } from "@tanstack/react-table";
+
+import type { DeceasedRecords } from "@/types/interment.types";
+
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { TableHeader, TableBody, TableCell, TableHead, TableRow, Table } from "@/components/ui/table";
 import {
-    DropdownMenu,
+    DropdownMenuCheckboxItem,
+    DropdownMenuSeparator,
     DropdownMenuTrigger,
     DropdownMenuContent,
     DropdownMenuLabel,
-    DropdownMenuSeparator,
-    DropdownMenuCheckboxItem,
+    DropdownMenu,
 } from "@/components/ui/dropdown-menu";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import type { DeceasedRecords } from "@/types/interment.types";
-import { ChevronDown, Columns2, Ghost, Plus, Search, SkullIcon } from "lucide-react";
+
 import { deceasedRecordsColumns } from "./columns/columns";
 
 interface DeceasedRecordsTableProps {
@@ -48,24 +51,24 @@ export default function DeceasedRecordsTable({ data }: DeceasedRecordsTableProps
     // FIX: use correct type for useReactTable
     const table = useReactTable<DeceasedRecords>({
         data,
-        columns: deceasedRecordsColumns,
+        globalFilterFn,
         onSortingChange: setSorting,
-        onColumnFiltersChange: setColumnFilters,
+        columns: deceasedRecordsColumns,
         getCoreRowModel: getCoreRowModel(),
-        getPaginationRowModel: getPaginationRowModel(),
+        onRowSelectionChange: setRowSelection,
+        onGlobalFilterChange: setGlobalFilter,
         getSortedRowModel: getSortedRowModel(),
+        onColumnFiltersChange: setColumnFilters,
         getFilteredRowModel: getFilteredRowModel(),
         onColumnVisibilityChange: setColumnVisibility,
-        onRowSelectionChange: setRowSelection,
-        globalFilterFn,
+        getPaginationRowModel: getPaginationRowModel(),
         state: {
             sorting,
-            columnFilters,
-            columnVisibility,
             rowSelection,
             globalFilter,
+            columnFilters,
+            columnVisibility,
         },
-        onGlobalFilterChange: setGlobalFilter,
     });
     // Helper function to format column names
     function formatColumnName(name: string): string {
@@ -77,7 +80,7 @@ export default function DeceasedRecordsTable({ data }: DeceasedRecordsTableProps
         <div>
             <div className="flex flex-col mb-2">
                 <div className="flex items-center gap-2">
-                    <SkullIcon strokeWidth={2.5} className="w-6 h-6 text-primary" />
+                    <SkullIcon className="w-6 h-6 text-primary" strokeWidth={2.5} />
                     <h2 className="text-2xl font-bold text-primary">Deceased Records Management</h2>
                 </div>
                 <p className="text-muted-foreground text-sm">View, search, and manage your deceased records.</p>
@@ -86,10 +89,10 @@ export default function DeceasedRecordsTable({ data }: DeceasedRecordsTableProps
                 <div className="relative flex items-center rounded-md border focus-within:ring-1 focus-within:ring-ring pl-2 dark:bg-background">
                     <Search className="h-5 w-5 text-muted-foreground dark:bg-background" />
                     <Input
+                        className="border-0 focus-visible:ring-0 shadow-none dark:bg-background"
+                        onChange={event => { setGlobalFilter(event.target.value); }}
                         placeholder="Search..."
                         value={globalFilter}
-                        onChange={event => setGlobalFilter(event.target.value)}
-                        className="border-0 focus-visible:ring-0 shadow-none dark:bg-background"
                     />
                 </div>
                 <div className="ml-auto flex gap-2">
@@ -102,17 +105,17 @@ export default function DeceasedRecordsTable({ data }: DeceasedRecordsTableProps
                                 <ChevronDown />
                             </Button>
                         </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end" className="w-[150px]">
+                        <DropdownMenuContent className="w-[150px]" align="end">
                             <DropdownMenuLabel>Toggle columns</DropdownMenuLabel>
                             <DropdownMenuSeparator />
                             {table.getAllColumns()
                                 .filter(column => column.getCanHide())
                                 .map(column => (
                                     <DropdownMenuCheckboxItem
-                                        key={column.id}
-                                        className="capitalize"
+                                        onCheckedChange={value => { column.toggleVisibility(!!value); }}
                                         checked={column.getIsVisible()}
-                                        onCheckedChange={value => column.toggleVisibility(!!value)}
+                                        className="capitalize"
+                                        key={column.id}
                                     >
                                         {formatColumnName(column.id)}
                                     </DropdownMenuCheckboxItem>
@@ -140,7 +143,7 @@ export default function DeceasedRecordsTable({ data }: DeceasedRecordsTableProps
                     <TableBody>
                         {table.getRowModel().rows.length ? (
                             table.getRowModel().rows.map(row => (
-                                <TableRow key={row.id} data-state={row.getIsSelected() && "selected"}>
+                                <TableRow data-state={row.getIsSelected() && "selected"} key={row.id}>
                                     {row.getVisibleCells().map(cell => (
                                         <TableCell key={cell.id}>
                                             {flexRender(cell.column.columnDef.cell, cell.getContext())}

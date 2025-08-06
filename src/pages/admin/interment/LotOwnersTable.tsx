@@ -1,33 +1,36 @@
 "use client";
 import * as React from "react";
+import { ChevronDown, Columns2, LandPlot, Search, Ghost, Plus } from "lucide-react";
 import {
-    useReactTable,
-    getCoreRowModel,
-    getPaginationRowModel,
-    getSortedRowModel,
-    getFilteredRowModel,
-    flexRender,
-    type SortingState,
     type ColumnFiltersState,
-    type VisibilityState,
     type RowSelectionState,
+    getPaginationRowModel,
+    type VisibilityState,
+    getFilteredRowModel,
+    getSortedRowModel,
+    type SortingState,
+    getCoreRowModel,
+    useReactTable,
+    flexRender,
 } from "@tanstack/react-table";
+
+import type { LotOwners } from "@/types/interment.types";
+
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Button } from "@/components/ui/button";
+import { TableHeader, TableBody, TableCell, TableHead, TableRow, Table } from "@/components/ui/table";
 import {
-    DropdownMenu,
+    DropdownMenuCheckboxItem,
+    DropdownMenuSeparator,
     DropdownMenuTrigger,
     DropdownMenuContent,
     DropdownMenuLabel,
-    DropdownMenuSeparator,
-    DropdownMenuCheckboxItem,
+    DropdownMenu,
 } from "@/components/ui/dropdown-menu";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import type { LotOwners } from "@/types/interment.types";
-import { ChevronDown, Columns2, Ghost, LandPlot, Plus, Search } from "lucide-react";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../../../components/ui/select";
-import { Label } from "@/components/ui/label";
+
 import { lotOwnerColumns } from "./columns/columns";
+import { SelectContent, SelectTrigger, SelectValue, SelectItem, Select } from "../../../components/ui/select";
 
 interface LotOwnersTableProps {
     data: LotOwners[];
@@ -49,24 +52,24 @@ export default function LotOwnersTable({ data }: LotOwnersTableProps) {
     }, []);
     const table = useReactTable<LotOwners>({
         data,
+        globalFilterFn,
         columns: lotOwnerColumns,
         onSortingChange: setSorting,
-        onColumnFiltersChange: setColumnFilters,
         getCoreRowModel: getCoreRowModel(),
-        getPaginationRowModel: getPaginationRowModel(),
+        onRowSelectionChange: setRowSelection,
+        onGlobalFilterChange: setGlobalFilter,
         getSortedRowModel: getSortedRowModel(),
+        onColumnFiltersChange: setColumnFilters,
         getFilteredRowModel: getFilteredRowModel(),
         onColumnVisibilityChange: setColumnVisibility,
-        onRowSelectionChange: setRowSelection,
-        globalFilterFn,
+        getPaginationRowModel: getPaginationRowModel(),
         state: {
             sorting,
-            columnFilters,
-            columnVisibility,
             rowSelection,
             globalFilter,
+            columnFilters,
+            columnVisibility,
         },
-        onGlobalFilterChange: setGlobalFilter,
     });
     // Helper function to format column names
     function formatColumnName(name: string): string {
@@ -78,7 +81,7 @@ export default function LotOwnersTable({ data }: LotOwnersTableProps) {
         <div>
             <div className="flex flex-col mb-2">
                 <div className="flex items-center gap-2">
-                    <LandPlot strokeWidth={2.5} className="w-6 h-6 text-primary" />
+                    <LandPlot className="w-6 h-6 text-primary" strokeWidth={2.5} />
                     <h2 className="text-2xl font-bold text-primary">Lot Owners Management</h2>
                 </div>
                 <p className="text-muted-foreground text-sm">View, search, and manage your lot owners records.</p>
@@ -87,10 +90,10 @@ export default function LotOwnersTable({ data }: LotOwnersTableProps) {
                 <div className="relative flex items-center rounded-md border focus-within:ring-1 focus-within:ring-ring pl-2 dark:bg-background">
                     <Search className="h-5 w-5 text-muted-foreground dark:bg-background" />
                     <Input
+                        className="border-0 focus-visible:ring-0 shadow-none dark:bg-background"
+                        onChange={event => { setGlobalFilter(event.target.value); }}
                         placeholder="Search..."
                         value={globalFilter}
-                        onChange={event => setGlobalFilter(event.target.value)}
-                        className="border-0 focus-visible:ring-0 shadow-none dark:bg-background"
                     />
                 </div>
                 <div className="ml-auto flex gap-2">
@@ -103,17 +106,17 @@ export default function LotOwnersTable({ data }: LotOwnersTableProps) {
                                 <ChevronDown />
                             </Button>
                         </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end" className="w-[150px]">
+                        <DropdownMenuContent className="w-[150px]" align="end">
                             <DropdownMenuLabel>Toggle columns</DropdownMenuLabel>
                             <DropdownMenuSeparator />
                             {table.getAllColumns()
                                 .filter(column => column.getCanHide())
                                 .map(column => (
                                     <DropdownMenuCheckboxItem
-                                        key={column.id}
-                                        className="capitalize"
+                                        onCheckedChange={value => { column.toggleVisibility(!!value); }}
                                         checked={column.getIsVisible()}
-                                        onCheckedChange={value => column.toggleVisibility(!!value)}
+                                        className="capitalize"
+                                        key={column.id}
                                     >
                                         {formatColumnName(column.id)}
                                     </DropdownMenuCheckboxItem>
@@ -141,7 +144,7 @@ export default function LotOwnersTable({ data }: LotOwnersTableProps) {
                     <TableBody>
                         {table.getRowModel().rows.length ? (
                             table.getRowModel().rows.map(row => (
-                                <TableRow key={row.id} data-state={row.getIsSelected() && "selected"}>
+                                <TableRow data-state={row.getIsSelected() && "selected"} key={row.id}>
                                     {row.getVisibleCells().map(cell => (
                                         <TableCell key={cell.id}>{
                                             flexRender(cell.column.columnDef.cell, cell.getContext())
@@ -171,19 +174,19 @@ export default function LotOwnersTable({ data }: LotOwnersTableProps) {
                     <div className="flex items-center space-x-2">
                         <Label className="text-sm font-medium">Rows per page</Label>
                         <Select
-                            value={`${table.getState().pagination.pageSize}`}
                             onValueChange={(value) => {
                                 table.setPageSize(Number(value))
                             }}
+                            value={`${table.getState().pagination.pageSize}`}
                         >
-                            <SelectTrigger size="sm" className="w-20" id="rows-per-page">
+                            <SelectTrigger id="rows-per-page" className="w-20" size="sm">
                                 <SelectValue
                                     placeholder={table.getState().pagination.pageSize}
                                 />
                             </SelectTrigger>
                             <SelectContent side="top">
                                 {[10, 20, 25, 30, 40, 50].map(pageSize => (
-                                    <SelectItem key={pageSize} value={`${pageSize}`}>
+                                    <SelectItem value={`${pageSize}`} key={pageSize}>
                                         {pageSize}
                                     </SelectItem>
                                 ))}
@@ -194,25 +197,25 @@ export default function LotOwnersTable({ data }: LotOwnersTableProps) {
                         Page {table.getState().pagination.pageIndex + 1} of {table.getPageCount()}
                     </div>
                     <div className="flex items-center space-x-2">
-                        <Button variant="outline" size="icon" className="hidden size-8 lg:flex" onClick={() => table.setPageIndex(0)} disabled={!table.getCanPreviousPage()}>
+                        <Button onClick={() => { table.setPageIndex(0); }} disabled={!table.getCanPreviousPage()} className="hidden size-8 lg:flex" variant="outline" size="icon">
                             <span className="sr-only">Go to first page</span>
                             {/* ChevronsLeft icon */}
-                            <svg width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M11 17l-5-5 5-5M18 17l-5-5 5-5" /></svg>
+                            <svg stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2" height="16" fill="none" width="16"><path d="M11 17l-5-5 5-5M18 17l-5-5 5-5" /></svg>
                         </Button>
-                        <Button variant="outline" size="icon" className="size-8" onClick={() => table.previousPage()} disabled={!table.getCanPreviousPage()}>
+                        <Button onClick={() => { table.previousPage(); }} disabled={!table.getCanPreviousPage()} className="size-8" variant="outline" size="icon">
                             <span className="sr-only">Go to previous page</span>
                             {/* ChevronLeft icon */}
-                            <svg width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M15 19l-7-7 7-7" /></svg>
+                            <svg stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2" height="16" fill="none" width="16"><path d="M15 19l-7-7 7-7" /></svg>
                         </Button>
-                        <Button variant="outline" size="icon" className="size-8" onClick={() => table.nextPage()} disabled={!table.getCanNextPage()}>
+                        <Button onClick={() => { table.nextPage(); }} disabled={!table.getCanNextPage()} className="size-8" variant="outline" size="icon">
                             <span className="sr-only">Go to next page</span>
                             {/* ChevronRight icon */}
-                            <svg width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M9 5l7 7-7 7" /></svg>
+                            <svg stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2" height="16" fill="none" width="16"><path d="M9 5l7 7-7 7" /></svg>
                         </Button>
-                        <Button variant="outline" size="icon" className="hidden size-8 lg:flex" onClick={() => table.setPageIndex(table.getPageCount() - 1)} disabled={!table.getCanNextPage()}>
+                        <Button onClick={() => { table.setPageIndex(table.getPageCount() - 1); }} disabled={!table.getCanNextPage()} className="hidden size-8 lg:flex" variant="outline" size="icon">
                             <span className="sr-only">Go to last page</span>
                             {/* ChevronsRight icon */}
-                            <svg width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M13 7l5 5-5 5M6 7l5 5-5 5" /></svg>
+                            <svg stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2" height="16" fill="none" width="16"><path d="M13 7l5 5-5 5M6 7l5 5-5 5" /></svg>
                         </Button>
                     </div>
                 </div>

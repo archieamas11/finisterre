@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
 
 interface GenericTableProps<T> {
-  fetchData: () => Promise<{ success: boolean; [key: string]: unknown }>;
+  loadingMessage?: string;
   extractData: (response: unknown) => T[];
   TableComponent: React.ComponentType<{ data: T[] }>;
-  loadingMessage?: string;
+  fetchData: () => Promise<{ [key: string]: unknown; success: boolean; }>;
 }
 
 export function GenericTable<T>({

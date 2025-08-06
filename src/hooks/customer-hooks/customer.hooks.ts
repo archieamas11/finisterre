@@ -1,23 +1,17 @@
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { getCustomers, createCustomer, editCustomer } from "@/api/customer.api";
+import { useQueryClient, useMutation, useQuery } from "@tanstack/react-query";
+
 import type { Customer } from "@/types/interment.types";
 import type { CustomerFormData } from "@/pages/admin/interment/customer/customer.validation";
 
-// 1) Query for list
-export function useCustomers() {
-  return useQuery({
-    queryKey: ["customers"],
-    queryFn: async () => {
-      const r = await getCustomers();
-      return r.customers ?? [];
-    },
-  });
-}
+import { createCustomer, getCustomers, editCustomer } from "@/api/customer.api";
 
 // 2) Mutation for add/edit
 export function useUpsertCustomer() {
   const qc = useQueryClient();
   return useMutation<Customer, Error, Partial<Customer>>({
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["customers"] });
+    },
     mutationFn: async (data) => {
       // Only call editCustomer if data.customer_id exists and is not undefined/null
       if (
@@ -29,8 +23,16 @@ export function useUpsertCustomer() {
       }
       return await createCustomer(data as CustomerFormData);
     },
-    onSuccess: () => {
-      qc.invalidateQueries({ queryKey: ["customers"] });
+  });
+}
+
+// 1) Query for list
+export function useCustomers() {
+  return useQuery({
+    queryKey: ["customers"],
+    queryFn: async () => {
+      const r = await getCustomers();
+      return r.customers ?? [];
     },
   });
 }

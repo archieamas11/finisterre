@@ -1,63 +1,64 @@
 import { z } from "zod";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
-import { Form, FormField, FormItem, FormLabel, FormControl, FormMessage } from "@/components/ui/form";
-import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
-import { Input } from "@/components/ui/input";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { CalendarIcon } from "lucide-react";
-import { Calendar } from "@/components/ui/calendar";
 import React from "react";
+import { useForm } from "react-hook-form";
+import { CalendarIcon } from "lucide-react";
+import { zodResolver } from "@hookform/resolvers/zod";
+
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { Calendar } from "@/components/ui/calendar";
+import { PopoverContent, PopoverTrigger, Popover } from "@/components/ui/popover";
+import { FormControl, FormMessage, FormField, FormLabel, FormItem, Form } from "@/components/ui/form";
+import { SelectTrigger, SelectContent, SelectValue, SelectItem, Select } from "@/components/ui/select";
+import { DialogDescription, DialogContent, DialogHeader, DialogTitle, Dialog } from "@/components/ui/dialog";
 
 // Unified customer schema for both add and edit
 const CustomerSchema = z.object({
-    first_name: z.string().min(3, { message: "Invalid first name." }),
     middle_name: z.string().optional(),
-    last_name: z.string().min(2, { message: "Invalid last name." }),
-    nickname: z.string().min(2, { message: "Invalid nickname." }),
-    address: z.string().min(6, { message: "Invalid address." }),
-    contact_number: z.string().min(11, { message: "Invalid contact number." }).regex(/^09\d{9}$/, { message: "Invalid contact number." }),
-    birth_date: z.string().min(1, { message: "Invalid birth date." }),
     gender: z.string().min(1, { message: "Invalid gender." }),
+    address: z.string().min(6, { message: "Invalid address." }),
+    nickname: z.string().min(2, { message: "Invalid nickname." }),
     religion: z.string().min(1, { message: "Invalid religion." }),
-    citizenship: z.string().min(1, { message: "Invalid citizenship." }),
+    last_name: z.string().min(2, { message: "Invalid last name." }),
+    first_name: z.string().min(3, { message: "Invalid first name." }),
+    birth_date: z.string().min(1, { message: "Invalid birth date." }),
     occupation: z.string().min(1, { message: "Invalid occupation." }),
+    citizenship: z.string().min(1, { message: "Invalid citizenship." }),
     email: z.string().min(1, { message: "Invalid email." }).email({ message: "Invalid email address." }),
     status: z.enum(["single", "married", "widowed", "divorced", "separated"], {
         message: "Invalid status.",
     }),
+    contact_number: z.string().min(11, { message: "Invalid contact number." }).regex(/^09\d{9}$/, { message: "Invalid contact number." }),
 });
 
-export type CustomerFormMode = "add" | "edit";
-
 export interface CustomerFormProps {
-    mode: CustomerFormMode;
     open: boolean;
-    onOpenChange: (open: boolean) => void;
     initialValues?: any;
-    onSubmit: (values: any) => Promise<void> | void;
     isPending?: boolean;
+    mode: CustomerFormMode;
+    onOpenChange: (open: boolean) => void;
+    onSubmit: (values: any) => Promise<void> | void;
 }
 
-export default function CustomerForm({ mode, open, onOpenChange, initialValues, onSubmit, isPending }: CustomerFormProps) {
+export type CustomerFormMode = "edit" | "add";
+
+export default function CustomerForm({ mode, open, onSubmit, isPending, onOpenChange, initialValues }: CustomerFormProps) {
     const form = useForm<any>({
         resolver: zodResolver(CustomerSchema),
         defaultValues: initialValues || {
-            first_name: "",
-            middle_name: "",
-            last_name: "",
-            nickname: "",
-            address: "",
-            contact_number: "",
-            birth_date: "",
-            gender: "",
-            religion: "",
-            citizenship: "",
-            occupation: "",
             email: "",
-            status: ""
+            gender: "",
+            status: "",
+            address: "",
+            nickname: "",
+            religion: "",
+            last_name: "",
+            first_name: "",
+            birth_date: "",
+            occupation: "",
+            middle_name: "",
+            citizenship: "",
+            contact_number: ""
         }
     });
 
@@ -66,7 +67,7 @@ export default function CustomerForm({ mode, open, onOpenChange, initialValues, 
     };
 
     return (
-        <Dialog open={open} onOpenChange={onOpenChange}>
+        <Dialog onOpenChange={onOpenChange} open={open}>
             <DialogContent className="lg:max-w-[900px]">
                 <DialogHeader>
                     <DialogTitle>{mode === "add" ? "Add New Customer" : "Edit Customer"}</DialogTitle>
@@ -77,7 +78,7 @@ export default function CustomerForm({ mode, open, onOpenChange, initialValues, 
                 <Form {...form}>
                     <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4">
                         <div className="grid grid-cols-3 gap-4">
-                            <FormField control={form.control} name="first_name" render={({ field }) => (
+                            <FormField render={({ field }) => (
                                 <FormItem>
                                     <FormLabel>First Name<span className="text-red-500">*</span></FormLabel>
                                     <FormControl>
@@ -85,8 +86,8 @@ export default function CustomerForm({ mode, open, onOpenChange, initialValues, 
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>
-                            )} />
-                            <FormField control={form.control} name="middle_name" render={({ field }) => (
+                            )} control={form.control} name="first_name" />
+                            <FormField render={({ field }) => (
                                 <FormItem>
                                     <FormLabel>Middle Name</FormLabel>
                                     <FormControl>
@@ -94,8 +95,8 @@ export default function CustomerForm({ mode, open, onOpenChange, initialValues, 
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>
-                            )} />
-                            <FormField control={form.control} name="last_name" render={({ field }) => (
+                            )} control={form.control} name="middle_name" />
+                            <FormField render={({ field }) => (
                                 <FormItem>
                                     <FormLabel>Last Name<span className="text-red-500">*</span></FormLabel>
                                     <FormControl>
@@ -103,8 +104,8 @@ export default function CustomerForm({ mode, open, onOpenChange, initialValues, 
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>
-                            )} />
-                            <FormField control={form.control} name="nickname" render={({ field }) => (
+                            )} control={form.control} name="last_name" />
+                            <FormField render={({ field }) => (
                                 <FormItem>
                                     <FormLabel>Nickname<span className="text-red-500">*</span></FormLabel>
                                     <FormControl>
@@ -112,8 +113,8 @@ export default function CustomerForm({ mode, open, onOpenChange, initialValues, 
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>
-                            )} />
-                            <FormField control={form.control} name="address" render={({ field }) => (
+                            )} control={form.control} name="nickname" />
+                            <FormField render={({ field }) => (
                                 <FormItem>
                                     <FormLabel>Address<span className="text-red-500">*</span></FormLabel>
                                     <FormControl>
@@ -121,8 +122,8 @@ export default function CustomerForm({ mode, open, onOpenChange, initialValues, 
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>
-                            )} />
-                            <FormField control={form.control} name="contact_number" render={({ field }) => (
+                            )} control={form.control} name="address" />
+                            <FormField render={({ field }) => (
                                 <FormItem>
                                     <FormLabel>Contact Number<span className="text-red-500">*</span></FormLabel>
                                     <FormControl>
@@ -130,14 +131,14 @@ export default function CustomerForm({ mode, open, onOpenChange, initialValues, 
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>
-                            )} />
-                            <FormField control={form.control} name="birth_date" render={({ field }) => {
+                            )} control={form.control} name="contact_number" />
+                            <FormField render={({ field }) => {
                                 // Local state for calendar popover and date selection
                                 const [calendarOpen, setCalendarOpen] = React.useState(false);
-                                const [selectedDate, setSelectedDate] = React.useState<Date | undefined>(
+                                const [selectedDate, setSelectedDate] = React.useState<undefined | Date>(
                                     field.value ? new Date(field.value) : undefined
                                 );
-                                const [month, setMonth] = React.useState<Date | undefined>(selectedDate);
+                                const [month, setMonth] = React.useState<undefined | Date>(selectedDate);
 
                                 // Helper to format date as YYYY-MM-DD in local time
                                 function formatDateLocal(date?: Date) {
@@ -154,7 +155,6 @@ export default function CustomerForm({ mode, open, onOpenChange, initialValues, 
                                         <FormControl>
                                             <div className="relative">
                                                 <Input
-                                                    value={field.value}
                                                     onChange={(e) => {
                                                         field.onChange(e.target.value);
                                                         const date = new Date(e.target.value);
@@ -164,15 +164,16 @@ export default function CustomerForm({ mode, open, onOpenChange, initialValues, 
                                                         }
                                                     }}
                                                     placeholder="Select birth date"
+                                                    value={field.value}
                                                 />
-                                                <Popover open={calendarOpen} onOpenChange={setCalendarOpen}>
+                                                <Popover onOpenChange={setCalendarOpen} open={calendarOpen}>
                                                     <PopoverTrigger asChild>
                                                         <Button
+                                                            className="absolute top-1/2 right-2 size-6 -translate-y-1/2"
+                                                            onClick={() => { setCalendarOpen(true); }}
                                                             id="date-picker"
                                                             variant="ghost"
-                                                            className="absolute top-1/2 right-2 size-6 -translate-y-1/2"
                                                             type="button"
-                                                            onClick={() => setCalendarOpen(true)}
                                                         >
                                                             <CalendarIcon className="size-3.5" />
                                                             <span className="sr-only">Select date</span>
@@ -180,22 +181,22 @@ export default function CustomerForm({ mode, open, onOpenChange, initialValues, 
                                                     </PopoverTrigger>
                                                     <PopoverContent
                                                         className="w-auto overflow-hidden p-0"
-                                                        align="end"
                                                         alignOffset={-8}
                                                         sideOffset={10}
+                                                        align="end"
                                                     >
                                                         <Calendar
-                                                            mode="single"
-                                                            selected={selectedDate}
-                                                            captionLayout="dropdown"
-                                                            month={month}
-                                                            onMonthChange={setMonth}
                                                             onSelect={(date) => {
                                                                 setSelectedDate(date);
                                                                 setMonth(date);
                                                                 setCalendarOpen(false);
                                                                 field.onChange(formatDateLocal(date));
                                                             }}
+                                                            captionLayout="dropdown"
+                                                            onMonthChange={setMonth}
+                                                            selected={selectedDate}
+                                                            mode="single"
+                                                            month={month}
                                                         />
                                                     </PopoverContent>
                                                 </Popover>
@@ -204,9 +205,9 @@ export default function CustomerForm({ mode, open, onOpenChange, initialValues, 
                                         <FormMessage />
                                     </FormItem>
                                 );
-                            }}
+                            }} control={form.control} name="birth_date"
                             />
-                            <FormField control={form.control} name="gender" render={({ field }) => (
+                            <FormField render={({ field }) => (
                                 <FormItem>
                                     <FormLabel>Gender<span className="text-red-500">*</span></FormLabel>
                                     <FormControl>
@@ -220,8 +221,8 @@ export default function CustomerForm({ mode, open, onOpenChange, initialValues, 
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>
-                            )} />
-                            <FormField control={form.control} name="religion" render={({ field }) => (
+                            )} control={form.control} name="gender" />
+                            <FormField render={({ field }) => (
                                 <FormItem>
                                     <FormLabel>Religion<span className="text-red-500">*</span></FormLabel>
                                     <FormControl>
@@ -229,8 +230,8 @@ export default function CustomerForm({ mode, open, onOpenChange, initialValues, 
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>
-                            )} />
-                            <FormField control={form.control} name="citizenship" render={({ field }) => (
+                            )} control={form.control} name="religion" />
+                            <FormField render={({ field }) => (
                                 <FormItem>
                                     <FormLabel>Citizenship<span className="text-red-500">*</span></FormLabel>
                                     <FormControl>
@@ -238,8 +239,8 @@ export default function CustomerForm({ mode, open, onOpenChange, initialValues, 
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>
-                            )} />
-                            <FormField control={form.control} name="occupation" render={({ field }) => (
+                            )} control={form.control} name="citizenship" />
+                            <FormField render={({ field }) => (
                                 <FormItem>
                                     <FormLabel>Occupation<span className="text-red-500">*</span></FormLabel>
                                     <FormControl>
@@ -247,17 +248,17 @@ export default function CustomerForm({ mode, open, onOpenChange, initialValues, 
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>
-                            )} />
-                            <FormField control={form.control} name="email" render={({ field }) => (
+                            )} control={form.control} name="occupation" />
+                            <FormField render={({ field }) => (
                                 <FormItem>
                                     <FormLabel>Email<span className="text-red-500">*</span></FormLabel>
                                     <FormControl>
-                                        <Input type="email" placeholder="Enter email" {...field} />
+                                        <Input placeholder="Enter email" type="email" {...field} />
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>
-                            )} />
-                            <FormField control={form.control} name="status" render={({ field }) => (
+                            )} control={form.control} name="email" />
+                            <FormField render={({ field }) => (
                                 <FormItem>
                                     <FormLabel>Status<span className="text-red-500">*</span></FormLabel>
                                     <FormControl>
@@ -274,10 +275,10 @@ export default function CustomerForm({ mode, open, onOpenChange, initialValues, 
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>
-                            )} />
+                            )} control={form.control} name="status" />
                         </div>
                         <div className="flex justify-end pt-4">
-                            <Button type="submit" disabled={isPending}>
+                            <Button disabled={isPending} type="submit">
                                 {isPending ? (mode === "add" ? "Saving..." : "Updating...") : (mode === "add" ? "Save" : "Update")}
                             </Button>
                         </div>

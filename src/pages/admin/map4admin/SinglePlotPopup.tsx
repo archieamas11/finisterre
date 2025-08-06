@@ -1,11 +1,14 @@
-import { Ruler, Plus, Edit, Eye } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import type { ConvertedMarker } from '@/types/map.types';
 import { useState } from 'react';
-import EditMapDialog from './editMapDialog';
-import { FaUser, FaCalendarAlt, FaMapMarkerAlt, FaInfoCircle, FaAward, FaHourglassStart } from 'react-icons/fa';
+import { Ruler, Plus, Edit, Eye } from 'lucide-react';
 import { BiCheckCircle, BiXCircle } from 'react-icons/bi';
+import { FaHourglassStart, FaMapMarkerAlt, FaCalendarAlt, FaInfoCircle, FaAward, FaUser } from 'react-icons/fa';
+
+import type { ConvertedMarker } from '@/types/map.types';
+
 import { isAdmin } from '@/utils/Auth.utils';
+import { Button } from '@/components/ui/button';
+
+import EditMapDialog from './editMapDialog';
 
 interface PlotLocationsProps {
     marker: ConvertedMarker;
@@ -103,7 +106,7 @@ export default function SinglePlotLocations({ marker }: PlotLocationsProps) {
             <div className="flex gap-2 mb-5">
                 <div className="flex-1 bg-card rounded-lg p-2 shadow-lg">
                     <div className="flex items-center gap-1 mb-1">
-                        <Ruler size={16} className="text-blue-500" />
+                        <Ruler className="text-blue-500" size={16} />
                         <span className="text-xs font-semibold text-accent-foreground">Dimension</span>
                     </div>
                     <div className="flex flex-col items-center">
@@ -133,10 +136,6 @@ export default function SinglePlotLocations({ marker }: PlotLocationsProps) {
                         <div className="grid grid-cols-2 gap-2 mt-5">
                             {images.map((imageUrl, idx) => (
                                 <img
-                                    key={idx}
-                                    src={imageUrl}
-                                    alt={`Plot media ${idx + 1}`}
-                                    className="w-full h-30 object-cover rounded hover:transform hover:scale-105 transition-transform duration-200"
                                     onError={(e) => {
                                         console.log("🖼️ Image failed to load:", imageUrl);
                                         e.currentTarget.style.display = 'none';
@@ -144,6 +143,10 @@ export default function SinglePlotLocations({ marker }: PlotLocationsProps) {
                                     onLoad={() => {
                                         console.log("✅ Image loaded successfully:", imageUrl);
                                     }}
+                                    className="w-full h-30 object-cover rounded hover:transform hover:scale-105 transition-transform duration-200"
+                                    alt={`Plot media ${idx + 1}`}
+                                    src={imageUrl}
+                                    key={idx}
                                 />
                             ))}
                         </div>
@@ -157,20 +160,20 @@ export default function SinglePlotLocations({ marker }: PlotLocationsProps) {
 
             {/* 🔧 Edit Dialog */}
             <EditMapDialog
-                open={isEditDialogOpen}
-                onOpenChange={setIsEditDialogOpen}
                 plots={{
+                    block: marker.block,
                     plot_id: marker.plot_id,
                     category: marker.category,
-                    length: marker.dimensions.length,
-                    width: marker.dimensions.width,
-                    area: marker.dimensions.area,
                     status: marker.plotStatus,
                     label: marker.label || "",
-                    file_name: marker.file_names_array || marker.file_name || [],
-                    block: marker.block,
+                    area: marker.dimensions.area,
                     coordinates: marker.position,
+                    width: marker.dimensions.width,
+                    length: marker.dimensions.length,
+                    file_name: marker.file_names_array || marker.file_name || [],
                 }}
+                onOpenChange={setIsEditDialogOpen}
+                open={isEditDialogOpen}
             />
         </div>
     );

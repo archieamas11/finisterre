@@ -1,9 +1,10 @@
-import LotOwnersTable from "./LotOwnersTable";
 import SpinnerCircle4 from "@/components/ui/spinner-10";
 import { useLotOwners } from "@/hooks/lot-owner-hooks/LotOwner.hooks";
 
+import LotOwnersTable from "./LotOwnersTable";
+
 export default function LotOwnersTablePage() {
-  const { data: lotOwners, isPending, isError } = useLotOwners();
+  const { isError, isPending, data: lotOwners } = useLotOwners();
 
   if (isPending)
     return (

@@ -1,26 +1,20 @@
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useQueryClient, useMutation, useQuery } from "@tanstack/react-query";
+
+import type { DeceasedRecords } from "@/types/interment.types";
+
 import {
   createDeceasedRecords,
   editDeceasedRecords,
   getDeceasedRecords,
 } from "@/api/deceased.api";
-import type { DeceasedRecords } from "@/types/interment.types";
-
-// 1) Query for list
-export function useDeceasedRecords() {
-  return useQuery({
-    queryKey: ["deceasedRecords"],
-    queryFn: async () => {
-      const r = await getDeceasedRecords();
-      return r.deceased ?? [];
-    },
-  });
-}
 
 // 2) Mutation for add/edit
 export function useUpsertDeceasedRecord() {
   const qc = useQueryClient();
   return useMutation<DeceasedRecords, Error, Partial<DeceasedRecords>>({
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["deceasedRecords"] });
+    },
     mutationFn: async (data) => {
       // Only call editCustomer if data.customer_id exists and is not undefined/null
       if (
@@ -32,8 +26,16 @@ export function useUpsertDeceasedRecord() {
       }
       return await createDeceasedRecords(data);
     },
-    onSuccess: () => {
-      qc.invalidateQueries({ queryKey: ["deceasedRecords"] });
+  });
+}
+
+// 1) Query for list
+export function useDeceasedRecords() {
+  return useQuery({
+    queryKey: ["deceasedRecords"],
+    queryFn: async () => {
+      const r = await getDeceasedRecords();
+      return r.deceased ?? [];
     },
   });
 }

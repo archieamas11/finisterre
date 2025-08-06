@@ -1,26 +1,27 @@
 import { useQuery } from "@tanstack/react-query";
+
 import { getNichesByPlot } from "@/api/plots.api";
 
 // 🗂️ Niche data structure matching database schema
 interface NicheData {
-  lot_id: string;
-  niche_number: number;
   row: number;
   col: number;
+  lot_id: string;
+  niche_number: number;
   customer_id?: string;
   niche_status: "available" | "occupied" | "reserved";
   owner?: {
     customer_id: string;
-    name: string;
     phone: string;
     email: string;
+    name: string;
   };
   deceased?: {
+    dateOfInterment: string;
     deceased_id: string;
-    name: string;
     dateOfBirth: string;
     dateOfDeath: string;
-    dateOfInterment: string;
+    name: string;
   };
 }
 
@@ -71,11 +72,11 @@ const generateGridPositions = (
       } else {
         // � Create empty niche for positions without data
         result.push({
-          lot_id: `${plotId}-N-${nicheCounter}-R${row}C${col}`,
-          niche_number: nicheCounter,
           row,
           col,
           niche_status: "available",
+          niche_number: nicheCounter,
+          lot_id: `${plotId}-N-${nicheCounter}-R${row}C${col}`,
         });
       }
       nicheCounter++;
@@ -89,7 +90,10 @@ const generateGridPositions = (
 // �🏛️ Hook to fetch niche data for a specific plot/columbarium with grid generation
 export function useNichesByPlot(plotId: string, rows: number, cols: number) {
   return useQuery({
+    gcTime: 10 * 60 * 1000, // 10 minutes cache
+    staleTime: 5 * 60 * 1000, // 5 minutes - niches don't change frequently
     queryKey: ["niches", plotId, rows, cols],
+    enabled: !!plotId && rows > 0 && cols > 0, // Only run if all required params exist
     queryFn: async () => {
       console.log("🚀 Fetching niche data for plot:", plotId);
 
@@ -108,17 +112,17 @@ export function useNichesByPlot(plotId: string, rows: number, cols: number) {
 
       // 🎯 Map existing niche data to our interface
       const plotNiches: NicheData[] = existingNiches.map((niche: any) => ({
-        lot_id: niche.lot_id || niche.lot_id,
-        niche_number: parseInt(niche.niche_number) || 0,
         row: parseInt(niche.row) || 0,
         col: parseInt(niche.col) || 0,
+        lot_id: niche.lot_id || niche.lot_id,
+        niche_number: parseInt(niche.niche_number) || 0,
         niche_status: niche.niche_status || "available",
         owner: niche.customer_id
           ? {
+              email: niche.email || "",
               customer_id: niche.customer_id,
               name: niche.customer_name || "",
               phone: niche.contact_number || "",
-              email: niche.email || "",
             }
           : undefined,
         deceased: niche.deceased_id
@@ -147,8 +151,5 @@ export function useNichesByPlot(plotId: string, rows: number, cols: number) {
       console.log("✅ Niche data loaded:", completeNiches);
       return completeNiches;
     },
-    enabled: !!plotId && rows > 0 && cols > 0, // Only run if all required params exist
-    staleTime: 5 * 60 * 1000, // 5 minutes - niches don't change frequently
-    gcTime: 10 * 60 * 1000, // 10 minutes cache
   });
 }

@@ -1,11 +1,11 @@
-import { Link } from "react-router-dom";
 import { MapPin } from 'lucide-react';
+import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
-import { Suspense, lazy, useEffect, useState } from "react";
+import { useEffect, Suspense, useState, lazy } from "react";
 
 import { Button } from "@/components/ui/button";
-import { NavigationMenuSection } from "@/pages/landing/section/NavigationMenu";
 import { ThemeToggleAdvanced } from "@/components/ThemeToggleAdvanced";
+import { NavigationMenuSection } from "@/pages/landing/section/NavigationMenu";
 
 const HeroSection = lazy(() => import("@/pages/landing/section/HeroSection"));
 const OurServicesSection = lazy(() => import("@/pages/landing/section/OurServicesSection"));
@@ -17,10 +17,10 @@ export default function LandingLayout() {
 
     useEffect(() => {
         // 🟢 Only show navbar border/background/shadow when scrolled
-        const handleScroll = () => setScrolled(window.scrollY > 0);
+        const handleScroll = () => { setScrolled(window.scrollY > 0); };
         window.addEventListener("scroll", handleScroll, { passive: true });
         handleScroll();
-        return () => window.removeEventListener("scroll", handleScroll);
+        return () => { window.removeEventListener("scroll", handleScroll); };
     }, []);
 
     return (
@@ -44,7 +44,7 @@ export default function LandingLayout() {
                     onClick={() => navigate("/")}
                     aria-label="Go to homepage"
                 >
-                    <MapPin size={20} className="mr-2" />
+                    <MapPin className="mr-2" size={20} />
                     <span className="hidden md:inline text-md">Finisterre</span>
                 </span>
                 <NavigationMenuSection />
@@ -52,9 +52,9 @@ export default function LandingLayout() {
                     <ThemeToggleAdvanced />
                     <Link to="/login">
                         <Button
-                            variant="default"
                             className="rounded-full text-foreground hover:bg-muted transition"
                             aria-label="Login"
+                            variant="default"
                         >
                             Login
                         </Button>

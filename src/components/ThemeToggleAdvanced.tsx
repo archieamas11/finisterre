@@ -1,7 +1,9 @@
-import { useTheme } from '../context/ThemeContext';
-import { Button } from '@/components/ui/button';
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { Moon, Sun } from 'lucide-react';
+
+import { Button } from '@/components/ui/button';
+import { TooltipProvider, TooltipContent, TooltipTrigger, Tooltip } from '@/components/ui/tooltip';
+
+import { useTheme } from '../context/ThemeContext';
 
 // Toggle between light and dark themes only, auto-detect system theme on load
 export function ThemeToggleAdvanced() {
@@ -17,11 +19,11 @@ export function ThemeToggleAdvanced() {
       <Tooltip>
         <TooltipTrigger asChild>
           <Button
-            variant="ghost"
-            size="icon"
+            className="rounded-full group border border-transparent hover:border-muted hover:bg-muted-foreground dark:hover:border-accent-foreground focus-visible:ring-2 focus-visible:ring-accent-foreground transition-colors"
             aria-label="Toggle theme"
             onClick={handleToggle}
-            className="rounded-full group border border-transparent hover:border-muted hover:bg-muted-foreground dark:hover:border-accent-foreground focus-visible:ring-2 focus-visible:ring-accent-foreground transition-colors"
+            variant="ghost"
+            size="icon"
           >
             {resolvedTheme === 'dark' ? (
               <Moon className="h-5 w-5 transition-transform duration-300 rotate-0 scale-100" key="moon" />
@@ -33,7 +35,7 @@ export function ThemeToggleAdvanced() {
             )}
           </Button>
         </TooltipTrigger>
-        <TooltipContent side="bottom" align="center">
+        <TooltipContent align="center" side="bottom">
           {resolvedTheme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
         </TooltipContent>
       </Tooltip>

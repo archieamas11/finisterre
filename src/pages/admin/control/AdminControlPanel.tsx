@@ -1,19 +1,20 @@
-import { User, Settings, FileText, Shield, Bell, BellOff, ArchiveIcon } from "lucide-react";
-import {
-  Card,
-  CardHeader,
-  CardTitle,
-  CardContent,
-  CardFooter,
-} from "@/components/ui/card";
+import { ArchiveIcon, Settings, FileText, BellOff, Shield, User, Bell } from "lucide-react";
+
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
+import {
+  CardContent,
+  CardHeader,
+  CardFooter,
+  CardTitle,
+  Card,
+} from "@/components/ui/card";
 
 export default function AdminControlPanel() {
   return (
     <div className="flex flex-1 flex-col gap-8 p-8" aria-label="Admin Control Panel">
       <div className="flex items-center gap-2">
-        <Shield strokeWidth={2.5} className="w-6 h-6 text-primary" />
+        <Shield className="w-6 h-6 text-primary" strokeWidth={2.5} />
         <h2 className="text-2xl font-bold text-primary">Admin Control Panel</h2>
       </div>
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6 flex-col">
@@ -28,7 +29,7 @@ export default function AdminControlPanel() {
             </p>
           </CardContent>
           <CardFooter>
-            <Button size="sm" variant="outline">
+            <Button variant="outline" size="sm">
               Go to Users
             </Button>
           </CardFooter>
@@ -44,7 +45,7 @@ export default function AdminControlPanel() {
             </p>
           </CardContent>
           <CardFooter>
-            <Button size="sm" variant="outline">
+            <Button variant="outline" size="sm">
               Edit Settings
             </Button>
           </CardFooter>
@@ -60,7 +61,7 @@ export default function AdminControlPanel() {
             </p>
           </CardContent>
           <CardFooter>
-            <Button size="sm" variant="outline">
+            <Button variant="outline" size="sm">
               View Logs
             </Button>
           </CardFooter>
@@ -76,7 +77,7 @@ export default function AdminControlPanel() {
             </p>
           </CardContent>
           <CardFooter>
-            <Button size="sm" variant="outline">
+            <Button variant="outline" size="sm">
               View archived data
             </Button>
           </CardFooter>

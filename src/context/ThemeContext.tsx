@@ -1,13 +1,13 @@
 // src/contexts/ThemeContext.tsx
 import React, { createContext, useContext, useEffect, useState } from 'react';
 
-type Theme = 'light' | 'dark' | 'system';
-
 interface ThemeContextType {
   theme: Theme;
-  setTheme: (theme: Theme) => void;
   resolvedTheme: 'light' | 'dark';
+  setTheme: (theme: Theme) => void;
 }
+
+type Theme = 'system' | 'light' | 'dark';
 
 const ThemeContext = createContext<ThemeContextType | null>(null);
 
@@ -76,7 +76,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     handleChange();
 
     mediaQuery.addEventListener('change', handleChange);
-    return () => mediaQuery.removeEventListener('change', handleChange);
+    return () => { mediaQuery.removeEventListener('change', handleChange); };
   }, [theme]);
 
   return (

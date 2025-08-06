@@ -1,43 +1,44 @@
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
-import { Form, FormField, FormItem, FormLabel, FormControl, FormMessage } from "@/components/ui/form";
-import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
-import { Input } from "@/components/ui/input";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { CalendarIcon } from "lucide-react";
-import { Calendar } from "@/components/ui/calendar";
 import React from "react";
-import { customerSchema } from "@/pages/admin/interment/customer/customer.validation";
+import { useForm } from "react-hook-form";
+import { CalendarIcon } from "lucide-react";
+import { zodResolver } from "@hookform/resolvers/zod";
 
-export type CustomerFormMode = "add" | "edit" | "view";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { Calendar } from "@/components/ui/calendar";
+import { PopoverContent, PopoverTrigger, Popover } from "@/components/ui/popover";
+import { customerSchema } from "@/pages/admin/interment/customer/customer.validation";
+import { FormControl, FormMessage, FormField, FormLabel, FormItem, Form } from "@/components/ui/form";
+import { SelectTrigger, SelectContent, SelectValue, SelectItem, Select } from "@/components/ui/select";
+import { DialogDescription, DialogContent, DialogHeader, DialogTitle, Dialog } from "@/components/ui/dialog";
 
 export interface CustomerFormProps {
-    mode: CustomerFormMode;
     open: boolean;
-    onOpenChange: (open: boolean) => void;
     initialValues?: any;
-    onSubmit: (values: any) => Promise<void> | void;
     isPending?: boolean;
+    mode: CustomerFormMode;
+    onOpenChange: (open: boolean) => void;
+    onSubmit: (values: any) => Promise<void> | void;
 }
 
-export default function CustomerForm({ mode, open, onOpenChange, initialValues, onSubmit, isPending }: CustomerFormProps) {
+export type CustomerFormMode = "edit" | "view" | "add";
+
+export default function CustomerForm({ mode, open, onSubmit, isPending, onOpenChange, initialValues }: CustomerFormProps) {
     const form = useForm<any>({
         resolver: zodResolver(customerSchema),
         defaultValues: initialValues || {
-            first_name: "",
-            middle_name: "",
-            last_name: "",
-            address: "",
-            contact_number: "",
-            birth_date: "",
-            gender: "",
-            religion: "",
-            citizenship: "",
-            occupation: "",
             email: "",
-            status: ""
+            gender: "",
+            status: "",
+            address: "",
+            religion: "",
+            last_name: "",
+            first_name: "",
+            birth_date: "",
+            occupation: "",
+            middle_name: "",
+            citizenship: "",
+            contact_number: ""
         }
     });
 
@@ -48,7 +49,7 @@ export default function CustomerForm({ mode, open, onOpenChange, initialValues, 
     };
 
     return (
-        <Dialog open={open} onOpenChange={onOpenChange}>
+        <Dialog onOpenChange={onOpenChange} open={open}>
             <DialogContent className="lg:max-w-[900px]">
                 <DialogHeader>
                     <DialogTitle>{mode === "add" ? "Add New Customer" : mode === "edit" ? "Edit Customer" : "View Customer"}</DialogTitle>
@@ -64,7 +65,7 @@ export default function CustomerForm({ mode, open, onOpenChange, initialValues, 
                     <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4">
                         <div className="grid grid-cols-3 gap-4">
                             {/* 🛑 All fields are read-only in view mode */}
-                            <FormField control={form.control} name="first_name" render={({ field }) => (
+                            <FormField render={({ field }) => (
                                 <FormItem>
                                     <FormLabel>First Name<span className="text-red-500">*</span></FormLabel>
                                     <FormControl>
@@ -72,8 +73,8 @@ export default function CustomerForm({ mode, open, onOpenChange, initialValues, 
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>
-                            )} />
-                            <FormField control={form.control} name="middle_name" render={({ field }) => (
+                            )} control={form.control} name="first_name" />
+                            <FormField render={({ field }) => (
                                 <FormItem>
                                     <FormLabel>Middle Name</FormLabel>
                                     <FormControl>
@@ -81,8 +82,8 @@ export default function CustomerForm({ mode, open, onOpenChange, initialValues, 
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>
-                            )} />
-                            <FormField control={form.control} name="last_name" render={({ field }) => (
+                            )} control={form.control} name="middle_name" />
+                            <FormField render={({ field }) => (
                                 <FormItem>
                                     <FormLabel>Last Name<span className="text-red-500">*</span></FormLabel>
                                     <FormControl>
@@ -90,8 +91,8 @@ export default function CustomerForm({ mode, open, onOpenChange, initialValues, 
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>
-                            )} />
-                            <FormField control={form.control} name="address" render={({ field }) => (
+                            )} control={form.control} name="last_name" />
+                            <FormField render={({ field }) => (
                                 <FormItem>
                                     <FormLabel>Address<span className="text-red-500">*</span></FormLabel>
                                     <FormControl>
@@ -99,8 +100,8 @@ export default function CustomerForm({ mode, open, onOpenChange, initialValues, 
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>
-                            )} />
-                            <FormField control={form.control} name="contact_number" render={({ field }) => (
+                            )} control={form.control} name="address" />
+                            <FormField render={({ field }) => (
                                 <FormItem>
                                     <FormLabel>Contact Number<span className="text-red-500">*</span></FormLabel>
                                     <FormControl>
@@ -108,13 +109,13 @@ export default function CustomerForm({ mode, open, onOpenChange, initialValues, 
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>
-                            )} />
-                            <FormField control={form.control} name="birth_date" render={({ field }) => {
+                            )} control={form.control} name="contact_number" />
+                            <FormField render={({ field }) => {
                                 const [calendarOpen, setCalendarOpen] = React.useState(false);
-                                const [selectedDate, setSelectedDate] = React.useState<Date | undefined>(
+                                const [selectedDate, setSelectedDate] = React.useState<undefined | Date>(
                                     field.value ? new Date(field.value) : undefined
                                 );
-                                const [month, setMonth] = React.useState<Date | undefined>(selectedDate);
+                                const [month, setMonth] = React.useState<undefined | Date>(selectedDate);
                                 function formatDateLocal(date?: Date) {
                                     if (!date) return "";
                                     const year = date.getFullYear();
@@ -128,7 +129,6 @@ export default function CustomerForm({ mode, open, onOpenChange, initialValues, 
                                         <FormControl>
                                             <div className="relative">
                                                 <Input
-                                                    value={field.value}
                                                     onChange={(e) => {
                                                         field.onChange(e.target.value);
                                                         const date = new Date(e.target.value);
@@ -140,16 +140,17 @@ export default function CustomerForm({ mode, open, onOpenChange, initialValues, 
                                                     placeholder="Select birth date"
                                                     readOnly={mode === "view"}
                                                     disabled={mode === "view"}
+                                                    value={field.value}
                                                 />
                                                 {mode !== "view" && (
-                                                    <Popover open={calendarOpen} onOpenChange={setCalendarOpen}>
+                                                    <Popover onOpenChange={setCalendarOpen} open={calendarOpen}>
                                                         <PopoverTrigger asChild>
                                                             <Button
+                                                                className="absolute top-1/2 right-2 size-6 -translate-y-1/2"
+                                                                onClick={() => { setCalendarOpen(true); }}
                                                                 id="date-picker"
                                                                 variant="ghost"
-                                                                className="absolute top-1/2 right-2 size-6 -translate-y-1/2"
                                                                 type="button"
-                                                                onClick={() => setCalendarOpen(true)}
                                                             >
                                                                 <CalendarIcon className="size-3.5" />
                                                                 <span className="sr-only">Select date</span>
@@ -157,22 +158,22 @@ export default function CustomerForm({ mode, open, onOpenChange, initialValues, 
                                                         </PopoverTrigger>
                                                         <PopoverContent
                                                             className="w-auto overflow-hidden p-0"
-                                                            align="end"
                                                             alignOffset={-8}
                                                             sideOffset={10}
+                                                            align="end"
                                                         >
                                                             <Calendar
-                                                                mode="single"
-                                                                selected={selectedDate}
-                                                                captionLayout="dropdown"
-                                                                month={month}
-                                                                onMonthChange={setMonth}
                                                                 onSelect={(date) => {
                                                                     setSelectedDate(date);
                                                                     setMonth(date);
                                                                     setCalendarOpen(false);
                                                                     field.onChange(formatDateLocal(date));
                                                                 }}
+                                                                captionLayout="dropdown"
+                                                                onMonthChange={setMonth}
+                                                                selected={selectedDate}
+                                                                mode="single"
+                                                                month={month}
                                                             />
                                                         </PopoverContent>
                                                     </Popover>
@@ -182,13 +183,13 @@ export default function CustomerForm({ mode, open, onOpenChange, initialValues, 
                                         <FormMessage />
                                     </FormItem>
                                 );
-                            }}
+                            }} control={form.control} name="birth_date"
                             />
-                            <FormField control={form.control} name="gender" render={({ field }) => (
+                            <FormField render={({ field }) => (
                                 <FormItem>
                                     <FormLabel>Gender<span className="text-red-500">*</span></FormLabel>
                                     <FormControl>
-                                        <Select onValueChange={field.onChange} value={field.value} disabled={mode === "view"}>
+                                        <Select onValueChange={field.onChange} disabled={mode === "view"} value={field.value}>
                                             <SelectTrigger className="w-full"><SelectValue placeholder="Select gender" /></SelectTrigger>
                                             <SelectContent>
                                                 <SelectItem value="male">Male</SelectItem>
@@ -198,8 +199,8 @@ export default function CustomerForm({ mode, open, onOpenChange, initialValues, 
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>
-                            )} />
-                            <FormField control={form.control} name="religion" render={({ field }) => (
+                            )} control={form.control} name="gender" />
+                            <FormField render={({ field }) => (
                                 <FormItem>
                                     <FormLabel>Religion<span className="text-red-500">*</span></FormLabel>
                                     <FormControl>
@@ -207,8 +208,8 @@ export default function CustomerForm({ mode, open, onOpenChange, initialValues, 
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>
-                            )} />
-                            <FormField control={form.control} name="citizenship" render={({ field }) => (
+                            )} control={form.control} name="religion" />
+                            <FormField render={({ field }) => (
                                 <FormItem>
                                     <FormLabel>Citizenship<span className="text-red-500">*</span></FormLabel>
                                     <FormControl>
@@ -216,8 +217,8 @@ export default function CustomerForm({ mode, open, onOpenChange, initialValues, 
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>
-                            )} />
-                            <FormField control={form.control} name="occupation" render={({ field }) => (
+                            )} control={form.control} name="citizenship" />
+                            <FormField render={({ field }) => (
                                 <FormItem>
                                     <FormLabel>Occupation<span className="text-red-500">*</span></FormLabel>
                                     <FormControl>
@@ -225,21 +226,21 @@ export default function CustomerForm({ mode, open, onOpenChange, initialValues, 
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>
-                            )} />
-                            <FormField control={form.control} name="email" render={({ field }) => (
+                            )} control={form.control} name="occupation" />
+                            <FormField render={({ field }) => (
                                 <FormItem>
                                     <FormLabel>Email<span className="text-red-500">*</span></FormLabel>
                                     <FormControl>
-                                        <Input type="email" placeholder="Enter email" {...field} readOnly={mode === "view"} disabled={mode === "view"} />
+                                        <Input placeholder="Enter email" type="email" {...field} readOnly={mode === "view"} disabled={mode === "view"} />
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>
-                            )} />
-                            <FormField control={form.control} name="status" render={({ field }) => (
+                            )} control={form.control} name="email" />
+                            <FormField render={({ field }) => (
                                 <FormItem>
                                     <FormLabel>Status<span className="text-red-500">*</span></FormLabel>
                                     <FormControl>
-                                        <Select onValueChange={field.onChange} value={field.value} disabled={mode === "view"}>
+                                        <Select onValueChange={field.onChange} disabled={mode === "view"} value={field.value}>
                                             <SelectTrigger className="w-full"><SelectValue placeholder="Select status" /></SelectTrigger>
                                             <SelectContent>
                                                 <SelectItem value="single">Single</SelectItem>
@@ -252,19 +253,19 @@ export default function CustomerForm({ mode, open, onOpenChange, initialValues, 
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>
-                            )} />
+                            )} control={form.control} name="status" />
                         </div>
                         {mode !== "view" && (
                             <div className="flex justify-end pt-4 space-x-2">
                                 <Button
-                                    type="button"
-                                    variant="outline"
+                                    onClick={() => { form.reset(); }}
                                     disabled={isPending}
-                                    onClick={() => form.reset()}
+                                    variant="outline"
+                                    type="button"
                                 >
                                     Clear
                                 </Button>
-                                <Button type="submit" disabled={isPending}>
+                                <Button disabled={isPending} type="submit">
                                     {isPending
                                         ? (mode === "add" ? "Saving..." : "Updating...")
                                         : (mode === "add" ? "Save" : "Update")}

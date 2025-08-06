@@ -1,29 +1,30 @@
-import { lazy, Suspense } from 'react';
-import 'leaflet/dist/leaflet.css';
-import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import L from 'leaflet';
-// Fix default icon paths so markers actually show up
-import iconUrl from 'leaflet/dist/images/marker-icon.png';
-import iconRetinaUrl from 'leaflet/dist/images/marker-icon-2x.png';
-import shadowUrl from 'leaflet/dist/images/marker-shadow.png';
+import 'leaflet/dist/leaflet.css';
+import { Suspense, lazy } from 'react';
+import { GiOpenGate } from 'react-icons/gi';
 import { createContext, useRef } from 'react';
 import { BiSolidChurch } from 'react-icons/bi';
 import { renderToStaticMarkup } from 'react-dom/server';
-import { GiOpenGate } from 'react-icons/gi';
-import { usePlots } from '@/hooks/plots-hooks/plot.hooks';
+import iconUrl from 'leaflet/dist/images/marker-icon.png';
+import shadowUrl from 'leaflet/dist/images/marker-shadow.png';
+import iconRetinaUrl from 'leaflet/dist/images/marker-icon-2x.png';
+import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
+
 import type { ConvertedMarker } from '@/types/map.types';
-import { convertPlotToMarker, getCategoryBackgroundColor, getStatusColor } from '@/types/map.types';
+
 import { Card } from '@/components/ui/card';
-import { Skeleton } from '@/components/ui/skeleton';
 import WebMapNavs from '@/pages/webmap/WebMapNavs';
+import { Skeleton } from '@/components/ui/skeleton';
+import { usePlots } from '@/hooks/plots-hooks/plot.hooks';
+import { getCategoryBackgroundColor, convertPlotToMarker, getStatusColor } from '@/types/map.types';
 const ColumbariumPopup = lazy(() => import("@/pages/admin/map4admin/ColumbariumPopup"));
 const SinglePlotLocations = lazy(() => import("@/pages/admin/map4admin/SinglePlotPopup"));
 
 
 const DefaultIcon = L.icon({
   iconUrl,
-  iconRetinaUrl,
   shadowUrl,
+  iconRetinaUrl,
 });
 L.Marker.prototype.options.icon = DefaultIcon;
 
@@ -31,7 +32,7 @@ L.Marker.prototype.options.icon = DefaultIcon;
 export const LocateContext = createContext<{ requestLocate: () => void } | null>(null);
 export default function AdminMapLayout() {
   // 🎣 Fetch real plot data from backend
-  const { data: plotsData, isLoading, error } = usePlots();
+  const { error, isLoading, data: plotsData } = usePlots();
 
   const bounds: [[number, number]] = [
     [10.24930711375518, 123.79784801248411],
@@ -47,7 +48,7 @@ export default function AdminMapLayout() {
 
   // 🔄 Convert database plots to marker format
   const markers = plotsData?.map(convertPlotToMarker) || [];
-  console.log('🗺️ Plots data loaded:', { plotsCount: markers.length, isLoading, error });
+  console.log('🗺️ Plots data loaded:', { error, isLoading, plotsCount: markers.length });
   // 🔄 Show loading state while fetching plots
   if (isLoading || isLoading) {
     return (
@@ -74,21 +75,21 @@ export default function AdminMapLayout() {
   }
 
   return (
-    <div className="flex flex-col gap-4 py-4 md:gap-6 md:py-6 z-1 w-full" aria-label="Admin Map Page" style={{ maxHeight: '100vh', overflow: 'hidden' }}>
-      <Card className="p-2 shadow-lg w-full" style={{ height: 'calc(97vh - 55px)', maxHeight: 'calc(100vh - 64px)', overflow: 'hidden' }}>
+    <div className="flex flex-col gap-4 py-4 md:gap-6 md:py-6 z-1 w-full" style={{ maxHeight: '100vh', overflow: 'hidden' }} aria-label="Admin Map Page">
+      <Card style={{ overflow: 'hidden', height: 'calc(97vh - 55px)', maxHeight: 'calc(100vh - 64px)' }} className="p-2 shadow-lg w-full">
         <LocateContext.Provider value={{ requestLocate }}>
-          <div className="relative w-full" style={{ maxHeight: '100%', height: '100%' }}>
+          <div style={{ height: '100%', maxHeight: '100%' }} className="relative w-full">
             <WebMapNavs />
             <MapContainer
-              bounds={bounds}
-              zoom={18}
-              maxZoom={20}
+              className="h-full w-full rounded-lg"
+              markerZoomAnimation={true}
               scrollWheelZoom={true}
+              fadeAnimation={false}
               zoomAnimation={true}
               zoomControl={false}
-              markerZoomAnimation={true}
-              fadeAnimation={false}
-              className="h-full w-full rounded-lg"
+              bounds={bounds}
+              maxZoom={20}
+              zoom={18}
             >
 
               <TileLayer
@@ -99,33 +100,33 @@ export default function AdminMapLayout() {
 
               {/* Cemetery Entrance Marker */}
               <Marker
-                position={[CEMETERY_GATE.lat, CEMETERY_GATE.lng]}
                 icon={L.divIcon({
+                  iconSize: [32, 32],
+                  className: 'destination-marker',
                   html: renderToStaticMarkup(
                     <div
                       style={{
-                        background: '#000000',
-                        borderRadius: '50% 50% 50% 0',
-                        boxShadow: '0 0 8px rgba(0,0,0,0.15)',
                         padding: '4px',
+                        background: '#000000',
+                        display: 'inline-block',
                         border: '2px solid #fff',
                         transform: 'rotate(-45deg)',
-                        display: 'inline-block',
+                        borderRadius: '50% 50% 50% 0',
+                        boxShadow: '0 0 8px rgba(0,0,0,0.15)',
                       }}
                     >
                       <GiOpenGate
-                        className="z-999 text-white"
-                        size={16}
-                        strokeWidth={2.5}
                         style={{
                           transform: 'rotate(45deg)',
                         }}
+                        className="z-999 text-white"
+                        strokeWidth={2.5}
+                        size={16}
                       />
                     </div>
                   ),
-                  className: 'destination-marker',
-                  iconSize: [32, 32],
                 })}
+                position={[CEMETERY_GATE.lat, CEMETERY_GATE.lng]}
               >
                 <Popup>
                   <div className="text-center">
@@ -137,33 +138,33 @@ export default function AdminMapLayout() {
 
               {/* Cemetery Exit Marker */}
               <Marker
-                position={[10.248166481872728, 123.79754558858059]}
                 icon={L.divIcon({
+                  iconSize: [32, 32],
+                  className: 'destination-marker',
                   html: renderToStaticMarkup(
                     <div
                       style={{
-                        background: '#000000',
-                        borderRadius: '50% 50% 50% 0',
-                        boxShadow: '0 0 8px rgba(0,0,0,0.15)',
                         padding: '4px',
+                        background: '#000000',
+                        display: 'inline-block',
                         border: '2px solid #fff',
                         transform: 'rotate(-45deg)',
-                        display: 'inline-block',
+                        borderRadius: '50% 50% 50% 0',
+                        boxShadow: '0 0 8px rgba(0,0,0,0.15)',
                       }}
                     >
                       <GiOpenGate
-                        className="z-999 text-white"
-                        size={16}
-                        strokeWidth={2.5}
                         style={{
                           transform: 'rotate(45deg)',
                         }}
+                        className="z-999 text-white"
+                        strokeWidth={2.5}
+                        size={16}
                       />
                     </div>
                   ),
-                  className: 'destination-marker',
-                  iconSize: [32, 32],
                 })}
+                position={[10.248166481872728, 123.79754558858059]}
               >
                 <Popup>
                   <div className="text-center">
@@ -175,33 +176,33 @@ export default function AdminMapLayout() {
 
               {/* Cemetery Chapel Marker */}
               <Marker
-                position={[10.248435228156183, 123.79787795587316]}
                 icon={L.divIcon({
+                  iconSize: [32, 32],
+                  className: 'destination-marker',
                   html: renderToStaticMarkup(
                     <div
                       style={{
-                        background: '#FF9800',
-                        borderRadius: '50% 50% 50% 0',
-                        boxShadow: '0 0 8px rgba(0,0,0,0.15)',
                         padding: '4px',
+                        background: '#FF9800',
+                        display: 'inline-block',
                         border: '2px solid #fff',
                         transform: 'rotate(-45deg)',
-                        display: 'inline-block',
+                        borderRadius: '50% 50% 50% 0',
+                        boxShadow: '0 0 8px rgba(0,0,0,0.15)',
                       }}
                     >
                       <BiSolidChurch
-                        className="z-999 text-white"
-                        size={16}
-                        strokeWidth={2.5}
                         style={{
                           transform: 'rotate(45deg)',
                         }}
+                        className="z-999 text-white"
+                        strokeWidth={2.5}
+                        size={16}
                       />
                     </div>
                   ),
-                  className: 'destination-marker',
-                  iconSize: [32, 32],
                 })}
+                position={[10.248435228156183, 123.79787795587316]}
               >
                 <Popup>
                   <div className="text-center">
@@ -215,6 +216,8 @@ export default function AdminMapLayout() {
                 const statusColor = getStatusColor(marker.plotStatus);
 
                 const circleIcon = L.divIcon({
+                  className: '',
+                  iconSize: [24, 24],
                   html: `<div style="
                 width: 20px;
                 height: 20px;
@@ -223,8 +226,6 @@ export default function AdminMapLayout() {
                 border: 2px solid #fff;
                 box-shadow: 0 0 4px rgba(0,0,0,0.15);
                 "></div>`,
-                  className: '',
-                  iconSize: [24, 24],
                 });
 
                 // 🎨 Category-based background colors for popup headers
@@ -292,7 +293,7 @@ export default function AdminMapLayout() {
                             </>
                           }
                         >
-                          <SinglePlotLocations marker={marker} backgroundColor={backgroundColor} />
+                          <SinglePlotLocations backgroundColor={backgroundColor} marker={marker} />
                         </Suspense>
                       </Popup>
                     )}

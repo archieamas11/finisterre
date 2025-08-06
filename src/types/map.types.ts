@@ -1,53 +1,53 @@
-export type ConvertedMarker = {
+export interface ConvertedMarker {
+  rows: string;
+  block: string;
   plot_id: string;
-  position: [number, number];
+  columns: string;
   location: string;
+  category: string;
   plotStatus: string;
+  label: string | null;
+  file_name?: string[];
+  position: [number, number];
+  file_names_array?: string[];
   dimensions: {
     length: number;
     width: number;
     area: number;
   };
-  rows: string;
-  columns: string;
-  category: string;
-  block: string;
-  label: string | null;
-  file_name?: string[];
-  file_names_array?: string[];
-};
+}
 
-export type plots = {
-  plot_id: string;
-  block: string;
-  category: string;
-  length: string;
-  width: string;
+export interface plots {
   area: string;
   rows: string;
-  columns: string;
-  status: string;
+  block: string;
+  width: string;
   label: string;
-  coordinates: [number, number];
+  length: string;
+  status: string;
+  plot_id: string;
+  columns: string;
+  category: string;
   file_names: string[];
   file_names_array?: string[];
-};
+  coordinates: [number, number];
+}
 
 // 🔧 Map utility functions
 export const convertPlotToMarker = (plot: {
-  plot_id: string;
-  block: string;
+  file_names_array?: string[];
+  label: string | null;
+  file_name?: string[];
+  coordinates: string;
   category: string;
+  plot_id: string;
+  columns: string;
   length: string;
+  status: string;
+  block: string;
   width: string;
   area: string;
   rows: string;
-  columns: string;
-  status: string;
-  label: string | null;
-  coordinates: string;
-  file_name?: string[];
-  file_names_array?: string[];
 }): ConvertedMarker => {
   // 📍 Parse coordinates from database format "lng, lat" to [lat, lng]
   const [lng, lat] = plot.coordinates.split(", ").map(Number);
@@ -79,40 +79,40 @@ export const convertPlotToMarker = (plot: {
   }
 
   return {
-    plot_id: plot.plot_id,
-    position: [lat, lng] as [number, number],
-    location: `Block ${plot.block} • Plot ${plot.plot_id}`,
-    plotStatus: plot.status,
-    dimensions: {
-      length: parseFloat(plot.length),
-      width: parseFloat(plot.width),
-      area: parseFloat(plot.area),
-    },
     rows: plot.rows,
-    columns: plot.columns,
-    category: plot.category,
     block: plot.block,
     label: plot.label,
+    plot_id: plot.plot_id,
+    columns: plot.columns,
+    plotStatus: plot.status,
+    category: plot.category,
+    position: [lat, lng] as [number, number],
+    location: `Block ${plot.block} • Plot ${plot.plot_id}`,
     file_name: fileNames.length > 0 ? fileNames : undefined,
     file_names_array: fileNames.length > 0 ? fileNames : undefined,
+    dimensions: {
+      area: parseFloat(plot.area),
+      width: parseFloat(plot.width),
+      length: parseFloat(plot.length),
+    },
   };
 };
 
 // 🎨 Get background color based on plot category
 export const getCategoryBackgroundColor = (category: string): string => {
   switch (category.toLowerCase()) {
+    case "columbarium":
+      return "#a3a3";
+    case "platinum":
+      return "#d4af37";
+    case "chambers":
+      return "#a3a3";
+    case "diamond":
+      return "#cc6688";
     case "bronze":
       return "#7d7d7d";
     case "silver":
       return "#b00020";
-    case "platinum":
-      return "#d4af37";
-    case "diamond":
-      return "#cc6688";
-    case "chambers":
-      return "#a3a3";
-    case "columbarium":
-      return "#a3a3";
     default:
       return "#6b7280";
   }

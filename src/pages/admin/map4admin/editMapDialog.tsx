@@ -1,46 +1,48 @@
-import { useEditPlots } from '@/hooks/plots-hooks/plot.hooks';
+import { z } from "zod";
+import React from 'react';
+import { toast } from 'sonner';
+import Dropzone from 'react-dropzone';
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { ImageIcon, Trash2, Edit3 } from 'lucide-react';
+
 import type { plots } from "@/types/map.types";
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
+
+import { cn } from '@/lib/utils';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { useForm } from "react-hook-form";
-import { z } from "zod";
-import { zodResolver } from "@hookform/resolvers/zod";
 import { getPlotsCategory } from '@/api/plots.api';
-import React from 'react';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { ImageIcon, Trash2, Edit3 } from 'lucide-react';
-import Dropzone from 'react-dropzone';
-import { cn } from '@/lib/utils';
-import { toast } from 'sonner';
+import { useEditPlots } from '@/hooks/plots-hooks/plot.hooks';
+import { FormControl, FormMessage, FormField, FormLabel, FormItem, Form } from '@/components/ui/form';
+import { SelectContent, SelectTrigger, SelectValue, SelectItem, Select } from '@/components/ui/select';
+import { DialogDescription, DialogContent, DialogHeader, DialogTitle, Dialog } from '@/components/ui/dialog';
 
 // 🧩 Zod schema for form validation
 const editPlotSchema = z.object({
-    category: z.string().min(1, "Category is required"),
-    length: z.coerce.number().positive("Length must be positive"),
-    width: z.coerce.number().positive("Width must be positive"),
-    area: z.coerce.number().positive("Area must be positive"),
-    status: z.string().min(1, "Status is required"),
     label: z.string().optional(),
     file_name: z.array(z.string()).optional(),
+    status: z.string().min(1, "Status is required"),
+    category: z.string().min(1, "Category is required"),
+    area: z.coerce.number().positive("Area must be positive"),
+    width: z.coerce.number().positive("Width must be positive"),
+    length: z.coerce.number().positive("Length must be positive"),
 });
-
-type EditPlotFormValues = z.infer<typeof editPlotSchema>;
 
 interface EditMapDialogProps {
     open: boolean;
     onOpenChange: (open: boolean) => void;
-    plots: Partial<EditPlotFormValues> & {
-        plot_id: string;
-        file_name?: string[];
-        block?: string;
+    plots: {
         coordinates?: [number, number];
-    };
+        file_name?: string[];
+        plot_id: string;
+        block?: string;
+    } & Partial<EditPlotFormValues>;
 }
 
-export default function EditMapDialog({ open, onOpenChange, plots }: EditMapDialogProps) {
-    const { mutateAsync, isPending } = useEditPlots();
+type EditPlotFormValues = z.infer<typeof editPlotSchema>;
+
+export default function EditMapDialog({ open, plots, onOpenChange }: EditMapDialogProps) {
+    const { isPending, mutateAsync } = useEditPlots();
     const [categories, setCategories] = React.useState<plots[]>([]);
     const [plotImages, setPlotImages] = React.useState<string[]>([]);
 
@@ -75,19 +77,19 @@ export default function EditMapDialog({ open, onOpenChange, plots }: EditMapDial
 
     async function handleSubmit(values: EditPlotFormValues) {
         const payload: plots = {
+            rows: '',
+            columns: '',
             plot_id: plots.plot_id,
+            file_names: plotImages, // Use current plotImages state
             block: plots.block || "",
-            category: values.category.trim(),
-            length: values.length.toString(),
-            width: values.width.toString(),
             area: values.area.toString(),
             status: values.status.trim(),
-            label: (values.label ?? "").trim(),
-            coordinates: plots.coordinates || [0, 0],
-            file_names: plotImages, // Use current plotImages state
             file_names_array: plotImages,
-            rows: '',
-            columns: ''
+            width: values.width.toString(),
+            category: values.category.trim(),
+            length: values.length.toString(),
+            label: (values.label ?? "").trim(),
+            coordinates: plots.coordinates || [0, 0]
         };
 
         try {
@@ -108,31 +110,31 @@ export default function EditMapDialog({ open, onOpenChange, plots }: EditMapDial
 
     // 🛠 Ensure initialValues types match schema (numbers for length, width, area)
     const initialValues: EditPlotFormValues = {
-        category: plots.category ?? "",
-        length: Number(plots.length) || 0,
-        width: Number(plots.width) || 0,
-        area: Number(plots.area) || 0,
-        status: plots.status ?? "available",
-        label: plots.label ?? "",
         file_name: plotImages,
+        label: plots.label ?? "",
+        area: Number(plots.area) || 0,
+        category: plots.category ?? "",
+        width: Number(plots.width) || 0,
+        length: Number(plots.length) || 0,
+        status: plots.status ?? "available",
     };
 
     const form = useForm({
-        resolver: zodResolver(editPlotSchema),
-        defaultValues: initialValues,
         mode: "onChange" as const,
+        defaultValues: initialValues,
+        resolver: zodResolver(editPlotSchema),
     });
 
     // 🔄 Reset form when plot data changes
     React.useEffect(() => {
         form.reset({
-            category: plots.category ?? "",
-            length: Number(plots.length) || 0,
-            width: Number(plots.width) || 0,
-            area: Number(plots.area) || 0,
-            status: plots.status ?? "available",
-            label: plots.label ?? "",
             file_name: plotImages,
+            label: plots.label ?? "",
+            area: Number(plots.area) || 0,
+            category: plots.category ?? "",
+            width: Number(plots.width) || 0,
+            length: Number(plots.length) || 0,
+            status: plots.status ?? "available",
         });
     }, [plots, plotImages, form]);
 
@@ -195,7 +197,7 @@ export default function EditMapDialog({ open, onOpenChange, plots }: EditMapDial
     };
 
     return (
-        <Dialog open={open} onOpenChange={onOpenChange}>
+        <Dialog onOpenChange={onOpenChange} open={open}>
             <DialogContent className="lg:max-w-[400px]">
                 <DialogHeader>
                     <DialogTitle>Edit Plot</DialogTitle>
@@ -204,14 +206,14 @@ export default function EditMapDialog({ open, onOpenChange, plots }: EditMapDial
                 <Form {...form}>
                     <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4s">
                         <div className="grid grid-cols-2 gap-4">
-                            <FormField control={form.control} name="category" render={({ field }) => (
+                            <FormField render={({ field }) => (
                                 <FormItem>
                                     <FormLabel>Category<span className="text-red-500">*</span></FormLabel>
                                     <FormControl>
                                         <Select
+                                            defaultValue={field.value || ""}
                                             onValueChange={field.onChange}
                                             value={field.value || ""}
-                                            defaultValue={field.value || ""}
                                         >
                                             <SelectTrigger className="w-full">
                                                 <SelectValue placeholder="Select category" />
@@ -225,7 +227,7 @@ export default function EditMapDialog({ open, onOpenChange, plots }: EditMapDial
                                                     categories
                                                         .filter(category => !!category.category && category.category !== "")
                                                         .map((category, index) => (
-                                                            <SelectItem key={index} value={category.category}>
+                                                            <SelectItem value={category.category} key={index}>
                                                                 {category.category}
                                                             </SelectItem>
                                                         ))
@@ -235,76 +237,74 @@ export default function EditMapDialog({ open, onOpenChange, plots }: EditMapDial
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>
-                            )} />
+                            )} control={form.control} name="category" />
                             <FormField
-                                control={form.control}
-                                name="length"
                                 render={({ field }) => (
                                     <FormItem>
                                         <FormLabel>Length<span className="text-red-500">*</span></FormLabel>
                                         <FormControl>
                                             <Input
-                                                type="number"
-                                                step="any"
-                                                placeholder="Enter length"
                                                 value={String(field.value || "")}
+                                                placeholder="Enter length"
                                                 onChange={field.onChange}
                                                 onBlur={field.onBlur}
                                                 name={field.name}
                                                 ref={field.ref}
+                                                type="number"
+                                                step="any"
                                             />
                                         </FormControl>
                                         <FormMessage />
                                     </FormItem>
                                 )}
+                                control={form.control}
+                                name="length"
                             />
                             <FormField
-                                control={form.control}
-                                name="width"
                                 render={({ field }) => (
                                     <FormItem>
                                         <FormLabel>Width<span className="text-red-500">*</span></FormLabel>
                                         <FormControl>
                                             <Input
-                                                type="number"
-                                                step="any"
-                                                placeholder="Enter width"
                                                 value={String(field.value || "")}
+                                                placeholder="Enter width"
                                                 onChange={field.onChange}
                                                 onBlur={field.onBlur}
                                                 name={field.name}
                                                 ref={field.ref}
+                                                type="number"
+                                                step="any"
                                             />
                                         </FormControl>
                                         <FormMessage />
                                     </FormItem>
                                 )}
+                                control={form.control}
+                                name="width"
                             />
                             <FormField
-                                control={form.control}
-                                name="area"
                                 render={({ field }) => (
                                     <FormItem>
                                         <FormLabel>Area<span className="text-red-500">*</span></FormLabel>
                                         <FormControl>
                                             <Input
-                                                type="number"
-                                                step="any"
-                                                placeholder="Enter area"
                                                 value={String(field.value || "")}
                                                 onChange={field.onChange}
+                                                placeholder="Enter area"
                                                 onBlur={field.onBlur}
                                                 name={field.name}
                                                 ref={field.ref}
+                                                type="number"
+                                                step="any"
                                             />
                                         </FormControl>
                                         <FormMessage />
                                     </FormItem>
                                 )}
+                                control={form.control}
+                                name="area"
                             />
                             <FormField
-                                control={form.control}
-                                name="status"
                                 render={({ field }) => (
                                     <FormItem>
                                         <FormLabel>Status<span className="text-red-500">*</span></FormLabel>
@@ -314,10 +314,10 @@ export default function EditMapDialog({ open, onOpenChange, plots }: EditMapDial
                                         <FormMessage />
                                     </FormItem>
                                 )}
+                                control={form.control}
+                                name="status"
                             />
                             <FormField
-                                control={form.control}
-                                name="label"
                                 render={({ field }) => (
                                     <FormItem>
                                         <FormLabel>Label</FormLabel>
@@ -327,10 +327,10 @@ export default function EditMapDialog({ open, onOpenChange, plots }: EditMapDial
                                         <FormMessage />
                                     </FormItem>
                                 )}
+                                control={form.control}
+                                name="label"
                             />
                             <FormField
-                                control={form.control}
-                                name="file_name"
                                 render={() => (
                                     <FormItem>
                                         <FormLabel>Media (Max 2 images)</FormLabel>
@@ -340,12 +340,12 @@ export default function EditMapDialog({ open, onOpenChange, plots }: EditMapDial
                                                 {plotImages.length > 0 && (
                                                     <div className="grid grid-cols-2 gap-2 justify-between w-full">
                                                         {plotImages.map((imageUrl, index) => (
-                                                            <div key={index} className="relative group w-full">
+                                                            <div className="relative group w-full" key={index}>
                                                                 <div className="w-full h-30 flex justify-between">
                                                                     <img
-                                                                        src={imageUrl}
-                                                                        alt={`Plot image ${index + 1}`}
                                                                         className="border border-border w-full h-full rounded-md object-cover"
+                                                                        alt={`Plot image ${index + 1}`}
+                                                                        src={imageUrl}
                                                                     />
                                                                     {/* 🎯 Hover overlay with actions */}
                                                                     <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity rounded-md flex items-center justify-center gap-2">
@@ -359,13 +359,13 @@ export default function EditMapDialog({ open, onOpenChange, plots }: EditMapDial
                                                                             accept={{
                                                                                 "image/*": [".png", ".jpg", ".jpeg", ".webp"]
                                                                             }}
-                                                                            maxFiles={1}
                                                                             noClick={false}
+                                                                            maxFiles={1}
                                                                         >
                                                                             {({ getRootProps, getInputProps }) => (
                                                                                 <button
-                                                                                    type="button"
                                                                                     className="p-2 bg-blue-600 text-white rounded-full hover:bg-blue-700 transition-colors"
+                                                                                    type="button"
                                                                                     {...getRootProps()}
                                                                                 >
                                                                                     <input {...getInputProps()} />
@@ -374,9 +374,9 @@ export default function EditMapDialog({ open, onOpenChange, plots }: EditMapDial
                                                                             )}
                                                                         </Dropzone>
                                                                         <button
-                                                                            type="button"
                                                                             className="p-2 bg-red-600 text-white rounded-full hover:bg-red-700 transition-colors"
-                                                                            onClick={() => handleImageRemove(index)}
+                                                                            onClick={() => { handleImageRemove(index); }}
+                                                                            type="button"
                                                                         >
                                                                             <Trash2 className="h-4 w-4" />
                                                                         </button>
@@ -403,18 +403,18 @@ export default function EditMapDialog({ open, onOpenChange, plots }: EditMapDial
                                                     >
                                                         {({
                                                             getRootProps,
-                                                            getInputProps,
                                                             isDragActive,
                                                             isDragAccept,
                                                             isDragReject,
+                                                            getInputProps,
                                                         }) => (
                                                             <div
                                                                 {...getRootProps()}
                                                                 className={cn(
                                                                     "w-full border-2 border-dashed flex items-center justify-center aspect-square rounded-md focus:outline-none focus:border-primary cursor-pointer hover:bg-gray-50 transition-colors",
                                                                     {
-                                                                        "border-primary bg-blue-50": isDragActive && isDragAccept,
                                                                         "border-red-500 bg-red-50": isDragActive && isDragReject,
+                                                                        "border-primary bg-blue-50": isDragActive && isDragAccept,
                                                                     }
                                                                 )}
                                                             >
@@ -447,9 +447,11 @@ export default function EditMapDialog({ open, onOpenChange, plots }: EditMapDial
                                         <FormMessage />
                                     </FormItem>
                                 )}
+                                control={form.control}
+                                name="file_name"
                             />
                         </div>
-                        <Button type="submit" className="w-full mt-10" disabled={isPending}>
+                        <Button className="w-full mt-10" disabled={isPending} type="submit">
                             {isPending ? "Saving..." : "Save"}
                         </Button>
                     </form>

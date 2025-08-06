@@ -8,11 +8,11 @@ const MapLibre = lazy(() => import("@/components/webmap/testing/MapLibre"));
 const AdminControlPanel = lazy(() => import("@/pages/admin/control/AdminControlPanel"));
 const DashboardLayout = lazy(() => import("@/components/layout/DashboardLayout"));
 
-import ForgotPassword from "@/auth/ForgotPassword";
+import LoginV2 from "@/auth/page";
 import Logout from "@/auth/Logout";
 import Layout from "@/auth/layout";
-import LoginV2 from "@/auth/page";
 import ResetPassword from "@/auth/ResetPassword";
+import ForgotPassword from "@/auth/ForgotPassword";
 
 const AdminDashboard = lazy(() => import("@/pages/admin/home/AdminDashboard"));
 const UserDashboard = lazy(() => import("@/pages/user/contents/UserDashboard"));

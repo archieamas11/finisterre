@@ -1,26 +1,26 @@
-import { useState, useRef, useCallback, useEffect } from "react";
 import L from "leaflet";
+import { useCallback, useEffect, useState, useRef } from "react";
 
 // Route interface
 export interface RouteData {
-  from: [number, number];
-  to: [number, number];
-  polyline: [number, number][];
   distance?: number;
   duration?: number;
+  to: [number, number];
+  from: [number, number];
+  polyline: [number, number][];
 }
 
 // Routing configuration
 const ROUTING_CONFIG = {
-  CEMETERY_GATE: L.latLng(10.248107820799307, 123.797607547609545),
   DRIFT_THRESHOLD: 30, // meters
-  APIS: {
-    PUBLIC: "https://router.project-osrm.org/route/v1/driving",
-    PRIVATE: "https://finisterreosm-production.up.railway.app/route/v1/foot",
-  },
+  CEMETERY_GATE: L.latLng(10.248107820799307, 123.797607547609545),
   SPEEDS: {
     WALKING: 1.4, // m/s
     DRIVING: 13.89, // m/s (~50 km/h)
+  },
+  APIS: {
+    PUBLIC: "https://router.project-osrm.org/route/v1/driving",
+    PRIVATE: "https://finisterreosm-production.up.railway.app/route/v1/foot",
   },
 };
 
@@ -57,7 +57,7 @@ export function useRouting() {
     async (
       from: [number, number],
       to: [number, number],
-      type: "public" | "private"
+      type: "private" | "public"
     ): Promise<{
       polyline: [number, number][];
       distance: number;
@@ -117,8 +117,8 @@ export function useRouting() {
             : ROUTING_CONFIG.SPEEDS.DRIVING;
 
         return {
-          polyline: [from, to],
           distance,
+          polyline: [from, to],
           duration: distance / speed,
         };
       }
@@ -206,9 +206,9 @@ export function useRouting() {
           // Could implement fallback strategies here
         },
         {
-          enableHighAccuracy: true,
           timeout: 10000,
           maximumAge: 2000, // More frequent updates for live tracking
+          enableHighAccuracy: true,
         }
       );
     },
@@ -227,7 +227,7 @@ export function useRouting() {
         Math.cos(lat1) * Math.sin(lat2) -
         Math.sin(lat1) * Math.cos(lat2) * Math.cos(dLon);
 
-      let bearing = (Math.atan2(y, x) * 180) / Math.PI;
+      const bearing = (Math.atan2(y, x) * 180) / Math.PI;
       return (bearing + 360) % 360; // Normalize to 0-360
     },
     []
@@ -320,8 +320,8 @@ export function useRouting() {
           // User is near the gate, skip public route
           console.log("📍 User near gate, using walking route only");
           publicData = {
-            polyline: [userPos, gatePos],
             distance: distanceToGate,
+            polyline: [userPos, gatePos],
             duration: distanceToGate / ROUTING_CONFIG.SPEEDS.WALKING,
           };
           privateData = await fetchRoutePolyline(
@@ -332,7 +332,7 @@ export function useRouting() {
         } else if (distanceToDestination < distanceToGate) {
           // User is already inside, use walking route only
           console.log("📍 User inside cemetery, using walking route only");
-          publicData = { polyline: [], distance: 0, duration: 0 };
+          publicData = { distance: 0, duration: 0, polyline: [] };
           privateData = await fetchRoutePolyline(
             userPos,
             destination,
@@ -366,8 +366,8 @@ export function useRouting() {
         // Update routes
         if (publicData.polyline.length > 0) {
           setPublicRoute({
-            from: userPos,
             to: gatePos,
+            from: userPos,
             ...publicData,
           });
         } else {
@@ -375,9 +375,9 @@ export function useRouting() {
         }
 
         setPrivateRoute({
+          to: destination,
           from:
             privateData.polyline.length > 0 ? privateData.polyline[0] : userPos,
-          to: destination,
           ...privateData,
         });
         lastUserPositionRef.current = userLatLng;
@@ -472,23 +472,23 @@ export function useRouting() {
     // State
     publicRoute,
     privateRoute,
-    isRecalculating,
     totalDistance,
     totalDuration,
-
-    // Actions
-    startNavigation,
     stopNavigation,
-    startLiveTracking,
-    stopLiveTracking,
-    setPendingDestination,
-    handlePendingDestination,
-    updateRouteFromCurrentPosition, // New dynamic update function
 
     // Utilities
     formatDistance,
     formatDuration,
+    isRecalculating,
+    // Actions
+    startNavigation,
+    stopLiveTracking,
     calculateBearing,
+    startLiveTracking,
+
+    setPendingDestination,
+    handlePendingDestination,
+    updateRouteFromCurrentPosition, // New dynamic update function
 
     // Constants
     CEMETERY_GATE: ROUTING_CONFIG.CEMETERY_GATE,

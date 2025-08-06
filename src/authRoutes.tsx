@@ -1,9 +1,9 @@
 import React from "react";
-import { Navigate, useLocation } from "react-router-dom";
+import { useLocation, Navigate } from "react-router-dom";
 
 interface AuthState {
-  isAuthenticated: boolean;
   isAdmin: boolean;
+  isAuthenticated: boolean;
 }
 
 export function useAuth(): AuthState {
@@ -12,8 +12,8 @@ export function useAuth(): AuthState {
     const token = localStorage.getItem("token");
     const isAdmin = localStorage.getItem("isAdmin") === "1";
     return {
-      isAuthenticated: !!token,
       isAdmin,
+      isAuthenticated: !!token,
     };
   });
 
@@ -23,12 +23,12 @@ export function useAuth(): AuthState {
       const token = localStorage.getItem("token");
       const isAdmin = localStorage.getItem("isAdmin") === "1";
       setAuth({
-        isAuthenticated: !!token,
         isAdmin,
+        isAuthenticated: !!token,
       });
     };
     window.addEventListener("storage", handleStorage);
-    return () => window.removeEventListener("storage", handleStorage);
+    return () => { window.removeEventListener("storage", handleStorage); };
   }, []);
 
   return auth;
@@ -38,25 +38,25 @@ export const RequireAuth = ({ children }: { children: React.ReactNode }) => {
   const { isAuthenticated } = useAuth();
   const location = useLocation();
   if (!isAuthenticated) {
-    return <Navigate to="/login" state={{ from: location }} replace />;
+    return <Navigate state={{ from: location }} to="/login" replace />;
   }
   return <>{children}</>;
 };
 
 export const RequireAdmin = ({ children }: { children: React.ReactNode }) => {
-  const { isAuthenticated, isAdmin } = useAuth();
+  const { isAdmin, isAuthenticated } = useAuth();
   const location = useLocation();
   if (!isAuthenticated || !isAdmin) {
-    return <Navigate to="/unauthorized" state={{ from: location }} replace />;
+    return <Navigate state={{ from: location }} to="/unauthorized" replace />;
   }
   return <>{children}</>;
 };
 
 export const RequireUser = ({ children }: { children: React.ReactNode }) => {
-  const { isAuthenticated, isAdmin } = useAuth();
+  const { isAdmin, isAuthenticated } = useAuth();
   const location = useLocation();
   if (!isAuthenticated || isAdmin) {
-    return <Navigate to="/unauthorized" state={{ from: location }} replace />;
+    return <Navigate state={{ from: location }} to="/unauthorized" replace />;
   }
   return <>{children}</>;
 };

@@ -1,4 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
+
 import { getCustomerById, getCustomers } from "@/api/customer.api";
 
 export function useGetCustomers() {
@@ -13,8 +14,8 @@ export function useGetCustomers() {
 
 export function useGetCustomersId(id: string) {
   return useQuery({
+    enabled: !!id,
     queryKey: ["customer", id],
     queryFn: () => getCustomerById(id),
-    enabled: !!id,
   });
 }

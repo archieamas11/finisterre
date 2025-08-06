@@ -1,25 +1,28 @@
-import { FaSkull } from "react-icons/fa";
-import { BsFillPatchCheckFill } from "react-icons/bs";
-import { ImLibrary } from "react-icons/im";
-import { useState } from 'react';
-import { Button } from '@/components/ui/button';
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { Badge } from '@/components/ui/badge';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { User, Calendar, Crown, Phone, Mail, X, Save } from 'lucide-react';
-import { useNichesByPlot } from '@/hooks/plots-hooks/niche.hooks';
-import { useQueryClient } from '@tanstack/react-query';
-import { useCustomers } from '@/hooks/customer-hooks/customer.hooks';
-import { createLotOwner } from '@/api/lotOwner.api';
-import type { ConvertedMarker } from '@/types/map.types';
-import type { nicheData } from '@/types/niche.types';
-import { isAdmin } from '@/utils/Auth.utils';
-import { FaDirections } from "react-icons/fa";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command";
-import { Check, ChevronsUpDown } from "lucide-react";
-import { cn } from "@/lib/utils";
 import { toast } from "sonner";
+import { useState } from 'react';
+import { FaSkull } from "react-icons/fa";
+import { ImLibrary } from "react-icons/im";
+import { FaDirections } from "react-icons/fa";
+import { ChevronsUpDown, Check } from "lucide-react";
+import { BsFillPatchCheckFill } from "react-icons/bs";
+import { useQueryClient } from '@tanstack/react-query';
+import { Calendar, Crown, Phone, User, Mail, Save, X } from 'lucide-react';
+
+import type { nicheData } from '@/types/niche.types';
+import type { ConvertedMarker } from '@/types/map.types';
+
+import { cn } from "@/lib/utils";
+import { isAdmin } from '@/utils/Auth.utils';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { createLotOwner } from '@/api/lotOwner.api';
+import { useNichesByPlot } from '@/hooks/plots-hooks/niche.hooks';
+import { useCustomers } from '@/hooks/customer-hooks/customer.hooks';
+import { CardContent, CardHeader, CardTitle, Card } from '@/components/ui/card';
+import { PopoverContent, PopoverTrigger, Popover } from "@/components/ui/popover";
+import { DialogDescription, DialogContent, DialogHeader, DialogTitle, Dialog } from '@/components/ui/dialog';
+import { CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList, Command } from "@/components/ui/command";
+import { Skeleton } from "@/components/ui/skeleton";
 
 interface ColumbariumPopupProps {
     marker: ConvertedMarker;
@@ -27,7 +30,6 @@ interface ColumbariumPopupProps {
 }
 
 export default function ColumbariumPopup({ marker, onDirectionClick }: ColumbariumPopupProps) {
-    // � Fetch customers data using React Query
     const { data: customersData, isLoading: isLoadingCustomers } = useCustomers();
     const customers = customersData || [];
 
@@ -67,9 +69,9 @@ export default function ColumbariumPopup({ marker, onDirectionClick }: Columbari
 
         setIsSaving(true);
         const lotOwnerData = {
-            customer_id: selectedCustomer,
+            selected: 1,
             plot_id: marker.plot_id,
-            selected: 1, // 🎯 Assuming 1 means selected/reserved
+            customer_id: selectedCustomer,
             niche_number: selectedNiche.niche_number,
         };
 
@@ -96,9 +98,9 @@ export default function ColumbariumPopup({ marker, onDirectionClick }: Columbari
 
     // 🔄 Fetch niche data using React Query
     const {
-        data: nicheData = [],
         error,
         isLoading,
+        data: nicheData = [],
     } = useNichesByPlot(marker.plot_id, rows, cols);
 
     const handleNicheClick = (niche: nicheData) => {
@@ -113,10 +115,10 @@ export default function ColumbariumPopup({ marker, onDirectionClick }: Columbari
             <div className="p-4 text-red-600">
                 <p>Error: {error.message || 'Failed to load niche data'}</p>
                 <Button
-                    onClick={() => window.location.reload()}
+                    onClick={() => { window.location.reload(); }}
                     variant="outline"
-                    size="sm"
                     className="mt-2"
+                    size="sm"
                 >
                     Retry
                 </Button>
@@ -126,9 +128,16 @@ export default function ColumbariumPopup({ marker, onDirectionClick }: Columbari
 
     if (isLoading) {
         return (
-            <div className="col-span-full text-center text-gray-500">
-                Loading niches...
-            </div>
+            <>
+                {/* Title skeleton */}
+                <Skeleton className="w-110 h-[24px] rounded mb-2" />
+                {/* Subtitle skeleton */}
+                <Skeleton className="w-110 h-[18px] rounded mb-2" />
+                {/* Grid skeleton */}
+                <Skeleton className="w-110 h-[200px] rounded mb-3" />
+                {/* Legend skeleton */}
+                <Skeleton className="w-110 h-[36px] rounded" />
+            </>
         );
     }
 
@@ -149,9 +158,9 @@ export default function ColumbariumPopup({ marker, onDirectionClick }: Columbari
                 {!isAdmin() && (
                     <Button
                         className="h-12 w-12 flex justify-center items-center rounded-full shadow-md transition-colors p-0"
+                        style={{ minWidth: '2rem', minHeight: '2rem' }}
                         onClick={onDirectionClick}
                         variant="secondary"
-                        style={{ minWidth: '2rem', minHeight: '2rem' }}
                     >
                         <FaDirections className="text-white text-base" />
                     </Button>
@@ -161,17 +170,17 @@ export default function ColumbariumPopup({ marker, onDirectionClick }: Columbari
             <div className="mb-3">
                 <h4 className="text-sm font-medium mb-2 text-secondary-foreground border rounded-lg bg-background dark:bg-muted p-3">Niche Layout:</h4>
                 <div
-                    className="grid gap-1 border rounded p-2 bg-card w-105"
                     style={{
-                        gridTemplateColumns: `repeat(${Math.min(cols, 9)}, minmax(0, 1fr))`,
                         fontSize: '20px',
                         scrollbarWidth: 'thin',
+                        gridTemplateColumns: `repeat(${Math.min(cols, 9)}, minmax(0, 1fr))`,
                     }}
+                    className="grid gap-1 border rounded p-2 bg-card w-105"
                 >
                     {nicheData.map((niche, index) => (
                         <button
                             key={`${niche.lot_id}-${niche.row}-${niche.col}-${index}`}
-                            {...(isAdmin() ? { onClick: () => handleNicheClick(niche) } : {})}
+                            onClick={() => handleNicheClick(niche)}
                             className={` aspect-square border rounded text-center p-1 transition-all duration-200 cursor-pointer
                                     flex flex-col items-center justify-center min-h-[40px] hover:scale-105 hover:shadow-sm
                                     ${getNicheStatusStyle(niche.niche_status)}
@@ -242,14 +251,14 @@ export default function ColumbariumPopup({ marker, onDirectionClick }: Columbari
                         <div className="grid grid-cols-2 gap-2 mt-5">
                             {images.map((imageUrl, idx) => (
                                 <img
-                                    key={idx}
-                                    src={imageUrl}
-                                    alt={`Plot media ${idx + 1}`}
-                                    className="w-full h-30 object-cover rounded hover:transform hover:scale-105 transition-transform duration-200"
                                     onError={(e) => {
                                         console.log("🖼️ Image failed to load:", imageUrl);
                                         e.currentTarget.style.display = 'none';
                                     }}
+                                    className="w-full h-30 object-cover rounded hover:transform hover:scale-105 transition-transform duration-200"
+                                    alt={`Plot media ${idx + 1}`}
+                                    src={imageUrl}
+                                    key={idx}
                                 />
                             ))}
                         </div>
@@ -262,7 +271,15 @@ export default function ColumbariumPopup({ marker, onDirectionClick }: Columbari
             })()}
 
             {/* 🔍 Niche Detail Dialog */}
-            <Dialog open={isDetailOpen} onOpenChange={setIsDetailOpen}>
+            <Dialog
+                open={isDetailOpen}
+                onOpenChange={(open) => {
+                    setIsDetailOpen(open);
+                    if (!open) {
+                        handleCancelReservation();
+                    }
+                }}
+            >
                 <DialogContent className="max-w-md">
                     <DialogHeader>
                         <DialogTitle className="flex items-center gap-2">
@@ -357,32 +374,35 @@ export default function ColumbariumPopup({ marker, onDirectionClick }: Columbari
                                     </Card>
 
                                     {/* Action buttons for available niches */}
-                                    <div className="flex gap-2">
-                                        <Button
-                                            size="sm"
-                                            className="flex-1"
-                                            onClick={() => setShowCustomerCombo(true)}
-                                        >
-                                            Reserve
-                                        </Button>
-                                    </div>
+                                    {!showCustomerCombo && (
+                                        <div className="flex gap-2">
+                                            <Button
+                                                onClick={() => setShowCustomerCombo(true)}
+                                                className="flex-1"
+                                                size="sm"
+                                            >
+                                                Reserve
+                                            </Button>
+                                        </div>
+                                    )}
 
                                     {/* Customer combobox shown when Reserve is clicked */}
                                     {showCustomerCombo && (
-                                        <div className="mt-4 p-4 border rounded-lg bg-muted/50">
+                                        <div
+                                            className="mt-4 p-4 border rounded-lg bg-muted/50">
                                             <h4 className="font-medium mb-3 text-sm text-muted-foreground">
                                                 Select Customer for Reservation
                                             </h4>
 
                                             {!isReservationStep ? (
-                                                <Popover open={comboOpen} onOpenChange={setComboOpen}>
+                                                <Popover onOpenChange={setComboOpen} open={comboOpen}>
                                                     <PopoverTrigger asChild>
                                                         <Button
-                                                            variant="outline"
-                                                            role="combobox"
-                                                            aria-expanded={comboOpen}
                                                             className="w-full justify-between"
                                                             disabled={isLoadingCustomers}
+                                                            aria-expanded={comboOpen}
+                                                            variant="outline"
+                                                            role="combobox"
                                                         >
                                                             {selectedCustomer
                                                                 ? (() => {
@@ -393,7 +413,7 @@ export default function ColumbariumPopup({ marker, onDirectionClick }: Columbari
                                                             <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                                                         </Button>
                                                     </PopoverTrigger>
-                                                    <PopoverContent className="w-full lg:w-80 p-0">
+                                                    <PopoverContent className="w-107 p-0">
                                                         <Command>
                                                             <CommandInput placeholder="Search customer..." className="h-9" />
                                                             <CommandList>
@@ -403,9 +423,9 @@ export default function ColumbariumPopup({ marker, onDirectionClick }: Columbari
                                                                 <CommandGroup>
                                                                     {customers.map((customer: any) => (
                                                                         <CommandItem
-                                                                            key={customer.customer_id}
                                                                             value={`${customer.first_name} ${customer.last_name} ${customer.customer_id}`}
-                                                                            onSelect={() => handleCustomerSelect(customer.customer_id)}
+                                                                            onSelect={() => { handleCustomerSelect(customer.customer_id); }}
+                                                                            key={customer.customer_id}
                                                                         >
                                                                             {customer.first_name} {customer.last_name} | ID: {customer.customer_id}
                                                                             <Check
@@ -436,20 +456,23 @@ export default function ColumbariumPopup({ marker, onDirectionClick }: Columbari
 
                                                     <div className="flex gap-2">
                                                         <Button
-                                                            variant="outline"
-                                                            size="sm"
-                                                            onClick={handleCancelReservation}
+                                                            onClick={() => {
+                                                                handleCancelReservation();
+                                                                setShowCustomerCombo(false);
+                                                            }}
                                                             disabled={isSaving}
                                                             className="flex-1"
+                                                            variant="outline"
+                                                            size="sm"
                                                         >
                                                             <X className="h-4 w-4 mr-1" />
                                                             Cancel
                                                         </Button>
                                                         <Button
-                                                            size="sm"
                                                             onClick={handleSaveReservation}
                                                             disabled={isSaving}
                                                             className="flex-1"
+                                                            size="sm"
                                                         >
                                                             <Save className="h-4 w-4 mr-1" />
                                                             {isSaving ? "Saving..." : "Save"}
@@ -466,7 +489,7 @@ export default function ColumbariumPopup({ marker, onDirectionClick }: Columbari
                             {/* Action buttons for reserved niches */}
                             {selectedNiche.niche_status === 'reserved' && (
                                 <div className="flex gap-2">
-                                    <Button size="sm" className="flex-1">
+                                    <Button className="flex-1" size="sm">
                                         Add Record
                                     </Button>
                                 </div>

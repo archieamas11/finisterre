@@ -1,6 +1,7 @@
+import { toast } from "sonner";
 import React, { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { toast } from "sonner";
+
 import { logout } from "@/utils/Auth.utils";
 import SpinnerCircle4 from "@/components/ui/spinner-10";
 
@@ -20,7 +21,7 @@ const Logout: React.FC = () => {
     if (!loading) return null;
 
     return (
-        <div className="flex items-center justify-center h-full" role="status" aria-live="polite">
+        <div className="flex items-center justify-center h-full" aria-live="polite" role="status">
             <SpinnerCircle4 />
         </div>
     );
