@@ -229,3 +229,10 @@
 .leaflet-container a.leaflet-popup-close-button {
   display: none;
 }
+
+.bg-gradient-u {
+  background: radial-gradient(ellipse at bottom,
+      theme('colors.background') 0%,
+      theme('colors.background / 0.6') 50%,
+      transparent 75%);
+}

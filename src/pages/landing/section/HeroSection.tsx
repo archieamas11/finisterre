@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 
 export default function HeroSection() {
   return (
-    <main className="relative mb-16 flex min-h-[100vh] flex-1 items-center justify-center overflow-hidden pt-24">
+    <main className="relative mb-16 flex min-h-[100vh] flex-1 items-center justify-center overflow-hidden pt-15">
       {/* Video Background */}
       <div className="absolute inset-0 z-0 overflow-hidden">
         <div className="absolute inset-0">
@@ -92,7 +92,9 @@ export default function HeroSection() {
               <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
             </Link>
           </Button>
-          <Button
+
+          {/* Maplibre test map */}
+          {/* <Button
             className="group from-chart-4 to-chart-5 hover:from-chart-4 hover:to-chart-5 text-foreground dark:text-accent relative overflow-hidden rounded-full border-0 bg-gradient-to-r px-8 py-4 font-semibold shadow-2xl transition-all duration-300 hover:scale-105 hover:shadow-blue-500/25"
             size={"lg"}
           >
@@ -105,7 +107,7 @@ export default function HeroSection() {
               Explore Map Libre
               <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
             </Link>
-          </Button>
+          </Button> */}
 
           {/* Secondary CTA */}
           <Button
@@ -119,24 +121,6 @@ export default function HeroSection() {
               Our Story
             </Link>
           </Button>
-        </div>
-
-        {/* Trust indicators */}
-        <div className="mt-16 flex justify-center">
-          <div className="flex items-center gap-8 text-sm text-white/60">
-            <div className="flex items-center gap-2">
-              <div className="h-2 w-2 animate-pulse rounded-full bg-green-400"></div>
-              <span>Sacred & Peaceful</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <div className="h-2 w-2 animate-pulse rounded-full bg-blue-400 delay-300"></div>
-              <span>Beautifully Designed</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <div className="h-2 w-2 animate-pulse rounded-full bg-purple-400 delay-700"></div>
-              <span>Meaningful Journey</span>
-            </div>
-          </div>
         </div>
       </div>
 
