@@ -41,48 +41,48 @@ const services: {
   title: string;
   href: string;
 }[] = [
-  {
-    icon: LeafIcon,
-    title: "Memorial Plots",
-    href: "/services/memorial-plots",
-    description:
-      "Beautifully landscaped plots for honoring your loved ones in a serene environment.",
-  },
-  {
-    icon: CalendarIcon,
-    title: "Event Planning",
-    href: "/services/event-planning",
-    description:
-      "Custom memorial services and celebrations of life tailored to your family's needs.",
-  },
-  {
-    icon: LeafIcon,
-    title: "Garden Maintenance",
-    href: "/services/garden-maintenance",
-    description:
-      "Professional care for memorial gardens to keep them pristine year-round.",
-  },
-  {
-    icon: UsersIcon,
-    title: "Family Services",
-    href: "/services/family-services",
-    description: "Special packages for families with multiple memorial needs.",
-  },
-  {
-    icon: HeartIcon,
-    title: "Custom Memorials",
-    href: "/services/custom-memorials",
-    description:
-      "Personalized monuments and markers to celebrate unique lives.",
-  },
-  {
-    icon: MapPinIcon,
-    title: "Virtual Tours",
-    href: "/services/virtual-tours",
-    description:
-      "Explore our memorial park from anywhere with our 360° virtual tour.",
-  },
-];
+    {
+      icon: LeafIcon,
+      title: "Memorial Plots",
+      href: "/services/memorial-plots",
+      description:
+        "Beautifully landscaped plots for honoring your loved ones in a serene environment.",
+    },
+    {
+      icon: CalendarIcon,
+      title: "Event Planning",
+      href: "/services/event-planning",
+      description:
+        "Custom memorial services and celebrations of life tailored to your family's needs.",
+    },
+    {
+      icon: LeafIcon,
+      title: "Garden Maintenance",
+      href: "/services/garden-maintenance",
+      description:
+        "Professional care for memorial gardens to keep them pristine year-round.",
+    },
+    {
+      icon: UsersIcon,
+      title: "Family Services",
+      href: "/services/family-services",
+      description: "Special packages for families with multiple memorial needs.",
+    },
+    {
+      icon: HeartIcon,
+      title: "Custom Memorials",
+      href: "/services/custom-memorials",
+      description:
+        "Personalized monuments and markers to celebrate unique lives.",
+    },
+    {
+      icon: MapPinIcon,
+      title: "Virtual Tours",
+      href: "/services/virtual-tours",
+      description:
+        "Explore our memorial park from anywhere with our 360° virtual tour.",
+    },
+  ];
 
 // Sample FAQs data
 const faqs: {
@@ -91,43 +91,43 @@ const faqs: {
   title: string;
   href: string;
 }[] = [
-  {
-    icon: ClockIcon,
-    title: "Visiting Hours",
-    href: "/faqs/visiting-hours",
-    description: "What are the park's opening and closing times?",
-  },
-  {
-    icon: CalendarIcon,
-    title: "Reservation Process",
-    href: "/faqs/reservation-process",
-    description: "How to book a memorial plot or service?",
-  },
-  {
-    icon: LeafIcon,
-    title: "Maintenance Policy",
-    href: "/faqs/maintenance-policy",
-    description: "How is the garden maintained and cared for?",
-  },
-  {
-    icon: UsersIcon,
-    title: "Pet Policy",
-    href: "/faqs/pet-policy",
-    description: "Are pets allowed in the memorial park?",
-  },
-  {
-    icon: PhoneIcon,
-    title: "Contact Us",
-    href: "/faqs/contact-us",
-    description: "How to reach our customer service team?",
-  },
-  {
-    icon: ShieldIcon,
-    title: "Privacy & Security",
-    href: "/faqs/privacy-security",
-    description: "How do we protect visitor information?",
-  },
-];
+    {
+      icon: ClockIcon,
+      title: "Visiting Hours",
+      href: "/faqs/visiting-hours",
+      description: "What are the park's opening and closing times?",
+    },
+    {
+      icon: CalendarIcon,
+      title: "Reservation Process",
+      href: "/faqs/reservation-process",
+      description: "How to book a memorial plot or service?",
+    },
+    {
+      icon: LeafIcon,
+      title: "Maintenance Policy",
+      href: "/faqs/maintenance-policy",
+      description: "How is the garden maintained and cared for?",
+    },
+    {
+      icon: UsersIcon,
+      title: "Pet Policy",
+      href: "/faqs/pet-policy",
+      description: "Are pets allowed in the memorial park?",
+    },
+    {
+      icon: PhoneIcon,
+      title: "Contact Us",
+      href: "/faqs/contact-us",
+      description: "How to reach our customer service team?",
+    },
+    {
+      icon: ShieldIcon,
+      title: "Privacy & Security",
+      href: "/faqs/privacy-security",
+      description: "How do we protect visitor information?",
+    },
+  ];
 
 // Mobile menu item component
 const MobileMenuItem = ({
@@ -316,10 +316,10 @@ export function NavigationMenuSection() {
 
       {/* Mobile Navigation */}
       <div className="w-full md:hidden">
-        <div className="flex items-center justify-end gap-2 p-2">
+        <div className="flex items-center gap-2 p-2 py-8 lg:py-0">
           <Sheet onOpenChange={setIsOpen} open={isOpen}>
             <SheetTrigger asChild>
-              <Button className="h-10 w-10" variant="ghost" size="icon">
+              <Button className="h-10 w-10 absolute left-12" variant="ghost" size="icon">
                 <MenuIcon className="h-6 w-6" />
                 <span className="sr-only">Toggle menu</span>
               </Button>

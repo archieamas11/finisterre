@@ -16,11 +16,10 @@ export default function HeroSection() {
             autoPlay
             muted
             loop
-            controls
-            preload="metadata"
+            preload="auto"
           >
             <source
-              src="C:\Users\Administrator\Downloads\Finisterre-Masterplan-Actual-Development.mp4"
+              src="https://finisterre.ph/wp-content/uploads/2023/09/Finisterre-Masterplan-Actual-Development.mp4"
               type="video/mp4"
             />
             Your browser does not support the video tag.
