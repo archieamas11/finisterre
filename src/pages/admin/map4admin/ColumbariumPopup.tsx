@@ -1,9 +1,8 @@
 import { toast } from "sonner";
 import { useState } from "react";
-import { FaSkull } from "react-icons/fa";
 import { ImLibrary } from "react-icons/im";
 import { FaDirections } from "react-icons/fa";
-import { ChevronsUpDown, Check } from "lucide-react";
+import { ChevronsUpDown, Check, Heart } from "lucide-react";
 import { BsFillPatchCheckFill } from "react-icons/bs";
 import { useQueryClient } from "@tanstack/react-query";
 import { Calendar, Crown, Phone, User, Mail, Save, X } from "lucide-react";
@@ -41,6 +40,7 @@ import {
 } from "@/components/ui/command";
 import { Skeleton } from "@/components/ui/skeleton";
 import CreateDeceased from "./columbarium-dialogs/CreateDeceasedPage";
+import { CopyButton } from "@/components/ui/shadcn-io/copy-button";
 
 interface ColumbariumPopupProps {
   marker: ConvertedMarker;
@@ -340,36 +340,34 @@ export default function ColumbariumPopup({
               {/* Owner Information */}
               {selectedNiche.owner && (
                 <Card>
-                  <CardHeader className="pb-2">
-                    <CardTitle className="flex items-center gap-2 text-sm">
-                      <User className="h-4 w-4" />
+                  <CardHeader className="pb-3">
+                    <CardTitle className="flex items-center gap-2 text-base font-semibold text-primary">
+                      <User className="h-4 w-4 text-primary" />
                       Owner Information
                     </CardTitle>
                   </CardHeader>
-                  <CardContent className="space-y-2 pt-0">
-                    <div className="flex items-center gap-2">
-                      <User className="h-3 w-3 text-gray-500" />
-                      <span className="text-sm">
-                        {selectedNiche.lot_id}
-                      </span>
+                  <CardContent className="pt-4 space-y-3">
+                    <div className="flex items-start gap-3">
+                      <div className="">
+                        <div className="h-10 w-10 rounded-full bg-accent flex items-center justify-center">
+                          <User className="h-5 w-5 text-accent-foreground" />
+                        </div>
+                      </div>
+                      <div className="space-y-0">
+                        <p className="font-medium">{selectedNiche.owner.name}</p>
+                        <p className="text-xs text-gray-500">LOT ID: {selectedNiche.lot_id}</p>
+                      </div>
                     </div>
-                    <div className="flex items-center gap-2">
-                      <User className="h-3 w-3 text-gray-500" />
-                      <span className="text-sm">
-                        {selectedNiche.owner.name}
-                      </span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <Phone className="h-3 w-3 text-gray-500" />
-                      <span className="text-sm">
-                        {selectedNiche.owner.phone}
-                      </span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <Mail className="h-3 w-3 text-gray-500" />
-                      <span className="text-sm">
-                        {selectedNiche.owner.email}
-                      </span>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
+                      <div className="flex items-center gap-2 p-2 rounded-lg bg-accent">
+                        <Phone className="h-4 w-4 text-accent-foreground" />
+                        <span className="text-xs text-accent-foreground">{selectedNiche.owner.phone}</span>
+                      </div>
+                      <div className="flex items-center gap-2 p-2 rounded-lg bg-accent">
+                        <Mail className="h-4 w-4 text-accent-foreground" />
+                        <span className="text-xs text-accent-foreground">{selectedNiche.owner.email}</span>
+                      </div>
                     </div>
                   </CardContent>
                 </Card>
@@ -393,34 +391,38 @@ export default function ColumbariumPopup({
               {/* Deceased Information */}
               {selectedNiche.deceased && (
                 <Card>
-                  <CardHeader className="pb-2">
-                    <CardTitle className="flex items-center gap-2 text-sm">
-                      <Calendar className="h-4 w-4" />
+                  <CardHeader className="pb-3">
+                    <CardTitle className="flex items-center gap-2 text-base font-semibold text-primary">
+                      <Heart className="h-4 w-4 text-primary" />
                       Deceased Information
                     </CardTitle>
                   </CardHeader>
-                  <CardContent className="space-y-2 pt-0">
-                    <div className="flex items-center gap-2">
-                      <FaSkull className="h-3 w-3 text-gray-500" />
-                      <span className="text-sm">
-                        {selectedNiche.deceased.name}
-                      </span>
-                    </div>
-                    <div className="grid grid-cols-2 gap-2 text-xs text-gray-600">
-                      <div>
-                        <span className="font-medium">Born:</span>
-                        <br />
-                        {selectedNiche.deceased.dateOfBirth}
+                  <CardContent className="pt-4 space-y-4">
+                    <div className="flex items-start gap-3">
+                      <div className="">
+                        <div className="h-10 w-10 rounded-full bg-accent flex items-center justify-center">
+                          <Heart className="h-4 w-4 text-accent-foreground" />
+                        </div>
                       </div>
                       <div>
-                        <span className="font-medium">Died:</span>
-                        <br />
-                        {selectedNiche.deceased.dateOfDeath}
+                        <p className="font-medium">{selectedNiche.deceased.name}</p>
+                        <p className="text-xs text-gray-500">DECEASED ID: {selectedNiche.deceased.deceased_id}</p>
                       </div>
                     </div>
-                    <div className="text-xs text-gray-600">
-                      <span className="font-medium">Interment:</span>{" "}
-                      {selectedNiche.deceased.dateOfInterment}
+
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                      <div className="p-3 rounded-lg bg-accent">
+                        <p className="text-xs text-accent-foreground font-medium">BORN</p>
+                        <p className="text-sm font-medium mt-1">{selectedNiche.deceased.dateOfBirth}</p>
+                      </div>
+                      <div className="p-3 rounded-lg bg-accent">
+                        <p className="text-xs text-accent-foreground font-medium">DIED</p>
+                        <p className="text-sm font-medium mt-1">{selectedNiche.deceased.dateOfDeath}</p>
+                      </div>
+                      <div className="p-3 rounded-lg bg-accent">
+                        <p className="text-xs text-accent-foreground font-medium">INTERMENT</p>
+                        <p className="text-sm font-medium mt-1">{selectedNiche.deceased.dateOfInterment}</p>
+                      </div>
                     </div>
                   </CardContent>
                 </Card>
