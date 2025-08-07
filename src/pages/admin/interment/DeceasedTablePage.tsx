@@ -2,6 +2,7 @@ import SpinnerCircle4 from "@/components/ui/spinner-10";
 import { useGetDeceasedRecord } from "@/hooks/deceased-hooks/useGetDeceasedRecord";
 
 import DeceasedRecordsTable from "./DeceasedTable";
+import { ErrorMessage } from "@/components/ErrorMessage";
 
 export default function DeceasedTablePage() {
   const { isError, isPending, data: deceasedRecords } = useGetDeceasedRecord();
@@ -15,7 +16,11 @@ export default function DeceasedTablePage() {
 
   if (isError || !deceasedRecords) {
     return (
-      <div className="p-4 text-center">Failed to load deceased records.</div>
+      <ErrorMessage
+        message="Failed to load deceased data. Please check your connection and try again."
+        onRetry={() => useGetDeceasedRecord()}
+        showRetryButton={true}
+      />
     );
   }
   return <DeceasedRecordsTable data={deceasedRecords} />;

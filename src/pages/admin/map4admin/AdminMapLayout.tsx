@@ -21,6 +21,8 @@ import {
   convertPlotToMarker,
   getStatusColor,
 } from "@/types/map.types";
+import SpinnerCircle4 from "@/components/ui/spinner-10";
+import { ErrorMessage } from "@/components/ErrorMessage";
 const ColumbariumPopup = lazy(
   () => import("@/pages/admin/map4admin/ColumbariumPopup"),
 );
@@ -35,55 +37,32 @@ const DefaultIcon = L.icon({
 });
 L.Marker.prototype.options.icon = DefaultIcon;
 
-// Context to signal a locate request from navs to map
-export const LocateContext = createContext<{
-  requestLocate: () => void;
-} | null>(null);
+export const LocateContext = createContext<{ requestLocate: () => void; } | null>(null);
 export default function AdminMapLayout() {
-  // 🎣 Fetch real plot data from backend
-  const { error, isLoading, data: plotsData } = usePlots();
-
-  const bounds: [[number, number]] = [[10.24930711375518, 123.79784801248411]];
-
-  const locateRef = useRef<(() => void) | null>(null);
-  // Cemetery entrance constant for routing
   const CEMETERY_GATE = L.latLng(10.248107820799307, 123.797607547609545);
-  // Provide context to navs
+  const { isError, isLoading, data: plotsData } = usePlots();
+  const markers = plotsData?.map(convertPlotToMarker) || [];
+  const bounds: [[number, number]] = [[10.24930711375518, 123.79784801248411]];
+  const locateRef = useRef<(() => void) | null>(null);
   const requestLocate = () => {
     if (locateRef.current) locateRef.current();
   };
 
-  // 🔄 Convert database plots to marker format
-  const markers = plotsData?.map(convertPlotToMarker) || [];
-  console.log("🗺️ Plots data loaded:", {
-    error,
-    isLoading,
-    plotsCount: markers.length,
-  });
-  // 🔄 Show loading state while fetching plots
-  if (isLoading || isLoading) {
+  if (isLoading) {
     return (
-      <div className="relative flex h-screen w-full items-center justify-center">
-        <div className="text-center">
-          <div className="border-primary mx-auto mb-4 h-12 w-12 animate-spin rounded-full border-b-2"></div>
-          <p className="text-gray-600">Loading plot data...</p>
-        </div>
+      <div className="flex h-full items-center justify-center">
+        <SpinnerCircle4 />
       </div>
     );
   }
 
-  // ❌ Show error state if plots failed to load
-  if (error || error) {
-    console.error("🚨 Error loading plots:", { error });
+  if (isError || !plotsData) {
     return (
-      <div className="relative flex h-screen w-full items-center justify-center">
-        <div className="text-center">
-          <p className="mb-2 text-red-600">Error loading plot data</p>
-          <p className="text-sm text-gray-600">
-            {error?.message || error?.message || "Unknown error"}
-          </p>
-        </div>
-      </div>
+      <ErrorMessage
+        message="Failed to load map data. Please check your connection and try again."
+        onRetry={() => usePlots()}
+        showRetryButton={true}
+      />
     );
   }
 
@@ -278,17 +257,14 @@ export default function AdminMapLayout() {
                     icon={circleIcon}
                   >
                     {marker.rows && marker.columns ? (
+                      // 🏢 Columbarium Popup
                       <Popup className="leaflet-theme-popup w-120">
                         <Suspense
                           fallback={
                             <>
-                              {/* Title skeleton */}
                               <Skeleton className="mb-2 h-[24px] w-110 rounded" />
-                              {/* Subtitle skeleton */}
                               <Skeleton className="mb-2 h-[18px] w-110 rounded" />
-                              {/* Grid skeleton */}
                               <Skeleton className="mb-3 h-[200px] w-110 rounded" />
-                              {/* Legend skeleton */}
                               <Skeleton className="h-[36px] w-110 rounded" />
                             </>
                           }
@@ -297,53 +273,30 @@ export default function AdminMapLayout() {
                         </Suspense>
                       </Popup>
                     ) : (
+                      // 🏠 Single Plot Popup
                       <Popup className="leaflet-theme-popup w-75">
                         <Suspense
                           fallback={
                             <>
-                              {/* Header Section */}
-                              <div className="mb-4 flex items-center justify-between">
-                                <Skeleton className="h-[20px] w-48 rounded" />{" "}
-                                {/* Block A + Plot 10 */}
-                                <Skeleton className="h-[20px] w-24 rounded bg-yellow-500 text-white" />{" "}
-                                {/* Reserved */}
+                              <div className="mb-3 items-center justify-between flex gap-2">
+                                <Skeleton className="h-[40px] w-full rounded" />
+                                <Skeleton className="h-[40px] w-full rounded" />
+                                <Skeleton className="h-[40px] w-full rounded" />
                               </div>
-
-                              {/* Content Section */}
-                              <div className="mb-4">
+                              <div className="mb-3">
                                 <div className="mb-2 flex items-center">
-                                  <Skeleton className="mr-2 h-6 w-6 rounded-full bg-gray-500" />{" "}
-                                  {/* Icon */}
-                                  <Skeleton className="ml-2 h-[16px] w-75 rounded" />{" "}
-                                  {/* Plot Category */}
+                                  <Skeleton className="h-[40px] w-full rounded" />
                                 </div>
                                 <div className="mb-2 flex items-center">
-                                  <Skeleton className="mr-2 h-6 w-6 rounded-full bg-gray-500" />{" "}
-                                  {/* Icon */}
-                                  <Skeleton className="ml-2 h-[16px] w-75 rounded" />{" "}
-                                  {/* Juan Dela Cruz */}
+                                  <Skeleton className="h-[40px] w-full rounded" />
                                 </div>
-                                <div className="flex items-center">
-                                  <Skeleton className="mr-2 h-6 w-6 rounded-full bg-gray-500" />{" "}
-                                  {/* Icon */}
-                                  <Skeleton className="ml-2 h-[16px] w-75 rounded" />{" "}
-                                  {/* Date */}
+                                <div className="mb-2 flex items-center">
+                                  <Skeleton className="h-[40px] w-full rounded" />
                                 </div>
                               </div>
-
-                              {/* Dimension Section */}
                               <div className="mt-4">
                                 <div className="mb-2 flex items-center">
-                                  <Skeleton className="mr-2 h-6 w-6 rounded-full bg-blue-500" />{" "}
-                                  {/* Icon */}
-                                  <Skeleton className="ml-2 h-[16px] w-75 rounded" />{" "}
-                                  {/* Label */}
-                                </div>
-                                <div className="text-center">
-                                  <Skeleton className="mb-2 h-[20px] w-32 rounded" />{" "}
-                                  {/* N/A m × N/A m */}
-                                  <Skeleton className="h-[16px] w-60 rounded" />{" "}
-                                  {/* N/A m² */}
+                                  <Skeleton className="h-[60px] w-full rounded" />
                                 </div>
                               </div>
                             </>

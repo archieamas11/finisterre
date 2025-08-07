@@ -1,4 +1,5 @@
 import SpinnerCircle4 from "@/components/ui/spinner-10";
+import { ErrorMessage } from "@/components/ErrorMessage";
 
 import LotOwnersTable from "./LotOwnersTable";
 import { useGetLotOwner } from "@/hooks/lot-owner-hooks/useGetLotOwner";
@@ -14,7 +15,13 @@ export default function LotOwnersTablePage() {
     );
 
   if (isError || !lotOwners) {
-    return <div className="p-4 text-center">Failed to load lot owners.</div>;
+    return (
+      <ErrorMessage
+        message="Failed to load user data. Please check your connection and try again."
+        onRetry={() => useGetLotOwner()}
+        showRetryButton={true}
+      />
+    );
   }
   return <LotOwnersTable data={lotOwners} />;
 }

@@ -127,7 +127,6 @@ export const customerColumns: ColumnDef<Customer>[] = [
   },
   {
     id: "actions",
-    header: "Action",
     enableHiding: false,
     cell: ({ row }) => {
       const [open, setOpen] = React.useState(false);
@@ -145,6 +144,13 @@ export const customerColumns: ColumnDef<Customer>[] = [
             <DropdownMenuContent className="z-50" align="end">
               <DropdownMenuLabel>Actions</DropdownMenuLabel>
               <DropdownMenuSeparator />
+              <DropdownMenuItem
+                onClick={() => {
+                  setOpen(true);
+                }}
+              >
+                Add Lot
+              </DropdownMenuItem>
               <DropdownMenuItem
                 onClick={() => {
                   setOpen(true);
@@ -306,7 +312,6 @@ export const lotOwnerColumns: ColumnDef<LotOwners>[] = [
     header: "Actions",
     enableHiding: false,
     cell: ({ row }) => {
-      // const [openLot, setOpenLot] = React.useState(false);
       if (!row?.original) return null;
       return (
         <>

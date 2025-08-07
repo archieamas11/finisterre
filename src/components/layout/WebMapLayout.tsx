@@ -672,49 +672,25 @@ export default function MapPage() {
                     <Suspense
                       fallback={
                         <>
-                          {/* Header Section */}
-                          <div className="mb-4 flex items-center justify-between">
-                            <Skeleton className="h-[20px] w-48 rounded" />{" "}
-                            {/* Block A + Plot 10 */}
-                            <Skeleton className="h-[20px] w-24 rounded bg-yellow-500 text-white" />{" "}
-                            {/* Reserved */}
+                          <div className="mb-3 items-center justify-between flex gap-2">
+                            <Skeleton className="h-[40px] w-full rounded" />
+                            <Skeleton className="h-[40px] w-full rounded" />
+                            <Skeleton className="h-[40px] w-full rounded" />
                           </div>
-
-                          {/* Content Section */}
-                          <div className="mb-4">
+                          <div className="mb-3">
                             <div className="mb-2 flex items-center">
-                              <Skeleton className="mr-2 h-6 w-6 rounded-full bg-gray-500" />{" "}
-                              {/* Icon */}
-                              <Skeleton className="ml-2 h-[16px] w-full rounded" />{" "}
-                              {/* Plot Category */}
+                              <Skeleton className="h-[40px] w-full rounded" />
                             </div>
                             <div className="mb-2 flex items-center">
-                              <Skeleton className="mr-2 h-6 w-6 rounded-full bg-gray-500" />{" "}
-                              {/* Icon */}
-                              <Skeleton className="ml-2 h-[16px] w-full rounded" />{" "}
-                              {/* Juan Dela Cruz */}
+                              <Skeleton className="h-[40px] w-full rounded" />
                             </div>
-                            <div className="flex items-center">
-                              <Skeleton className="mr-2 h-6 w-6 rounded-full bg-gray-500" />{" "}
-                              {/* Icon */}
-                              <Skeleton className="ml-2 h-[16px] w-full rounded" />{" "}
-                              {/* Date */}
+                            <div className="mb-2 flex items-center">
+                              <Skeleton className="h-[40px] w-full rounded" />
                             </div>
                           </div>
-
-                          {/* Dimension Section */}
                           <div className="mt-4">
                             <div className="mb-2 flex items-center">
-                              <Skeleton className="mr-2 h-6 w-6 rounded-full bg-blue-500" />{" "}
-                              {/* Icon */}
-                              <Skeleton className="ml-2 h-[16px] w-full rounded" />{" "}
-                              {/* Label */}
-                            </div>
-                            <div className="text-center">
-                              <Skeleton className="mb-2 h-[20px] w-32 rounded" />{" "}
-                              {/* N/A m × N/A m */}
-                              <Skeleton className="h-[16px] w-full rounded" />{" "}
-                              {/* N/A m² */}
+                              <Skeleton className="h-[60px] w-full rounded" />
                             </div>
                           </div>
                         </>

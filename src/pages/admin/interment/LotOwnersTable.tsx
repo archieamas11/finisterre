@@ -50,7 +50,6 @@ import {
   SelectItem,
   Select,
 } from "../../../components/ui/select";
-import CreateLotOwner from "./lot-owner/createLotOwner";
 
 interface LotOwnersTableProps {
   data: LotOwners[];
@@ -160,7 +159,6 @@ export default function LotOwnersTable({ data }: LotOwnersTableProps) {
                 ))}
             </DropdownMenuContent>
           </DropdownMenu>
-          <CreateLotOwner />
         </div>
       </div>
       <div className="overflow-hidden rounded-md border">
