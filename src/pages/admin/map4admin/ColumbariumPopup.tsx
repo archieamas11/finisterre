@@ -5,7 +5,7 @@ import { FaDirections } from "react-icons/fa";
 import { ChevronsUpDown, Check, Heart } from "lucide-react";
 import { BsFillPatchCheckFill } from "react-icons/bs";
 import { useQueryClient } from "@tanstack/react-query";
-import { Calendar, Crown, Phone, User, Mail, Save, X } from "lucide-react";
+import { Crown, Phone, User, Mail, Save, X } from "lucide-react";
 
 import type { nicheData } from "@/types/niche.types";
 import type { ConvertedMarker } from "@/types/map.types";
@@ -40,7 +40,6 @@ import {
 } from "@/components/ui/command";
 import { Skeleton } from "@/components/ui/skeleton";
 import CreateDeceased from "./columbarium-dialogs/CreateDeceasedPage";
-import { CopyButton } from "@/components/ui/shadcn-io/copy-button";
 
 interface ColumbariumPopupProps {
   marker: ConvertedMarker;

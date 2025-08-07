@@ -6,7 +6,6 @@ import {
   LandPlot,
   Search,
   Ghost,
-  Plus,
 } from "lucide-react";
 import {
   type ColumnFiltersState,
