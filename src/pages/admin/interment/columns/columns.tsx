@@ -243,14 +243,14 @@ export const lotOwnerColumns: ColumnDef<LotOwners>[] = [
       row.block && row.plot_id
         ? `Block ${row.block} • Grave ${row.plot_id}`
         : row.category && row.niche_number
-          ? `${capitalizeWords(row.category)} • Niche ${row.niche_number}`
+          ? `${capitalizeWords(row.category)} ${row.plot_id} • Niche ${row.niche_number}`
           : null,
     cell: ({ row }) => {
       // 🧩 Show block/plot if present, else category/niche_id, else N/A badge
       if (row.original.block && row.original.plot_id) {
         return `Block ${row.original.block} • Grave ${row.original.plot_id}`;
       } else if (row.original.category && row.original.niche_number) {
-        return `${capitalizeWords(row.original.category)} • Niche ${row.original.niche_number}`;
+        return `${capitalizeWords(row.original.category)} ${row.original.plot_id} • Niche ${row.original.niche_number}`;
       } else {
         return (
           <Badge variant="secondary" asChild={false}>
