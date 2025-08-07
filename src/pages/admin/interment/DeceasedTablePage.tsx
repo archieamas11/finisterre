@@ -1,10 +1,10 @@
 import SpinnerCircle4 from "@/components/ui/spinner-10";
-import { useDeceasedRecords } from "@/hooks/deceased-hooks/DeceasedRecords.hooks";
+import { useGetDeceasedRecord } from "@/hooks/deceased-hooks/useGetDeceasedRecord";
 
 import DeceasedRecordsTable from "./DeceasedTable";
 
 export default function DeceasedTablePage() {
-  const { isError, isPending, data: deceasedRecords } = useDeceasedRecords();
+  const { isError, isPending, data: deceasedRecords } = useGetDeceasedRecord();
 
   if (isPending)
     return (

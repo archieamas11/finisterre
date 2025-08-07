@@ -17,16 +17,6 @@ export function useCreatePlots() {
   });
 }
 
-// export function useColPlots() {
-//   return useQuery({
-//     queryKey: ["colPlots"],
-//     queryFn: async () => {
-//       const r = await getColPlots();
-//       return r.plots ?? [];
-//     },
-//   });
-// }
-
 // 3) Mutation for edit
 export function useEditPlots() {
   const qc = useQueryClient();

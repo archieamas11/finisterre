@@ -42,16 +42,6 @@ const generateGridPositions = (
     }
   });
 
-  console.log(
-    "🗺️ Creating grid for plot:",
-    plotId,
-    "with dimensions:",
-    totalRows,
-    "x",
-    totalCols,
-  );
-  console.log("🔍 Existing niches to map:", fetchedNiches);
-
   let nicheCounter = 1;
   for (let row = 1; row <= totalRows; row++) {
     for (let col = 1; col <= totalCols; col++) {
@@ -65,10 +55,6 @@ const generateGridPositions = (
           col,
           niche_number: nicheCounter,
         });
-        console.log(
-          `✅ Mapped existing niche ${nicheCounter} with data:`,
-          existingNiche.owner?.name || "No owner",
-        );
       } else {
         // � Create empty niche for positions without data
         result.push({
@@ -82,8 +68,6 @@ const generateGridPositions = (
       nicheCounter++;
     }
   }
-
-  console.log("🏁 Final grid result:", result.length, "niches generated");
   return result;
 };
 
@@ -136,10 +120,6 @@ export function useNichesByPlot(plotId: string, rows: number, cols: number) {
           : undefined,
       }));
 
-      console.log("🔍 Existing niches:", existingNiches);
-      console.log("🎯 Mapped plotNiches:", plotNiches);
-      console.log("📏 Grid dimensions:", { rows, cols, total: rows * cols });
-
       // 🧮 Generate grid positions for niches that don't have row/col data
       const completeNiches = generateGridPositions(
         plotNiches,
@@ -147,8 +127,6 @@ export function useNichesByPlot(plotId: string, rows: number, cols: number) {
         cols,
         plotId,
       );
-
-      console.log("✅ Niche data loaded:", completeNiches);
       return completeNiches;
     },
   });

@@ -40,6 +40,7 @@ import {
   Command,
 } from "@/components/ui/command";
 import { Skeleton } from "@/components/ui/skeleton";
+import CreateDeceased from "./columbarium-dialogs/CreateDeceasedPage";
 
 interface ColumbariumPopupProps {
   marker: ConvertedMarker;
@@ -349,6 +350,12 @@ export default function ColumbariumPopup({
                     <div className="flex items-center gap-2">
                       <User className="h-3 w-3 text-gray-500" />
                       <span className="text-sm">
+                        {selectedNiche.lot_id}
+                      </span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <User className="h-3 w-3 text-gray-500" />
+                      <span className="text-sm">
                         {selectedNiche.owner.name}
                       </span>
                     </div>
@@ -366,6 +373,21 @@ export default function ColumbariumPopup({
                     </div>
                   </CardContent>
                 </Card>
+              )}
+
+              {/* Action buttons for reserved niches */}
+              {selectedNiche.niche_status === "reserved" && (
+                <div className="flex gap-2">
+                  {/* Add deceased record */}
+                  {/* 📨 Pass owner customer_id to CreateDeceased */}
+                  <CreateDeceased
+                    lotId={selectedNiche.lot_id}
+                    onSuccess={() => {
+                      // 🔄 Close the detail dialog to show updated niche status
+                      setIsDetailOpen(false);
+                    }}
+                  />
+                </div>
               )}
 
               {/* Deceased Information */}
@@ -448,14 +470,14 @@ export default function ColumbariumPopup({
                             >
                               {selectedCustomer
                                 ? (() => {
-                                    const customer = customers.find(
-                                      (c: any) =>
-                                        c.customer_id === selectedCustomer,
-                                    );
-                                    return customer
-                                      ? `${customer.first_name} ${customer.last_name} | ID: ${customer.customer_id}`
-                                      : "Select a customer";
-                                  })()
+                                  const customer = customers.find(
+                                    (c: any) =>
+                                      c.customer_id === selectedCustomer,
+                                  );
+                                  return customer
+                                    ? `${customer.first_name} ${customer.last_name} | ID: ${customer.customer_id}`
+                                    : "Select a customer";
+                                })()
                                 : isLoadingCustomers
                                   ? "Loading customers..."
                                   : "Select a customer"}
@@ -552,15 +574,6 @@ export default function ColumbariumPopup({
                     </div>
                   )}
                 </>
-              )}
-
-              {/* Action buttons for reserved niches */}
-              {selectedNiche.niche_status === "reserved" && (
-                <div className="flex gap-2">
-                  <Button className="flex-1" size="sm">
-                    Add Record
-                  </Button>
-                </div>
               )}
             </div>
           )}

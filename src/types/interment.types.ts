@@ -1,11 +1,11 @@
 export interface DeceasedRecords {
-  block: string;
-  lot_id: string;
-  plot_id: string;
-  category: string;
+  block?: string;
+  lot_id?: string;
+  plot_id?: string;
+  category?: string;
   created_at: string;
   updated_at: string;
-  full_name?: string;
+  full_name: string;
   deceased_id: string;
   dead_gender: string;
   dead_fullname: string;
@@ -14,10 +14,10 @@ export interface DeceasedRecords {
   dead_birth_date: string;
   dead_date_death: string;
 
-  dead_citizenship: string;
+  dead_citizenship?: string;
   dead_bio?: string | null;
-  dead_civil_status: string;
-  dead_relationship: string;
+  dead_civil_status?: string;
+  dead_relationship?: string;
   dead_message?: string | null;
   dead_profile_link?: string | null;
 }
