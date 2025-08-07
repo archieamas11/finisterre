@@ -34,7 +34,7 @@ export default function OurServicesSection() {
       id="our-services-section"
       className="w-full py-16"
     >
-      <div className="mx-auto max-w-5xl px-6">
+      <div className="max-w-7xl mx-auto px-6">
         <h2
           className="text-foreground mb-2 text-center text-4xl font-extrabold tracking-tight"
           id="about-section-heading"

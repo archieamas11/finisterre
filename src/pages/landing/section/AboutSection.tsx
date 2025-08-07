@@ -52,7 +52,7 @@ export default function AboutSection() {
       className="bg-background w-full py-16"
       id="about-section"
     >
-      <div className="mx-auto max-w-6xl px-4 sm:px-6">
+      <div className="max-w-7xl mx-auto px-6">
         <div className="flex flex-col items-center gap-12 lg:flex-row">
           {/* Left: Text */}
           <div className="flex-1">
@@ -128,9 +128,8 @@ export default function AboutSection() {
               >
                 {images.map((_, idx) => (
                   <button
-                    className={`focus:ring-primary h-3 w-3 rounded-full transition-colors focus:ring-2 focus:outline-none ${
-                      idx === current ? "bg-primary" : "bg-muted-foreground/30"
-                    }`}
+                    className={`focus:ring-primary h-3 w-3 rounded-full transition-colors focus:ring-2 focus:outline-none ${idx === current ? "bg-primary" : "bg-muted-foreground/30"
+                      }`}
                     aria-label={`Go to slide ${idx + 1}`}
                     onClick={() => {
                       setCurrent(idx);
