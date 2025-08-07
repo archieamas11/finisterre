@@ -314,7 +314,7 @@ export default function ColumbariumPopup({
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
               <Crown className="h-5 w-5 text-purple-600" />
-              Chamber {selectedNiche?.lot_id}
+              Chamber {marker.plot_id}
             </DialogTitle>
             {/* ✅ Proper location for description */}
             <DialogDescription className="sr-only">
