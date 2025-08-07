@@ -149,13 +149,6 @@ export const customerColumns: ColumnDef<Customer>[] = [
                   setOpen(true);
                 }}
               >
-                Add Lot
-              </DropdownMenuItem>
-              <DropdownMenuItem
-                onClick={() => {
-                  setOpen(true);
-                }}
-              >
                 Edit Customer
               </DropdownMenuItem>
               <DropdownMenuItem

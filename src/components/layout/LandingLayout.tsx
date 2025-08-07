@@ -8,10 +8,11 @@ import { ThemeToggleAdvanced } from "@/components/ThemeToggleAdvanced";
 import { NavigationMenuSection } from "@/pages/landing/section/NavigationMenu";
 
 const HeroSection = lazy(() => import("@/pages/landing/section/HeroSection"));
-const OurServicesSection = lazy(
-  () => import("@/pages/landing/section/OurServicesSection"),
-);
+const OurServicesSection = lazy(() => import("@/pages/landing/section/OurServicesSection"));
 const AboutSection = lazy(() => import("@/pages/landing/section/AboutSection"));
+const FAQs = lazy(() => import("@/pages/landing/section/FAQs"));
+const Showcase = lazy(() => import("@/pages/landing/section/Showcase"));
+const Footer = lazy(() => import("@/pages/landing/section/Footer"));
 
 export default function LandingLayout() {
   const navigate = useNavigate();
@@ -70,6 +71,9 @@ export default function LandingLayout() {
         <HeroSection />
         <OurServicesSection />
         <AboutSection />
+        <Showcase />
+        <FAQs />
+        <Footer />
       </Suspense>
     </div>
   );
