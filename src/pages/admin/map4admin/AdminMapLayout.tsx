@@ -258,23 +258,33 @@ export default function AdminMapLayout() {
                   >
                     {marker.rows && marker.columns ? (
                       // 🏢 Columbarium Popup
-                      <Popup className="leaflet-theme-popup w-120">
-                        <Suspense
-                          fallback={
-                            <>
-                              <Skeleton className="mb-2 h-[24px] w-110 rounded" />
-                              <Skeleton className="mb-2 h-[18px] w-110 rounded" />
-                              <Skeleton className="mb-3 h-[200px] w-110 rounded" />
-                              <Skeleton className="h-[36px] w-110 rounded" />
-                            </>
-                          }
-                        >
-                          <ColumbariumPopup marker={marker} />
-                        </Suspense>
+                      <Popup className="leaflet-theme-popup"
+                        offset={[-2, 5]}
+                        minWidth={450}
+                        closeButton={false}
+                      >
+                        <div className="w-full py-2">
+                          <Suspense
+                            fallback={
+                              <>
+                                <Skeleton className="mb-2 h-[24px] w-full rounded" />
+                                <Skeleton className="mb-2 h-[18px] w-full rounded" />
+                                <Skeleton className="mb-3 h-[200px] w-full rounded" />
+                                <Skeleton className="h-[36px] w-full rounded" />
+                              </>
+                            }
+                          >
+                            <ColumbariumPopup marker={marker} />
+                          </Suspense>
+                        </div>
                       </Popup>
                     ) : (
                       // 🏠 Single Plot Popup
-                      <Popup className="leaflet-theme-popup w-75">
+                      <Popup className="leaflet-theme-popup"
+                        offset={[-2, 5]}
+                        minWidth={250}
+                        closeButton={false}
+                      >
                         <Suspense
                           fallback={
                             <>

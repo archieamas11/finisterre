@@ -152,19 +152,19 @@ export default function ColumbariumPopup({
   if (isLoading) {
     return (
       <>
-        <Skeleton className="mb-2 h-[24px] w-110 rounded" />
-        <Skeleton className="mb-2 h-[18px] w-110 rounded" />
-        <Skeleton className="mb-3 h-[200px] w-110 rounded" />
-        <Skeleton className="h-[36px] w-110 rounded" />
+        <Skeleton className="mb-2 h-[24px] w-full rounded" />
+        <Skeleton className="mb-2 h-[18px] w-full rounded" />
+        <Skeleton className="mb-3 h-[200px] w-full rounded" />
+        <Skeleton className="h-[36px] w-full rounded" />
       </>
     );
   }
 
   return (
-    <div className="w-109 p-2">
-      <div className="bg-background dark:bg-muted mb-3 flex items-center justify-between rounded-lg border p-3">
+    <div className="w-full">
+      <div className="bg-background dark:bg-muted mb-2 flex items-center justify-between rounded-lg border p-3">
         <div>
-          <h3 className="text-accent-foreground mb-1 flex items-center gap-2 text-lg font-bold">
+          <h3 className="text-accent-foreground flex items-center gap-2 text-lg font-bold">
             <ImLibrary /> Chamber {marker.plot_id}
           </h3>
           <div className="text-secondary-foreground flex gap-2 text-sm">
@@ -192,7 +192,7 @@ export default function ColumbariumPopup({
         )}
       </div>
       {/* 🔢 Grid layout for niches */}
-      <div className="mb-3">
+      <div className="mb-2">
         <h4 className="text-secondary-foreground bg-background dark:bg-muted mb-2 rounded-lg border p-3 text-sm font-medium">
           Niche Layout:
         </h4>
@@ -202,7 +202,7 @@ export default function ColumbariumPopup({
             scrollbarWidth: "thin",
             gridTemplateColumns: `repeat(${Math.min(cols, 9)}, minmax(0, 1fr))`,
           }}
-          className="bg-card grid w-105 gap-1 rounded border p-2"
+          className="bg-card grid w-full gap-1 rounded border p-2"
         >
           {nicheData.map((niche, index) => (
             <button

@@ -42,9 +42,6 @@ const DefaultIcon = L.icon({
   iconUrl,
   shadowUrl,
   iconRetinaUrl,
-  iconSize: [25, 41],
-  iconAnchor: [12, 41],
-  popupAnchor: [1, -34],
 });
 L.Marker.prototype.options.icon = DefaultIcon;
 
@@ -650,25 +647,35 @@ export default function MapPage() {
                 icon={circleIcon}
               >
                 {markers.rows && markers.columns ? (
-                  <Popup className="leaflet-theme-popup w-120">
-                    <Suspense
-                      fallback={
-                        <>
-                          <Skeleton className="mb-2 h-[24px] w-110 rounded" />
-                          <Skeleton className="mb-2 h-[18px] w-110 rounded" />
-                          <Skeleton className="mb-3 h-[200px] w-110 rounded" />
-                          <Skeleton className="h-[36px] w-110 rounded" />
-                        </>
-                      }
-                    >
-                      <ColumbariumPopup
-                        onDirectionClick={handleDirectionClick}
-                        marker={markers}
-                      />
-                    </Suspense>
+                  <Popup className="leaflet-theme-popup"
+                    offset={[-2, 5]}
+                    minWidth={450}
+                    closeButton={false}
+                  >
+                    <div className="w-full py-2">
+                      <Suspense
+                        fallback={
+                          <>
+                            <Skeleton className="mb-2 h-[24px] w-full rounded" />
+                            <Skeleton className="mb-2 h-[18px] w-full rounded" />
+                            <Skeleton className="mb-3 h-[200px] w-full rounded" />
+                            <Skeleton className="h-[36px] w-full rounded" />
+                          </>
+                        }
+                      >
+                        <ColumbariumPopup
+                          onDirectionClick={handleDirectionClick}
+                          marker={markers}
+                        />
+                      </Suspense>
+                    </div>
                   </Popup>
                 ) : (
-                  <Popup className="leaflet-theme-popup w-70">
+                  <Popup className="leaflet-theme-popup"
+                    offset={[-2, 5]}
+                    minWidth={250}
+                    closeButton={false}
+                  >
                     <Suspense
                       fallback={
                         <>

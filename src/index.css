@@ -226,10 +226,6 @@
   @apply bg-background text-foreground dark:bg-background dark:text-foreground;
 }
 
-.leaflet-container a.leaflet-popup-close-button {
-  display: none;
-}
-
 .bg-gradient-u {
   background: radial-gradient(ellipse at bottom,
       theme('colors.background') 0%,
