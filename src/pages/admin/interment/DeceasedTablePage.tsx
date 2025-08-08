@@ -1,18 +1,22 @@
-import SpinnerCircle4 from "@/components/ui/spinner-10";
 import { useGetDeceasedRecord } from "@/hooks/deceased-hooks/useGetDeceasedRecord";
 
 import DeceasedRecordsTable from "./DeceasedTable";
 import { ErrorMessage } from "@/components/ErrorMessage";
+import SkeletonTableOneWrapper from "@/components/mvpblocks/skeleton-table-1";
 
 export default function DeceasedTablePage() {
   const { isError, isPending, data: deceasedRecords } = useGetDeceasedRecord();
 
   if (isPending)
-    return (
-      <div className="flex h-full items-center justify-center">
-        <SpinnerCircle4 />
-      </div>
-    );
+    if (isPending)
+      return (
+        <div className="flex h-full items-center justify-center">
+          <SkeletonTableOneWrapper
+            rowCount={10}
+            columnCount={5}
+          />
+        </div>
+      );
 
   if (isError || !deceasedRecords) {
     return (

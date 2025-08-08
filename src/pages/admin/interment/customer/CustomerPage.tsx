@@ -1,5 +1,5 @@
 import { ErrorMessage } from "@/components/ErrorMessage";
-import SpinnerCircle4 from "@/components/ui/spinner-10";
+import SkeletonTableOneWrapper from "@/components/mvpblocks/skeleton-table-1";
 import { useGetCustomers } from "@/hooks/customer-hooks/useGetCustomer";
 import CustomersTable from "@/pages/admin/interment/customer/CustomersTable";
 
@@ -9,7 +9,10 @@ export default function CustomersPage() {
   if (isPending)
     return (
       <div className="flex h-full items-center justify-center">
-        <SpinnerCircle4 />
+        <SkeletonTableOneWrapper
+          rowCount={10}
+          columnCount={5}
+        />
       </div>
     );
   if (isError || !customers) {
