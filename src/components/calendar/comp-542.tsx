@@ -1,11 +1,7 @@
-"use client"
-
 import { useState } from "react"
 import { addDays, setHours, setMinutes, subDays } from "date-fns"
-
-import { type CalendarEvent } from "@/components/calendar/types"
-import { EventCalendar } from "@/components/calendar/event-calendar"
-
+import type { CalendarEvent } from "./types"
+import { EventCalendar } from "./event-calendar"
 // Sample events data with hardcoded times
 const sampleEvents: CalendarEvent[] = [
   {
@@ -130,7 +126,7 @@ const sampleEvents: CalendarEvent[] = [
   },
 ]
 
-export default function Bookings() {
+export default function Component() {
   const [events, setEvents] = useState<CalendarEvent[]>(sampleEvents)
 
   const handleEventAdd = (event: CalendarEvent) => {
