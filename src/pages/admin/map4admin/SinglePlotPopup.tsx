@@ -9,12 +9,9 @@ import {
   FaAward,
   FaUser,
 } from "react-icons/fa";
-
 import type { ConvertedMarker } from "@/types/map.types";
-
 import { isAdmin } from "@/utils/Auth.utils";
 import { Button } from "@/components/ui/button";
-
 import EditMapDialog from "./editMapDialog";
 
 interface PlotLocationsProps {
@@ -23,10 +20,7 @@ interface PlotLocationsProps {
 }
 
 export default function SinglePlotLocations({ marker }: PlotLocationsProps) {
-  // 🔧 State for edit dialog
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
-
-  // 🔧 Handler functions for plot operations
   const handleEdit = () => {
     console.log("✏️ Edit plot:", marker.plot_id);
     setIsEditDialogOpen(true);
@@ -146,25 +140,23 @@ export default function SinglePlotLocations({ marker }: PlotLocationsProps) {
           </div>
           <div className="flex flex-col items-center">
             <div className="text-accent-foreground text-xs font-bold">
-              {/* 🧮 Show N/A if length or width is missing or not a number */}
               {isNaN(marker.dimensions.length) ||
-              marker.dimensions.length === undefined ||
-              marker.dimensions.length === null
+                marker.dimensions.length === undefined ||
+                marker.dimensions.length === null
                 ? "N/A"
                 : marker.dimensions.length}{" "}
               m ×{" "}
               {isNaN(marker.dimensions.width) ||
-              marker.dimensions.width === undefined ||
-              marker.dimensions.width === null
+                marker.dimensions.width === undefined ||
+                marker.dimensions.width === null
                 ? "N/A"
                 : marker.dimensions.width}{" "}
               m<br />
             </div>
             <span className="text-accent-foreground text-xs">
-              {/* 🧮 Show N/A if area is missing or not a number */}
               {isNaN(marker.dimensions.area) ||
-              marker.dimensions.area === undefined ||
-              marker.dimensions.area === null
+                marker.dimensions.area === undefined ||
+                marker.dimensions.area === null
                 ? "N/A"
                 : marker.dimensions.area.toLocaleString()}{" "}
               m²
@@ -173,7 +165,6 @@ export default function SinglePlotLocations({ marker }: PlotLocationsProps) {
         </div>
       </div>
       {(() => {
-        // 🖼️ Check both file_names_array and file_name properties
         const images = marker.file_names_array || marker.file_name || [];
         console.log("🖼️ Images to display:", images, "from marker:", marker);
         if (!isAdmin()) {

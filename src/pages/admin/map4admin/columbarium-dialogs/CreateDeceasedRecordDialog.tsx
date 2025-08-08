@@ -45,9 +45,12 @@ const formSchema = z.object({
         .min(1, "Name is required")
         .min(3, "Name must be at least 3 characters")
         .max(50, "Name must be less than 50 characters"),
-    dead_birth_date: z.date(),
-    dead_date_death: z.date(),
-    dead_interment: z.date(),
+    dead_birth_date: z.string()
+        .min(1, "Birth date is required"),
+    dead_date_death: z.string()
+        .min(1, "Date of death is required"),
+    dead_interment: z.string()
+        .min(1, "Interment date is required"),
     dead_gender: z.enum(["Male", "Female"]),
 });
 
@@ -66,9 +69,9 @@ export function CreateDeceasedRecordDialog({
         defaultValues: {
             dead_fullname: initialValues?.dead_fullname || "",
             dead_gender: initialValues?.dead_gender as "Male" | "Female" || undefined,
-            dead_birth_date: initialValues?.dead_birth_date ? new Date(initialValues.dead_birth_date) : new Date(),
-            dead_date_death: initialValues?.dead_date_death ? new Date(initialValues.dead_date_death) : new Date(),
-            dead_interment: initialValues?.dead_interment ? new Date(initialValues.dead_interment) : new Date(),
+            dead_birth_date: initialValues?.dead_birth_date || "",
+            dead_date_death: initialValues?.dead_date_death || "",
+            dead_interment: initialValues?.dead_interment || "",
         },
     });
 
@@ -86,12 +89,11 @@ export function CreateDeceasedRecordDialog({
                 dead_fullname: values.dead_fullname,
                 full_name: values.dead_fullname,
                 dead_gender: values.dead_gender,
-                dead_birth_date: values.dead_birth_date.toISOString().slice(0, 10),
-                dead_date_death: values.dead_date_death.toISOString().slice(0, 10),
-                dead_interment: values.dead_interment.toISOString().slice(0, 10),
+                dead_birth_date: values.dead_birth_date,
+                dead_date_death: values.dead_date_death,
+                dead_interment: values.dead_interment,
                 created_at: currentTime,
                 updated_at: currentTime,
-                // 🔧 Optional fields - set defaults if needed by API
                 dead_citizenship: "",
                 dead_bio: "",
                 dead_civil_status: "",

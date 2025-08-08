@@ -1,6 +1,5 @@
 import React from "react";
 import { toast } from "sonner";
-
 import { Button } from "@/components/ui/button";
 import { useCreateDeceasedRecord } from "@/hooks/deceased-hooks/useCreateDeceasedRecord";
 import { CreateDeceasedRecordDialog } from "@/pages/admin/map4admin/columbarium-dialogs/CreateDeceasedRecordDialog";
@@ -12,31 +11,32 @@ interface CreateDeceasedProps {
 
 export default function CreateDeceased({ lotId, onSuccess }: CreateDeceasedProps) {
   const [open, setOpen] = React.useState(false);
-  const { mutate, isPending } = useCreateDeceasedRecord();
-  const handleSubmit = (values: any) => {
+  const { mutateAsync, isPending } = useCreateDeceasedRecord();
+  const handleSubmit = async (values: any) => {
     const payload = {
       ...values,
       ...(lotId && { lot_id: lotId }),
     };
-    mutate(payload, {
-      onError: () => {
-        toast.error("Error saving deceased record");
-      },
-      onSuccess: () => {
-        setOpen(false);
-        toast.success("Deceased record created successfully!");
-        onSuccess?.();
-      },
-    });
+    try {
+      const mutationPromise = mutateAsync(payload);
+      toast.promise(mutationPromise, {
+        loading: 'Saving deceased record...',
+        success: 'Deceased record created successfully!',
+        error: 'Error saving deceased record'
+      });
+      await mutationPromise;
+      setOpen(false);
+      onSuccess?.();
+    } catch (error) {
+      console.error("Deceased record creation failed:", error);
+    }
   };
 
   return (
     <>
       <Button
         className="flex-1"
-        onClick={() => {
-          setOpen(true);
-        }}
+        onClick={() => setOpen(true)}
         size="sm"
       >
         Add Deceased Record

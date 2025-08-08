@@ -40,6 +40,7 @@ import {
 } from "@/components/ui/command";
 import { Skeleton } from "@/components/ui/skeleton";
 import CreateDeceased from "./columbarium-dialogs/CreateDeceasedPage";
+import { ErrorMessage } from "@/components/ErrorMessage";
 
 interface ColumbariumPopupProps {
   marker: ConvertedMarker;
@@ -62,8 +63,8 @@ export default function ColumbariumPopup({
   const [isSaving, setIsSaving] = useState(false);
   const rows = parseInt(marker.rows);
   const cols = parseInt(marker.columns);
+  const queryClient = useQueryClient();
 
-  // 🔄 Handle customer selection from combobox
   const handleCustomerSelect = (customerId: string) => {
     console.log("👤 Customer selected:", customerId);
     setSelectedCustomer(customerId);
@@ -71,7 +72,6 @@ export default function ColumbariumPopup({
     setIsReservationStep(true);
   };
 
-  // ❌ Handle cancellation of reservation
   const handleCancelReservation = () => {
     console.log("❌ Reservation cancelled");
     setSelectedCustomer("");
@@ -79,8 +79,6 @@ export default function ColumbariumPopup({
     setIsReservationStep(false);
   };
 
-  // 💾 Handle saving the reservation
-  const queryClient = useQueryClient();
   const handleSaveReservation = async () => {
     if (!selectedNiche || !selectedCustomer) {
       toast.error("Missing required data for reservation");
@@ -88,6 +86,7 @@ export default function ColumbariumPopup({
     }
 
     setIsSaving(true);
+
     const lotOwnerData = {
       selected: 1,
       plot_id: marker.plot_id,
@@ -95,27 +94,35 @@ export default function ColumbariumPopup({
       niche_number: selectedNiche.niche_number,
     };
 
-    createLotOwner(lotOwnerData)
-      .then((result) => {
-        if (result.success) {
-          toast.success("🎉 Niche reserved successfully!");
-          // 🔄 Refetch niche data so user sees the update
+    try {
+      // Create the promise for the API call
+      const reservationPromise = createLotOwner(lotOwnerData)
+        .then(result => {
+          if (!result.success) {
+            throw new Error(result.message || "Failed to reserve niche");
+          }
+          return result;
+        });
+
+      await toast.promise(reservationPromise, {
+        loading: 'Reserving niche...',
+        success: () => {
           queryClient.invalidateQueries({
             queryKey: ["niches", marker.plot_id, rows, cols],
           });
           handleCancelReservation();
           setIsDetailOpen(false);
-        } else {
-          toast.error(result.message || "Failed to reserve niche");
+          return "Niche reserved successfully!";
+        },
+        error: (error) => {
+          return error.message || "Failed to save reservation";
         }
-      })
-      .catch((error) => {
-        console.error("❌ Error saving reservation:", error);
-        toast.error("Failed to save reservation");
-      })
-      .finally(() => {
-        setIsSaving(false);
       });
+    } catch (error) {
+      console.error("❌ Error saving reservation:", error);
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   // 🔄 Fetch niche data using React Query
@@ -131,35 +138,24 @@ export default function ColumbariumPopup({
     setIsDetailOpen(true);
   };
 
-  // ❌ Show error state
   if (error) {
     return (
-      <div className="p-4 text-red-600">
-        <p>Error: {error.message || "Failed to load niche data"}</p>
-        <Button
-          onClick={() => {
-            window.location.reload();
-          }}
-          variant="outline"
-          className="mt-2"
-          size="sm"
-        >
-          Retry
-        </Button>
-      </div>
+      <>
+        <ErrorMessage
+          message="Failed to load niche data. Please check your connection and try again."
+          onRetry={() => useNichesByPlot(marker.plot_id, rows, cols)}
+          showRetryButton={true}
+        />
+      </>
     );
   }
 
   if (isLoading) {
     return (
       <>
-        {/* Title skeleton */}
         <Skeleton className="mb-2 h-[24px] w-110 rounded" />
-        {/* Subtitle skeleton */}
         <Skeleton className="mb-2 h-[18px] w-110 rounded" />
-        {/* Grid skeleton */}
         <Skeleton className="mb-3 h-[200px] w-110 rounded" />
-        {/* Legend skeleton */}
         <Skeleton className="h-[36px] w-110 rounded" />
       </>
     );
@@ -375,12 +371,9 @@ export default function ColumbariumPopup({
               {/* Action buttons for reserved niches */}
               {selectedNiche.niche_status === "reserved" && (
                 <div className="flex gap-2">
-                  {/* Add deceased record */}
-                  {/* 📨 Pass owner customer_id to CreateDeceased */}
                   <CreateDeceased
                     lotId={selectedNiche.lot_id}
                     onSuccess={() => {
-                      // 🔄 Close the detail dialog to show updated niche status
                       setIsDetailOpen(false);
                     }}
                   />
@@ -411,16 +404,21 @@ export default function ColumbariumPopup({
 
                     <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                       <div className="p-3 rounded-lg bg-accent">
-                        <p className="text-xs text-accent-foreground font-medium">BORN</p>
-                        <p className="text-sm font-medium mt-1">{selectedNiche.deceased.dateOfBirth}</p>
-                      </div>
-                      <div className="p-3 rounded-lg bg-accent">
                         <p className="text-xs text-accent-foreground font-medium">DIED</p>
                         <p className="text-sm font-medium mt-1">{selectedNiche.deceased.dateOfDeath}</p>
                       </div>
                       <div className="p-3 rounded-lg bg-accent">
                         <p className="text-xs text-accent-foreground font-medium">INTERMENT</p>
                         <p className="text-sm font-medium mt-1">{selectedNiche.deceased.dateOfInterment}</p>
+                      </div>
+                      <div className="p-3 rounded-lg bg-accent">
+                        <p className="text-xs text-accent-foreground font-medium">Years Buried</p>
+                        <p className="text-sm font-medium mt-1">
+                          {new Date().getFullYear() - new Date(selectedNiche.deceased.dateOfInterment).getFullYear() < 1
+                            ? "Less than a year"
+                            : `${new Date().getFullYear() - new Date(selectedNiche.deceased.dateOfInterment).getFullYear()} Year(s)`}
+                        </p>
+
                       </div>
                     </div>
                   </CardContent>
