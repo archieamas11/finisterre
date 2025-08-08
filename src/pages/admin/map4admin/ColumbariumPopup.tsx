@@ -133,8 +133,14 @@ export default function ColumbariumPopup({
 
   const handleNicheClick = (niche: nicheData) => {
     console.log("🎯 Niche selected:", niche);
-    setSelectedNiche(niche);
-    setIsDetailOpen(true);
+    if (isAdmin()) {
+      setSelectedNiche(niche);
+      setIsDetailOpen(true);
+    } else {
+      setIsDetailOpen(false);
+      console.warn("🚫 Admin access required to view niche details");
+      toast.error("Admin access required to view niche details");
+    }
   };
 
   if (error) {
