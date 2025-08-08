@@ -1,4 +1,3 @@
-import SpinnerCircle4 from "@/components/ui/spinner-10";
 import { ErrorMessage } from "@/components/ErrorMessage";
 
 import LotOwnersTable from "./LotOwnersTable";

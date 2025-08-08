@@ -1,6 +1,5 @@
 import { Link } from "react-router-dom";
 import { ArrowRight, Sparkles, MapPin, Heart } from "lucide-react";
-
 import { Button } from "@/components/ui/button";
 
 export default function HeroSection() {
@@ -30,13 +29,6 @@ export default function HeroSection() {
         <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-black/30" />
         {/* Subtle animated overlay */}
         <div className="absolute inset-0 animate-pulse bg-gradient-to-r from-blue-900/20 via-transparent to-purple-900/20" />
-      </div>
-
-      {/* Floating decorative elements */}
-      <div className="pointer-events-none absolute inset-0 z-[1]">
-        <div className="absolute top-1/4 left-1/4 h-2 w-2 animate-bounce rounded-full bg-white/30 delay-700"></div>
-        <div className="absolute top-3/4 right-1/3 h-1 w-1 animate-bounce rounded-full bg-white/40 delay-1000"></div>
-        <div className="absolute bottom-1/4 left-1/3 h-1.5 w-1.5 animate-bounce rounded-full bg-white/20 delay-500"></div>
       </div>
 
       {/* Main Content Container */}
@@ -93,22 +85,6 @@ export default function HeroSection() {
             </Link>
           </Button>
 
-          {/* Maplibre test map */}
-          {/* <Button
-            className="group from-chart-4 to-chart-5 hover:from-chart-4 hover:to-chart-5 text-foreground dark:text-accent relative overflow-hidden rounded-full border-0 bg-gradient-to-r px-8 py-4 font-semibold shadow-2xl transition-all duration-300 hover:scale-105 hover:shadow-blue-500/25"
-            size={"lg"}
-          >
-            <Link
-              className="flex items-center gap-3"
-              aria-label="Explore Map"
-              to="/mapLibre"
-            >
-              <MapPin className="h-5 w-5" />
-              Explore Map Libre
-              <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
-            </Link>
-          </Button> */}
-
           {/* Secondary CTA */}
           <Button
             className="group rounded-full border-white/30 bg-white/10 px-8 py-4 font-medium text-white backdrop-blur-md transition-all duration-300 hover:scale-105 hover:border-white/50 hover:bg-white/20"
@@ -126,17 +102,6 @@ export default function HeroSection() {
 
       {/* Bottom fade */}
       <div className="from-background via-background/60 absolute right-0 bottom-0 left-0 z-[5] h-48 bg-gradient-to-t to-transparent"></div>
-
-      {/* Custom animations */}
-      <style>{`
-                @keyframes fade-in {
-                    from { opacity: 0; transform: translateY(20px); }
-                    to { opacity: 1; transform: translateY(0); }
-                }
-                .animate-fade-in {
-                    animation: fade-in 1s ease-out;
-                }
-            `}</style>
     </main>
   );
 }
