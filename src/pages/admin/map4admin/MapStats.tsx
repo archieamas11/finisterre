@@ -178,7 +178,7 @@ export default function MapStats() {
                     {/* Burger Menu Button */}
                     <button
                         onClick={() => setOpen(!open)}
-                        className="flex items-center justify-center w-12 h-12 rounded-full bg-white/90 dark:bg-[#16141e]/80 shadow-lg backdrop-blur-md border border-white/20 dark:border-stone-700/50"
+                        className="flex items-center justify-center w-12 h-12 rounded-full bg-white/90 dark:bg-[#16141e]/80 shadow-lg backdrop-blur-md border border-white/20 dark:border-stone-700/50 cursor-pointer"
                     >
                         {open ? (
                             <X className="h-6 w-6 text-gray-700 dark:text-gray-200" />

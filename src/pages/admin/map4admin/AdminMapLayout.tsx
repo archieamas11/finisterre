@@ -246,8 +246,6 @@ export default function AdminMapLayout() {
                 box-shadow: 0 0 4px rgba(0,0,0,0.15);
                 "></div>`,
                 });
-
-                // 🎨 Category-based background colors for popup headers
                 const backgroundColor = getCategoryBackgroundColor(
                   marker.category,
                 );
