@@ -20,7 +20,6 @@ export default function CreateCustomer() {
       toast.promise(mutationPromise, {
         loading: 'Saving customer...',
         success: 'Customer saved successfully',
-        error: 'Error saving customer'
       });
       await mutationPromise;
       setOpen(false);

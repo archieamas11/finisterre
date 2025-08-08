@@ -53,7 +53,6 @@ export default function ColumbariumPopup({
 }: ColumbariumPopupProps) {
   const { data: customersData, isLoading: isLoadingCustomers } = useCustomers();
   const customers = customersData || [];
-
   const [selectedNiche, setSelectedNiche] = useState<nicheData | null>(null);
   const [isDetailOpen, setIsDetailOpen] = useState(false);
   const [showCustomerCombo, setShowCustomerCombo] = useState(false);
@@ -226,9 +225,6 @@ export default function ColumbariumPopup({
       {/* 🎨 Legend */}
       <div className="bg-background dark:bg-muted mb-3 rounded-lg border p-3">
         <div className="mb-3">
-          <h4 className="text-accent-foreground mb-2 text-sm font-medium">
-            Legend:
-          </h4>
           <div className="flex gap-4 text-xs">
             <div className="flex items-center gap-1">
               <div className="h-3 w-3 rounded border border-green-300 bg-green-100"></div>

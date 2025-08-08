@@ -75,14 +75,12 @@ export default function CustomerForm({
   // 🔄 Reset form when initialValues change (important for edit mode)
   React.useEffect(() => {
     if (initialValues && open) {
-      console.log("🔄 Resetting form with new initial values");
       form.reset(initialValues);
     }
   }, [form, initialValues, open]);
 
   const handleSubmit = async (values: any) => {
     await onSubmit(values);
-    // 🔄 Only reset form in add mode to keep edited data visible
     if (mode === "add") {
       form.reset();
     }

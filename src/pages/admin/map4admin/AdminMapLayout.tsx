@@ -23,6 +23,7 @@ import {
 } from "@/types/map.types";
 import SpinnerCircle4 from "@/components/ui/spinner-10";
 import { ErrorMessage } from "@/components/ErrorMessage";
+import MapStats from "./MapStats";
 const ColumbariumPopup = lazy(
   () => import("@/pages/admin/map4admin/ColumbariumPopup"),
 );
@@ -86,6 +87,7 @@ export default function AdminMapLayout() {
             className="relative w-full"
           >
             <WebMapNavs />
+            <MapStats />
             <MapContainer
               className="h-full w-full rounded-lg"
               markerZoomAnimation={true}

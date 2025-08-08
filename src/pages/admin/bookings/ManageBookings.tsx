@@ -150,11 +150,14 @@ export default function Bookings() {
   }
 
   return (
-    <EventCalendar
-      events={events}
-      onEventAdd={handleEventAdd}
-      onEventUpdate={handleEventUpdate}
-      onEventDelete={handleEventDelete}
-    />
+    <div className="">
+      <EventCalendar
+        events={events}
+        onEventAdd={handleEventAdd}
+        onEventUpdate={handleEventUpdate}
+        onEventDelete={handleEventDelete}
+        className=""
+      />
+    </div>
   )
 }
