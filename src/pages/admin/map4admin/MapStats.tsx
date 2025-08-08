@@ -18,7 +18,7 @@ const locationData = [
     },
     {
         id: "memorial",
-        name: "Memorial Chambers",
+        name: "Chambers",
         stats: [
             { label: "Available", value: 28, color: "text-green-600", bgColor: "bg-green-100 dark:bg-green-900/30" },
             { label: "Occupied", value: 32, color: "text-red-600", bgColor: "bg-red-100 dark:bg-red-900/30" },

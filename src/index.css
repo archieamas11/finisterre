@@ -223,7 +223,11 @@
 /* global.css or tailwind.css */
 .leaflet-theme-popup .leaflet-popup-content-wrapper,
 .leaflet-theme-popup .leaflet-popup-tip {
-  @apply bg-background text-foreground dark:bg-background dark:text-foreground;
+  @apply bg-[#f1eff5]/90 dark:bg-[#16141e]/80 shadow-xl backdrop-blur-md;
+}
+
+.leaflet-container a.leaflet-popup-close-button {
+  display: none;
 }
 
 .bg-gradient-u {

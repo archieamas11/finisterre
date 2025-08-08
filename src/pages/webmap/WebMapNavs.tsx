@@ -24,32 +24,32 @@ export default function WebMapNavs() {
       style={{ pointerEvents: "auto" }}
     >
       <Button
-        className="dark:bg-primary-foreground rounded-full border border-stone-300 bg-white/80 shadow hover:bg-white/90 dark:border-stone-700 dark:hover:bg-stone-800/90"
+        className="rounded-full bg-[#f1eff5]/90 dark:bg-[#16141e]/80 shadow-xl backdrop-blur-md border border-white/20 dark:border-stone-700/50"
         size="icon"
       >
         <Search className="h-6 w-6 text-stone-700 dark:text-stone-200" />
       </Button>
       <Button
-        className="dark:bg-primary-foreground rounded-full border border-stone-300 bg-white/80 shadow hover:bg-white/90 dark:border-stone-700 dark:hover:bg-stone-800/90"
+        className="rounded-full bg-[#f1eff5]/90 dark:bg-[#16141e]/80 shadow-xl backdrop-blur-md border border-white/20 dark:border-stone-700/50"
         size="icon"
       >
         <RiListSettingsFill className="h-6 w-6 text-stone-700 dark:text-stone-200" />
       </Button>
       <Button
-        className="dark:bg-primary-foreground rounded-full border border-stone-300 bg-white/80 shadow hover:bg-white/90 dark:border-stone-700 dark:hover:bg-stone-800/90"
+        className="rounded-full bg-[#f1eff5]/90 dark:bg-[#16141e]/80 shadow-xl backdrop-blur-md border border-white/20 dark:border-stone-700/50"
         size="icon"
       >
         <Filter className="h-6 w-6 text-stone-700 dark:text-stone-200" />
       </Button>
       <Button
-        className="dark:bg-primary-foreground rounded-full border border-stone-300 bg-white/80 shadow hover:bg-white/90 dark:border-stone-700 dark:hover:bg-stone-800/90"
+        className="rounded-full bg-[#f1eff5]/90 dark:bg-[#16141e]/80 shadow-xl backdrop-blur-md border border-white/20 dark:border-stone-700/50"
         size="icon"
       >
         <RefreshCw className="h-6 w-6 text-stone-700 dark:text-stone-200" />
       </Button>
       {!isAdmin() && (
         <Button
-          className="dark:bg-primary-foreground rounded-full border border-stone-300 bg-white/80 shadow hover:bg-white/90 dark:border-stone-700 dark:hover:bg-stone-800/90"
+          className="rounded-full bg-[#f1eff5]/90 dark:bg-[#16141e]/80 shadow-xl backdrop-blur-md border border-white/20 dark:border-stone-700/50"
           onClick={() => locateCtx?.requestLocate()}
           aria-label="Locate me"
           size="icon"
@@ -58,7 +58,7 @@ export default function WebMapNavs() {
         </Button>
       )}
       <Button
-        className="dark:bg-primary-foreground rounded-full border border-stone-300 bg-white/80 shadow hover:bg-white/90 dark:border-stone-700 dark:hover:bg-stone-800/90"
+        className="rounded-full bg-[#f1eff5]/90 dark:bg-[#16141e]/80 shadow-xl backdrop-blur-md border border-white/20 dark:border-stone-700/50"
         size="icon"
       >
         <Layers className="h-6 w-6 text-stone-700 dark:text-stone-200" />
@@ -66,7 +66,7 @@ export default function WebMapNavs() {
       {!isAdmin() && (
         <Link to="/">
           <Button
-            className="dark:bg-primary-foreground rounded-full border border-stone-300 bg-white/80 shadow hover:bg-white/90 dark:border-stone-700 dark:hover:bg-stone-800/90"
+            className="rounded-full bg-[#f1eff5]/90 dark:bg-[#16141e]/80 shadow-xl backdrop-blur-md border border-white/20 dark:border-stone-700/50"
             size="icon"
           >
             <Home className="h-6 w-6 text-stone-700 dark:text-stone-200" />
