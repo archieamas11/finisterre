@@ -6,7 +6,6 @@ import {
   Columns2,
   Search,
   Ghost,
-  Plus,
 } from "lucide-react";
 import {
   type ColumnFiltersState,
@@ -155,9 +154,6 @@ export default function DeceasedRecordsTable({
                 ))}
             </DropdownMenuContent>
           </DropdownMenu>
-          <Button variant="outline" size="lg">
-            <Plus className="h-4 w-4" /> Add Deceased Record
-          </Button>
         </div>
       </div>
       <div className="overflow-hidden rounded-md border">
@@ -170,9 +166,9 @@ export default function DeceasedRecordsTable({
                     {header.isPlaceholder
                       ? null
                       : flexRender(
-                          header.column.columnDef.header,
-                          header.getContext(),
-                        )}
+                        header.column.columnDef.header,
+                        header.getContext(),
+                      )}
                   </TableHead>
                 ))}
               </TableRow>

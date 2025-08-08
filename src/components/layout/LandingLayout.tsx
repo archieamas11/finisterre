@@ -8,11 +8,11 @@ import { ThemeToggleAdvanced } from "@/components/ThemeToggleAdvanced";
 import { NavigationMenuSection } from "@/pages/landing/section/NavigationMenu";
 
 const HeroSection = lazy(() => import("@/pages/landing/section/HeroSection"));
-const OurServicesSection = lazy(() => import("@/pages/landing/section/OurServicesSection"));
-const AboutSection = lazy(() => import("@/pages/landing/section/AboutSection"));
 const FAQs = lazy(() => import("@/pages/landing/section/FAQs"));
 const Showcase = lazy(() => import("@/pages/landing/section/Showcase"));
 const Footer = lazy(() => import("@/pages/landing/section/Footer"));
+const Feature3 = lazy(() => import("../mvpblocks/feature-3"));
+const TestimonialCard = lazy(() => import("../mvpblocks/testimonials-marquee"));
 
 export default function LandingLayout() {
   const navigate = useNavigate();
@@ -69,9 +69,9 @@ export default function LandingLayout() {
       </nav>
       <Suspense fallback={null}>
         <HeroSection />
-        <OurServicesSection />
-        <AboutSection />
+        <Feature3 />
         <Showcase />
+        <TestimonialCard />
         <FAQs />
         <Footer />
       </Suspense>

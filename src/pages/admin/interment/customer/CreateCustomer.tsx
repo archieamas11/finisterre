@@ -2,7 +2,6 @@ import React from "react";
 import { toast } from "sonner";
 import { Plus } from "lucide-react";
 import { useQueryClient, useMutation } from "@tanstack/react-query";
-
 import { Button } from "@/components/ui/button";
 import { createCustomer } from "@/api/customer.api";
 import CustomerForm from "@/pages/admin/interment/forms/CustomerForm";
@@ -10,23 +9,31 @@ import CustomerForm from "@/pages/admin/interment/forms/CustomerForm";
 export default function CreateCustomer() {
   const queryClient = useQueryClient();
   const [open, setOpen] = React.useState(false);
-  const { mutate, isPending } = useMutation({
+
+  const { mutateAsync, isPending } = useMutation({
     mutationFn: createCustomer,
-    onError: () => {
-      toast.error("Error saving customer");
-    },
-    onSuccess: () => {
+  });
+
+  const handleSubmit = async (data: any) => {
+    try {
+      const mutationPromise = mutateAsync(data);
+      toast.promise(mutationPromise, {
+        loading: 'Saving customer...',
+        success: 'Customer saved successfully',
+        error: 'Error saving customer'
+      });
+      await mutationPromise;
       setOpen(false);
       queryClient.invalidateQueries({ queryKey: ["customers"] });
-    },
-  });
+    } catch (error) {
+      console.error("Customer creation failed:", error);
+    }
+  };
 
   return (
     <>
       <Button
-        onClick={() => {
-          setOpen(true);
-        }}
+        onClick={() => setOpen(true)}
         variant="outline"
         size="lg"
       >
@@ -36,7 +43,7 @@ export default function CreateCustomer() {
       <CustomerForm
         onOpenChange={setOpen}
         isPending={isPending}
-        onSubmit={mutate}
+        onSubmit={handleSubmit}
         open={open}
         mode="add"
       />
