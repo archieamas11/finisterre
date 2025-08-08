@@ -10,55 +10,55 @@ import { EventCalendar } from "@/components/calendar/event-calendar"
 const sampleEvents: CalendarEvent[] = [
   {
     id: "1",
-    title: "Annual Planning",
-    description: "Strategic planning for next year",
+    title: "Memorial Service - Smith Family",
+    description: "Service for John Smith at Garden Chapel",
     start: subDays(new Date(), 24), // 24 days before today
     end: subDays(new Date(), 23), // 23 days before today
     allDay: true,
     color: "sky",
-    location: "Main Conference Hall",
+    location: "Garden Chapel",
   },
   {
     id: "2",
-    title: "Project Deadline",
-    description: "Submit final deliverables",
+    title: "Plot Viewing Appointment",
+    description: "Guided tour for the Lee family",
     start: setMinutes(setHours(subDays(new Date(), 9), 13), 0), // 1:00 PM, 9 days before
     end: setMinutes(setHours(subDays(new Date(), 9), 15), 30), // 3:30 PM, 9 days before
     color: "amber",
-    location: "Office",
+    location: "Section B Entrance",
   },
   {
     id: "3",
-    title: "Quarterly Budget Review",
-    description: "Strategic planning for next year",
+    title: "Cemetery Maintenance",
+    description: "Quarterly groundskeeping and inspection",
     start: subDays(new Date(), 13), // 13 days before today
     end: subDays(new Date(), 13), // 13 days before today
     allDay: true,
     color: "orange",
-    location: "Main Conference Hall",
+    location: "Entire Park",
   },
   {
     id: "4",
-    title: "Team Meeting",
-    description: "Weekly team sync",
+    title: "Staff Meeting",
+    description: "Weekly operations update",
     start: setMinutes(setHours(new Date(), 10), 0), // 10:00 AM today
     end: setMinutes(setHours(new Date(), 11), 0), // 11:00 AM today
     color: "sky",
-    location: "Conference Room A",
+    location: "Admin Office",
   },
   {
     id: "5",
-    title: "Lunch with Client",
-    description: "Discuss new project requirements",
+    title: "Family Consultation",
+    description: "Discuss pre-need arrangements with Garcia family",
     start: setMinutes(setHours(addDays(new Date(), 1), 12), 0), // 12:00 PM, 1 day from now
     end: setMinutes(setHours(addDays(new Date(), 1), 13), 15), // 1:15 PM, 1 day from now
     color: "emerald",
-    location: "Downtown Cafe",
+    location: "Consultation Room 2",
   },
   {
     id: "6",
-    title: "Product Launch",
-    description: "New product release",
+    title: "All Souls' Day Preparation",
+    description: "Setup for annual remembrance event",
     start: addDays(new Date(), 3), // 3 days from now
     end: addDays(new Date(), 6), // 6 days from now
     allDay: true,
@@ -66,67 +66,67 @@ const sampleEvents: CalendarEvent[] = [
   },
   {
     id: "7",
-    title: "Sales Conference",
-    description: "Discuss about new clients",
+    title: "Burial Ceremony - Tan Family",
+    description: "Interment at Section C, Plot 45",
     start: setMinutes(setHours(addDays(new Date(), 4), 14), 30), // 2:30 PM, 4 days from now
     end: setMinutes(setHours(addDays(new Date(), 5), 14), 45), // 2:45 PM, 5 days from now
     color: "rose",
-    location: "Downtown Cafe",
+    location: "Section C, Plot 45",
   },
   {
     id: "8",
-    title: "Team Meeting",
-    description: "Weekly team sync",
+    title: "Staff Training",
+    description: "First aid and emergency response",
     start: setMinutes(setHours(addDays(new Date(), 5), 9), 0), // 9:00 AM, 5 days from now
     end: setMinutes(setHours(addDays(new Date(), 5), 10), 30), // 10:30 AM, 5 days from now
     color: "orange",
-    location: "Conference Room A",
+    location: "Training Room",
   },
   {
     id: "9",
-    title: "Review contracts",
-    description: "Weekly team sync",
+    title: "Headstone Installation",
+    description: "Install marker for Rivera family",
     start: setMinutes(setHours(addDays(new Date(), 5), 14), 0), // 2:00 PM, 5 days from now
     end: setMinutes(setHours(addDays(new Date(), 5), 15), 30), // 3:30 PM, 5 days from now
     color: "sky",
-    location: "Conference Room A",
+    location: "Section D, Plot 12",
   },
   {
     id: "10",
-    title: "Team Meeting",
-    description: "Weekly team sync",
+    title: "Memorial Bench Dedication",
+    description: "Ceremony for donated bench",
     start: setMinutes(setHours(addDays(new Date(), 5), 9), 45), // 9:45 AM, 5 days from now
     end: setMinutes(setHours(addDays(new Date(), 5), 11), 0), // 11:00 AM, 5 days from now
     color: "amber",
-    location: "Conference Room A",
+    location: "Reflection Garden",
   },
   {
     id: "11",
-    title: "Marketing Strategy Session",
-    description: "Quarterly marketing planning",
+    title: "Community Outreach",
+    description: "Free estate planning seminar",
     start: setMinutes(setHours(addDays(new Date(), 9), 10), 0), // 10:00 AM, 9 days from now
     end: setMinutes(setHours(addDays(new Date(), 9), 15), 30), // 3:30 PM, 9 days from now
     color: "emerald",
-    location: "Marketing Department",
+    location: "Event Hall",
   },
   {
     id: "12",
-    title: "Annual Shareholders Meeting",
-    description: "Presentation of yearly results",
+    title: "Remembrance Ceremony",
+    description: "Annual event for families",
     start: addDays(new Date(), 17), // 17 days from now
     end: addDays(new Date(), 17), // 17 days from now
     allDay: true,
     color: "sky",
-    location: "Grand Conference Center",
+    location: "Memorial Lawn",
   },
   {
     id: "13",
-    title: "Product Development Workshop",
-    description: "Brainstorming for new features",
+    title: "Tree Planting Memorial",
+    description: "Commemorative tree planting for donors",
     start: setMinutes(setHours(addDays(new Date(), 26), 9), 0), // 9:00 AM, 26 days from now
     end: setMinutes(setHours(addDays(new Date(), 27), 17), 0), // 5:00 PM, 27 days from now
     color: "rose",
-    location: "Innovation Lab",
+    location: "North Grove",
   },
 ]
 
