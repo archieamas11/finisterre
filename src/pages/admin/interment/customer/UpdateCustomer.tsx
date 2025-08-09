@@ -1,4 +1,5 @@
 import type { Customer } from "@/types/interment.types";
+import { toast } from "sonner";
 
 import CustomerForm from "@/pages/admin/interment/forms/CustomerForm";
 import { useUpsertCustomer } from "@/hooks/customer-hooks/customer.hooks";
@@ -34,14 +35,19 @@ export default function EditCustomerDialog({
         ? new Date(values.birth_date).toISOString().slice(0, 10)
         : "",
     };
-    try {
-      const result = await mutateAsync(payload);
-      if ((result as any)?.success) {
-        onOpenChange(false);
-      }
-    } catch (error) {
-      console.error("Error updating customer:", error);
-    }
+    await toast.promise(
+      mutateAsync(payload).then((result) => {
+        if ((result as any)?.success) {
+          onOpenChange(false);
+        }
+        return result;
+      }),
+      {
+        loading: "Updating customer...",
+        success: "Customer updated successfully!",
+        error: "Failed to update customer.",
+      },
+    );
   }
 
   const initialValues = {
