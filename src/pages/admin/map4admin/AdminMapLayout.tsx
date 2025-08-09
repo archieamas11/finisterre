@@ -288,7 +288,7 @@ export default function AdminMapLayout() {
                         className="leaflet-theme-popup"
                         closeButton={false}
                         offset={[-2, 5]}
-                        minWidth={550}
+                        minWidth={600}
                         maxWidth={600}
                       >
                         <Suspense

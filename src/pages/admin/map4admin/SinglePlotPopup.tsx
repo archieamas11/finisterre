@@ -1,6 +1,5 @@
 import { useState, lazy } from "react";
 import {
-  Ruler,
   Plus,
   Edit,
   Eye,
@@ -82,9 +81,9 @@ export default function SinglePlotLocations({ marker }: PlotLocationsProps) {
       </div>
 
       {/* Main Content Grid - Two Columns */}
-      <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
+      <div className="grid grid-cols-1 gap-2 md:grid-cols-2">
         {/* Left Column - Plot Info */}
-        <Card className="h-fit">
+        <Card className="h-83">
           <CardHeader className="pb-2">
             <CardTitle className="flex items-center gap-2 text-sm">
               <MapPin className="text-primary h-4 w-4" />
@@ -93,17 +92,18 @@ export default function SinglePlotLocations({ marker }: PlotLocationsProps) {
           </CardHeader>
           <CardContent className="space-y-2 text-xs">
             {/* Location */}
-            <div className="flex items-center justify-between">
-              <span className="text-muted-foreground font-medium">
-                Location
-              </span>
+            <div className="flex items-center justify-between py-2">
+              <div className="flex items-center gap-2">
+                <span className="text-muted-foreground font-medium">
+                  Location
+                </span>
+              </div>
               <span className="font-semibold">{marker.location}</span>
             </div>
-
             <Separator />
 
             {/* Status and Category - Row layout */}
-            <div className="grid grid-cols-2 gap-2">
+            <div className="grid grid-cols-2 gap-2 py-2">
               <div className="text-center">
                 <p className="text-muted-foreground mb-1 text-xs">Status</p>
                 <Badge
@@ -114,7 +114,7 @@ export default function SinglePlotLocations({ marker }: PlotLocationsProps) {
                         ? "secondary"
                         : "destructive"
                   }
-                  className="flex items-center gap-1 text-xs"
+                  className="text-xs"
                 >
                   {marker.plotStatus === "available" && (
                     <CheckCircle className="h-2 w-2" />
@@ -132,7 +132,7 @@ export default function SinglePlotLocations({ marker }: PlotLocationsProps) {
                 <p className="text-muted-foreground mb-1 text-xs">Category</p>
                 <Badge
                   variant="outline"
-                  className={`flex items-center gap-1 text-xs ${
+                  className={`text-xs ${
                     marker.category === "bronze"
                       ? "border-amber-400 text-amber-700"
                       : marker.category === "silver"
@@ -150,38 +150,47 @@ export default function SinglePlotLocations({ marker }: PlotLocationsProps) {
                 </Badge>
               </div>
             </div>
-
             <Separator />
 
-            {/* Dimensions - Compact inline */}
-            <div className="bg-muted rounded p-2">
-              <div className="mb-1 flex items-center gap-1">
-                <Ruler className="text-primary h-3 w-3" />
-                <span className="text-xs font-medium">Dimensions</span>
-              </div>
-              <div className="flex items-center justify-between text-xs">
-                <span>
-                  {isNaN(marker.dimensions.length) ||
-                  marker.dimensions.length === undefined ||
-                  marker.dimensions.length === null
-                    ? "N/A"
-                    : marker.dimensions.length}
-                  m ×{" "}
-                  {isNaN(marker.dimensions.width) ||
-                  marker.dimensions.width === undefined ||
-                  marker.dimensions.width === null
-                    ? "N/A"
-                    : marker.dimensions.width}
-                  m
+            {/* Dimensions - Improved Design */}
+            <div className="flex items-center justify-between py-2">
+              <div className="flex items-center gap-2">
+                <span className="text-muted-foreground text-xs font-medium">
+                  Dimensions
                 </span>
-                <Badge variant="secondary" className="text-xs">
-                  {isNaN(marker.dimensions.area) ||
-                  marker.dimensions.area === undefined ||
-                  marker.dimensions.area === null
-                    ? "N/A"
-                    : marker.dimensions.area.toLocaleString()}{" "}
-                  m²
-                </Badge>
+              </div>
+              <div className="flex flex-col items-end">
+                <div className="flex items-center gap-1 text-xs font-semibold">
+                  <span>
+                    {isNaN(marker.dimensions.length) ||
+                    marker.dimensions.length === undefined ||
+                    marker.dimensions.length === null
+                      ? "N/A"
+                      : marker.dimensions.length}
+                    m
+                  </span>
+                  <span className="text-muted-foreground">×</span>
+                  <span>
+                    {isNaN(marker.dimensions.width) ||
+                    marker.dimensions.width === undefined ||
+                    marker.dimensions.width === null
+                      ? "N/A"
+                      : marker.dimensions.width}
+                    m
+                  </span>
+                  <span className="text-muted-foreground">×</span>
+                  <span>
+                    {isNaN(marker.dimensions.area) ||
+                    marker.dimensions.area === undefined ||
+                    marker.dimensions.area === null
+                      ? "N/A"
+                      : marker.dimensions.area.toLocaleString()}
+                    m²
+                  </span>
+                </div>
+                <div className="text-muted-foreground mt-1 text-[10px]">
+                  Length × Width × Area
+                </div>
               </div>
             </div>
           </CardContent>

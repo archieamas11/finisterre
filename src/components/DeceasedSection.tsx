@@ -1,4 +1,4 @@
-import { User, Users, Loader2 } from "lucide-react";
+import { Users, Loader2 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
@@ -61,37 +61,22 @@ export function DeceasedSection({
   const ownerInfo = owner || fallbackOwner;
 
   return (
-    <Card className="h-fit">
-      <CardHeader className="pb-1">
+    <Card className="h-83">
+      <CardHeader className="pb-2">
         <CardTitle className="flex items-center gap-2 text-sm">
-          <Users className="text-primary h-3 w-3" />
-          Owner & Deceased
+          <Users className="text-primary h-4 w-4" />
+          Plot Information
         </CardTitle>
       </CardHeader>
-      <CardContent className="space-y-2 p-2">
+      <CardContent className="">
         {/* Owner Section - Ultra Minimal */}
-        <div className="space-y-1">
-          <div className="flex items-center gap-1">
-            <User className="h-2 w-2 text-blue-600" />
-            <span className="text-muted-foreground text-xs font-medium">
-              Owner
-            </span>
-          </div>
+        <div className="">
           {ownerInfo?.fullname ? (
             <div className="pl-3">
-              <p className="truncate text-xs font-semibold">
-                {ownerInfo.fullname}
-              </p>
-              {(ownerInfo.email || ownerInfo.contact) && (
-                <div className="text-muted-foreground mt-0.5 flex gap-2 text-xs">
-                  {ownerInfo.email && (
-                    <span className="max-w-[120px] truncate">
-                      📧 {ownerInfo.email}
-                    </span>
-                  )}
-                  {ownerInfo.contact && <span>📞 {ownerInfo.contact}</span>}
-                </div>
-              )}
+              <div className="flex items-center justify-between">
+                <span className="text-muted-foreground font-medium">Owner</span>
+                <span className="font-semibold"> {ownerInfo.fullname}</span>
+              </div>
             </div>
           ) : (
             <p className="text-muted-foreground pl-3 text-xs">
@@ -103,11 +88,10 @@ export function DeceasedSection({
         <Separator className="my-2" />
 
         {/* Deceased Section - Ultra Minimal */}
-        <div className="space-y-1">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-1">
-              <Users className="h-2 w-2 text-green-600" />
-              <span className="text-muted-foreground text-xs font-medium">
+        <div className="">
+          <div className="flex justify-between pl-3">
+            <div className="flex items-center justify-between">
+              <span className="text-muted-foreground font-medium">
                 Deceased
               </span>
             </div>
@@ -119,11 +103,14 @@ export function DeceasedSection({
           </div>
 
           {deceased && deceased.length > 0 ? (
-            <div className="space-y-1.5 pl-3">
+            <div className="mt-2">
               {deceased.slice(0, 2).map((person, index) => {
                 const yearsBuried = calculateYearsBuried(person.dead_interment);
                 return (
-                  <div key={person.deceased_id || index} className="text-xs">
+                  <div
+                    key={person.deceased_id || index}
+                    className="grid-col-2 bg-primary-foreground mb-2 grid rounded-lg border px-2 text-xs"
+                  >
                     <div className="flex items-center justify-between">
                       <p className="truncate text-xs font-semibold">
                         {person.dead_fullname}
@@ -132,7 +119,7 @@ export function DeceasedSection({
                         #{index + 1}
                       </span>
                     </div>
-                    <div className="text-muted-foreground text-xs">
+                    <div className="text-muted-foreground mb-4 text-xs">
                       <span>
                         ⚰️ {formatDate(person.dead_interment)} • ⏰{" "}
                         {yearsBuried}y
