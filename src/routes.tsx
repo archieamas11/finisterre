@@ -8,7 +8,6 @@ const AdminMapLayout = lazy(
 );
 const Bookings = lazy(() => import("@/pages/admin/bookings/ManageBookings"));
 const MapPage = lazy(() => import("@/components/layout/WebMapLayout"));
-const MapLibre = lazy(() => import("@/components/webmap/testing/MapLibre"));
 const AdminControlPanel = lazy(
   () => import("@/pages/admin/control/AdminControlPanel"),
 );
@@ -68,7 +67,6 @@ export const routes = [
     ],
   },
   { path: "/map", element: <MapPage /> },
-  { path: "/mapLibre", element: <MapLibre /> },
 
   // auth page
   {

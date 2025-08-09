@@ -24,8 +24,6 @@ import { RequireAdmin, RequireAuth, RequireUser } from "@/authRoutes";
 import AdminControlPanel from "@/pages/admin/control/AdminControlPanel";
 import DeceasedTablePage from "@/pages/admin/interment/DeceasedTablePage";
 import LotOwnersTablePage from "@/pages/admin/interment/LotOwnersTablePage";
-
-import MapLibre from "./components/webmap/testing/MapLibre";
 import CustomersPage from "./pages/admin/interment/customer/CustomerPage";
 
 export default function App() {
@@ -34,21 +32,13 @@ export default function App() {
       <Suspense fallback={<div>Loading...</div>}>
         <Routes>
           {/* Public Routes */}
-          <Route element={<LandingLayout />} path="/" />
-          <Route element={<MapPage />} path="/map" />
-          <Route element={<MapLibre />} path="/mapLibre" />
-          <Route
-            element={
-              <Layout>
-                <LoginV2 />
-              </Layout>
-            }
-            path="/login"
-          />
-          <Route element={<ForgotPassword />} path="/forgot-password" />
-          <Route element={<ResetPassword />} path="/reset-password" />
-          <Route element={<Logout />} path="/logout" />
-          <Route element={<UnauthorizedPage />} path="/unauthorized" />
+          <Route path="/" element={<LandingLayout />} />
+          <Route path="/map" element={<MapPage />} />
+          <Route path="/login" element={<Layout><LoginV2 /></Layout>} />
+          <Route path="/forgot-password" element={<ForgotPassword />} />
+          <Route path="/reset-password" element={<ResetPassword />} />
+          <Route path="/logout" element={<Logout />} />
+          <Route path="/unauthorized" element={<UnauthorizedPage />} />
 
           {/* User Protected Routes */}
           <Route
