@@ -75,7 +75,7 @@ export const adminSidebarItems: NavGroup[] = [
         url: "/admin/map",
       },
       {
-        title: "Bookings",
+        title: "Event Calendar",
         icon: CalendarDays,
         url: "/admin/bookings",
       },

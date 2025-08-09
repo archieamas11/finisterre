@@ -38,10 +38,13 @@ const DefaultIcon = L.icon({
 });
 L.Marker.prototype.options.icon = DefaultIcon;
 
-export const LocateContext = createContext<{ requestLocate: () => void; } | null>(null);
+export const LocateContext = createContext<{
+  requestLocate: () => void;
+} | null>(null);
+
 export default function AdminMapLayout() {
   const CEMETERY_GATE = L.latLng(10.248107820799307, 123.797607547609545);
-  const { isError, isLoading, data: plotsData } = usePlots();
+  const { isError, refetch, isLoading, data: plotsData } = usePlots();
   const markers = plotsData?.map(convertPlotToMarker) || [];
   const bounds: [[number, number]] = [[10.24930711375518, 123.79784801248411]];
   const locateRef = useRef<(() => void) | null>(null);
@@ -61,7 +64,7 @@ export default function AdminMapLayout() {
     return (
       <ErrorMessage
         message="Failed to load map data. Please check your connection and try again."
-        onRetry={() => usePlots()}
+        onRetry={refetch}
         showRetryButton={true}
       />
     );
@@ -258,10 +261,11 @@ export default function AdminMapLayout() {
                   >
                     {marker.rows && marker.columns ? (
                       // 🏢 Columbarium Popup
-                      <Popup className="leaflet-theme-popup"
+                      <Popup
+                        className="leaflet-theme-popup"
+                        closeButton={false}
                         offset={[-2, 5]}
                         minWidth={450}
-                        closeButton={false}
                       >
                         <div className="w-full py-2">
                           <Suspense
@@ -280,15 +284,17 @@ export default function AdminMapLayout() {
                       </Popup>
                     ) : (
                       // 🏠 Single Plot Popup
-                      <Popup className="leaflet-theme-popup"
-                        offset={[-2, 5]}
-                        minWidth={250}
+                      <Popup
+                        className="leaflet-theme-popup"
                         closeButton={false}
+                        offset={[-2, 5]}
+                        minWidth={550}
+                        maxWidth={600}
                       >
                         <Suspense
                           fallback={
                             <>
-                              <div className="mb-3 items-center justify-between flex gap-2">
+                              <div className="mb-3 flex items-center justify-between gap-2">
                                 <Skeleton className="h-[40px] w-full rounded" />
                                 <Skeleton className="h-[40px] w-full rounded" />
                                 <Skeleton className="h-[40px] w-full rounded" />

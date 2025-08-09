@@ -1,4 +1,14 @@
 export interface ConvertedMarker {
+  deceased: {
+    dead_fullname?: string;
+    dead_interment?: string;
+  };
+  owner: {
+    customer_id?: string;
+    fullname?: string;
+    email?: string;
+    contact?: string;
+  };
   rows: string;
   block: string;
   plot_id: string;
@@ -36,6 +46,12 @@ export interface plots {
 // 🔧 Map utility functions
 export const convertPlotToMarker = (plot: {
   file_names_array?: string[];
+  dead_fullname?: string;
+  dead_interment?: string;
+  customer_id?: string;
+  fullname?: string;
+  email?: string;
+  contact?: string;
   label: string | null;
   file_name?: string[];
   coordinates: string;
@@ -94,6 +110,16 @@ export const convertPlotToMarker = (plot: {
       area: parseFloat(plot.area),
       width: parseFloat(plot.width),
       length: parseFloat(plot.length),
+    },
+    deceased: {
+      dead_fullname: plot.dead_fullname,
+      dead_interment: plot.dead_interment,
+    },
+    owner: {
+      customer_id: plot.customer_id,
+      fullname: plot.fullname,
+      email: plot.email,
+      contact: plot.contact,
     },
   };
 };

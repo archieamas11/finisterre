@@ -1,6 +1,3 @@
-import reactNamingConvention from "eslint-plugin-react-naming-convention";
-import reactHooksExtra from "eslint-plugin-react-hooks-extra";
-import perfectionist from "eslint-plugin-perfectionist";
 import reactRefresh from "eslint-plugin-react-refresh";
 import reactWebApi from "eslint-plugin-react-web-api";
 import reactHooks from "eslint-plugin-react-hooks";

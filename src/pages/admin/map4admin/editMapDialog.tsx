@@ -71,7 +71,6 @@ export default function EditMapDialog({
 
   // 🖼️ Initialize images from plot data
   React.useEffect(() => {
-    console.log("🔍 Initializing images from plot data:", plots);
     if (plots.file_name && Array.isArray(plots.file_name)) {
       setPlotImages(plots.file_name.filter(Boolean));
     } else if (plots.file_name && typeof plots.file_name === "string") {
@@ -84,11 +83,8 @@ export default function EditMapDialog({
   // 📋 Fetch categories when dialog opens
   React.useEffect(() => {
     if (!open) return;
-
-    console.log("📋 Fetching plot categories...");
     getPlotsCategory()
       .then((res) => {
-        // 🟢 Map string array to array of objects for Select compatibility
         const arr = Array.isArray(res?.categories)
           ? res.categories.map((cat: string) => ({ category: cat }))
           : [];

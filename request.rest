@@ -1,2 +1,6 @@
-POST http://localhost/finisterre_backend/plots/get_plots.php
+POST http://localhost/finisterre_backend/plots/get_plots_media.php
 Content-Type: application/json
+
+{
+  "plot_id": "1"
+}

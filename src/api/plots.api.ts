@@ -81,3 +81,28 @@ export async function getPlotsCategory() {
   const res = await api.post("plots/get_plot_category.php");
   return res.data;
 }
+
+// Serenity Lawn
+export async function getSerenityByPlot(plot_id: string) {
+  const res = await api.post("plots/get_plots_media.php", { plot_id });
+  if (!res.data?.success) {
+    throw new Error(res.data?.message || "Failed to fetch plot media");
+  }
+  if (!Array.isArray(res.data.mediaData)) {
+    throw new Error("Invalid response format - mediaData should be an array");
+  } else {
+    console.log("🚀 Fetched media for plot:", plot_id, res.data.mediaData);
+  }
+  return res.data;
+}
+
+// 🏠 Get plot owner and deceased details
+export async function getPlotDetails(plot_id: string) {
+  const res = await api.post("plots/get_plot_details.php", { plot_id });
+  if (!res.data?.success) {
+    throw new Error(res.data?.message || "Failed to fetch plot details");
+  } else {
+    console.log("🚀 Fetched plot details for plot:", plot_id, res.data);
+  }
+  return res.data;
+}
