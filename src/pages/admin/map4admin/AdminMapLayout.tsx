@@ -9,6 +9,7 @@ import iconUrl from "leaflet/dist/images/marker-icon.png";
 import shadowUrl from "leaflet/dist/images/marker-shadow.png";
 import iconRetinaUrl from "leaflet/dist/images/marker-icon-2x.png";
 import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
+import { useQueryClient } from "@tanstack/react-query";
 
 import type { ConvertedMarker } from "@/types/map.types";
 
@@ -45,11 +46,20 @@ export const LocateContext = createContext<{
 export default function AdminMapLayout() {
   const CEMETERY_GATE = L.latLng(10.248107820799307, 123.797607547609545);
   const { isError, refetch, isLoading, data: plotsData } = usePlots();
+  const queryClient = useQueryClient();
   const markers = plotsData?.map(convertPlotToMarker) || [];
   const bounds: [[number, number]] = [[10.24930711375518, 123.79784801248411]];
   const locateRef = useRef<(() => void) | null>(null);
   const requestLocate = () => {
     if (locateRef.current) locateRef.current();
+  };
+
+  // Function to handle popup opening - invalidate cache for fresh data
+  const handlePopupOpen = (plot_id: string) => {
+    // Invalidate the specific plot details cache when popup opens
+    queryClient.invalidateQueries({
+      queryKey: ["plotDetails", plot_id],
+    });
   };
 
   if (isLoading) {
@@ -290,6 +300,9 @@ export default function AdminMapLayout() {
                         offset={[-2, 5]}
                         minWidth={600}
                         maxWidth={600}
+                        eventHandlers={{
+                          add: () => handlePopupOpen(marker.plot_id),
+                        }}
                       >
                         <Suspense
                           fallback={

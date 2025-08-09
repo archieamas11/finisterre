@@ -48,7 +48,10 @@ export const usePlotDetails = (plot_id: string) => {
       };
     },
     enabled: !!plot_id,
-    staleTime: 5 * 60 * 1000, // 5 minutes
+    staleTime: 30 * 1000, // Reduced to 30 seconds for fresher data
+    gcTime: 2 * 60 * 1000, // 2 minutes garbage collection time
+    refetchOnWindowFocus: true, // Refetch when window gains focus
+    refetchOnMount: true, // Always refetch on component mount
     retry: 2,
   });
 };

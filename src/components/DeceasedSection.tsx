@@ -1,3 +1,5 @@
+import { HiClock } from "react-icons/hi";
+import { GiCoffin } from "react-icons/gi";
 import { Users, Loader2 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -119,10 +121,12 @@ export function DeceasedSection({
                         #{index + 1}
                       </span>
                     </div>
-                    <div className="text-muted-foreground mb-4 text-xs">
-                      <span>
-                        ⚰️ {formatDate(person.dead_interment)} • ⏰{" "}
-                        {yearsBuried}y
+                    <div className="text-muted-foreground mb-4 flex items-center justify-between gap-1 text-xs">
+                      <span className="flex items-center justify-center gap-1">
+                        <GiCoffin /> {formatDate(person.dead_interment)}
+                      </span>
+                      <span className="flex items-center justify-center gap-1">
+                        <HiClock /> {yearsBuried}
                       </span>
                     </div>
                   </div>
