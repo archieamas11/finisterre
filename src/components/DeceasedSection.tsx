@@ -47,7 +47,7 @@ export function DeceasedSection({
 }: CombinedSectionProps) {
   if (isLoading) {
     return (
-      <Card className="h-fit max-h-[280px]">
+      <Card className="h-83">
         <CardContent className="flex items-center justify-center p-3">
           <div className="flex items-center gap-1">
             <Loader2 className="h-3 w-3 animate-spin" />
