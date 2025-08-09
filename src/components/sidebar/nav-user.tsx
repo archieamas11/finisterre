@@ -1,45 +1,40 @@
-"use client"
+"use client";
 
+import { useNavigate } from "react-router-dom";
+import { ChevronsUpDown, BadgeCheck, LogOut, Bell } from "lucide-react";
+
+import { AvatarFallback, AvatarImage, Avatar } from "@/components/ui/avatar";
 import {
-  BadgeCheck,
-  Bell,
-  ChevronsUpDown,
-  LogOut,
-} from "lucide-react"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuGroup,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import {
-  SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
+  SidebarMenu,
   useSidebar,
-} from "@/components/ui/sidebar"
-import { useNavigate } from "react-router-dom"
+} from "@/components/ui/sidebar";
+import {
+  DropdownMenuSeparator,
+  DropdownMenuContent,
+  DropdownMenuTrigger,
+  DropdownMenuGroup,
+  DropdownMenuLabel,
+  DropdownMenuItem,
+  DropdownMenu,
+} from "@/components/ui/dropdown-menu";
 
 export function NavUser({
   user,
 }: {
   user: {
-    name: string
-    email: string
-    avatar: string
-  }
+    avatar: string;
+    email: string;
+    name: string;
+  };
 }) {
-  const { isMobile } = useSidebar()
+  const { isMobile } = useSidebar();
 
   const navigate = useNavigate();
   const handleLogout = () => {
     navigate("/logout");
   };
-
 
   return (
     <SidebarMenu>
@@ -47,8 +42,8 @@ export function NavUser({
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <SidebarMenuButton
-              size="lg"
               className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
+              size="lg"
             >
               <Avatar className="h-8 w-8 rounded-lg">
                 <AvatarImage src={user.avatar} alt={user.name} />
@@ -64,8 +59,8 @@ export function NavUser({
           <DropdownMenuContent
             className="w-(--radix-dropdown-menu-trigger-width) min-w-56 rounded-lg"
             side={isMobile ? "bottom" : "right"}
-            align="end"
             sideOffset={4}
+            align="end"
           >
             <DropdownMenuLabel className="p-0 font-normal">
               <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
@@ -99,5 +94,5 @@ export function NavUser({
         </DropdownMenu>
       </SidebarMenuItem>
     </SidebarMenu>
-  )
+  );
 }

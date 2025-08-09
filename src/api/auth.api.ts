@@ -1,15 +1,15 @@
 import { api } from "./axiosInstance";
 
 export interface LoginResponse {
-  success: boolean;
-  message: string;
   token?: string;
+  message: string;
+  success: boolean;
   isAdmin?: boolean;
 }
 
 export async function loginUser(
   username: string,
-  password: string
+  password: string,
 ): Promise<LoginResponse> {
   try {
     const res = await api.post<LoginResponse>("auth/login.php", {

@@ -1,19 +1,30 @@
+import { ErrorMessage } from "@/components/ErrorMessage";
+
 import LotOwnersTable from "./LotOwnersTable";
-import SpinnerCircle4 from "@/components/ui/spinner-10";
-import { useLotOwners } from "@/hooks/lot-owner-hooks/LotOwner.hooks";
+import { useGetLotOwner } from "@/hooks/lot-owner-hooks/useGetLotOwner";
+import SkeletonTableOneWrapper from "@/components/mvpblocks/skeleton-table-1";
 
 export default function LotOwnersTablePage() {
-  const { data: lotOwners, isPending, isError } = useLotOwners();
+  const { isError, isPending, data: lotOwners } = useGetLotOwner();
 
   if (isPending)
     return (
-      <div className="flex items-center justify-center h-full">
-        <SpinnerCircle4 />
+      <div className="flex h-full items-center justify-center">
+        <SkeletonTableOneWrapper
+          rowCount={10}
+          columnCount={5}
+        />
       </div>
     );
 
   if (isError || !lotOwners) {
-    return <div className="p-4 text-center">Failed to load lot owners.</div>;
+    return (
+      <ErrorMessage
+        message="Failed to load user data. Please check your connection and try again."
+        onRetry={() => useGetLotOwner()}
+        showRetryButton={true}
+      />
+    );
   }
   return <LotOwnersTable data={lotOwners} />;
 }

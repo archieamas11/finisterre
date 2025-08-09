@@ -1,4 +1,4 @@
-import { SectionCards } from "@/components/sidebar/section-cards"
+import { SectionCards } from "@/components/sidebar/section-cards";
 export default function UserDashboard() {
   return (
     <div>
@@ -11,5 +11,5 @@ export default function UserDashboard() {
         </div>
       </div>
     </div>
-  )
+  );
 }

@@ -1,17 +1,28 @@
-import SpinnerCircle4 from "@/components/ui/spinner-10";
+import { ErrorMessage } from "@/components/ErrorMessage";
+import SkeletonTableOneWrapper from "@/components/mvpblocks/skeleton-table-1";
 import { useGetCustomers } from "@/hooks/customer-hooks/useGetCustomer";
 import CustomersTable from "@/pages/admin/interment/customer/CustomersTable";
 
 export default function CustomersPage() {
-    const { data: customers, isPending, isError } = useGetCustomers();
+  const { isError, isPending, data: customers } = useGetCustomers();
 
-    if (isPending)
-        return (
-            <div className="flex items-center justify-center h-full">
-                <SpinnerCircle4 />
-            </div>
-        );
-    if (isError) return <p>Failed to load customers</p>;
-
-    return <CustomersTable data={customers} />;
+  if (isPending)
+    return (
+      <div className="flex h-full items-center justify-center">
+        <SkeletonTableOneWrapper
+          rowCount={10}
+          columnCount={5}
+        />
+      </div>
+    );
+  if (isError || !customers) {
+    return (
+      <ErrorMessage
+        message="Failed to load customer data. Please check your connection and try again."
+        onRetry={() => useGetCustomers()}
+        showRetryButton={true}
+      />
+    );
+  }
+  return <CustomersTable data={customers} />;
 }

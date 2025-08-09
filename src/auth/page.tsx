@@ -1,7 +1,8 @@
-import { APP_CONFIG } from "@/config/app-config";
-import { LoginPage } from "@/auth/LoginPage";
-import { MapPin } from "lucide-react"
+import { MapPin } from "lucide-react";
 import { Link } from "react-router-dom";
+
+import { LoginPage } from "@/auth/LoginPage";
+import { APP_CONFIG } from "@/config/app-config";
 
 export default function LoginV2() {
   return (
@@ -10,14 +11,16 @@ export default function LoginV2() {
         <div className="space-y-2 text-center">
           <div className="flex justify-center">
             <Link
+              className="border-primary/10 bg-primary/10 mb-5 flex aspect-square h-16 w-16 items-center justify-center rounded-full border p-3 lg:hidden"
               to="/"
-              className="flex items-center justify-center lg:hidden border border-primary/10 bg-primary/10 rounded-full p-3 w-16 h-16 aspect-square mb-5"
             >
               <MapPin className="h-20 w-20" />
             </Link>
           </div>
           <h1 className="text-3xl font-medium">Login to your account</h1>
-          <p className="text-muted-foreground text-sm">Please enter your details to login.</p>
+          <p className="text-muted-foreground text-sm">
+            Please enter your details to login.
+          </p>
         </div>
         <div className="space-y-4">
           <LoginPage />

@@ -1,47 +1,53 @@
-export type ConvertedMarker = {
+export interface ConvertedMarker {
+  rows: string;
+  block: string;
   plot_id: string;
-  position: [number, number];
+  columns: string;
   location: string;
+  category: string;
   plotStatus: string;
+  label: string | null;
+  file_name?: string[];
+  position: [number, number];
+  file_names_array?: string[];
   dimensions: {
     length: number;
     width: number;
     area: number;
   };
-  category: string;
-  block: string;
-  label: string | null;
-  file_name?: string[];
-  file_names_array?: string[];
-};
+}
 
-export type plots = {
-  plot_id: string;
-  block: string;
-  category: string;
-  length: string;
-  width: string;
+export interface plots {
   area: string;
-  status: string;
+  rows: string;
+  block: string;
+  width: string;
   label: string;
-  coordinates: [number, number];
+  length: string;
+  status: string;
+  plot_id: string;
+  columns: string;
+  category: string;
   file_names: string[];
   file_names_array?: string[];
-};
+  coordinates: [number, number];
+}
 
 // 🔧 Map utility functions
 export const convertPlotToMarker = (plot: {
-  plot_id: string;
-  block: string;
+  file_names_array?: string[];
+  label: string | null;
+  file_name?: string[];
+  coordinates: string;
   category: string;
+  plot_id: string;
+  columns: string;
   length: string;
+  status: string;
+  block: string;
   width: string;
   area: string;
-  status: string;
-  label: string | null;
-  coordinates: string;
-  file_name?: string[];
-  file_names_array?: string[];
+  rows: string;
 }): ConvertedMarker => {
   // 📍 Parse coordinates from database format "lng, lat" to [lat, lng]
   const [lng, lat] = plot.coordinates.split(", ").map(Number);
@@ -72,73 +78,41 @@ export const convertPlotToMarker = (plot: {
     }
   }
 
-  console.log("🔄 Converting plot:", {
-    plot_id: plot.plot_id,
-    original_file_name: plot.file_name,
-    original_file_names_array: plot.file_names_array,
-    converted_fileNames: fileNames,
-  });
-
   return {
-    plot_id: plot.plot_id,
-    position: [lat, lng] as [number, number],
-    location: `Block ${plot.block} • Plot ${plot.plot_id}`,
-    plotStatus: plot.status,
-    dimensions: {
-      length: parseFloat(plot.length),
-      width: parseFloat(plot.width),
-      area: parseFloat(plot.area),
-    },
-    category: plot.category,
+    rows: plot.rows,
     block: plot.block,
     label: plot.label,
+    plot_id: plot.plot_id,
+    columns: plot.columns,
+    plotStatus: plot.status,
+    category: plot.category,
+    position: [lat, lng] as [number, number],
+    location: `Block ${plot.block} • Plot ${plot.plot_id}`,
     file_name: fileNames.length > 0 ? fileNames : undefined,
     file_names_array: fileNames.length > 0 ? fileNames : undefined,
-  };
-};
-
-export type multiplePlots = {
-  col_id: string;
-  rows: string;
-  columns: string;
-  coordinates: [number, number];
-};
-
-// 🔄 Convert multiple plots data to marker format
-export const convertColPlotToMarker = (plot: {
-  col_id: string;
-  rows: string;
-  columns: string;
-  coordinates: string;
-}): multiplePlots => {
-  // 📍 Parse coordinates from database format "lng, lat" to [lat, lng]
-  const [lng, lat] = plot.coordinates.split(", ").map(Number);
-
-  console.log("🔄 Converting col plot:", {
-    col_id: plot.col_id,
-    coordinates: plot.coordinates,
-    parsed: [lat, lng],
-  });
-
-  return {
-    col_id: plot.col_id,
-    rows: plot.rows,
-    columns: plot.columns,
-    coordinates: [lat, lng] as [number, number],
+    dimensions: {
+      area: parseFloat(plot.area),
+      width: parseFloat(plot.width),
+      length: parseFloat(plot.length),
+    },
   };
 };
 
 // 🎨 Get background color based on plot category
 export const getCategoryBackgroundColor = (category: string): string => {
   switch (category.toLowerCase()) {
+    case "columbarium":
+      return "#a3a3";
+    case "platinum":
+      return "#d4af37";
+    case "chambers":
+      return "#a3a3";
+    case "diamond":
+      return "#cc6688";
     case "bronze":
       return "#7d7d7d";
     case "silver":
       return "#b00020";
-    case "platinum":
-      return "#d4af37";
-    case "diamond":
-      return "#cc6688";
     default:
       return "#6b7280";
   }
@@ -146,7 +120,7 @@ export const getCategoryBackgroundColor = (category: string): string => {
 
 // 🟢 Get status color for map markers
 export const getStatusColor = (status: string): string => {
-  switch (status.toLowerCase()) {
+  switch (status) {
     case "available":
       return "#22c55e";
     case "occupied":

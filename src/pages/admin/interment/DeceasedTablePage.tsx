@@ -1,20 +1,31 @@
+import { useGetDeceasedRecord } from "@/hooks/deceased-hooks/useGetDeceasedRecord";
+
 import DeceasedRecordsTable from "./DeceasedTable";
-import SpinnerCircle4 from "@/components/ui/spinner-10";
-import { useDeceasedRecords } from "@/hooks/deceased-hooks/DeceasedRecords.hooks";
+import { ErrorMessage } from "@/components/ErrorMessage";
+import SkeletonTableOneWrapper from "@/components/mvpblocks/skeleton-table-1";
 
 export default function DeceasedTablePage() {
-  const { data: deceasedRecords, isPending, isError } = useDeceasedRecords();
-
+  const { isError, isPending, data: deceasedRecords } = useGetDeceasedRecord();
 
   if (isPending)
-    return (
-      <div className="flex items-center justify-center h-full">
-        <SpinnerCircle4 />
-      </div>
-    );
+    if (isPending)
+      return (
+        <div className="flex h-full items-center justify-center">
+          <SkeletonTableOneWrapper
+            rowCount={10}
+            columnCount={5}
+          />
+        </div>
+      );
 
   if (isError || !deceasedRecords) {
-    return <div className="p-4 text-center">Failed to load deceased records.</div>;
+    return (
+      <ErrorMessage
+        message="Failed to load deceased data. Please check your connection and try again."
+        onRetry={() => useGetDeceasedRecord()}
+        showRetryButton={true}
+      />
+    );
   }
   return <DeceasedRecordsTable data={deceasedRecords} />;
 }

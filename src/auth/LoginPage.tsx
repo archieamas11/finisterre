@@ -1,26 +1,31 @@
-import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
+import React from "react";
+import { toast } from "sonner";
 import { useForm } from "react-hook-form";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
+import { zodResolver } from "@hookform/resolvers/zod";
+
+import { loginUser } from "@/api/auth.api";
+import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
-  Form,
   FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
   FormMessage,
+  FormField,
+  FormLabel,
+  FormItem,
+  Form,
 } from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { loginUser } from "@/api/auth.api";
-import { toast } from "sonner";
-import React from "react";
 
 const FormSchema = z.object({
-  username: z.string().min(3, { message: "Property ID must be at least 3 characters." }),
-  password: z.string().min(4, { message: "Password must be at least 4 characters." }),
   remember: z.boolean().optional(),
+  password: z
+    .string()
+    .min(4, { message: "Password must be at least 4 characters." }),
+  username: z
+    .string()
+    .min(2, { message: "Property ID must be at least 2 characters." }),
 });
 
 export function LoginPage() {
@@ -74,7 +79,7 @@ export function LoginPage() {
         } else if (res.message === "Invalid password") {
           form.setError("password", {
             type: "manual",
-            message: "Incorrect Property ID or Password"
+            message: "Incorrect Property ID or Password",
           });
         } else {
           toast.error("Something went wrong. Please try again later.");
@@ -90,74 +95,77 @@ export function LoginPage() {
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
         <FormField
-          control={form.control}
-          name="username"
           render={({ field }) => (
             <FormItem>
               <FormLabel>Property ID</FormLabel>
               <FormControl>
                 <Input
-                  id="username"
-                  type="text"
                   placeholder="your property ID"
                   autoComplete="username"
+                  id="username"
+                  type="text"
                   {...field}
                 />
               </FormControl>
               <FormMessage />
             </FormItem>
           )}
+          control={form.control}
+          name="username"
         />
         <FormField
-          control={form.control}
-          name="password"
           render={({ field }) => (
             <FormItem>
               <FormLabel>Password</FormLabel>
               <FormControl>
                 <Input
-                  id="password"
-                  type="password"
-                  placeholder="Password"
                   autoComplete="current-password"
+                  placeholder="Password"
+                  type="password"
+                  id="password"
                   {...field}
                 />
               </FormControl>
               <FormMessage /> {/* This will show validation errors */}
             </FormItem>
           )}
+          control={form.control}
+          name="password"
         />
         <FormField
-          control={form.control}
-          name="remember"
           render={({ field }) => (
             <FormItem className="flex flex-row items-center justify-between">
-              <FormLabel htmlFor="login-remember" className="cursor-pointer flex items-center gap-2">
+              <FormLabel
+                className="flex cursor-pointer items-center gap-2"
+                htmlFor="login-remember"
+              >
                 <Checkbox
-                  id="login-remember"
-                  checked={field.value}
                   onCheckedChange={field.onChange}
+                  checked={field.value}
+                  id="login-remember"
                   className="size-4"
                 />
                 Remember me
               </FormLabel>
               <Link
+                className="text-muted-foreground mt-1 block text-xs hover:underline"
                 to="/forgot-password"
-                className="text-xs text-muted-foreground hover:underline block mt-1"
               >
                 Forgot your password?
               </Link>
             </FormItem>
           )}
+          control={form.control}
+          name="remember"
         />
-        <Button className="w-full mt-2" type="submit">
+        <Button className="mt-2 w-full" variant={"default"} type="submit">
           Login
         </Button>
         <Button
-          className="w-full"
-          type="button"
-          variant="outline"
           onClick={() => navigate(-1)}
+          className="w-full"
+          variant="outline"
+          type="button"
         >
           Back
         </Button>

@@ -1,33 +1,33 @@
 // src/config/sidebar-items.ts
 import {
   LayoutDashboard,
-  ChartBar,
   type LucideIcon,
-  MapIcon,
+  CalendarDays,
   PaintBucket,
+  MonitorCog,
+  ChartBar,
+  MapIcon,
   User,
   Home,
-  MonitorCog,
-  CalendarDays,
 } from "lucide-react";
 
-export interface NavSubItem {
-  title: string;
+export interface NavMainItem {
   url: string;
+  title: string;
+  isNew?: boolean;
+  newTab?: boolean;
   icon?: LucideIcon;
   comingSoon?: boolean;
-  newTab?: boolean;
-  isNew?: boolean;
+  subItems?: NavSubItem[];
 }
 
-export interface NavMainItem {
-  title: string;
+export interface NavSubItem {
   url: string;
-  icon?: LucideIcon;
-  subItems?: NavSubItem[];
-  comingSoon?: boolean;
-  newTab?: boolean;
+  title: string;
   isNew?: boolean;
+  newTab?: boolean;
+  icon?: LucideIcon;
+  comingSoon?: boolean;
 }
 
 export interface NavGroup {
@@ -48,41 +48,41 @@ export const adminSidebarItems: NavGroup[] = [
         icon: LayoutDashboard,
       },
       {
+        icon: ChartBar,
         title: "Interment Setup",
         url: "/admin/interment-setup",
-        icon: ChartBar,
         subItems: [
           {
+            newTab: false,
             title: "Manage Customers",
             url: "/admin/interment-setup/customers",
-            newTab: false,
           },
           {
+            newTab: false,
             title: "Manage Lot Owners",
             url: "/admin/interment-setup/lot-owners",
-            newTab: false,
           },
           {
+            newTab: false,
             title: "Manage Deceased Records",
             url: "/admin/interment-setup/deceased-records",
-            newTab: false,
           },
         ],
       },
       {
         title: "Map",
-        url: "/admin/map",
         icon: MapIcon,
+        url: "/admin/map",
       },
       {
         title: "Bookings",
-        url: "/admin/bookings",
         icon: CalendarDays,
+        url: "/admin/bookings",
       },
       {
+        icon: MonitorCog,
         title: "Control Panel",
         url: "/admin/control-panel",
-        icon: MonitorCog,
       },
     ],
   },
@@ -95,24 +95,24 @@ export const userSidebarItems: NavGroup[] = [
     label: "User Dashboard",
     items: [
       {
-        title: "Home",
-        url: "/user",
         icon: Home,
+        url: "/user",
+        title: "Home",
       },
       {
+        icon: User,
         title: "My Profile",
         url: "/user/profile",
-        icon: User,
       },
       {
+        icon: PaintBucket,
         title: "My Services",
         url: "/user/services",
-        icon: PaintBucket,
       },
       {
         title: "Map",
-        url: "/user/map",
         icon: MapIcon,
+        url: "/user/map",
       },
     ],
   },
@@ -129,7 +129,7 @@ export const getSidebarItems = (isAdmin: boolean): NavGroup[] => {
  */
 export function findSidebarItemByPath(
   pathname: string,
-  isAdmin: boolean
+  isAdmin: boolean,
 ): {
   mainItem: NavMainItem;
   subItem?: NavSubItem;
@@ -143,7 +143,7 @@ export function findSidebarItemByPath(
       if (mainItem.subItems) {
         const subItem = mainItem.subItems.find((s) => s.url === pathname);
         if (subItem) {
-          return { mainItem, subItem };
+          return { subItem, mainItem };
         }
       }
     }

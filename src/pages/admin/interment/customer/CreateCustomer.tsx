@@ -1,34 +1,50 @@
 import React from "react";
-import { Button } from "@/components/ui/button";
-import { Plus } from "lucide-react";
-import CustomerForm from "@/components/forms/CustomerForm";
-import { createCustomer } from "@/api/customer.api";
 import { toast } from "sonner";
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { Plus } from "lucide-react";
+import { useQueryClient, useMutation } from "@tanstack/react-query";
+import { Button } from "@/components/ui/button";
+import { createCustomer } from "@/api/customer.api";
+import CustomerForm from "@/pages/admin/interment/forms/CustomerForm";
 
 export default function CreateCustomer() {
   const queryClient = useQueryClient();
   const [open, setOpen] = React.useState(false);
-  const { mutate, isPending } = useMutation({
+
+  const { mutateAsync, isPending } = useMutation({
     mutationFn: createCustomer,
-    onSuccess: () => {
-      setOpen(false);
-      queryClient.invalidateQueries({ queryKey: ['customers'] });
-    },
-    onError: () => {
-      toast.error('Error saving customer');
-    },
   });
+
+  const handleSubmit = async (data: any) => {
+    try {
+      const mutationPromise = mutateAsync(data);
+      toast.promise(mutationPromise, {
+        loading: 'Saving customer...',
+        success: 'Customer saved successfully',
+      });
+      await mutationPromise;
+      setOpen(false);
+      queryClient.invalidateQueries({ queryKey: ["customers"] });
+    } catch (error) {
+      console.error("Customer creation failed:", error);
+    }
+  };
 
   return (
     <>
-      <Button variant="outline" size="lg" onClick={() => setOpen(true)}><Plus />Add Customer</Button>
+      <Button
+        onClick={() => setOpen(true)}
+        variant="outline"
+        size="lg"
+      >
+        <Plus />
+        Add Customer
+      </Button>
       <CustomerForm
-        mode="add"
-        open={open}
         onOpenChange={setOpen}
-        onSubmit={mutate}
         isPending={isPending}
+        onSubmit={handleSubmit}
+        open={open}
+        mode="add"
       />
     </>
   );

@@ -1,221 +1,243 @@
-import 'leaflet/dist/leaflet.css';
-import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
-import L from 'leaflet';
-// Fix default icon paths so markers actually show up
-import iconUrl from 'leaflet/dist/images/marker-icon.png';
-import iconRetinaUrl from 'leaflet/dist/images/marker-icon-2x.png';
-import shadowUrl from 'leaflet/dist/images/marker-shadow.png';
-import { createContext, useRef } from 'react';
-import { PlotLocations } from '@/pages/admin/map4admin/AdminMapPopup';
-import { ColumbariumPopup } from '@/pages/admin/map4admin/ColumbariumPopup';
-import { BiSolidChurch } from 'react-icons/bi';
-import { renderToStaticMarkup } from 'react-dom/server';
-import { GiOpenGate } from 'react-icons/gi';
-import { useColPlots, usePlots } from '@/hooks/plots-hooks/plot.hooks';
-import type { ConvertedMarker, multiplePlots } from '@/types/map.types';
-import { convertPlotToMarker, convertColPlotToMarker, getCategoryBackgroundColor, getStatusColor } from '@/types/map.types';
+import L from "leaflet";
+import "leaflet/dist/leaflet.css";
+import { Suspense, lazy } from "react";
+import { GiOpenGate } from "react-icons/gi";
+import { createContext, useRef } from "react";
+import { BiSolidChurch } from "react-icons/bi";
+import { renderToStaticMarkup } from "react-dom/server";
+import iconUrl from "leaflet/dist/images/marker-icon.png";
+import shadowUrl from "leaflet/dist/images/marker-shadow.png";
+import iconRetinaUrl from "leaflet/dist/images/marker-icon-2x.png";
+import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
+
+import type { ConvertedMarker } from "@/types/map.types";
+
+import { Card } from "@/components/ui/card";
+import WebMapNavs from "@/pages/webmap/WebMapNavs";
+import { Skeleton } from "@/components/ui/skeleton";
+import { usePlots } from "@/hooks/plots-hooks/plot.hooks";
+import {
+  getCategoryBackgroundColor,
+  convertPlotToMarker,
+  getStatusColor,
+} from "@/types/map.types";
+import SpinnerCircle4 from "@/components/ui/spinner-10";
+import { ErrorMessage } from "@/components/ErrorMessage";
+import MapStats from "./MapStats";
+const ColumbariumPopup = lazy(
+  () => import("@/pages/admin/map4admin/ColumbariumPopup"),
+);
+const SinglePlotLocations = lazy(
+  () => import("@/pages/admin/map4admin/SinglePlotPopup"),
+);
 
 const DefaultIcon = L.icon({
   iconUrl,
-  iconRetinaUrl,
   shadowUrl,
-  iconSize: [25, 41],
-  iconAnchor: [12, 41],
-  popupAnchor: [1, -34],
+  iconRetinaUrl,
 });
 L.Marker.prototype.options.icon = DefaultIcon;
 
-// Context to signal a locate request from navs to map
-export const LocateContext = createContext<{ requestLocate: () => void } | null>(null);
+export const LocateContext = createContext<{ requestLocate: () => void; } | null>(null);
 export default function AdminMapLayout() {
-  // 🎣 Fetch real plot data from backend
-  const { data: plotsData, isLoading, error } = usePlots();
-  const { data: colPlotsData, isLoading: colLoading, error: colError } = useColPlots();
-
-  const bounds: [[number, number], [number, number]] = [
-    [10.247883800064669, 123.79691285546676],
-    [10.249302749341647, 123.7988598710129],
-  ];
-  const locateRef = useRef<(() => void) | null>(null);
-
-  // Cemetery entrance constant for routing
   const CEMETERY_GATE = L.latLng(10.248107820799307, 123.797607547609545);
-
-  // Provide context to navs
+  const { isError, isLoading, data: plotsData } = usePlots();
+  const markers = plotsData?.map(convertPlotToMarker) || [];
+  const bounds: [[number, number]] = [[10.24930711375518, 123.79784801248411]];
+  const locateRef = useRef<(() => void) | null>(null);
   const requestLocate = () => {
     if (locateRef.current) locateRef.current();
   };
 
-  // 🔄 Convert database plots to marker format
-  const markers = plotsData?.map(convertPlotToMarker) || [];
-  const colMarkers = colPlotsData?.map(convertColPlotToMarker) || [];
-
-  console.log('🗺️ Plots data loaded:', { plotsCount: markers.length, isLoading, error });
-  console.log('🏛️ Col Plots data loaded:', { colPlotsCount: colMarkers.length, colLoading, colError });
-
-  // 🔄 Show loading state while fetching plots
-  if (isLoading || colLoading) {
+  if (isLoading) {
     return (
-      <div className="h-screen w-full relative flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
-          <p className="text-gray-600">Loading plot data...</p>
-        </div>
+      <div className="flex h-full items-center justify-center">
+        <SpinnerCircle4 />
       </div>
     );
   }
 
-  // ❌ Show error state if plots failed to load
-  if (error || colError) {
-    console.error('🚨 Error loading plots:', { error, colError });
+  if (isError || !plotsData) {
     return (
-      <div className="h-screen w-full relative flex items-center justify-center">
-        <div className="text-center">
-          <p className="text-red-600 mb-2">Error loading plot data</p>
-          <p className="text-gray-600 text-sm">{error?.message || colError?.message || 'Unknown error'}</p>
-        </div>
-      </div>
+      <ErrorMessage
+        message="Failed to load map data. Please check your connection and try again."
+        onRetry={() => usePlots()}
+        showRetryButton={true}
+      />
     );
   }
 
   return (
-    <LocateContext.Provider value={{ requestLocate }}>
-      <div className="h-screen w-full relative">
-        <MapContainer
-          bounds={bounds}
-          zoom={18}
-          maxZoom={25}
-          scrollWheelZoom={true}
-          zoomAnimation={true}
-          zoomControl={false}
-          markerZoomAnimation={true}
-          className="h-full w-full"
-        >
-          <TileLayer
-            url="https://services.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"
-            maxNativeZoom={18}
-            maxZoom={25}
-          />
-
-          {/* Cemetery Entrance Marker */}
-          <Marker
-            position={[CEMETERY_GATE.lat, CEMETERY_GATE.lng]}
-            icon={L.divIcon({
-              html: renderToStaticMarkup(
-                <div
-                  style={{
-                    background: '#000000',
-                    borderRadius: '50% 50% 50% 0',
-                    boxShadow: '0 0 8px rgba(0,0,0,0.15)',
-                    padding: '4px',
-                    border: '2px solid #fff',
-                    transform: 'rotate(-45deg)',
-                    display: 'inline-block',
-                  }}
-                >
-                  <GiOpenGate
-                    className="z-999 text-white"
-                    size={16}
-                    strokeWidth={2.5}
-                    style={{
-                      transform: 'rotate(45deg)',
-                    }}
-                  />
-                </div>
-              ),
-              className: 'destination-marker',
-              iconSize: [32, 32],
-            })}
+    <div
+      className="z-1 flex w-full flex-col gap-4 py-4 md:gap-6 md:py-6"
+      style={{ maxHeight: "100vh", overflow: "hidden" }}
+      aria-label="Admin Map Page"
+    >
+      <Card
+        style={{
+          overflow: "hidden",
+          height: "calc(97vh - 55px)",
+          maxHeight: "calc(100vh - 64px)",
+        }}
+        className="w-full p-2 shadow-lg"
+      >
+        <LocateContext.Provider value={{ requestLocate }}>
+          <div
+            style={{ height: "100%", maxHeight: "100%" }}
+            className="relative w-full"
           >
-            <Popup>
-              <div className="text-center">
-                <div className="font-semibold text-orange-600">🚪 Cemetery Gate</div>
-                <div className="text-xs text-gray-500 mt-1">Entry point for cemetery visitors</div>
-              </div>
-            </Popup>
-          </Marker>
+            <WebMapNavs />
+            <MapStats />
+            <MapContainer
+              className="h-full w-full rounded-lg"
+              markerZoomAnimation={true}
+              scrollWheelZoom={true}
+              fadeAnimation={false}
+              zoomAnimation={true}
+              zoomControl={false}
+              bounds={bounds}
+              maxZoom={20}
+              zoom={18}
+            >
+              <TileLayer
+                url="https://services.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"
+                maxNativeZoom={18}
+                maxZoom={25}
+              />
 
-          {/* Cemetery Exit Marker */}
-          <Marker
-            position={[10.248166481872728, 123.79754558858059]}
-            icon={L.divIcon({
-              html: renderToStaticMarkup(
-                <div
-                  style={{
-                    background: '#000000',
-                    borderRadius: '50% 50% 50% 0',
-                    boxShadow: '0 0 8px rgba(0,0,0,0.15)',
-                    padding: '4px',
-                    border: '2px solid #fff',
-                    transform: 'rotate(-45deg)',
-                    display: 'inline-block',
-                  }}
-                >
-                  <GiOpenGate
-                    className="z-999 text-white"
-                    size={16}
-                    strokeWidth={2.5}
-                    style={{
-                      transform: 'rotate(45deg)',
-                    }}
-                  />
-                </div>
-              ),
-              className: 'destination-marker',
-              iconSize: [32, 32],
-            })}
-          >
-            <Popup>
-              <div className="text-center">
-                <div className="font-semibold text-orange-600">🚪 Cemetery Gate</div>
-                <div className="text-xs text-gray-500 mt-1">Entry point for cemetery visitors</div>
-              </div>
-            </Popup>
-          </Marker>
+              {/* Cemetery Entrance Marker */}
+              <Marker
+                icon={L.divIcon({
+                  iconSize: [32, 32],
+                  className: "destination-marker",
+                  html: renderToStaticMarkup(
+                    <div
+                      style={{
+                        padding: "4px",
+                        background: "#000000",
+                        display: "inline-block",
+                        border: "2px solid #fff",
+                        transform: "rotate(-45deg)",
+                        borderRadius: "50% 50% 50% 0",
+                        boxShadow: "0 0 8px rgba(0,0,0,0.15)",
+                      }}
+                    >
+                      <GiOpenGate
+                        style={{
+                          transform: "rotate(45deg)",
+                        }}
+                        className="z-999 text-white"
+                        strokeWidth={2.5}
+                        size={16}
+                      />
+                    </div>,
+                  ),
+                })}
+                position={[CEMETERY_GATE.lat, CEMETERY_GATE.lng]}
+              >
+                <Popup>
+                  <div className="text-center">
+                    <div className="font-semibold text-orange-600">
+                      🚪 Cemetery Gate
+                    </div>
+                    <div className="mt-1 text-xs text-gray-500">
+                      Entry point for cemetery visitors
+                    </div>
+                  </div>
+                </Popup>
+              </Marker>
 
-          {/* Cemetery Chapel Marker */}
-          <Marker
-            position={[10.248435228156183, 123.79787795587316]}
-            icon={L.divIcon({
-              html: renderToStaticMarkup(
-                <div
-                  style={{
-                    background: '#FF9800',
-                    borderRadius: '50% 50% 50% 0',
-                    boxShadow: '0 0 8px rgba(0,0,0,0.15)',
-                    padding: '4px',
-                    border: '2px solid #fff',
-                    transform: 'rotate(-45deg)',
-                    display: 'inline-block',
-                  }}
-                >
-                  <BiSolidChurch
-                    className="z-999 text-white"
-                    size={16}
-                    strokeWidth={2.5}
-                    style={{
-                      transform: 'rotate(45deg)',
-                    }}
-                  />
-                </div>
-              ),
-              className: 'destination-marker',
-              iconSize: [32, 32],
-            })}
-          >
-            <Popup>
-              <div className="text-center">
-                <div className="font-semibold text-orange-600">🚪 Chapel</div>
-                <div className="text-xs text-gray-500 mt-1">Entry point for chapel visitors</div>
-              </div>
-            </Popup>
-          </Marker>
+              {/* Cemetery Exit Marker */}
+              <Marker
+                icon={L.divIcon({
+                  iconSize: [32, 32],
+                  className: "destination-marker",
+                  html: renderToStaticMarkup(
+                    <div
+                      style={{
+                        padding: "4px",
+                        background: "#000000",
+                        display: "inline-block",
+                        border: "2px solid #fff",
+                        transform: "rotate(-45deg)",
+                        borderRadius: "50% 50% 50% 0",
+                        boxShadow: "0 0 8px rgba(0,0,0,0.15)",
+                      }}
+                    >
+                      <GiOpenGate
+                        style={{
+                          transform: "rotate(45deg)",
+                        }}
+                        className="z-999 text-white"
+                        strokeWidth={2.5}
+                        size={16}
+                      />
+                    </div>,
+                  ),
+                })}
+                position={[10.248166481872728, 123.79754558858059]}
+              >
+                <Popup>
+                  <div className="text-center">
+                    <div className="font-semibold text-orange-600">
+                      🚪 Cemetery Gate
+                    </div>
+                    <div className="mt-1 text-xs text-gray-500">
+                      Entry point for cemetery visitors
+                    </div>
+                  </div>
+                </Popup>
+              </Marker>
 
-          {markers.map((marker: ConvertedMarker) => {
-            const statusColor = getStatusColor(marker.plotStatus);
+              {/* Cemetery Chapel Marker */}
+              <Marker
+                icon={L.divIcon({
+                  iconSize: [32, 32],
+                  className: "destination-marker",
+                  html: renderToStaticMarkup(
+                    <div
+                      style={{
+                        padding: "4px",
+                        background: "#FF9800",
+                        display: "inline-block",
+                        border: "2px solid #fff",
+                        transform: "rotate(-45deg)",
+                        borderRadius: "50% 50% 50% 0",
+                        boxShadow: "0 0 8px rgba(0,0,0,0.15)",
+                      }}
+                    >
+                      <BiSolidChurch
+                        style={{
+                          transform: "rotate(45deg)",
+                        }}
+                        className="z-999 text-white"
+                        strokeWidth={2.5}
+                        size={16}
+                      />
+                    </div>,
+                  ),
+                })}
+                position={[10.248435228156183, 123.79787795587316]}
+              >
+                <Popup>
+                  <div className="text-center">
+                    <div className="font-semibold text-orange-600">
+                      🚪 Chapel
+                    </div>
+                    <div className="mt-1 text-xs text-gray-500">
+                      Entry point for chapel visitors
+                    </div>
+                  </div>
+                </Popup>
+              </Marker>
 
-            const circleIcon = L.divIcon({
-              html: `<div style="
+              {markers.map((marker: ConvertedMarker) => {
+                const statusColor = getStatusColor(marker.plotStatus);
+
+                const circleIcon = L.divIcon({
+                  className: "",
+                  iconSize: [24, 24],
+                  html: `<div style="
                 width: 20px;
                 height: 20px;
                 border-radius: 50%;
@@ -223,48 +245,87 @@ export default function AdminMapLayout() {
                 border: 2px solid #fff;
                 box-shadow: 0 0 4px rgba(0,0,0,0.15);
                 "></div>`,
-              className: '',
-              iconSize: [24, 24],
-            });
+                });
+                const backgroundColor = getCategoryBackgroundColor(
+                  marker.category,
+                );
 
-            // 🎨 Category-based background colors for popup headers
-            const backgroundColor = getCategoryBackgroundColor(marker.category);
-
-            return (
-              <Marker key={`plot-${marker.plot_id}`} position={marker.position} icon={circleIcon}>
-                <Popup className='w-75'>
-                  <PlotLocations marker={marker} backgroundColor={backgroundColor} />
-                </Popup>
-              </Marker>
-            );
-          })}
-
-          {colMarkers.map((marker: multiplePlots) => {
-            // 🗺️ Coordinates are already converted to [lat, lng] format
-            const position: [number, number] = marker.coordinates;
-            const circleIcon = L.divIcon({
-              html: `<div style="
-                width: 20px;
-                height: 20px;
-                border-radius: 50%;
-                background: #8b5cf6;
-                border: 2px solid #fff;
-                box-shadow: 0 0 4px rgba(0,0,0,0.15);
-                "></div>`,
-              className: '',
-              iconSize: [24, 24],
-            });
-
-            return (
-              <Marker key={`col-plot-${marker.col_id}`} position={position} icon={circleIcon}>
-                <Popup className='w-100'>
-                  <ColumbariumPopup marker={marker} />
-                </Popup>
-              </Marker>
-            );
-          })}
-        </MapContainer>
-      </div>
-    </LocateContext.Provider>
+                return (
+                  <Marker
+                    key={`plot-${marker.plot_id}`}
+                    position={marker.position}
+                    icon={circleIcon}
+                  >
+                    {marker.rows && marker.columns ? (
+                      // 🏢 Columbarium Popup
+                      <Popup className="leaflet-theme-popup"
+                        offset={[-2, 5]}
+                        minWidth={450}
+                        closeButton={false}
+                      >
+                        <div className="w-full py-2">
+                          <Suspense
+                            fallback={
+                              <>
+                                <Skeleton className="mb-2 h-[24px] w-full rounded" />
+                                <Skeleton className="mb-2 h-[18px] w-full rounded" />
+                                <Skeleton className="mb-3 h-[200px] w-full rounded" />
+                                <Skeleton className="h-[36px] w-full rounded" />
+                              </>
+                            }
+                          >
+                            <ColumbariumPopup marker={marker} />
+                          </Suspense>
+                        </div>
+                      </Popup>
+                    ) : (
+                      // 🏠 Single Plot Popup
+                      <Popup className="leaflet-theme-popup"
+                        offset={[-2, 5]}
+                        minWidth={250}
+                        closeButton={false}
+                      >
+                        <Suspense
+                          fallback={
+                            <>
+                              <div className="mb-3 items-center justify-between flex gap-2">
+                                <Skeleton className="h-[40px] w-full rounded" />
+                                <Skeleton className="h-[40px] w-full rounded" />
+                                <Skeleton className="h-[40px] w-full rounded" />
+                              </div>
+                              <div className="mb-3">
+                                <div className="mb-2 flex items-center">
+                                  <Skeleton className="h-[40px] w-full rounded" />
+                                </div>
+                                <div className="mb-2 flex items-center">
+                                  <Skeleton className="h-[40px] w-full rounded" />
+                                </div>
+                                <div className="mb-2 flex items-center">
+                                  <Skeleton className="h-[40px] w-full rounded" />
+                                </div>
+                              </div>
+                              <div className="mt-4">
+                                <div className="mb-2 flex items-center">
+                                  <Skeleton className="h-[60px] w-full rounded" />
+                                </div>
+                              </div>
+                            </>
+                          }
+                        >
+                          <SinglePlotLocations
+                            backgroundColor={backgroundColor}
+                            marker={marker}
+                          />
+                        </Suspense>
+                      </Popup>
+                    )}
+                  </Marker>
+                );
+              })}
+            </MapContainer>
+          </div>
+        </LocateContext.Provider>
+      </Card>
+    </div>
   );
 }

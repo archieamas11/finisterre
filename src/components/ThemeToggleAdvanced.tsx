@@ -1,29 +1,27 @@
-import { useTheme } from '../context/ThemeContext';
-import { Button } from '@/components/ui/button';
-import { Moon, Sun } from 'lucide-react';
+import { useTheme } from "../context/ThemeContext";
+import { ThemeToggleButton, useThemeTransition } from "@/components/ui/shadcn-io/theme-toggle-button";
 
 // Toggle between light and dark themes only, auto-detect system theme on load
 export function ThemeToggleAdvanced() {
   const { setTheme, resolvedTheme } = useTheme();
+  const { startTransition } = useThemeTransition();
 
   // Toggle theme between light and dark
   const handleToggle = () => {
-    setTheme(resolvedTheme === 'dark' ? 'light' : 'dark');
+    const newTheme = resolvedTheme === "dark" ? "light" : "dark";
+    startTransition(() => {
+      setTheme(newTheme);
+    });
   };
 
   return (
-    <Button
-      variant="ghost"
-      size="icon"
-      aria-label="Toggle theme"
+    <ThemeToggleButton
+      theme={resolvedTheme}
       onClick={handleToggle}
-      className='border border-transparent hover:border-accent-foreground hover:bg-transparent focus:bg-transparent cursor-pointer'
-    >
-      {resolvedTheme === 'dark' ? (
-        <Moon className="h-5 w-5" />
-      ) : (
-        <Sun className="h-5 w-5" />
-      )}
-    </Button>
+      className="border-0 hover:border bg-transparent hover:bg-transparent"
+      showLabel={false}
+      variant="circle-blur"
+      start="top-right"
+    />
   );
 }

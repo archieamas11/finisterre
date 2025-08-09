@@ -7,7 +7,7 @@ export const APP_CONFIG = {
   version: packageJson.version,
   copyright: `© ${currentYear}, Finisterre Gardenz.`,
   meta: {
-    title: "Finisterre Gardenz Dashboard",
     description: "Test",
+    title: "Finisterre Gardenz Dashboard",
   },
 };

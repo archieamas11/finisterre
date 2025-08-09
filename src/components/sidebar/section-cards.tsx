@@ -1,14 +1,14 @@
-import { IconTrendingDown, IconTrendingUp } from "@tabler/icons-react"
+import { IconTrendingDown, IconTrendingUp } from "@tabler/icons-react";
 
-import { Badge } from "@/components/ui/badge"
+import { Badge } from "@/components/ui/badge";
 import {
-  Card,
-  CardAction,
   CardDescription,
+  CardAction,
   CardFooter,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card"
+  Card,
+} from "@/components/ui/card";
 
 export function SectionCards() {
   return (
@@ -74,7 +74,9 @@ export function SectionCards() {
           <div className="line-clamp-1 flex gap-2 font-medium">
             Plots open for reservation <IconTrendingUp className="size-4" />
           </div>
-          <div className="text-muted-foreground">Ready for new reservations</div>
+          <div className="text-muted-foreground">
+            Ready for new reservations
+          </div>
         </CardFooter>
       </Card>
       <Card className="@container/card">
@@ -92,11 +94,12 @@ export function SectionCards() {
         </CardHeader>
         <CardFooter className="flex-col items-start gap-1.5 text-sm">
           <div className="line-clamp-1 flex gap-2 font-medium">
-            Plots reserved but not yet occupied <IconTrendingUp className="size-4" />
+            Plots reserved but not yet occupied{" "}
+            <IconTrendingUp className="size-4" />
           </div>
           <div className="text-muted-foreground">Pending future use</div>
         </CardFooter>
       </Card>
     </div>
-  )
+  );
 }
