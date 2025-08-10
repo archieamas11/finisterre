@@ -7,13 +7,18 @@ import { QueryClientProvider, QueryClient } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/sonner.tsx";
 
 import App from "./App.tsx";
-import { ThemeProvider } from "../src/context/ThemeContext.tsx";
+import { ThemeProvider } from "@/components/provider/theme-provider.tsx";
 
 const queryClient = new QueryClient();
 
 createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
-    <ThemeProvider>
+    <ThemeProvider
+      attribute="class"
+      defaultTheme="system"
+      disableTransitionOnChange
+      enableSystem
+    >
       <QueryClientProvider client={queryClient}>
         <App />
       </QueryClientProvider>

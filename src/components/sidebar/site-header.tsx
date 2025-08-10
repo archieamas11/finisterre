@@ -17,7 +17,7 @@ import {
   Breadcrumb,
 } from "@/components/ui/breadcrumb";
 
-import { ThemeToggleAdvanced } from "../ThemeToggleAdvanced";
+import { ThemeToggleButton } from "@/components/ui/theme-toggle-button";
 
 interface SiteHeaderProps {
   breadcrumbItem?: {
@@ -79,7 +79,7 @@ export function SiteHeader({ breadcrumbItem }: SiteHeaderProps) {
           </BreadcrumbList>
         </Breadcrumb>
         <div className="ml-auto flex items-center gap-2">
-          <ThemeToggleAdvanced />
+          <ThemeToggleButton start="top-right" variant="circle-blur" />
           <Button
             className="hover:border-accent-foreground hidden cursor-pointer border border-transparent hover:bg-transparent focus:bg-transparent sm:flex"
             aria-label="Notifications"

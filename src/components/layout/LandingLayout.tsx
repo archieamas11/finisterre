@@ -4,8 +4,8 @@ import { useNavigate } from "react-router-dom";
 import { useEffect, Suspense, useState, lazy } from "react";
 
 import { Button } from "@/components/ui/button";
-import { ThemeToggleAdvanced } from "@/components/ThemeToggleAdvanced";
 import { NavigationMenuSection } from "@/pages/landing/section/NavigationMenu";
+import { ThemeToggleButton } from "@/components/ui/theme-toggle-button";
 
 const HeroSection = lazy(() => import("@/pages/landing/section/HeroSection"));
 const FAQs = lazy(() => import("@/pages/landing/section/FAQs"));
@@ -55,7 +55,7 @@ export default function LandingLayout() {
         </span>
         <NavigationMenuSection />
         <div className="flex items-center gap-2 sm:gap-4">
-          <ThemeToggleAdvanced />
+          <ThemeToggleButton start="top-right" variant="circle-blur" />
           <Link to="/login">
             <Button
               className="text-foreground hover:bg-muted rounded-full transition"
