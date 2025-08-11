@@ -10,7 +10,7 @@ import js from "@eslint/js";
 
 export default tseslint.config([
   perfectionist.configs["recommended-line-length"],
-  globalIgnores(["dist"]),
+  globalIgnores(["dist", "src/component/**"]),
   {
     rules: {
       "perfectionist/sort-imports": [

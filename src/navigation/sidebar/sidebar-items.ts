@@ -1,15 +1,5 @@
 // src/config/sidebar-items.ts
-import {
-  LayoutDashboard,
-  type LucideIcon,
-  CalendarDays,
-  PaintBucket,
-  MonitorCog,
-  ChartBar,
-  MapIcon,
-  User,
-  Home,
-} from "lucide-react";
+import { LayoutDashboard, type LucideIcon, CalendarDays, PaintBucket, MonitorCog, ChartBar, MapIcon, User, Home } from "lucide-react";
 
 export interface NavMainItem {
   url: string;
@@ -122,11 +112,6 @@ export const getSidebarItems = (isAdmin: boolean): NavGroup[] => {
   return isAdmin ? adminSidebarItems : userSidebarItems;
 };
 
-/**
- * Finds the main and sub sidebar item for a given pathname.
- * Returns { mainItem, subItem } or null if not found.
- * Used for Breadcrumbs that support subItems.
- */
 export function findSidebarItemByPath(
   pathname: string,
   isAdmin: boolean,

@@ -18,26 +18,9 @@ import { createLotOwner } from "@/api/lotOwner.api";
 import { useNichesByPlot } from "@/hooks/plots-hooks/niche.hooks";
 import { useCustomers } from "@/hooks/customer-hooks/customer.hooks";
 import { CardContent, CardHeader, CardTitle, Card } from "@/components/ui/card";
-import {
-  PopoverContent,
-  PopoverTrigger,
-  Popover,
-} from "@/components/ui/popover";
-import {
-  DialogDescription,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  Dialog,
-} from "@/components/ui/dialog";
-import {
-  CommandEmpty,
-  CommandGroup,
-  CommandInput,
-  CommandItem,
-  CommandList,
-  Command,
-} from "@/components/ui/command";
+import { PopoverContent, PopoverTrigger, Popover } from "@/components/ui/popover";
+import { DialogDescription, DialogContent, DialogHeader, DialogTitle, Dialog } from "@/components/ui/dialog";
+import { CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList, Command } from "@/components/ui/command";
 import { Skeleton } from "@/components/ui/skeleton";
 import CreateDeceased from "./columbarium-dialogs/CreateDeceasedPage";
 import { ErrorMessage } from "@/components/ErrorMessage";
@@ -47,10 +30,7 @@ interface ColumbariumPopupProps {
   onDirectionClick?: () => void;
 }
 
-export default function ColumbariumPopup({
-  marker,
-  onDirectionClick,
-}: ColumbariumPopupProps) {
+export default function ColumbariumPopup({ marker, onDirectionClick }: ColumbariumPopupProps) {
   const { data: customersData, isLoading: isLoadingCustomers } = useCustomers();
   const customers = customersData || [];
   const [selectedNiche, setSelectedNiche] = useState<nicheData | null>(null);
@@ -95,16 +75,15 @@ export default function ColumbariumPopup({
 
     try {
       // Create the promise for the API call
-      const reservationPromise = createLotOwner(lotOwnerData)
-        .then(result => {
-          if (!result.success) {
-            throw new Error(result.message || "Failed to reserve niche");
-          }
-          return result;
-        });
+      const reservationPromise = createLotOwner(lotOwnerData).then((result) => {
+        if (!result.success) {
+          throw new Error(result.message || "Failed to reserve niche");
+        }
+        return result;
+      });
 
       await toast.promise(reservationPromise, {
-        loading: 'Reserving niche...',
+        loading: "Reserving niche...",
         success: () => {
           queryClient.invalidateQueries({
             queryKey: ["niches", marker.plot_id, rows, cols],
@@ -115,7 +94,7 @@ export default function ColumbariumPopup({
         },
         error: (error) => {
           return error.message || "Failed to save reservation";
-        }
+        },
       });
     } catch (error) {
       console.error("❌ Error saving reservation:", error);
@@ -125,11 +104,7 @@ export default function ColumbariumPopup({
   };
 
   // 🔄 Fetch niche data using React Query
-  const {
-    error,
-    isLoading,
-    data: nicheData = [],
-  } = useNichesByPlot(marker.plot_id, rows, cols);
+  const { error, isLoading, data: nicheData = [] } = useNichesByPlot(marker.plot_id, rows, cols);
 
   const handleNicheClick = (niche: nicheData) => {
     console.log("🎯 Niche selected:", niche);
@@ -199,9 +174,7 @@ export default function ColumbariumPopup({
       </div>
       {/* 🔢 Grid layout for niches */}
       <div className="mb-2">
-        <h4 className="text-secondary-foreground bg-background dark:bg-muted mb-2 rounded-lg border p-3 text-sm font-medium">
-          Niche Layout:
-        </h4>
+        <h4 className="text-secondary-foreground bg-background dark:bg-muted mb-2 rounded-lg border p-3 text-sm font-medium">Niche Layout:</h4>
         <div
           style={{
             fontSize: "20px",
@@ -217,9 +190,7 @@ export default function ColumbariumPopup({
               className={`flex aspect-square min-h-[40px] cursor-pointer flex-col items-center justify-center rounded border p-1 text-center transition-all duration-200 hover:scale-105 hover:shadow-sm ${getNicheStatusStyle(niche.niche_status)} `}
               title={`${niche.lot_id} - ${niche.niche_status}${niche.owner ? ` (${niche.owner.name})` : ""}`}
             >
-              <span className="font-mono text-[10px] leading-tight">
-                N{niche.niche_number}
-              </span>
+              <span className="font-mono text-[10px] leading-tight">N{niche.niche_number}</span>
               <span className="font-mono text-[11px] leading-tight">
                 R{niche.row}C{niche.col}
               </span>
@@ -250,21 +221,15 @@ export default function ColumbariumPopup({
         {/* 📊 Summary stats */}
         <div className="grid grid-cols-3 gap-2 text-xs">
           <div className="rounded bg-green-50 p-2 text-center dark:bg-green-200">
-            <div className="font-semibold text-green-700">
-              {nicheData.filter((n) => n.niche_status === "available").length}
-            </div>
+            <div className="font-semibold text-green-700">{nicheData.filter((n) => n.niche_status === "available").length}</div>
             <div className="text-green-600">Available</div>
           </div>
           <div className="rounded bg-yellow-50 p-2 text-center dark:bg-yellow-200">
-            <div className="font-semibold text-yellow-700">
-              {nicheData.filter((n) => n.niche_status === "reserved").length}
-            </div>
+            <div className="font-semibold text-yellow-700">{nicheData.filter((n) => n.niche_status === "reserved").length}</div>
             <div className="text-yellow-600">Reserved</div>
           </div>
           <div className="rounded bg-red-50 p-2 text-center dark:bg-red-200">
-            <div className="font-semibold text-red-700">
-              {nicheData.filter((n) => n.niche_status === "occupied").length}
-            </div>
+            <div className="font-semibold text-red-700">{nicheData.filter((n) => n.niche_status === "occupied").length}</div>
             <div className="text-red-600">Occupied</div>
           </div>
         </div>
@@ -291,9 +256,7 @@ export default function ColumbariumPopup({
               ))}
             </div>
           ) : (
-            <div className="mt-5 text-center text-xs text-gray-400">
-              No photos available
-            </div>
+            <div className="mt-5 text-center text-xs text-gray-400">No photos available</div>
           );
         }
       })()}
@@ -315,22 +278,15 @@ export default function ColumbariumPopup({
               Chamber {marker.plot_id}
             </DialogTitle>
             {/* ✅ Proper location for description */}
-            <DialogDescription className="sr-only">
-              Details and actions for the selected chambers niche.
-            </DialogDescription>
+            <DialogDescription className="sr-only">Details and actions for the selected chambers niche.</DialogDescription>
           </DialogHeader>
           {selectedNiche && (
             <div className="space-y-4">
               {/* Status Badge */}
               <div className="flex items-center gap-2">
-                <Badge
-                  className={getStatusBadgeVariant(selectedNiche.niche_status)}
-                >
-                  {selectedNiche.niche_status.toUpperCase()}
-                </Badge>
+                <Badge className={getStatusBadgeVariant(selectedNiche.niche_status)}>{selectedNiche.niche_status.toUpperCase()}</Badge>
                 <span className="text-sm text-gray-600">
-                  Niche #{selectedNiche.niche_number} - Row {selectedNiche.row},
-                  Column {selectedNiche.col}
+                  Niche #{selectedNiche.niche_number} - Row {selectedNiche.row}, Column {selectedNiche.col}
                 </span>
               </div>
 
@@ -338,16 +294,16 @@ export default function ColumbariumPopup({
               {selectedNiche.owner && (
                 <Card>
                   <CardHeader className="pb-3">
-                    <CardTitle className="flex items-center gap-2 text-base font-semibold text-primary">
-                      <User className="h-4 w-4 text-primary" />
+                    <CardTitle className="text-primary flex items-center gap-2 text-base font-semibold">
+                      <User className="text-primary h-4 w-4" />
                       Owner Information
                     </CardTitle>
                   </CardHeader>
-                  <CardContent className="pt-4 space-y-3">
+                  <CardContent className="space-y-3 pt-4">
                     <div className="flex items-start gap-3">
                       <div className="">
-                        <div className="h-10 w-10 rounded-full bg-accent flex items-center justify-center">
-                          <User className="h-5 w-5 text-accent-foreground" />
+                        <div className="bg-accent flex h-10 w-10 items-center justify-center rounded-full">
+                          <User className="text-accent-foreground h-5 w-5" />
                         </div>
                       </div>
                       <div className="space-y-0">
@@ -356,14 +312,14 @@ export default function ColumbariumPopup({
                       </div>
                     </div>
 
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
-                      <div className="flex items-center gap-2 p-2 rounded-lg bg-accent">
-                        <Phone className="h-4 w-4 text-accent-foreground" />
-                        <span className="text-xs text-accent-foreground">{selectedNiche.owner.phone}</span>
+                    <div className="grid grid-cols-1 gap-3 pt-2 sm:grid-cols-2">
+                      <div className="bg-accent flex items-center gap-2 rounded-lg p-2">
+                        <Phone className="text-accent-foreground h-4 w-4" />
+                        <span className="text-accent-foreground text-xs">{selectedNiche.owner.phone}</span>
                       </div>
-                      <div className="flex items-center gap-2 p-2 rounded-lg bg-accent">
-                        <Mail className="h-4 w-4 text-accent-foreground" />
-                        <span className="text-xs text-accent-foreground">{selectedNiche.owner.email}</span>
+                      <div className="bg-accent flex items-center gap-2 rounded-lg p-2">
+                        <Mail className="text-accent-foreground h-4 w-4" />
+                        <span className="text-accent-foreground text-xs">{selectedNiche.owner.email}</span>
                       </div>
                     </div>
                   </CardContent>
@@ -386,16 +342,16 @@ export default function ColumbariumPopup({
               {selectedNiche.deceased && (
                 <Card>
                   <CardHeader className="pb-3">
-                    <CardTitle className="flex items-center gap-2 text-base font-semibold text-primary">
-                      <Heart className="h-4 w-4 text-primary" />
+                    <CardTitle className="text-primary flex items-center gap-2 text-base font-semibold">
+                      <Heart className="text-primary h-4 w-4" />
                       Deceased Information
                     </CardTitle>
                   </CardHeader>
-                  <CardContent className="pt-4 space-y-4">
+                  <CardContent className="space-y-4 pt-4">
                     <div className="flex items-start gap-3">
                       <div className="">
-                        <div className="h-10 w-10 rounded-full bg-accent flex items-center justify-center">
-                          <Heart className="h-4 w-4 text-accent-foreground" />
+                        <div className="bg-accent flex h-10 w-10 items-center justify-center rounded-full">
+                          <Heart className="text-accent-foreground h-4 w-4" />
                         </div>
                       </div>
                       <div>
@@ -404,23 +360,22 @@ export default function ColumbariumPopup({
                       </div>
                     </div>
 
-                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                      <div className="p-3 rounded-lg bg-accent">
-                        <p className="text-xs text-accent-foreground font-medium">DIED</p>
-                        <p className="text-sm font-medium mt-1">{selectedNiche.deceased.dateOfDeath}</p>
+                    <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
+                      <div className="bg-accent rounded-lg p-3">
+                        <p className="text-accent-foreground text-xs font-medium">DIED</p>
+                        <p className="mt-1 text-sm font-medium">{selectedNiche.deceased.dateOfDeath}</p>
                       </div>
-                      <div className="p-3 rounded-lg bg-accent">
-                        <p className="text-xs text-accent-foreground font-medium">INTERMENT</p>
-                        <p className="text-sm font-medium mt-1">{selectedNiche.deceased.dateOfInterment}</p>
+                      <div className="bg-accent rounded-lg p-3">
+                        <p className="text-accent-foreground text-xs font-medium">INTERMENT</p>
+                        <p className="mt-1 text-sm font-medium">{selectedNiche.deceased.dateOfInterment}</p>
                       </div>
-                      <div className="p-3 rounded-lg bg-accent">
-                        <p className="text-xs text-accent-foreground font-medium">Years Buried</p>
-                        <p className="text-sm font-medium mt-1">
+                      <div className="bg-accent rounded-lg p-3">
+                        <p className="text-accent-foreground text-xs font-medium">Years Buried</p>
+                        <p className="mt-1 text-sm font-medium">
                           {new Date().getFullYear() - new Date(selectedNiche.deceased.dateOfInterment).getFullYear() < 1
                             ? "Less than a year"
                             : `${new Date().getFullYear() - new Date(selectedNiche.deceased.dateOfInterment).getFullYear()} Year(s)`}
                         </p>
-
                       </div>
                     </div>
                   </CardContent>
@@ -433,8 +388,7 @@ export default function ColumbariumPopup({
                   <Card className="border-green-200 bg-green-50">
                     <CardContent>
                       <div className="flex items-center justify-center gap-2 text-center text-sm text-green-800">
-                        <BsFillPatchCheckFill /> This niche is available for
-                        purchase or reservation.
+                        <BsFillPatchCheckFill /> This niche is available for purchase or reservation.
                       </div>
                     </CardContent>
                   </Card>
@@ -442,11 +396,7 @@ export default function ColumbariumPopup({
                   {/* Action buttons for available niches */}
                   {!showCustomerCombo && (
                     <div className="flex gap-2">
-                      <Button
-                        onClick={() => setShowCustomerCombo(true)}
-                        className="flex-1"
-                        size="sm"
-                      >
+                      <Button onClick={() => setShowCustomerCombo(true)} className="flex-1" size="sm">
                         Reserve
                       </Button>
                     </div>
@@ -455,9 +405,7 @@ export default function ColumbariumPopup({
                   {/* Customer combobox shown when Reserve is clicked */}
                   {showCustomerCombo && (
                     <div className="bg-muted/50 mt-4 rounded-lg border p-4">
-                      <h4 className="text-muted-foreground mb-3 text-sm font-medium">
-                        Select Customer for Reservation
-                      </h4>
+                      <h4 className="text-muted-foreground mb-3 text-sm font-medium">Select Customer for Reservation</h4>
 
                       {!isReservationStep ? (
                         <Popover onOpenChange={setComboOpen} open={comboOpen}>
@@ -471,14 +419,11 @@ export default function ColumbariumPopup({
                             >
                               {selectedCustomer
                                 ? (() => {
-                                  const customer = customers.find(
-                                    (c: any) =>
-                                      c.customer_id === selectedCustomer,
-                                  );
-                                  return customer
-                                    ? `${customer.first_name} ${customer.last_name} | ID: ${customer.customer_id}`
-                                    : "Select a customer";
-                                })()
+                                    const customer = customers.find((c: any) => c.customer_id === selectedCustomer);
+                                    return customer
+                                      ? `${customer.first_name} ${customer.last_name} | ID: ${customer.customer_id}`
+                                      : "Select a customer";
+                                  })()
                                 : isLoadingCustomers
                                   ? "Loading customers..."
                                   : "Select a customer"}
@@ -487,37 +432,21 @@ export default function ColumbariumPopup({
                           </PopoverTrigger>
                           <PopoverContent className="w-107 p-0">
                             <Command>
-                              <CommandInput
-                                placeholder="Search customer..."
-                                className="h-9"
-                              />
+                              <CommandInput placeholder="Search customer..." className="h-9" />
                               <CommandList>
-                                <CommandEmpty>
-                                  {isLoadingCustomers
-                                    ? "Loading customers..."
-                                    : "No customer found."}
-                                </CommandEmpty>
+                                <CommandEmpty>{isLoadingCustomers ? "Loading customers..." : "No customer found."}</CommandEmpty>
                                 <CommandGroup>
                                   {customers.map((customer: any) => (
                                     <CommandItem
                                       value={`${customer.first_name} ${customer.last_name} ${customer.customer_id}`}
                                       onSelect={() => {
-                                        handleCustomerSelect(
-                                          customer.customer_id,
-                                        );
+                                        handleCustomerSelect(customer.customer_id);
                                       }}
                                       key={customer.customer_id}
                                     >
-                                      {customer.first_name} {customer.last_name}{" "}
-                                      | ID: {customer.customer_id}
+                                      {customer.first_name} {customer.last_name} | ID: {customer.customer_id}
                                       <Check
-                                        className={cn(
-                                          "ml-auto h-4 w-4",
-                                          selectedCustomer ===
-                                            customer.customer_id
-                                            ? "opacity-100"
-                                            : "opacity-0",
-                                        )}
+                                        className={cn("ml-auto h-4 w-4", selectedCustomer === customer.customer_id ? "opacity-100" : "opacity-0")}
                                       />
                                     </CommandItem>
                                   ))}
@@ -530,18 +459,11 @@ export default function ColumbariumPopup({
                         // 🎯 Show selected customer and action buttons
                         <div className="space-y-3">
                           <div className="bg-background rounded-lg border p-3">
-                            <p className="text-sm font-medium">
-                              Selected Customer:
-                            </p>
+                            <p className="text-sm font-medium">Selected Customer:</p>
                             <p className="text-muted-foreground text-sm">
                               {(() => {
-                                const customer = customers.find(
-                                  (c: any) =>
-                                    c.customer_id === selectedCustomer,
-                                );
-                                return customer
-                                  ? `${customer.first_name} ${customer.last_name} (ID: ${customer.customer_id})`
-                                  : "Unknown Customer";
+                                const customer = customers.find((c: any) => c.customer_id === selectedCustomer);
+                                return customer ? `${customer.first_name} ${customer.last_name} (ID: ${customer.customer_id})` : "Unknown Customer";
                               })()}
                             </p>
                           </div>
@@ -560,12 +482,7 @@ export default function ColumbariumPopup({
                               <X className="mr-1 h-4 w-4" />
                               Cancel
                             </Button>
-                            <Button
-                              onClick={handleSaveReservation}
-                              disabled={isSaving}
-                              className="flex-1"
-                              size="sm"
-                            >
+                            <Button onClick={handleSaveReservation} disabled={isSaving} className="flex-1" size="sm">
                               <Save className="mr-1 h-4 w-4" />
                               {isSaving ? "Saving..." : "Save"}
                             </Button>

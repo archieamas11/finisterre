@@ -1,14 +1,12 @@
-import { useState, useEffect, lazy } from "react";
 import {
   Plus,
-  Edit,
+  // Edit,
   Eye,
   MapPin,
   Award,
   Clock,
   CheckCircle,
   XCircle,
-  RefreshCw,
 } from "lucide-react";
 import type { ConvertedMarker } from "@/types/map.types";
 import { isAdmin } from "@/utils/Auth.utils";
@@ -17,9 +15,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { usePlotDetails } from "@/hooks/plots-hooks/usePlotDetails";
-import { usePlotCacheManager } from "@/hooks/plots-hooks/usePlotCacheManager";
 import { DeceasedSection } from "@/components/DeceasedSection";
-const EditMapDialog = lazy(() => import("./editMapDialog"));
 
 interface PlotLocationsProps {
   marker: ConvertedMarker;
@@ -27,34 +23,18 @@ interface PlotLocationsProps {
 }
 
 export default function SinglePlotLocations({ marker }: PlotLocationsProps) {
-  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
-  const [isRefreshing, setIsRefreshing] = useState(false);
   const { data: plotDetails, isLoading: isLoadingDetails } = usePlotDetails(
     marker.plot_id,
   );
-  const { refreshPlotDetails, invalidatePlots } = usePlotCacheManager();
 
   const ownerData = plotDetails?.owner;
   const deceasedData = plotDetails?.deceased;
 
   // Auto-refresh when component mounts or plot_id changes
-  useEffect(() => {
-    const refreshData = async () => {
-      try {
-        await refreshPlotDetails(marker.plot_id);
-      } catch (error) {
-        console.error("Failed to auto-refresh plot details:", error);
-      }
-    };
-
-    if (marker.plot_id) {
-      refreshData();
-    }
-  }, [marker.plot_id, refreshPlotDetails]);
-  const handleEdit = () => {
-    console.log("✏️ Edit plot:", marker.plot_id);
-    setIsEditDialogOpen(true);
-  };
+  // const handleEdit = () => {
+  //   console.log("✏️ Edit plot:", marker.plot_id);
+  //   setIsEditDialogOpen(true);
+  // };
 
   const handleAdd = () => {
     console.log("➕ Add deceased record:", marker.plot_id);
@@ -66,64 +46,36 @@ export default function SinglePlotLocations({ marker }: PlotLocationsProps) {
     // TODO: Open detailed view modal
   };
 
-  const handleRefresh = async () => {
-    setIsRefreshing(true);
-    try {
-      // Refresh both plot details and main plots data
-      await Promise.all([
-        refreshPlotDetails(marker.plot_id),
-        invalidatePlots(),
-      ]);
-      console.log("🔄 Refreshed plot data:", marker.plot_id);
-    } catch (error) {
-      console.error("Failed to refresh plot data:", error);
-    } finally {
-      setIsRefreshing(false);
-    }
-  };
-
   return (
     <div className="max-w-full">
       {/* Action Buttons - Compact Row */}
-      <div className="mb-3 grid grid-cols-4 gap-2">
-        <Button
+      <div className="mb-3 grid grid-cols-2 gap-2">
+        {/* <Button
           variant="outline"
           size="sm"
           onClick={handleEdit}
-          className="flex items-center gap-1 px-2 py-1 text-xs"
+          className="flex items-center gap-1 px-2 py-1 text-xs bg-card border text-accent-foreground hover:bg-accent/90"
         >
           <Edit className="h-3 w-3" />
           Edit
-        </Button>
+        </Button> */}
         <Button
-          variant="outline"
-          size="sm"
+          variant="secondary"
+          size="lg"
           onClick={handleAdd}
-          className="flex items-center gap-1 px-2 py-1 text-xs"
+          className="flex items-center gap-1 px-2 py-1 text-xs bg-card border text-accent-foreground hover:bg-accent/90"
         >
           <Plus className="h-3 w-3" />
           Add
         </Button>
         <Button
-          variant="outline"
-          size="sm"
+          variant="secondary"
+          size="lg"
           onClick={handleView}
-          className="flex items-center gap-1 px-2 py-1 text-xs"
+          className="flex items-center gap-1 px-2 py-1 text-xs bg-card border text-accent-foreground hover:bg-accent/90"
         >
           <Eye className="h-3 w-3" />
           View
-        </Button>
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={handleRefresh}
-          disabled={isRefreshing || isLoadingDetails}
-          className="flex items-center gap-1 px-2 py-1 text-xs"
-        >
-          <RefreshCw
-            className={`h-3 w-3 ${isRefreshing ? "animate-spin" : ""}`}
-          />
-          Refresh
         </Button>
       </div>
 
@@ -299,7 +251,7 @@ export default function SinglePlotLocations({ marker }: PlotLocationsProps) {
       })()}
 
       {/* Edit Dialog */}
-      <EditMapDialog
+      {/* <EditMapDialog
         plots={{
           block: marker.block,
           plot_id: marker.plot_id,
@@ -314,7 +266,7 @@ export default function SinglePlotLocations({ marker }: PlotLocationsProps) {
         }}
         onOpenChange={setIsEditDialogOpen}
         open={isEditDialogOpen}
-      />
+      /> */}
     </div>
   );
 }

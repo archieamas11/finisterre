@@ -1,7 +1,8 @@
 import { HiClock } from "react-icons/hi";
 import { GiCoffin } from "react-icons/gi";
-import { Users, Loader2 } from "lucide-react";
+import { Users } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Skeleton } from "@/components/ui/skeleton";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { calculateYearsBuried, formatDate } from "@/utils/dateUtils";
@@ -48,12 +49,18 @@ export function DeceasedSection({
   if (isLoading) {
     return (
       <Card className="h-83">
-        <CardContent className="flex items-center justify-center p-3">
-          <div className="flex items-center gap-1">
-            <Loader2 className="h-3 w-3 animate-spin" />
-            <span className="text-muted-foreground text-xs">
-              Loading information...
-            </span>
+        <CardContent className="p-3">
+          <div className="space-y-3">
+            <Skeleton className="h-8 w-full" />
+            <div className="flex justify-between mt-10">
+              <Skeleton className="h-4 w-1/4" />
+              <Skeleton className="h-4 w-1/4" />
+            </div>
+            <div className="flex justify-between mt-3">
+              <Skeleton className="h-4 w-1/4" />
+              <Skeleton className="h-4 w-1/8" />
+            </div>
+            <Skeleton className="h-20 w-full" />
           </div>
         </CardContent>
       </Card>
@@ -88,7 +95,6 @@ export function DeceasedSection({
         </div>
 
         <Separator className="my-2" />
-
         {/* Deceased Section - Ultra Minimal */}
         <div className="">
           <div className="flex justify-between pl-3">
@@ -99,7 +105,7 @@ export function DeceasedSection({
             </div>
             {deceased && deceased.length > 0 && (
               <Badge variant="secondary" className="h-4 px-1 text-xs">
-                {deceased.length}
+                #{deceased.length}
               </Badge>
             )}
           </div>
