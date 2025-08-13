@@ -88,6 +88,8 @@ export default function ColumbariumPopup({ marker, onDirectionClick }: Columbari
           queryClient.invalidateQueries({
             queryKey: ["niches", marker.plot_id, rows, cols],
           });
+          queryClient.invalidateQueries({ queryKey: ["map-stats", "serenity"] });
+          queryClient.invalidateQueries({ queryKey: ["map-stats", "chambers"] });
           handleCancelReservation();
           setIsDetailOpen(false);
           return "Niche reserved successfully!";
@@ -405,19 +407,11 @@ export default function ColumbariumPopup({ marker, onDirectionClick }: Columbari
                       {!isReservationStep ? (
                         <Popover onOpenChange={setComboOpen} open={comboOpen}>
                           <PopoverTrigger asChild>
-                            <Button
-                              className="w-full justify-between"
-                              disabled={isLoadingCustomers}
-                              aria-expanded={comboOpen}
-                              variant="outline"
-                              role="combobox"
-                            >
+                            <Button className="w-full justify-between" disabled={isLoadingCustomers} aria-expanded={comboOpen} variant="outline" role="combobox">
                               {selectedCustomer
                                 ? (() => {
                                     const customer = customers.find((c: any) => c.customer_id === selectedCustomer);
-                                    return customer
-                                      ? `${customer.first_name} ${customer.last_name} | ID: ${customer.customer_id}`
-                                      : "Select a customer";
+                                    return customer ? `${customer.first_name} ${customer.last_name} | ID: ${customer.customer_id}` : "Select a customer";
                                   })()
                                 : isLoadingCustomers
                                   ? "Loading customers..."
@@ -440,9 +434,7 @@ export default function ColumbariumPopup({ marker, onDirectionClick }: Columbari
                                       key={customer.customer_id}
                                     >
                                       {customer.first_name} {customer.last_name} | ID: {customer.customer_id}
-                                      <Check
-                                        className={cn("ml-auto h-4 w-4", selectedCustomer === customer.customer_id ? "opacity-100" : "opacity-0")}
-                                      />
+                                      <Check className={cn("ml-auto h-4 w-4", selectedCustomer === customer.customer_id ? "opacity-100" : "opacity-0")} />
                                     </CommandItem>
                                   ))}
                                 </CommandGroup>

@@ -41,9 +41,6 @@ function LotInfoCard({ lot }: { lot: LotInfo }) {
     return (
       <div className="bg-card hover:bg-muted/50 rounded-lg border p-3 transition-colors">
         <div className="flex items-center gap-2">
-          <div className="bg-primary/10 flex h-8 w-8 items-center justify-center rounded-full">
-            <span className="text-primary text-xs font-medium">B{lot.block}</span>
-          </div>
           <div>
             <div className="font-medium">Block {lot.block}</div>
             <div className="text-muted-foreground text-sm">Grave {lot.lot_plot_id}</div>
@@ -57,9 +54,6 @@ function LotInfoCard({ lot }: { lot: LotInfo }) {
     return (
       <div className="bg-card hover:bg-muted/50 rounded-lg border p-3 transition-colors">
         <div className="flex items-center gap-2">
-          <div className="bg-secondary/10 flex h-8 w-8 items-center justify-center rounded-full">
-            <span className="text-secondary-foreground text-xs font-medium">{String(lot.category).charAt(0)}</span>
-          </div>
           <div>
             <div className="font-medium">
               {lot.category} {lot.plot_id ?? ""}
