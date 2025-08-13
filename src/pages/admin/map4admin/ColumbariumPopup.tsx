@@ -181,7 +181,7 @@ export default function ColumbariumPopup({ marker, onDirectionClick }: Columbari
             scrollbarWidth: "thin",
             gridTemplateColumns: `repeat(${Math.min(cols, 9)}, minmax(0, 1fr))`,
           }}
-          className="bg-card grid w-full gap-1 rounded border p-2"
+          className="bg-background dark:bg-muted grid w-full gap-1 rounded border p-2"
         >
           {nicheData.map((niche, index) => (
             <button
