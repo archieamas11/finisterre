@@ -4,7 +4,7 @@ import { Plus } from "lucide-react";
 import { useQueryClient, useMutation } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { createCustomer } from "@/api/customer.api";
-import CustomerForm from "@/pages/admin/interment/forms/CustomerForm";
+import CustomerForm from "@/pages/admin/interment/customer/CustomerForm";
 
 export default function CreateCustomer() {
   const queryClient = useQueryClient();
@@ -18,8 +18,8 @@ export default function CreateCustomer() {
     try {
       const mutationPromise = mutateAsync(data);
       toast.promise(mutationPromise, {
-        loading: 'Saving customer...',
-        success: 'Customer saved successfully',
+        loading: "Saving customer...",
+        success: "Customer saved successfully",
       });
       await mutationPromise;
       setOpen(false);
@@ -31,21 +31,11 @@ export default function CreateCustomer() {
 
   return (
     <>
-      <Button
-        onClick={() => setOpen(true)}
-        variant="outline"
-        size="lg"
-      >
+      <Button onClick={() => setOpen(true)} variant="outline" size="sm">
         <Plus />
         Add Customer
       </Button>
-      <CustomerForm
-        onOpenChange={setOpen}
-        isPending={isPending}
-        onSubmit={handleSubmit}
-        open={open}
-        mode="add"
-      />
+      <CustomerForm onOpenChange={setOpen} isPending={isPending} onSubmit={handleSubmit} open={open} mode="add" />
     </>
   );
 }

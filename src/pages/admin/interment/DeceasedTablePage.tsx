@@ -2,21 +2,20 @@ import { useGetDeceasedRecord } from "@/hooks/deceased-hooks/useGetDeceasedRecor
 
 import DeceasedRecordsTable from "./DeceasedTable";
 import { ErrorMessage } from "@/components/ErrorMessage";
-import SkeletonTableOneWrapper from "@/components/mvpblocks/skeleton-table-1";
+import { Card } from "@/components/ui/card";
+import { DataTableSkeleton } from "@/components/data-table/data-table-skeleton";
 
 export default function DeceasedTablePage() {
   const { isError, isPending, data: deceasedRecords } = useGetDeceasedRecord();
+  const isLoading = isPending;
 
-  if (isPending)
-    if (isPending)
-      return (
-        <div className="flex h-full items-center justify-center">
-          <SkeletonTableOneWrapper
-            rowCount={10}
-            columnCount={5}
-          />
-        </div>
-      );
+  if (isLoading && !deceasedRecords) {
+    return (
+      <Card className="p-4">
+        <DataTableSkeleton columnCount={9} filterCount={0} />
+      </Card>
+    );
+  }
 
   if (isError || !deceasedRecords) {
     return (

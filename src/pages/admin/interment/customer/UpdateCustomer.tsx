@@ -1,7 +1,7 @@
-import type { Customer } from "@/types/interment.types";
+import type { Customer } from "@/api/customer.api";
 import { toast } from "sonner";
 
-import CustomerForm from "@/pages/admin/interment/forms/CustomerForm";
+import CustomerForm from "@/pages/admin/interment/customer/CustomerForm";
 import { useUpsertCustomer } from "@/hooks/customer-hooks/customer.hooks";
 
 interface EditCustomerDialogProps {
@@ -10,11 +10,7 @@ interface EditCustomerDialogProps {
   onOpenChange: (open: boolean) => void;
 }
 
-export default function EditCustomerDialog({
-  open,
-  customer,
-  onOpenChange,
-}: EditCustomerDialogProps) {
+export default function EditCustomerDialog({ open, customer, onOpenChange }: EditCustomerDialogProps) {
   const { isPending, mutateAsync } = useUpsertCustomer();
 
   async function handleSubmit(values: any) {
@@ -23,7 +19,7 @@ export default function EditCustomerDialog({
       status: values.status,
       email: values.email.trim(),
       address: values.address.trim(),
-      customer_id: customer.customer_id,
+      customer_id: customer.customer_id as string,
       last_name: values.last_name.trim(),
       first_name: values.first_name.trim(),
       occupation: values.occupation.trim(),
@@ -31,9 +27,7 @@ export default function EditCustomerDialog({
       religion: values.religion?.trim() || "",
       contact_number: values.contact_number.trim(),
       middle_name: values.middle_name?.trim() || "",
-      birth_date: values.birth_date
-        ? new Date(values.birth_date).toISOString().slice(0, 10)
-        : "",
+      birth_date: values.birth_date ? new Date(values.birth_date).toISOString().slice(0, 10) : "",
     };
     await toast.promise(
       mutateAsync(payload).then((result) => {
@@ -54,26 +48,17 @@ export default function EditCustomerDialog({
     email: customer.email || "",
     address: customer.address || "",
     nickname: customer.nickname || "",
-    gender: customer.gender || "male",
+    gender: (customer.gender as string) || "male",
     religion: customer.religion || "",
     last_name: customer.last_name || "",
-    status: customer.status || "single",
+    status: (customer.status as string) || "single",
     first_name: customer.first_name || "",
     occupation: customer.occupation || "",
     middle_name: customer.middle_name || "",
     citizenship: customer.citizenship || "",
     contact_number: customer.contact_number || "",
-    birth_date: customer.birth_date ? customer.birth_date.slice(0, 10) : "",
+    birth_date: customer.birth_date ? String(customer.birth_date).slice(0, 10) : "",
   };
 
-  return (
-    <CustomerForm
-      initialValues={initialValues}
-      onOpenChange={onOpenChange}
-      onSubmit={handleSubmit}
-      isPending={isPending}
-      mode="edit"
-      open={open}
-    />
-  );
+  return <CustomerForm initialValues={initialValues} onOpenChange={onOpenChange} onSubmit={handleSubmit} isPending={isPending} mode="edit" open={open} />;
 }

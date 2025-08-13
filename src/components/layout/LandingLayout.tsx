@@ -58,9 +58,9 @@ export default function LandingLayout() {
           <ThemeToggleButton start="top-right" variant="circle-blur" />
           <Link to="/login">
             <Button
-              className="text-foreground hover:bg-muted rounded-full transition"
+              className="rounded-full transition"
               aria-label="Login"
-              variant="default"
+              variant="secondary"
             >
               Login
             </Button>

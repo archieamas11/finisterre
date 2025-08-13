@@ -1,31 +1,14 @@
 "use client";
 
 import type { ColumnDef } from "@tanstack/react-table";
-
-import * as React from "react";
+import React from "react";
 import { MoreHorizontal, Archive, Pencil, Eye } from "lucide-react";
-
-import type {
-  DeceasedRecords,
-  LotOwners,
-  Customer,
-} from "@/types/interment.types";
-
+import type { DeceasedRecords, LotOwners } from "@/types/interment.types";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { capitalizeWords } from "@/lib/stringUtils";
-import EditCustomerDialog from "@/pages/admin/interment/customer/UpdateCustomer";
-import {
-  DropdownMenuSeparator,
-  DropdownMenuContent,
-  DropdownMenuTrigger,
-  DropdownMenuLabel,
-  DropdownMenuItem,
-  DropdownMenu,
-} from "@/components/ui/dropdown-menu";
-
-import ViewCustomerDialog from "../customer/ViewCustomer";
+import { DropdownMenuSeparator, DropdownMenuContent, DropdownMenuTrigger, DropdownMenuLabel, DropdownMenuItem, DropdownMenu } from "@/components/ui/dropdown-menu";
 
 // Fix: Checkbox with indeterminate state for header
 function SelectAllCheckbox({ table }: { table: any }) {
@@ -36,9 +19,7 @@ function SelectAllCheckbox({ table }: { table: any }) {
       const input = wrapperRef.current.querySelector('input[type="checkbox"]');
       // 🛡️ Only set indeterminate if input is HTMLInputElement
       if (input instanceof HTMLInputElement) {
-        input.indeterminate =
-          table.getIsSomePageRowsSelected() &&
-          !table.getIsAllPageRowsSelected();
+        input.indeterminate = table.getIsSomePageRowsSelected() && !table.getIsAllPageRowsSelected();
       }
     }
   }, [table.getIsSomePageRowsSelected(), table.getIsAllPageRowsSelected()]);
@@ -54,151 +35,15 @@ function SelectAllCheckbox({ table }: { table: any }) {
   );
 }
 
-export const customerColumns: ColumnDef<Customer>[] = [
-  {
-    id: "select",
-    enableHiding: false,
-    enableSorting: false,
-    header: ({ table }) => <SelectAllCheckbox table={table} />,
-    cell: ({ row }) => {
-      if (
-        !row ||
-        typeof row.getIsSelected !== "function" ||
-        typeof row.toggleSelected !== "function"
-      )
-        return null;
-      return (
-        <Checkbox
-          onCheckedChange={(value) => {
-            row.toggleSelected(!!value);
-          }}
-          className="border-accent dark:border-accent-background"
-          checked={row.getIsSelected()}
-          aria-label="Select row"
-        />
-      );
-    },
-  },
-  {
-    header: "#",
-    accessorKey: "customer_id",
-  },
-  {
-    id: "full_name",
-    header: "Full Name",
-    accessorFn: (row) =>
-      capitalizeWords(`${row.first_name} ${row.middle_name} ${row.last_name}`),
-  },
-  {
-    header: "Address",
-    accessorKey: "address",
-    cell: ({ row }) =>
-      row.original.address ? (
-        row.original.address
-      ) : (
-        <Badge variant="secondary" asChild={false}>
-          <span>N/A</span>
-        </Badge>
-      ),
-  },
-  {
-    header: "Phone",
-    accessorKey: "contact_number",
-    cell: ({ row }) =>
-      row.original.contact_number ? (
-        row.original.contact_number
-      ) : (
-        <Badge variant="secondary" asChild={false}>
-          <span>N/A</span>
-        </Badge>
-      ),
-  },
-  {
-    header: "Email",
-    accessorKey: "email",
-    cell: ({ row }) =>
-      row.original.email ? (
-        row.original.email
-      ) : (
-        <Badge variant="secondary" asChild={false}>
-          <span>N/A</span>
-        </Badge>
-      ),
-  },
-  {
-    id: "actions",
-    enableHiding: false,
-    cell: ({ row }) => {
-      const [open, setOpen] = React.useState(false);
-      const [viewOpen, setViewOpen] = React.useState(false);
-      if (!row?.original) return null;
-      return (
-        <>
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button className="h-8 w-8 p-0" variant="ghost">
-                <span className="sr-only">Open menu</span>
-                <MoreHorizontal />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent className="z-50" align="end">
-              <DropdownMenuLabel>Actions</DropdownMenuLabel>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem
-                onClick={() => {
-                  setOpen(true);
-                }}
-              >
-                Edit Customer
-              </DropdownMenuItem>
-              <DropdownMenuItem
-                onClick={() => {
-                  setViewOpen(true);
-                }}
-              >
-                View Customer
-              </DropdownMenuItem>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem
-                onClick={() =>
-                  navigator.clipboard.writeText(row.original.customer_id)
-                }
-                className="text-red-600 hover:bg-red-100"
-              >
-                <Archive className="mr-2 h-4 w-4 text-red-600" />
-                Archive
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-          <EditCustomerDialog
-            customer={row.original}
-            onOpenChange={setOpen}
-            open={open}
-          />
-          <ViewCustomerDialog
-            onOpenChange={setViewOpen}
-            customer={row.original}
-            open={viewOpen}
-          />
-        </>
-      );
-    },
-  },
-];
-
 export const lotOwnerColumns: ColumnDef<LotOwners>[] = [
   {
     id: "select",
+    size: 40,
     enableHiding: false,
     enableSorting: false,
     header: ({ table }) => <SelectAllCheckbox table={table} />,
     cell: ({ row }) => {
-      if (
-        !row ||
-        typeof row.getIsSelected !== "function" ||
-        typeof row.toggleSelected !== "function"
-      )
-        return null;
+      if (!row || typeof row.getIsSelected !== "function" || typeof row.toggleSelected !== "function") return null;
       return (
         <Checkbox
           onCheckedChange={(value) => {
@@ -212,7 +57,8 @@ export const lotOwnerColumns: ColumnDef<LotOwners>[] = [
     },
   },
   {
-    header: "#",
+    header: "ID",
+    size: 40,
     accessorKey: "lot_id",
     cell: ({ row }) =>
       row.original.lot_id ? (
@@ -263,38 +109,37 @@ export const lotOwnerColumns: ColumnDef<LotOwners>[] = [
     header: "Status",
     accessorKey: "lot_status",
     cell: ({ row }) => {
-      // 🟡 Show colored badge based on status value
       const status = row.original.lot_status?.toLowerCase();
       if (!status) {
         return (
-          <Badge variant="secondary" asChild={false}>
-            <span>N/A</span>
+          <Badge variant="outline" asChild={false}>
+            <span className="text-xs">N/A</span>
           </Badge>
         );
       }
       if (status === "active") {
         return (
-          <Badge className="bg-yellow-400 text-black" asChild={false}>
-            <span>Active</span>
+          <Badge variant="outline" className="bg-yellow-400 text-black" asChild={false}>
+            <span className="text-xs">Active</span>
           </Badge>
         );
       }
       if (status === "canceled") {
         return (
-          <Badge className="bg-red-500 text-white" asChild={false}>
+          <Badge variant="outline" className="bg-red-500 text-white" asChild={false}>
             <span>Canceled</span>
           </Badge>
         );
       }
       if (status === "completed") {
         return (
-          <Badge className="bg-green-500 text-white" asChild={false}>
+          <Badge variant="outline" className="bg-green-500 text-white" asChild={false}>
             <span>Completed</span>
           </Badge>
         );
       }
       return (
-        <Badge variant="secondary" asChild={false}>
+        <Badge variant="outline" asChild={false}>
           <span>{row.original.lot_status}</span>
         </Badge>
       );
@@ -302,7 +147,7 @@ export const lotOwnerColumns: ColumnDef<LotOwners>[] = [
   },
   {
     id: "actions",
-    header: "Actions",
+    size: 40,
     enableHiding: false,
     cell: ({ row }) => {
       if (!row?.original) return null;
@@ -321,12 +166,7 @@ export const lotOwnerColumns: ColumnDef<LotOwners>[] = [
               <DropdownMenuItem>Edit lot owner</DropdownMenuItem>
               <DropdownMenuItem>View lot owner</DropdownMenuItem>
               <DropdownMenuSeparator />
-              <DropdownMenuItem
-                onClick={() =>
-                  navigator.clipboard.writeText(row.original.customer_id)
-                }
-                className="text-red-600 hover:bg-red-100"
-              >
+              <DropdownMenuItem onClick={() => navigator.clipboard.writeText(row.original.customer_id)} className="text-red-600 hover:bg-red-100">
                 <Archive className="mr-2 h-4 w-4 text-red-600" />
                 Archive
               </DropdownMenuItem>
@@ -341,16 +181,12 @@ export const lotOwnerColumns: ColumnDef<LotOwners>[] = [
 export const deceasedRecordsColumns: ColumnDef<DeceasedRecords>[] = [
   {
     id: "select",
+    size: 40,
     enableHiding: false,
     enableSorting: false,
     header: ({ table }) => <SelectAllCheckbox table={table} />,
     cell: ({ row }) => {
-      if (
-        !row ||
-        typeof row.getIsSelected !== "function" ||
-        typeof row.toggleSelected !== "function"
-      )
-        return null;
+      if (!row || typeof row.getIsSelected !== "function" || typeof row.toggleSelected !== "function") return null;
       return (
         <Checkbox
           onCheckedChange={(value) => {
@@ -364,7 +200,8 @@ export const deceasedRecordsColumns: ColumnDef<DeceasedRecords>[] = [
     },
   },
   {
-    header: "#",
+    header: "ID",
+    size: 40,
     accessorKey: "deceased_id",
   },
   {
@@ -416,23 +253,11 @@ export const deceasedRecordsColumns: ColumnDef<DeceasedRecords>[] = [
     },
   },
   {
-    header: "Buried Date",
+    header: "Interment Date",
     accessorKey: "dead_interment",
     cell: ({ row }) =>
       row.original.dead_interment ? (
         row.original.dead_interment
-      ) : (
-        <Badge variant="secondary" asChild={false}>
-          <span>N/A</span>
-        </Badge>
-      ),
-  },
-  {
-    header: "Date of Death",
-    accessorKey: "dead_date_death",
-    cell: ({ row }) =>
-      row.original.dead_date_death ? (
-        row.original.dead_date_death
       ) : (
         <Badge variant="secondary" asChild={false}>
           <span>N/A</span>
@@ -454,18 +279,14 @@ export const deceasedRecordsColumns: ColumnDef<DeceasedRecords>[] = [
       const dayDiff = now.getDate() - buriedDate.getDate();
 
       // If less than a full year
-      const isLessThanOneYear =
-        yearsBuried < 1 ||
-        (yearsBuried === 1 &&
-          (monthDiff < 0 || (monthDiff === 0 && dayDiff < 0)));
+      const isLessThanOneYear = yearsBuried < 1 || (yearsBuried === 1 && (monthDiff < 0 || (monthDiff === 0 && dayDiff < 0)));
 
-      return isLessThanOneYear
-        ? "Less than a year"
-        : `${yearsBuried} year${yearsBuried > 1 ? "s" : ""}`;
+      return isLessThanOneYear ? "Less than a year" : `${yearsBuried} year${yearsBuried > 1 ? "s" : ""}`;
     },
   },
   {
     id: "actions",
+    size: 40,
     enableHiding: false,
     cell: ({ row }) => {
       if (!row?.original) return null;
@@ -481,11 +302,7 @@ export const deceasedRecordsColumns: ColumnDef<DeceasedRecords>[] = [
           <DropdownMenuContent className="z-50" align="end">
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
             <DropdownMenuSeparator />
-            <DropdownMenuItem
-              onClick={() =>
-                navigator.clipboard.writeText(deceasedRecord.deceased_id)
-              }
-            >
+            <DropdownMenuItem onClick={() => navigator.clipboard.writeText(deceasedRecord.deceased_id)}>
               <Pencil className="mr-2 h-4 w-4" />
               Edit deceased record
             </DropdownMenuItem>

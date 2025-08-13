@@ -1,6 +1,7 @@
 import axios from "axios";
 
 export const api = axios.create({
-  baseURL: "https://finisterre.x10.bz/",
-  // baseURL: "http://localhost/finisterre_backend/",
+	baseURL: import.meta.env.VITE_API_URL,
+	headers: { 'Content-Type': 'application/json' },
+	withCredentials: false,
 });

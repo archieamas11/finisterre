@@ -1,4 +1,3 @@
-// src/config/sidebar-items.ts
 import { LayoutDashboard, type LucideIcon, CalendarDays, PaintBucket, MonitorCog, ChartBar, MapIcon, User, Home } from "lucide-react";
 
 export interface NavMainItem {
@@ -43,17 +42,14 @@ export const adminSidebarItems: NavGroup[] = [
         url: "/admin/interment-setup",
         subItems: [
           {
-            newTab: false,
             title: "Manage Customers",
             url: "/admin/interment-setup/customers",
           },
           {
-            newTab: false,
             title: "Manage Lot Owners",
             url: "/admin/interment-setup/lot-owners",
           },
           {
-            newTab: false,
             title: "Manage Deceased Records",
             url: "/admin/interment-setup/deceased-records",
           },

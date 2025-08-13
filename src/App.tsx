@@ -22,9 +22,9 @@ import AdminMapLayout from "@/pages/admin/map4admin/AdminMapLayout";
 import IntermentSetup from "@/pages/admin/interment/IntermentSetup";
 import { RequireAdmin, RequireAuth, RequireUser } from "@/authRoutes";
 import AdminControlPanel from "@/pages/admin/control/AdminControlPanel";
-import DeceasedTablePage from "@/pages/admin/interment/DeceasedTablePage";
-import LotOwnersTablePage from "@/pages/admin/interment/LotOwnersTablePage";
-import CustomersPage from "./pages/admin/interment/customer/CustomerPage";
+import AdminIntermentDeceasedPage from "@/pages/admin/interment/deceased";
+import AdminIntermentLotOwnersPage from "@/pages/admin/interment/lot-owners";
+import AdminIntermentCustomerPage from "./pages/admin/interment/customer/customers";
 
 export default function App() {
   return (
@@ -70,9 +70,9 @@ export default function App() {
           >
             <Route element={<AdminDashboard />} index />
             <Route element={<IntermentSetup />} path="interment-setup">
-              <Route element={<CustomersPage />} path="customers" />
-              <Route element={<LotOwnersTablePage />} path="lot-owners" />
-              <Route element={<DeceasedTablePage />} path="deceased-records" />
+              <Route element={<AdminIntermentCustomerPage />} path="customers" />
+              <Route element={<AdminIntermentLotOwnersPage />} path="lot-owners" />
+              <Route element={<AdminIntermentDeceasedPage />} path="deceased-records" />
             </Route>
             <Route element={<AdminMapLayout />} path="map" />
             <Route element={<Bookings />} path="bookings" />

@@ -1,28 +1,22 @@
 import { ErrorMessage } from "@/components/ErrorMessage";
-import SkeletonTableOneWrapper from "@/components/mvpblocks/skeleton-table-1";
+import { Card } from "@/components/ui/card";
+import { DataTableSkeleton } from "@/components/data-table/data-table-skeleton";
 import { useGetCustomers } from "@/hooks/customer-hooks/useGetCustomer";
 import CustomersTable from "@/pages/admin/interment/customer/CustomersTable";
 
 export default function CustomersPage() {
   const { isError, isPending, data: customers } = useGetCustomers();
+  const isLoading = isPending;
 
-  if (isPending)
+  if (isLoading && !customers) {
     return (
-      <div className="flex h-full items-center justify-center">
-        <SkeletonTableOneWrapper
-          rowCount={10}
-          columnCount={5}
-        />
-      </div>
+      <Card className="p-4">
+        <DataTableSkeleton columnCount={9} filterCount={1} />
+      </Card>
     );
+  }
   if (isError || !customers) {
-    return (
-      <ErrorMessage
-        message="Failed to load customer data. Please check your connection and try again."
-        onRetry={() => useGetCustomers()}
-        showRetryButton={true}
-      />
-    );
+    return <ErrorMessage message="Failed to load customer data. Please check your connection and try again." onRetry={() => useGetCustomers()} showRetryButton={true} />;
   }
   return <CustomersTable data={customers} />;
 }

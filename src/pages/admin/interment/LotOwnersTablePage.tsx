@@ -1,21 +1,21 @@
 import { ErrorMessage } from "@/components/ErrorMessage";
+import { Card } from "@/components/ui/card";
+import { DataTableSkeleton } from "@/components/data-table/data-table-skeleton";
 
 import LotOwnersTable from "./LotOwnersTable";
 import { useGetLotOwner } from "@/hooks/lot-owner-hooks/useGetLotOwner";
-import SkeletonTableOneWrapper from "@/components/mvpblocks/skeleton-table-1";
 
 export default function LotOwnersTablePage() {
   const { isError, isPending, data: lotOwners } = useGetLotOwner();
+  const isLoading = isPending;
 
-  if (isPending)
+  if (isLoading && !lotOwners) {
     return (
-      <div className="flex h-full items-center justify-center">
-        <SkeletonTableOneWrapper
-          rowCount={10}
-          columnCount={5}
-        />
-      </div>
+      <Card className="p-4">
+        <DataTableSkeleton columnCount={9} filterCount={0} />
+      </Card>
     );
+  }
 
   if (isError || !lotOwners) {
     return (

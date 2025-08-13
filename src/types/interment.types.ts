@@ -35,24 +35,3 @@ export interface LotOwners {
   niche_number?: string;
   customer_name?: string;
 }
-
-export interface Customer {
-  email: string;
-  gender: string;
-  select: boolean;
-  user_id: string;
-  address: string;
-  status?: string;
-  nickname: string;
-  religion: string;
-  last_name: string;
-  first_name: string;
-  birth_date: string;
-  occupation: string;
-  created_at: string;
-  updated_at: string;
-  customer_id: string;
-  middle_name: string;
-  citizenship: string;
-  contact_number: string;
-}
