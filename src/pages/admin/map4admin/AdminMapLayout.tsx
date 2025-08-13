@@ -68,7 +68,7 @@ export default function AdminMapLayout() {
   return (
     <div className="h-full w-full rounded-lg border p-2">
       <LocateContext.Provider value={{ requestLocate }}>
-        <div className="relative h-full w-full">
+        <div className="z-1 relative h-full w-full">
           <WebMapNavs />
           <MapStats />
           <MapContainer

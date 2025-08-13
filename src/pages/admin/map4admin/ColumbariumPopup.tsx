@@ -181,7 +181,7 @@ export default function ColumbariumPopup({ marker, onDirectionClick }: Columbari
             scrollbarWidth: "thin",
             gridTemplateColumns: `repeat(${Math.min(cols, 9)}, minmax(0, 1fr))`,
           }}
-          className="bg-background dark:bg-muted grid w-full gap-1 rounded border p-2"
+          className="bg-background dark:bg-muted grid w-full gap-1 rounded-lg border p-2"
         >
           {nicheData.map((niche, index) => (
             <button
@@ -237,17 +237,12 @@ export default function ColumbariumPopup({ marker, onDirectionClick }: Columbari
 
       {/* Media display */}
       {(() => {
-        // 🖼️ Check both file_names_array and file_name properties
         const images = marker.file_names_array || marker.file_name || [];
         if (!isAdmin()) {
           return Array.isArray(images) && images.length > 0 ? (
             <div className="mt-5 grid grid-cols-2 gap-2">
               {images.map((imageUrl, idx) => (
                 <img
-                  onError={(e) => {
-                    console.log("🖼️ Image failed to load:", imageUrl);
-                    e.currentTarget.style.display = "none";
-                  }}
                   className="h-30 w-full rounded object-cover transition-transform duration-200 hover:scale-105 hover:transform"
                   alt={`Plot media ${idx + 1}`}
                   src={imageUrl}
