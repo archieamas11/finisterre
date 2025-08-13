@@ -1,0 +1,13 @@
+{
+	"folders": [
+		{
+			"path": "."
+		},
+		{
+			"path": "../finisterre_backend"
+		}
+	],
+	"settings": {
+		"hide-files.files": []
+	}
+}

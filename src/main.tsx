@@ -1,6 +1,6 @@
 import React from "react";
 import { createRoot } from "react-dom/client";
-
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 import "./index.css";
 import { QueryClientProvider, QueryClient } from "@tanstack/react-query";
 
@@ -21,8 +21,9 @@ createRoot(document.getElementById("root")!).render(
     >
       <QueryClientProvider client={queryClient}>
         <App />
+        <ReactQueryDevtools initialIsOpen={false} />
+        <Toaster position="top-right" richColors />
       </QueryClientProvider>
-      <Toaster position="top-right" richColors />
     </ThemeProvider>
   </React.StrictMode>,
 );
