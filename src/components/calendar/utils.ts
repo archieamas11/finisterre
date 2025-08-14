@@ -28,10 +28,7 @@ export function getEventColorClasses(color?: EventColor | string): string {
 /**
  * Get CSS classes for border radius based on event position in multi-day events
  */
-export function getBorderRadiusClasses(
-  isFirstDay: boolean,
-  isLastDay: boolean,
-): string {
+export function getBorderRadiusClasses(isFirstDay: boolean, isLastDay: boolean): string {
   if (isFirstDay && isLastDay) {
     return "rounded"; // Both ends rounded
   } else if (isFirstDay) {
@@ -55,10 +52,7 @@ export function isMultiDayEvent(event: CalendarEvent): boolean {
 /**
  * Filter events for a specific day
  */
-export function getEventsForDay(
-  events: CalendarEvent[],
-  day: Date,
-): CalendarEvent[] {
+export function getEventsForDay(events: CalendarEvent[], day: Date): CalendarEvent[] {
   return events
     .filter((event) => {
       const eventStart = new Date(event.start);
@@ -85,10 +79,7 @@ export function sortEvents(events: CalendarEvent[]): CalendarEvent[] {
 /**
  * Get multi-day events that span across a specific day (but don't start on that day)
  */
-export function getSpanningEventsForDay(
-  events: CalendarEvent[],
-  day: Date,
-): CalendarEvent[] {
+export function getSpanningEventsForDay(events: CalendarEvent[], day: Date): CalendarEvent[] {
   return events.filter((event) => {
     if (!isMultiDayEvent(event)) return false;
 
@@ -96,47 +87,30 @@ export function getSpanningEventsForDay(
     const eventEnd = new Date(event.end);
 
     // Only include if it's not the start day but is either the end day or a middle day
-    return (
-      !isSameDay(day, eventStart) &&
-      (isSameDay(day, eventEnd) || (day > eventStart && day < eventEnd))
-    );
+    return !isSameDay(day, eventStart) && (isSameDay(day, eventEnd) || (day > eventStart && day < eventEnd));
   });
 }
 
 /**
  * Get all events visible on a specific day (starting, ending, or spanning)
  */
-export function getAllEventsForDay(
-  events: CalendarEvent[],
-  day: Date,
-): CalendarEvent[] {
+export function getAllEventsForDay(events: CalendarEvent[], day: Date): CalendarEvent[] {
   return events.filter((event) => {
     const eventStart = new Date(event.start);
     const eventEnd = new Date(event.end);
-    return (
-      isSameDay(day, eventStart) ||
-      isSameDay(day, eventEnd) ||
-      (day > eventStart && day < eventEnd)
-    );
+    return isSameDay(day, eventStart) || isSameDay(day, eventEnd) || (day > eventStart && day < eventEnd);
   });
 }
 
 /**
  * Get all events for a day (for agenda view)
  */
-export function getAgendaEventsForDay(
-  events: CalendarEvent[],
-  day: Date,
-): CalendarEvent[] {
+export function getAgendaEventsForDay(events: CalendarEvent[], day: Date): CalendarEvent[] {
   return events
     .filter((event) => {
       const eventStart = new Date(event.start);
       const eventEnd = new Date(event.end);
-      return (
-        isSameDay(day, eventStart) ||
-        isSameDay(day, eventEnd) ||
-        (day > eventStart && day < eventEnd)
-      );
+      return isSameDay(day, eventStart) || isSameDay(day, eventEnd) || (day > eventStart && day < eventEnd);
     })
     .sort((a, b) => new Date(a.start).getTime() - new Date(b.start).getTime());
 }

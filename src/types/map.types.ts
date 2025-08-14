@@ -81,9 +81,7 @@ export const convertPlotToMarker = (plot: {
       // 🔧 Handle case where backend sends JSON string or comma-separated
       try {
         const parsed = JSON.parse(plot.file_name);
-        fileNames = Array.isArray(parsed)
-          ? parsed.filter(Boolean)
-          : [plot.file_name];
+        fileNames = Array.isArray(parsed) ? parsed.filter(Boolean) : [plot.file_name];
       } catch {
         // 📝 Might be comma-separated string
         fileNames = (plot.file_name as string)

@@ -1,14 +1,7 @@
 import { RiListSettingsFill } from "react-icons/ri";
 import { useContext } from "react";
 import { Link } from "react-router-dom";
-import {
-  RefreshCw,
-  Search,
-  Filter,
-  Locate,
-  Layers,
-  Home,
-} from "lucide-react";
+import { RefreshCw, Search, Filter, Locate, Layers, Home } from "lucide-react";
 
 import { isAdmin } from "@/utils/Auth.utils";
 import { Button } from "@/components/ui/button";
@@ -23,33 +16,21 @@ export default function WebMapNavs() {
       className="pointer-events-auto absolute top-4 right-4 z-[990] flex flex-col gap-3 sm:top-8 sm:right-8 sm:gap-4 md:top-8 md:right-auto md:left-1/2 md:-translate-x-1/2 md:flex-row md:gap-4"
       style={{ pointerEvents: "auto" }}
     >
-      <Button
-        className="rounded-full bg-[#f1eff5]/90 dark:bg-[#16141e]/80 shadow-xl backdrop-blur-md border border-white/20 dark:border-stone-700/50"
-        size="icon"
-      >
+      <Button className="rounded-full border border-white/20 bg-[#f1eff5]/90 shadow-xl backdrop-blur-md dark:border-stone-700/50 dark:bg-[#16141e]/80" size="icon">
         <Search className="h-6 w-6 text-stone-700 dark:text-stone-200" />
       </Button>
-      <Button
-        className="rounded-full bg-[#f1eff5]/90 dark:bg-[#16141e]/80 shadow-xl backdrop-blur-md border border-white/20 dark:border-stone-700/50"
-        size="icon"
-      >
+      <Button className="rounded-full border border-white/20 bg-[#f1eff5]/90 shadow-xl backdrop-blur-md dark:border-stone-700/50 dark:bg-[#16141e]/80" size="icon">
         <RiListSettingsFill className="h-6 w-6 text-stone-700 dark:text-stone-200" />
       </Button>
-      <Button
-        className="rounded-full bg-[#f1eff5]/90 dark:bg-[#16141e]/80 shadow-xl backdrop-blur-md border border-white/20 dark:border-stone-700/50"
-        size="icon"
-      >
+      <Button className="rounded-full border border-white/20 bg-[#f1eff5]/90 shadow-xl backdrop-blur-md dark:border-stone-700/50 dark:bg-[#16141e]/80" size="icon">
         <Filter className="h-6 w-6 text-stone-700 dark:text-stone-200" />
       </Button>
-      <Button
-        className="rounded-full bg-[#f1eff5]/90 dark:bg-[#16141e]/80 shadow-xl backdrop-blur-md border border-white/20 dark:border-stone-700/50"
-        size="icon"
-      >
+      <Button className="rounded-full border border-white/20 bg-[#f1eff5]/90 shadow-xl backdrop-blur-md dark:border-stone-700/50 dark:bg-[#16141e]/80" size="icon">
         <RefreshCw className="h-6 w-6 text-stone-700 dark:text-stone-200" />
       </Button>
       {!isAdmin() && (
         <Button
-          className="rounded-full bg-[#f1eff5]/90 dark:bg-[#16141e]/80 shadow-xl backdrop-blur-md border border-white/20 dark:border-stone-700/50"
+          className="rounded-full border border-white/20 bg-[#f1eff5]/90 shadow-xl backdrop-blur-md dark:border-stone-700/50 dark:bg-[#16141e]/80"
           onClick={() => locateCtx?.requestLocate()}
           aria-label="Locate me"
           size="icon"
@@ -57,18 +38,12 @@ export default function WebMapNavs() {
           <Locate className="h-6 w-6 text-stone-700 dark:text-stone-200" />
         </Button>
       )}
-      <Button
-        className="rounded-full bg-[#f1eff5]/90 dark:bg-[#16141e]/80 shadow-xl backdrop-blur-md border border-white/20 dark:border-stone-700/50"
-        size="icon"
-      >
+      <Button className="rounded-full border border-white/20 bg-[#f1eff5]/90 shadow-xl backdrop-blur-md dark:border-stone-700/50 dark:bg-[#16141e]/80" size="icon">
         <Layers className="h-6 w-6 text-stone-700 dark:text-stone-200" />
       </Button>
       {!isAdmin() && (
         <Link to="/">
-          <Button
-            className="rounded-full bg-[#f1eff5]/90 dark:bg-[#16141e]/80 shadow-xl backdrop-blur-md border border-white/20 dark:border-stone-700/50"
-            size="icon"
-          >
+          <Button className="rounded-full border border-white/20 bg-[#f1eff5]/90 shadow-xl backdrop-blur-md dark:border-stone-700/50 dark:bg-[#16141e]/80" size="icon">
             <Home className="h-6 w-6 text-stone-700 dark:text-stone-200" />
           </Button>
         </Link>
@@ -76,4 +51,3 @@ export default function WebMapNavs() {
     </nav>
   );
 }
-

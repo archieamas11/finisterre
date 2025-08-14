@@ -1,9 +1,6 @@
 import { useCallback, useState } from "react";
 
-export type UseCopyToClipboardReturn = [
-  (text: string) => Promise<void>,
-  boolean
-];
+export type UseCopyToClipboardReturn = [(text: string) => Promise<void>, boolean];
 
 export const useCopyToClipboard = (): UseCopyToClipboardReturn => {
   const [isCopied, setIsCopied] = useState(false);
@@ -17,7 +14,7 @@ export const useCopyToClipboard = (): UseCopyToClipboardReturn => {
     try {
       await navigator.clipboard.writeText(text);
       setIsCopied(true);
-      
+
       // Reset the copied state after 2 seconds
       setTimeout(() => setIsCopied(false), 2000);
     } catch (error) {

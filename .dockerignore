@@ -1,0 +1,14 @@
+node_modules
+bun.lockb
+bunfig.toml
+Dockerfile
+.git
+.gitignore
+.vscode
+.idea
+**/*.log
+dist
+**/.DS_Store
+**/Thumbs.db
+github/*
+docs/*

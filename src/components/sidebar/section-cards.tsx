@@ -1,14 +1,7 @@
 import { IconTrendingDown, IconTrendingUp } from "@tabler/icons-react";
 
 import { Badge } from "@/components/ui/badge";
-import {
-  CardDescription,
-  CardAction,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-  Card,
-} from "@/components/ui/card";
+import { CardDescription, CardAction, CardFooter, CardHeader, CardTitle, Card } from "@/components/ui/card";
 
 export function SectionCards() {
   return (
@@ -16,9 +9,7 @@ export function SectionCards() {
       <Card className="@container/card">
         <CardHeader>
           <CardDescription>Total Plots</CardDescription>
-          <CardTitle className="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl">
-            2,500
-          </CardTitle>
+          <CardTitle className="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl">2,500</CardTitle>
           <CardAction>
             <Badge variant="outline">
               <IconTrendingUp />
@@ -30,17 +21,13 @@ export function SectionCards() {
           <div className="line-clamp-1 flex gap-2 font-medium">
             All plots in cemetery <IconTrendingUp className="size-4" />
           </div>
-          <div className="text-muted-foreground">
-            Total number of plots available for allocation
-          </div>
+          <div className="text-muted-foreground">Total number of plots available for allocation</div>
         </CardFooter>
       </Card>
       <Card className="@container/card">
         <CardHeader>
           <CardDescription>Occupied Plots</CardDescription>
-          <CardTitle className="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl">
-            1,800
-          </CardTitle>
+          <CardTitle className="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl">1,800</CardTitle>
           <CardAction>
             <Badge variant="outline">
               <IconTrendingDown />
@@ -52,17 +39,13 @@ export function SectionCards() {
           <div className="line-clamp-1 flex gap-2 font-medium">
             Plots currently occupied <IconTrendingDown className="size-4" />
           </div>
-          <div className="text-muted-foreground">
-            Indicates total plots with burials
-          </div>
+          <div className="text-muted-foreground">Indicates total plots with burials</div>
         </CardFooter>
       </Card>
       <Card className="@container/card">
         <CardHeader>
           <CardDescription>Available Plots</CardDescription>
-          <CardTitle className="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl">
-            500
-          </CardTitle>
+          <CardTitle className="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl">500</CardTitle>
           <CardAction>
             <Badge variant="outline">
               <IconTrendingUp />
@@ -74,17 +57,13 @@ export function SectionCards() {
           <div className="line-clamp-1 flex gap-2 font-medium">
             Plots open for reservation <IconTrendingUp className="size-4" />
           </div>
-          <div className="text-muted-foreground">
-            Ready for new reservations
-          </div>
+          <div className="text-muted-foreground">Ready for new reservations</div>
         </CardFooter>
       </Card>
       <Card className="@container/card">
         <CardHeader>
           <CardDescription>Reserved Plots</CardDescription>
-          <CardTitle className="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl">
-            200
-          </CardTitle>
+          <CardTitle className="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl">200</CardTitle>
           <CardAction>
             <Badge variant="outline">
               <IconTrendingUp />
@@ -94,8 +73,7 @@ export function SectionCards() {
         </CardHeader>
         <CardFooter className="flex-col items-start gap-1.5 text-sm">
           <div className="line-clamp-1 flex gap-2 font-medium">
-            Plots reserved but not yet occupied{" "}
-            <IconTrendingUp className="size-4" />
+            Plots reserved but not yet occupied <IconTrendingUp className="size-4" />
           </div>
           <div className="text-muted-foreground">Pending future use</div>
         </CardFooter>

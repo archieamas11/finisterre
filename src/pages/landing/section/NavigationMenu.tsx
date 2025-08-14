@@ -1,29 +1,10 @@
 import * as React from "react";
 import { Link } from "react-router-dom";
-import {
-  ChevronDownIcon,
-  type LucideIcon,
-  CalendarIcon,
-  MapPinIcon,
-  ShieldIcon,
-  UsersIcon,
-  PhoneIcon,
-  ClockIcon,
-  HeartIcon,
-  LeafIcon,
-  MenuIcon,
-} from "lucide-react";
+import { ChevronDownIcon, type LucideIcon, CalendarIcon, MapPinIcon, ShieldIcon, UsersIcon, PhoneIcon, ClockIcon, HeartIcon, LeafIcon, MenuIcon } from "lucide-react";
 
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
-import {
-  SheetDescription,
-  SheetContent,
-  SheetTrigger,
-  SheetHeader,
-  SheetTitle,
-  Sheet,
-} from "@/components/ui/sheet";
+import { SheetDescription, SheetContent, SheetTrigger, SheetHeader, SheetTitle, Sheet } from "@/components/ui/sheet";
 import {
   navigationMenuTriggerStyle,
   NavigationMenuContent,
@@ -41,48 +22,43 @@ const services: {
   title: string;
   href: string;
 }[] = [
-    {
-      icon: LeafIcon,
-      title: "Memorial Plots",
-      href: "/services/memorial-plots",
-      description:
-        "Beautifully landscaped plots for honoring your loved ones in a serene environment.",
-    },
-    {
-      icon: CalendarIcon,
-      title: "Event Planning",
-      href: "/services/event-planning",
-      description:
-        "Custom memorial services and celebrations of life tailored to your family's needs.",
-    },
-    {
-      icon: LeafIcon,
-      title: "Garden Maintenance",
-      href: "/services/garden-maintenance",
-      description:
-        "Professional care for memorial gardens to keep them pristine year-round.",
-    },
-    {
-      icon: UsersIcon,
-      title: "Family Services",
-      href: "/services/family-services",
-      description: "Special packages for families with multiple memorial needs.",
-    },
-    {
-      icon: HeartIcon,
-      title: "Custom Memorials",
-      href: "/services/custom-memorials",
-      description:
-        "Personalized monuments and markers to celebrate unique lives.",
-    },
-    {
-      icon: MapPinIcon,
-      title: "Virtual Tours",
-      href: "/services/virtual-tours",
-      description:
-        "Explore our memorial park from anywhere with our 360° virtual tour.",
-    },
-  ];
+  {
+    icon: LeafIcon,
+    title: "Memorial Plots",
+    href: "/services/memorial-plots",
+    description: "Beautifully landscaped plots for honoring your loved ones in a serene environment.",
+  },
+  {
+    icon: CalendarIcon,
+    title: "Event Planning",
+    href: "/services/event-planning",
+    description: "Custom memorial services and celebrations of life tailored to your family's needs.",
+  },
+  {
+    icon: LeafIcon,
+    title: "Garden Maintenance",
+    href: "/services/garden-maintenance",
+    description: "Professional care for memorial gardens to keep them pristine year-round.",
+  },
+  {
+    icon: UsersIcon,
+    title: "Family Services",
+    href: "/services/family-services",
+    description: "Special packages for families with multiple memorial needs.",
+  },
+  {
+    icon: HeartIcon,
+    title: "Custom Memorials",
+    href: "/services/custom-memorials",
+    description: "Personalized monuments and markers to celebrate unique lives.",
+  },
+  {
+    icon: MapPinIcon,
+    title: "Virtual Tours",
+    href: "/services/virtual-tours",
+    description: "Explore our memorial park from anywhere with our 360° virtual tour.",
+  },
+];
 
 // Sample FAQs data
 const faqs: {
@@ -91,58 +67,46 @@ const faqs: {
   title: string;
   href: string;
 }[] = [
-    {
-      icon: ClockIcon,
-      title: "Visiting Hours",
-      href: "/faqs/visiting-hours",
-      description: "What are the park's opening and closing times?",
-    },
-    {
-      icon: CalendarIcon,
-      title: "Reservation Process",
-      href: "/faqs/reservation-process",
-      description: "How to book a memorial plot or service?",
-    },
-    {
-      icon: LeafIcon,
-      title: "Maintenance Policy",
-      href: "/faqs/maintenance-policy",
-      description: "How is the garden maintained and cared for?",
-    },
-    {
-      icon: UsersIcon,
-      title: "Pet Policy",
-      href: "/faqs/pet-policy",
-      description: "Are pets allowed in the memorial park?",
-    },
-    {
-      icon: PhoneIcon,
-      title: "Contact Us",
-      href: "/faqs/contact-us",
-      description: "How to reach our customer service team?",
-    },
-    {
-      icon: ShieldIcon,
-      title: "Privacy & Security",
-      href: "/faqs/privacy-security",
-      description: "How do we protect visitor information?",
-    },
-  ];
+  {
+    icon: ClockIcon,
+    title: "Visiting Hours",
+    href: "/faqs/visiting-hours",
+    description: "What are the park's opening and closing times?",
+  },
+  {
+    icon: CalendarIcon,
+    title: "Reservation Process",
+    href: "/faqs/reservation-process",
+    description: "How to book a memorial plot or service?",
+  },
+  {
+    icon: LeafIcon,
+    title: "Maintenance Policy",
+    href: "/faqs/maintenance-policy",
+    description: "How is the garden maintained and cared for?",
+  },
+  {
+    icon: UsersIcon,
+    title: "Pet Policy",
+    href: "/faqs/pet-policy",
+    description: "Are pets allowed in the memorial park?",
+  },
+  {
+    icon: PhoneIcon,
+    title: "Contact Us",
+    href: "/faqs/contact-us",
+    description: "How to reach our customer service team?",
+  },
+  {
+    icon: ShieldIcon,
+    title: "Privacy & Security",
+    href: "/faqs/privacy-security",
+    description: "How do we protect visitor information?",
+  },
+];
 
 // Mobile menu item component
-const MobileMenuItem = ({
-  href,
-  title,
-  children,
-  onSelect,
-  icon: Icon,
-}: {
-  children?: React.ReactNode;
-  onSelect?: () => void;
-  icon?: LucideIcon;
-  title: string;
-  href: string;
-}) => {
+const MobileMenuItem = ({ href, title, children, onSelect, icon: Icon }: { children?: React.ReactNode; onSelect?: () => void; icon?: LucideIcon; title: string; href: string }) => {
   if (children) {
     const [isOpen, setIsOpen] = React.useState(false);
 
@@ -155,12 +119,7 @@ const MobileMenuItem = ({
           }}
         >
           <span className="font-medium">{title}</span>
-          <ChevronDownIcon
-            className={cn(
-              "h-4 w-4 transition-transform",
-              isOpen && "rotate-180",
-            )}
-          />
+          <ChevronDownIcon className={cn("h-4 w-4 transition-transform", isOpen && "rotate-180")} />
         </button>
         {isOpen && <div className="bg-background pb-2">{children}</div>}
       </div>
@@ -180,25 +139,9 @@ const MobileMenuItem = ({
 };
 
 // Mobile submenu item
-const MobileSubMenuItem = ({
-  href,
-  title,
-  onSelect,
-  icon: Icon,
-  description,
-}: {
-  onSelect?: () => void;
-  description: string;
-  icon: LucideIcon;
-  title: string;
-  href: string;
-}) => {
+const MobileSubMenuItem = ({ href, title, onSelect, icon: Icon, description }: { onSelect?: () => void; description: string; icon: LucideIcon; title: string; href: string }) => {
   return (
-    <Link
-      className="hover:bg-accent hover:text-foreground focus:bg-background focus:text-foreground flex items-start gap-3 px-6 py-2"
-      onClick={onSelect}
-      to={href}
-    >
+    <Link className="hover:bg-accent hover:text-foreground focus:bg-background focus:text-foreground flex items-start gap-3 px-6 py-2" onClick={onSelect} to={href}>
       <Icon className="mt-1 h-4 w-4 flex-shrink-0" />
       <div>
         <div className="text-sm font-medium">{title}</div>
@@ -221,48 +164,29 @@ export function NavigationMenuSection() {
       <NavigationMenu className="z-20 hidden md:flex">
         <NavigationMenuList>
           <NavigationMenuItem>
-            <NavigationMenuLink
-              className={cn(navigationMenuTriggerStyle(), "bg-transparent")}
-              asChild
-            >
+            <NavigationMenuLink className={cn(navigationMenuTriggerStyle(), "bg-transparent")} asChild>
               <Link to="/home">Home</Link>
             </NavigationMenuLink>
           </NavigationMenuItem>
           <NavigationMenuItem>
-            <NavigationMenuTrigger className="bg-transparent">
-              Services
-            </NavigationMenuTrigger>
+            <NavigationMenuTrigger className="bg-transparent">Services</NavigationMenuTrigger>
             <NavigationMenuContent className="p-4">
               <div className="grid w-[900px] grid-cols-3 gap-3 divide-x p-4">
                 <div className="col-span-2">
-                  <h6 className="text-muted-foreground pl-2.5 text-sm font-semibold uppercase">
-                    Our Services
-                  </h6>
+                  <h6 className="text-muted-foreground pl-2.5 text-sm font-semibold uppercase">Our Services</h6>
                   <ul className="mt-2.5 grid grid-cols-2 gap-3">
                     {services.map((service) => (
-                      <ListItem
-                        title={service.title}
-                        key={service.title}
-                        icon={service.icon}
-                        to={service.href}
-                      >
+                      <ListItem title={service.title} key={service.title} icon={service.icon} to={service.href}>
                         {service.description}
                       </ListItem>
                     ))}
                   </ul>
                 </div>
                 <div className="pl-4">
-                  <h6 className="text-muted-foreground pl-2.5 text-sm font-semibold uppercase">
-                    Special Features
-                  </h6>
+                  <h6 className="text-muted-foreground pl-2.5 text-sm font-semibold uppercase">Special Features</h6>
                   <ul className="mt-2.5 grid gap-3">
                     {services.slice(0, 3).map((service) => (
-                      <ListItem
-                        title={service.title}
-                        key={service.title}
-                        icon={service.icon}
-                        to={service.href}
-                      >
+                      <ListItem title={service.title} key={service.title} icon={service.icon} to={service.href}>
                         {service.description}
                       </ListItem>
                     ))}
@@ -272,38 +196,23 @@ export function NavigationMenuSection() {
             </NavigationMenuContent>
           </NavigationMenuItem>
           <NavigationMenuItem>
-            <NavigationMenuLink
-              className={cn(navigationMenuTriggerStyle(), "bg-transparent")}
-              asChild
-            >
+            <NavigationMenuLink className={cn(navigationMenuTriggerStyle(), "bg-transparent")} asChild>
               <Link to="/about">About</Link>
             </NavigationMenuLink>
           </NavigationMenuItem>
           <NavigationMenuItem>
-            <NavigationMenuLink
-              className={cn(navigationMenuTriggerStyle(), "bg-transparent")}
-              asChild
-            >
+            <NavigationMenuLink className={cn(navigationMenuTriggerStyle(), "bg-transparent")} asChild>
               <Link to="/location">Location</Link>
             </NavigationMenuLink>
           </NavigationMenuItem>
           <NavigationMenuItem>
-            <NavigationMenuTrigger className="bg-transparent">
-              FAQs
-            </NavigationMenuTrigger>
+            <NavigationMenuTrigger className="bg-transparent">FAQs</NavigationMenuTrigger>
             <NavigationMenuContent className="px-4 py-6">
               <div className="pl-4">
-                <h6 className="text-muted-foreground pl-2.5 text-sm font-semibold uppercase">
-                  Frequently Asked Questions
-                </h6>
+                <h6 className="text-muted-foreground pl-2.5 text-sm font-semibold uppercase">Frequently Asked Questions</h6>
                 <ul className="mt-2.5 grid w-[400px] gap-3 md:w-[500px] md:grid-cols-2 lg:w-[600px]">
                   {faqs.map((faq) => (
-                    <ListItem
-                      title={faq.title}
-                      key={faq.title}
-                      icon={faq.icon}
-                      to={faq.href}
-                    >
+                    <ListItem title={faq.title} key={faq.title} icon={faq.icon} to={faq.href}>
                       {faq.description}
                     </ListItem>
                   ))}
@@ -319,7 +228,7 @@ export function NavigationMenuSection() {
         <div className="flex items-center gap-2 p-2 py-8 lg:py-0">
           <Sheet onOpenChange={setIsOpen} open={isOpen}>
             <SheetTrigger asChild>
-              <Button className="h-10 w-10 absolute left-12" variant="ghost" size="icon">
+              <Button className="absolute left-12 h-10 w-10" variant="ghost" size="icon">
                 <MenuIcon className="h-6 w-6" />
                 <span className="sr-only">Toggle menu</span>
               </Button>
@@ -328,23 +237,15 @@ export function NavigationMenuSection() {
               {/* Accessibility: Add DialogTitle and Description for SheetContent using shadcn primitives */}
               <SheetHeader className="border-b">
                 <SheetTitle>Menu</SheetTitle>
-                <SheetDescription className="sr-only">
-                  Main navigation menu for mobile users
-                </SheetDescription>
+                <SheetDescription className="sr-only">Main navigation menu for mobile users</SheetDescription>
               </SheetHeader>
               <div className="flex flex-1 flex-col overflow-y-auto">
                 <nav className="py-2">
-                  <MobileMenuItem
-                    onSelect={handleMobileMenuClose}
-                    title="Home"
-                    href="/home"
-                  />
+                  <MobileMenuItem onSelect={handleMobileMenuClose} title="Home" href="/home" />
                   <MobileMenuItem title="Services" href="#">
                     <div className="bg-background py-2">
                       <div className="px-6 py-2">
-                        <h6 className="text-xs font-semibold text-gray-500 uppercase">
-                          Our Services
-                        </h6>
+                        <h6 className="text-xs font-semibold text-gray-500 uppercase">Our Services</h6>
                       </div>
                       {services.map((service) => (
                         <MobileSubMenuItem
@@ -358,32 +259,15 @@ export function NavigationMenuSection() {
                       ))}
                     </div>
                   </MobileMenuItem>
-                  <MobileMenuItem
-                    onSelect={handleMobileMenuClose}
-                    title="About"
-                    href="/about"
-                  />
-                  <MobileMenuItem
-                    onSelect={handleMobileMenuClose}
-                    title="Location"
-                    href="/location"
-                  />
+                  <MobileMenuItem onSelect={handleMobileMenuClose} title="About" href="/about" />
+                  <MobileMenuItem onSelect={handleMobileMenuClose} title="Location" href="/location" />
                   <MobileMenuItem title="FAQs" href="#">
                     <div className="py-2">
                       <div className="px-6 py-2">
-                        <h6 className="text-xs font-semibold text-gray-500 uppercase">
-                          Frequently Asked Questions
-                        </h6>
+                        <h6 className="text-xs font-semibold text-gray-500 uppercase">Frequently Asked Questions</h6>
                       </div>
                       {faqs.map((faq) => (
-                        <MobileSubMenuItem
-                          onSelect={handleMobileMenuClose}
-                          description={faq.description}
-                          title={faq.title}
-                          key={faq.title}
-                          href={faq.href}
-                          icon={faq.icon}
-                        />
+                        <MobileSubMenuItem onSelect={handleMobileMenuClose} description={faq.description} title={faq.title} key={faq.title} href={faq.href} icon={faq.icon} />
                       ))}
                     </div>
                   </MobileMenuItem>
@@ -421,11 +305,7 @@ const ListItem = React.forwardRef<
           {Icon && <Icon className="mt-1 h-5 w-5 flex-shrink-0" />}
           <div>
             <div className="text-sm font-medium">{title}</div>
-            {children && (
-              <div className="text-muted-foreground mt-1 text-xs">
-                {children}
-              </div>
-            )}
+            {children && <div className="text-muted-foreground mt-1 text-xs">{children}</div>}
           </div>
         </Link>
       </NavigationMenuLink>

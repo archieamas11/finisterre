@@ -7,10 +7,7 @@ export interface LoginResponse {
   isAdmin?: boolean;
 }
 
-export async function loginUser(
-  username: string,
-  password: string,
-): Promise<LoginResponse> {
+export async function loginUser(username: string, password: string): Promise<LoginResponse> {
   try {
     const res = await api.post<LoginResponse>("auth/login.php", {
       username,

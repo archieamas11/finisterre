@@ -5,17 +5,8 @@ import { ChevronRight } from "lucide-react";
 import { useLocation, Link } from "react-router-dom";
 
 import { type NavMainItem } from "@/navigation/sidebar/sidebar-items";
-import {
-  CollapsibleContent,
-  CollapsibleTrigger,
-  Collapsible,
-} from "@/components/ui/collapsible";
-import {
-  DropdownMenuContent,
-  DropdownMenuTrigger,
-  DropdownMenuItem,
-  DropdownMenu,
-} from "@/components/ui/dropdown-menu";
+import { CollapsibleContent, CollapsibleTrigger, Collapsible } from "@/components/ui/collapsible";
+import { DropdownMenuContent, DropdownMenuTrigger, DropdownMenuItem, DropdownMenu } from "@/components/ui/dropdown-menu";
 import {
   SidebarMenuSubButton,
   SidebarGroupContent,
@@ -41,31 +32,17 @@ const NavItemExpanded = ({
   item: NavMainItem;
 }) => {
   return (
-    <Collapsible
-      defaultOpen={isSubmenuOpen(item.subItems)}
-      className="group/collapsible"
-      key={item.title}
-      asChild
-    >
+    <Collapsible defaultOpen={isSubmenuOpen(item.subItems)} className="group/collapsible" key={item.title} asChild>
       <SidebarMenuItem>
         <CollapsibleTrigger asChild>
           {item.subItems ? (
-            <SidebarMenuButton
-              isActive={isActive(item.url, item.subItems)}
-              disabled={item.comingSoon}
-              tooltip={item.title}
-            >
+            <SidebarMenuButton isActive={isActive(item.url, item.subItems)} disabled={item.comingSoon} tooltip={item.title}>
               {item.icon && <item.icon />}
               <span>{item.title}</span>
               <ChevronRight className="ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
             </SidebarMenuButton>
           ) : (
-            <SidebarMenuButton
-              aria-disabled={item.comingSoon}
-              isActive={isActive(item.url)}
-              tooltip={item.title}
-              asChild
-            >
+            <SidebarMenuButton aria-disabled={item.comingSoon} isActive={isActive(item.url)} tooltip={item.title} asChild>
               <Link target={item.newTab ? "_blank" : undefined} to={item.url}>
                 {item.icon && <item.icon />}
                 <span>{item.title}</span>
@@ -78,15 +55,8 @@ const NavItemExpanded = ({
             <SidebarMenuSub>
               {item.subItems.map((subItem) => (
                 <SidebarMenuSubItem key={subItem.title}>
-                  <SidebarMenuSubButton
-                    aria-disabled={subItem.comingSoon}
-                    isActive={isActive(subItem.url)}
-                    asChild
-                  >
-                    <Link
-                      target={subItem.newTab ? "_blank" : undefined}
-                      to={subItem.url}
-                    >
+                  <SidebarMenuSubButton aria-disabled={subItem.comingSoon} isActive={isActive(subItem.url)} asChild>
+                    <Link target={subItem.newTab ? "_blank" : undefined} to={subItem.url}>
                       {subItem.icon && <subItem.icon />}
                       <span>{subItem.title}</span>
                     </Link>
@@ -101,48 +71,23 @@ const NavItemExpanded = ({
   );
 };
 
-const NavItemCollapsed = ({
-  item,
-  isActive,
-}: {
-  isActive: (url: string, subItems?: NavMainItem["subItems"]) => boolean;
-  item: NavMainItem;
-}) => {
+const NavItemCollapsed = ({ item, isActive }: { isActive: (url: string, subItems?: NavMainItem["subItems"]) => boolean; item: NavMainItem }) => {
   return (
     <SidebarMenuItem key={item.title}>
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <SidebarMenuButton
-            isActive={isActive(item.url, item.subItems)}
-            disabled={item.comingSoon}
-            tooltip={item.title}
-          >
+          <SidebarMenuButton isActive={isActive(item.url, item.subItems)} disabled={item.comingSoon} tooltip={item.title}>
             {item.icon && <item.icon />}
             <span>{item.title}</span>
             <ChevronRight />
           </SidebarMenuButton>
         </DropdownMenuTrigger>
-        <DropdownMenuContent
-          className="w-50 space-y-1"
-          align="start"
-          side="right"
-        >
+        <DropdownMenuContent className="w-50 space-y-1" align="start" side="right">
           {item.subItems?.map((subItem) => (
             <DropdownMenuItem key={subItem.title} asChild>
-              <SidebarMenuSubButton
-                aria-disabled={subItem.comingSoon}
-                className="focus-visible:ring-0"
-                isActive={isActive(subItem.url)}
-                key={subItem.title}
-                asChild
-              >
-                <Link
-                  target={subItem.newTab ? "_blank" : undefined}
-                  to={subItem.url}
-                >
-                  {subItem.icon && (
-                    <subItem.icon className="[&>svg]:text-sidebar-foreground" />
-                  )}
+              <SidebarMenuSubButton aria-disabled={subItem.comingSoon} className="focus-visible:ring-0" isActive={isActive(subItem.url)} key={subItem.title} asChild>
+                <Link target={subItem.newTab ? "_blank" : undefined} to={subItem.url}>
+                  {subItem.icon && <subItem.icon className="[&>svg]:text-sidebar-foreground" />}
                   <span>{subItem.title}</span>
                 </Link>
               </SidebarMenuSubButton>
@@ -179,16 +124,8 @@ export function NavMain({ items }: NavMainProps) {
             if (!item.subItems) {
               return (
                 <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton
-                    isActive={isItemActive(item.url)}
-                    aria-disabled={item.comingSoon}
-                    tooltip={item.title}
-                    asChild
-                  >
-                    <Link
-                      target={item.newTab ? "_blank" : undefined}
-                      to={item.url}
-                    >
+                  <SidebarMenuButton isActive={isItemActive(item.url)} aria-disabled={item.comingSoon} tooltip={item.title} asChild>
+                    <Link target={item.newTab ? "_blank" : undefined} to={item.url}>
                       {item.icon && <item.icon />}
                       <span>{item.title}</span>
                     </Link>
@@ -197,23 +134,10 @@ export function NavMain({ items }: NavMainProps) {
               );
             }
             // Otherwise, render the dropdown as before
-            return (
-              <NavItemCollapsed
-                isActive={isItemActive}
-                key={item.title}
-                item={item}
-              />
-            );
+            return <NavItemCollapsed isActive={isItemActive} key={item.title} item={item} />;
           }
           // Expanded view
-          return (
-            <NavItemExpanded
-              isSubmenuOpen={isSubmenuOpen}
-              isActive={isItemActive}
-              key={item.title}
-              item={item}
-            />
-          );
+          return <NavItemExpanded isSubmenuOpen={isSubmenuOpen} isActive={isItemActive} key={item.title} item={item} />;
         })}
       </SidebarMenu>
     </SidebarGroupContent>

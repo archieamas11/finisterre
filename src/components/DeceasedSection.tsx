@@ -40,23 +40,18 @@ interface CombinedSectionProps {
   isLoading: boolean;
 }
 
-export function DeceasedSection({
-  owner,
-  fallbackOwner,
-  deceased,
-  isLoading,
-}: CombinedSectionProps) {
+export function DeceasedSection({ owner, fallbackOwner, deceased, isLoading }: CombinedSectionProps) {
   if (isLoading) {
     return (
       <Card className="h-83">
         <CardContent className="p-3">
           <div className="space-y-3">
             <Skeleton className="h-8 w-full" />
-            <div className="flex justify-between mt-10">
+            <div className="mt-10 flex justify-between">
               <Skeleton className="h-4 w-1/4" />
               <Skeleton className="h-4 w-1/4" />
             </div>
-            <div className="flex justify-between mt-3">
+            <div className="mt-3 flex justify-between">
               <Skeleton className="h-4 w-1/4" />
               <Skeleton className="h-4 w-1/8" />
             </div>
@@ -88,9 +83,7 @@ export function DeceasedSection({
               </div>
             </div>
           ) : (
-            <p className="text-muted-foreground pl-3 text-xs">
-              No owner information
-            </p>
+            <p className="text-muted-foreground pl-3 text-xs">No owner information</p>
           )}
         </div>
 
@@ -99,9 +92,7 @@ export function DeceasedSection({
         <div className="">
           <div className="flex justify-between pl-3">
             <div className="flex items-center justify-between">
-              <span className="text-muted-foreground font-medium">
-                Deceased
-              </span>
+              <span className="text-muted-foreground font-medium">Deceased</span>
             </div>
             {deceased && deceased.length > 0 && (
               <Badge variant="secondary" className="h-4 px-1 text-xs">
@@ -115,17 +106,10 @@ export function DeceasedSection({
               {deceased.slice(0, 2).map((person, index) => {
                 const yearsBuried = calculateYearsBuried(person.dead_interment);
                 return (
-                  <div
-                    key={person.deceased_id || index}
-                    className="grid-col-2 bg-primary-foreground mb-2 grid rounded-lg border px-2 text-xs"
-                  >
+                  <div key={person.deceased_id || index} className="grid-col-2 bg-primary-foreground mb-2 grid rounded-lg border px-2 text-xs">
                     <div className="flex items-center justify-between">
-                      <p className="truncate text-xs font-semibold">
-                        {person.dead_fullname}
-                      </p>
-                      <span className="text-muted-foreground text-xs">
-                        #{index + 1}
-                      </span>
+                      <p className="truncate text-xs font-semibold">{person.dead_fullname}</p>
+                      <span className="text-muted-foreground text-xs">#{index + 1}</span>
                     </div>
                     <div className="text-muted-foreground mb-4 flex items-center justify-between gap-1 text-xs">
                       <span className="flex items-center justify-center gap-1">
@@ -138,16 +122,10 @@ export function DeceasedSection({
                   </div>
                 );
               })}
-              {deceased.length > 2 && (
-                <div className="text-muted-foreground mt-1 border-t pt-1 text-center text-xs">
-                  +{deceased.length - 2} more deceased
-                </div>
-              )}
+              {deceased.length > 2 && <div className="text-muted-foreground mt-1 border-t pt-1 text-center text-xs">+{deceased.length - 2} more deceased</div>}
             </div>
           ) : (
-            <p className="text-muted-foreground pl-3 text-xs">
-              No deceased information
-            </p>
+            <p className="text-muted-foreground pl-3 text-xs">No deceased information</p>
           )}
         </div>
       </CardContent>

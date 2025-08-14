@@ -9,14 +9,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { forgotPassword } from "@/api/auth.api";
-import {
-  FormControl,
-  FormMessage,
-  FormField,
-  FormLabel,
-  FormItem,
-  Form,
-} from "@/components/ui/form";
+import { FormControl, FormMessage, FormField, FormLabel, FormItem, Form } from "@/components/ui/form";
 
 const FormSchema = z.object({
   username: z.string().min(3, {
@@ -70,17 +63,12 @@ export default function ForgotPassword() {
       <div className="mx-auto flex flex-col justify-center space-y-8 sm:w-[350px]">
         <div className="space-y-2 text-center">
           <div className="flex justify-center">
-            <Link
-              className="border-primary/10 bg-primary/10 mb-5 flex aspect-square h-16 w-16 items-center justify-center rounded-full border p-3"
-              to="/"
-            >
+            <Link className="border-primary/10 bg-primary/10 mb-5 flex aspect-square h-16 w-16 items-center justify-center rounded-full border p-3" to="/">
               <MapPin className="h-20 w-20" />
             </Link>
           </div>
           <h1 className="text-3xl font-medium">Forgot Password</h1>
-          <p className="text-muted-foreground text-sm">
-            Please enter your property id to verify your account.
-          </p>
+          <p className="text-muted-foreground text-sm">Please enter your property id to verify your account.</p>
         </div>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
@@ -89,13 +77,7 @@ export default function ForgotPassword() {
                 <FormItem>
                   <FormLabel>Property ID</FormLabel>
                   <FormControl>
-                    <Input
-                      placeholder="Enter your property ID"
-                      autoComplete="username"
-                      id="username"
-                      type="text"
-                      {...field}
-                    />
+                    <Input placeholder="Enter your property ID" autoComplete="username" id="username" type="text" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -103,19 +85,10 @@ export default function ForgotPassword() {
               control={form.control}
               name="username"
             />
-            <Button
-              className="mt-2 w-full"
-              disabled={isSubmitting}
-              type="submit"
-            >
+            <Button className="mt-2 w-full" disabled={isSubmitting} type="submit">
               {isSubmitting ? "Verifying..." : "Verify"}
             </Button>
-            <Button
-              onClick={() => navigate(-1)}
-              className="w-full"
-              variant="outline"
-              type="button"
-            >
+            <Button onClick={() => navigate(-1)} className="w-full" variant="outline" type="button">
               Back
             </Button>
           </form>

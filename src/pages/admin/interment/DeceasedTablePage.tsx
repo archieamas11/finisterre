@@ -18,13 +18,7 @@ export default function DeceasedTablePage() {
   }
 
   if (isError || !deceasedRecords) {
-    return (
-      <ErrorMessage
-        message="Failed to load deceased data. Please check your connection and try again."
-        onRetry={() => useGetDeceasedRecord()}
-        showRetryButton={true}
-      />
-    );
+    return <ErrorMessage message="Failed to load deceased data. Please check your connection and try again." onRetry={() => useGetDeceasedRecord()} showRetryButton={true} />;
   }
   return <DeceasedRecordsTable data={deceasedRecords} />;
 }

@@ -4,9 +4,7 @@ import { type ReactNode } from "react";
 import { APP_CONFIG } from "@/config/app-config";
 import { Separator } from "@/components/ui/separator";
 
-export default function Layout({
-  children,
-}: Readonly<{ children: ReactNode }>) {
+export default function Layout({ children }: Readonly<{ children: ReactNode }>) {
   return (
     <main>
       <div className="grid h-dvh justify-center p-2 lg:grid-cols-2">
@@ -20,18 +18,12 @@ export default function Layout({
           <div className="absolute bottom-10 flex w-full justify-between px-10">
             <div className="text-primary-foreground flex-1 space-y-1">
               <h2 className="font-medium">Plan with peace of mind</h2>
-              <p className="text-sm">
-                Discover serene memorial options and manage arrangements with
-                ease and dignity.
-              </p>
+              <p className="text-sm">Discover serene memorial options and manage arrangements with ease and dignity.</p>
             </div>
             <Separator className="mx-3 !h-auto" orientation="vertical" />
             <div className="text-primary-foreground flex-1 space-y-1">
               <h2 className="font-medium">Need assistance?</h2>
-              <p className="text-sm">
-                Our caring team is here to guide you—contact us or visit our
-                help center for support.
-              </p>
+              <p className="text-sm">Our caring team is here to guide you—contact us or visit our help center for support.</p>
             </div>
           </div>
         </div>

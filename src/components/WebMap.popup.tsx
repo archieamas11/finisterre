@@ -15,31 +15,18 @@ interface PlotLocationsProps {
   onDirectionClick?: () => void;
 }
 
-export function PlotLocations({
-  marker,
-  backgroundColor,
-  onDirectionClick,
-}: PlotLocationsProps) {
+export function PlotLocations({ marker, backgroundColor, onDirectionClick }: PlotLocationsProps) {
   return (
     <div className="mt-5">
-      <div
-        className="bg-background dark:bg-muted rounded-t-lg p-3 transition-colors"
-        style={backgroundColor ? { background: backgroundColor } : {}}
-      >
-        <CardDescription className="text-primary-background">
-          Finisterre
-        </CardDescription>
-        <CardTitle className="text-primary-background">
-          Plot Information
-        </CardTitle>
+      <div className="bg-background dark:bg-muted rounded-t-lg p-3 transition-colors" style={backgroundColor ? { background: backgroundColor } : {}}>
+        <CardDescription className="text-primary-background">Finisterre</CardDescription>
+        <CardTitle className="text-primary-background">Plot Information</CardTitle>
       </div>
       <div className="bg-accent/60 dark:bg-accent/80 mb-3 rounded-b-lg p-2 transition-colors">
         <div className="flex items-center justify-between gap-1">
           <div className="flex items-center gap-1">
             <MapPin className="text-primary/80 dark:text-primary" size={16} />
-            <span className="text-foreground text-sm font-medium">
-              {marker.location}
-            </span>
+            <span className="text-foreground text-sm font-medium">{marker.location}</span>
           </div>
           <Button
             className="flex h-8 w-8 items-center justify-center rounded-full shadow-md transition-colors"
@@ -79,25 +66,19 @@ export function PlotLocations({
         <div className="bg-accent/40 dark:bg-accent/60 flex-1 rounded-lg p-2 shadow-sm transition-colors">
           <div className="mb-1 flex items-center gap-1">
             <Ruler className="text-blue-600 dark:text-blue-300" size={16} />
-            <span className="text-xs font-semibold text-blue-700 dark:text-blue-200">
-              Dimension
-            </span>
+            <span className="text-xs font-semibold text-blue-700 dark:text-blue-200">Dimension</span>
           </div>
           <div className="flex flex-col items-center">
             <div className="text-foreground text-xs font-bold">
               {marker.dimensions.length} m × {marker.dimensions.width} m<br />
             </div>
-            <span className="text-muted-foreground text-xs">
-              {marker.dimensions.area.toLocaleString()} m²
-            </span>
+            <span className="text-muted-foreground text-xs">{marker.dimensions.area.toLocaleString()} m²</span>
           </div>
         </div>
         <div className="bg-accent/40 dark:bg-accent/60 flex-1 rounded-lg p-2 shadow-sm transition-colors">
           <div className="mb-1 flex items-center gap-1">
             <Info className="text-primary/80 dark:text-primary" size={16} />
-            <span className="text-foreground text-xs font-semibold">
-              Details
-            </span>
+            <span className="text-foreground text-xs font-semibold">Details</span>
           </div>
           <span
             className={
@@ -105,8 +86,7 @@ export function PlotLocations({
                 ? "bg-amber-200 text-amber-900 dark:bg-amber-900 dark:text-amber-200"
                 : marker.category === "Silver"
                   ? "bg-gray-200 text-gray-800 dark:bg-gray-700 dark:text-gray-200"
-                  : "bg-yellow-200 text-yellow-900 dark:bg-yellow-900 dark:text-yellow-200") +
-              " flex items-center justify-center rounded px-2 py-1 text-xs font-semibold shadow"
+                  : "bg-yellow-200 text-yellow-900 dark:bg-yellow-900 dark:text-yellow-200") + " flex items-center justify-center rounded px-2 py-1 text-xs font-semibold shadow"
             }
           >
             <Award className="inline" size={14} />
@@ -138,9 +118,7 @@ export function PlotLocations({
               ))}
             </div>
           ) : (
-            <div className="mt-2 text-center text-xs text-gray-400">
-              No photos available
-            </div>
+            <div className="mt-2 text-center text-xs text-gray-400">No photos available</div>
           );
         }
       })()}

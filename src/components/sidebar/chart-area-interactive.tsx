@@ -5,27 +5,9 @@ import { CartesianGrid, AreaChart, XAxis, Area } from "recharts";
 
 import { useIsMobile } from "@/hooks/use-mobile";
 import { ToggleGroupItem, ToggleGroup } from "@/components/ui/toggle-group";
-import {
-  SelectContent,
-  SelectTrigger,
-  SelectValue,
-  SelectItem,
-  Select,
-} from "@/components/ui/select";
-import {
-  ChartTooltipContent,
-  type ChartConfig,
-  ChartContainer,
-  ChartTooltip,
-} from "@/components/ui/chart";
-import {
-  CardDescription,
-  CardContent,
-  CardAction,
-  CardHeader,
-  CardTitle,
-  Card,
-} from "@/components/ui/card";
+import { SelectContent, SelectTrigger, SelectValue, SelectItem, Select } from "@/components/ui/select";
+import { ChartTooltipContent, type ChartConfig, ChartContainer, ChartTooltip } from "@/components/ui/chart";
+import { CardDescription, CardContent, CardAction, CardHeader, CardTitle, Card } from "@/components/ui/card";
 
 export const description = "An interactive area chart";
 
@@ -166,29 +148,17 @@ export function ChartAreaInteractive() {
       <CardHeader>
         <CardTitle>Total Visitors</CardTitle>
         <CardDescription>
-          <span className="hidden @[540px]/card:block">
-            Total for the last 3 months
-          </span>
+          <span className="hidden @[540px]/card:block">Total for the last 3 months</span>
           <span className="@[540px]/card:hidden">Last 3 months</span>
         </CardDescription>
         <CardAction>
-          <ToggleGroup
-            className="hidden *:data-[slot=toggle-group-item]:!px-4 @[767px]/card:flex"
-            onValueChange={setTimeRange}
-            value={timeRange}
-            variant="outline"
-            type="single"
-          >
+          <ToggleGroup className="hidden *:data-[slot=toggle-group-item]:!px-4 @[767px]/card:flex" onValueChange={setTimeRange} value={timeRange} variant="outline" type="single">
             <ToggleGroupItem value="90d">Last 3 months</ToggleGroupItem>
             <ToggleGroupItem value="30d">Last 30 days</ToggleGroupItem>
             <ToggleGroupItem value="7d">Last 7 days</ToggleGroupItem>
           </ToggleGroup>
           <Select onValueChange={setTimeRange} value={timeRange}>
-            <SelectTrigger
-              className="flex w-40 **:data-[slot=select-value]:block **:data-[slot=select-value]:truncate @[767px]/card:hidden"
-              aria-label="Select a value"
-              size="sm"
-            >
+            <SelectTrigger className="flex w-40 **:data-[slot=select-value]:block **:data-[slot=select-value]:truncate @[767px]/card:hidden" aria-label="Select a value" size="sm">
               <SelectValue placeholder="Last 3 months" />
             </SelectTrigger>
             <SelectContent className="rounded-xl">
@@ -206,35 +176,16 @@ export function ChartAreaInteractive() {
         </CardAction>
       </CardHeader>
       <CardContent className="px-2 pt-4 sm:px-6 sm:pt-6">
-        <ChartContainer
-          className="aspect-auto h-[250px] w-full"
-          config={chartConfig}
-        >
+        <ChartContainer className="aspect-auto h-[250px] w-full" config={chartConfig}>
           <AreaChart data={filteredData}>
             <defs>
               <linearGradient id="fillDesktop" x1="0" y1="0" x2="0" y2="1">
-                <stop
-                  stopColor="var(--color-desktop)"
-                  stopOpacity={1.0}
-                  offset="5%"
-                />
-                <stop
-                  stopColor="var(--color-desktop)"
-                  stopOpacity={0.1}
-                  offset="95%"
-                />
+                <stop stopColor="var(--color-desktop)" stopOpacity={1.0} offset="5%" />
+                <stop stopColor="var(--color-desktop)" stopOpacity={0.1} offset="95%" />
               </linearGradient>
               <linearGradient id="fillMobile" x1="0" y1="0" x2="0" y2="1">
-                <stop
-                  stopColor="var(--color-mobile)"
-                  stopOpacity={0.8}
-                  offset="5%"
-                />
-                <stop
-                  stopColor="var(--color-mobile)"
-                  stopOpacity={0.1}
-                  offset="95%"
-                />
+                <stop stopColor="var(--color-mobile)" stopOpacity={0.8} offset="5%" />
+                <stop stopColor="var(--color-mobile)" stopOpacity={0.1} offset="95%" />
               </linearGradient>
             </defs>
             <CartesianGrid vertical={false} />
@@ -267,20 +218,8 @@ export function ChartAreaInteractive() {
               defaultIndex={isMobile ? -1 : 10}
               cursor={false}
             />
-            <Area
-              stroke="var(--color-mobile)"
-              fill="url(#fillMobile)"
-              dataKey="mobile"
-              type="natural"
-              stackId="a"
-            />
-            <Area
-              stroke="var(--color-desktop)"
-              fill="url(#fillDesktop)"
-              dataKey="desktop"
-              type="natural"
-              stackId="a"
-            />
+            <Area stroke="var(--color-mobile)" fill="url(#fillMobile)" dataKey="mobile" type="natural" stackId="a" />
+            <Area stroke="var(--color-desktop)" fill="url(#fillDesktop)" dataKey="desktop" type="natural" stackId="a" />
           </AreaChart>
         </ChartContainer>
       </CardContent>

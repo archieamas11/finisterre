@@ -22,34 +22,13 @@ export default tseslint.config([
           order: "asc",
         },
       ],
-      "perfectionist/sort-array-includes": [
-        "error",
-        { type: "line-length", order: "asc" },
-      ],
-      "perfectionist/sort-named-exports": [
-        "error",
-        { type: "line-length", order: "asc" },
-      ],
-      "perfectionist/sort-interfaces": [
-        "error",
-        { type: "line-length", order: "asc" },
-      ],
-      "perfectionist/sort-imports": [
-        "error",
-        { type: "line-length", order: "asc" },
-      ],
-      "perfectionist/sort-exports": [
-        "error",
-        { type: "line-length", order: "asc" },
-      ],
-      "perfectionist/sort-objects": [
-        "error",
-        { type: "line-length", order: "asc" },
-      ],
-      "perfectionist/sort-enums": [
-        "error",
-        { type: "line-length", order: "asc" },
-      ],
+      "perfectionist/sort-array-includes": ["error", { type: "line-length", order: "asc" }],
+      "perfectionist/sort-named-exports": ["error", { type: "line-length", order: "asc" }],
+      "perfectionist/sort-interfaces": ["error", { type: "line-length", order: "asc" }],
+      "perfectionist/sort-imports": ["error", { type: "line-length", order: "asc" }],
+      "perfectionist/sort-exports": ["error", { type: "line-length", order: "asc" }],
+      "perfectionist/sort-objects": ["error", { type: "line-length", order: "asc" }],
+      "perfectionist/sort-enums": ["error", { type: "line-length", order: "asc" }],
       "react-hooks-extra/prefer-use-state-lazy-initialization": "warn",
       "react-hooks-extra/no-unnecessary-use-prefix": "warn",
       "react-naming-convention/component-name": "warn",

@@ -20,10 +20,7 @@ import {
 
 import { NavUser } from "./nav-user";
 
-export function AppSidebar({
-  items,
-  ...props
-}: React.ComponentProps<typeof Sidebar> & { items: NavGroup[] }) {
+export function AppSidebar({ items, ...props }: React.ComponentProps<typeof Sidebar> & { items: NavGroup[] }) {
   return (
     <Sidebar collapsible="icon" {...props}>
       <SidebarHeader className="border-b">
@@ -46,9 +43,7 @@ export function AppSidebar({
       <SidebarContent>
         {items.map((group) => (
           <SidebarGroup key={group.id}>
-            {group.label && (
-              <SidebarGroupLabel>{group.label}</SidebarGroupLabel>
-            )}
+            {group.label && <SidebarGroupLabel>{group.label}</SidebarGroupLabel>}
             <NavMain items={group.items} />
           </SidebarGroup>
         ))}

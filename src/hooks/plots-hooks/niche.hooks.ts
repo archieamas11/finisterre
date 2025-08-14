@@ -26,12 +26,7 @@ interface NicheData {
 }
 
 // 🧮 Generate grid positions and fill empty niches
-const generateGridPositions = (
-  fetchedNiches: NicheData[],
-  totalRows: number,
-  totalCols: number,
-  plotId: string,
-): NicheData[] => {
+const generateGridPositions = (fetchedNiches: NicheData[], totalRows: number, totalCols: number, plotId: string): NicheData[] => {
   const result: NicheData[] = [];
 
   // 📊 Create a map of existing niches by niche_number
@@ -88,9 +83,7 @@ export function useNichesByPlot(plotId: string, rows: number, cols: number) {
         existingNiches = response.nicheData || [];
         console.log("✅ Found existing niche data:", existingNiches);
       } catch (nicheError) {
-        console.log(
-          "ℹ️ No existing niche data found, will generate empty grid",
-        );
+        console.log("ℹ️ No existing niche data found, will generate empty grid");
         existingNiches = [];
       }
 
@@ -121,12 +114,7 @@ export function useNichesByPlot(plotId: string, rows: number, cols: number) {
       }));
 
       // 🧮 Generate grid positions for niches that don't have row/col data
-      const completeNiches = generateGridPositions(
-        plotNiches,
-        rows,
-        cols,
-        plotId,
-      );
+      const completeNiches = generateGridPositions(plotNiches, rows, cols, plotId);
       return completeNiches;
     },
   });

@@ -7,12 +7,7 @@ interface GenericTableProps<T> {
   fetchData: () => Promise<{ [key: string]: unknown; success: boolean }>;
 }
 
-export function GenericTable<T>({
-  fetchData,
-  extractData,
-  TableComponent,
-  loadingMessage = "Loading...",
-}: GenericTableProps<T>) {
+export function GenericTable<T>({ fetchData, extractData, TableComponent, loadingMessage = "Loading..." }: GenericTableProps<T>) {
   const [data, setData] = useState<T[]>([]);
   const [loading, setLoading] = useState(true);
 

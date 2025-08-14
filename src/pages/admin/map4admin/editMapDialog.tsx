@@ -13,28 +13,9 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { getPlotsCategory } from "@/api/plots.api";
 import { useEditPlots } from "@/hooks/plots-hooks/plot.hooks";
-import {
-  FormControl,
-  FormMessage,
-  FormField,
-  FormLabel,
-  FormItem,
-  Form,
-} from "@/components/ui/form";
-import {
-  SelectContent,
-  SelectTrigger,
-  SelectValue,
-  SelectItem,
-  Select,
-} from "@/components/ui/select";
-import {
-  DialogDescription,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  Dialog,
-} from "@/components/ui/dialog";
+import { FormControl, FormMessage, FormField, FormLabel, FormItem, Form } from "@/components/ui/form";
+import { SelectContent, SelectTrigger, SelectValue, SelectItem, Select } from "@/components/ui/select";
+import { DialogDescription, DialogContent, DialogHeader, DialogTitle, Dialog } from "@/components/ui/dialog";
 
 // 🧩 Zod schema for form validation
 const editPlotSchema = z.object({
@@ -60,11 +41,7 @@ interface EditMapDialogProps {
 
 type EditPlotFormValues = z.infer<typeof editPlotSchema>;
 
-export default function EditMapDialog({
-  open,
-  plots,
-  onOpenChange,
-}: EditMapDialogProps) {
+export default function EditMapDialog({ open, plots, onOpenChange }: EditMapDialogProps) {
   const { isPending, mutateAsync } = useEditPlots();
   const [categories, setCategories] = React.useState<plots[]>([]);
   const [plotImages, setPlotImages] = React.useState<string[]>([]);
@@ -85,9 +62,7 @@ export default function EditMapDialog({
     if (!open) return;
     getPlotsCategory()
       .then((res) => {
-        const arr = Array.isArray(res?.categories)
-          ? res.categories.map((cat: string) => ({ category: cat }))
-          : [];
+        const arr = Array.isArray(res?.categories) ? res.categories.map((cat: string) => ({ category: cat })) : [];
         setCategories(arr);
       })
       .catch((error) => {
@@ -225,10 +200,7 @@ export default function EditMapDialog({
           <DialogDescription>Edit Plot Details</DialogDescription>
         </DialogHeader>
         <Form {...form}>
-          <form
-            onSubmit={form.handleSubmit(handleSubmit)}
-            className="space-y-4s"
-          >
+          <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4s">
             <div className="grid grid-cols-2 gap-4">
               <FormField
                 render={({ field }) => (
@@ -237,11 +209,7 @@ export default function EditMapDialog({
                       Category<span className="text-red-500">*</span>
                     </FormLabel>
                     <FormControl>
-                      <Select
-                        defaultValue={field.value || ""}
-                        onValueChange={field.onChange}
-                        value={field.value || ""}
-                      >
+                      <Select defaultValue={field.value || ""} onValueChange={field.onChange} value={field.value || ""}>
                         <SelectTrigger className="w-full">
                           <SelectValue placeholder="Select category" />
                         </SelectTrigger>
@@ -249,21 +217,12 @@ export default function EditMapDialog({
                           {/* 🟢 Only render SelectItem if categories are loaded and valid */}
                           {categories.length === 0 ? (
                             // ⚠️ Do not render a SelectItem with empty value
-                            <div className="px-3 py-2 text-sm text-gray-500">
-                              Loading categories...
-                            </div>
+                            <div className="px-3 py-2 text-sm text-gray-500">Loading categories...</div>
                           ) : (
                             categories
-                              .filter(
-                                (category) =>
-                                  !!category.category &&
-                                  category.category !== "",
-                              )
+                              .filter((category) => !!category.category && category.category !== "")
                               .map((category, index) => (
-                                <SelectItem
-                                  value={category.category}
-                                  key={index}
-                                >
+                                <SelectItem value={category.category} key={index}>
                                   {category.category}
                                 </SelectItem>
                               ))
@@ -387,16 +346,9 @@ export default function EditMapDialog({
                         {plotImages.length > 0 && (
                           <div className="grid w-full grid-cols-2 justify-between gap-2">
                             {plotImages.map((imageUrl, index) => (
-                              <div
-                                className="group relative w-full"
-                                key={index}
-                              >
+                              <div className="group relative w-full" key={index}>
                                 <div className="flex h-30 w-full justify-between">
-                                  <img
-                                    className="border-border h-full w-full rounded-md border object-cover"
-                                    alt={`Plot image ${index + 1}`}
-                                    src={imageUrl}
-                                  />
+                                  <img className="border-border h-full w-full rounded-md border object-cover" alt={`Plot image ${index + 1}`} src={imageUrl} />
                                   {/* 🎯 Hover overlay with actions */}
                                   <div className="absolute inset-0 flex items-center justify-center gap-2 rounded-md bg-black/50 opacity-0 transition-opacity group-hover:opacity-100">
                                     <Dropzone
@@ -407,22 +359,13 @@ export default function EditMapDialog({
                                         }
                                       }}
                                       accept={{
-                                        "image/*": [
-                                          ".png",
-                                          ".jpg",
-                                          ".jpeg",
-                                          ".webp",
-                                        ],
+                                        "image/*": [".png", ".jpg", ".jpeg", ".webp"],
                                       }}
                                       noClick={false}
                                       maxFiles={1}
                                     >
                                       {({ getRootProps, getInputProps }) => (
-                                        <button
-                                          className="rounded-full bg-blue-600 p-2 text-white transition-colors hover:bg-blue-700"
-                                          type="button"
-                                          {...getRootProps()}
-                                        >
+                                        <button className="rounded-full bg-blue-600 p-2 text-white transition-colors hover:bg-blue-700" type="button" {...getRootProps()}>
                                           <input {...getInputProps()} />
                                           <Edit3 className="h-4 w-4" />
                                         </button>
@@ -458,42 +401,24 @@ export default function EditMapDialog({
                             }}
                             maxFiles={1}
                           >
-                            {({
-                              getRootProps,
-                              isDragActive,
-                              isDragAccept,
-                              isDragReject,
-                              getInputProps,
-                            }) => (
+                            {({ getRootProps, isDragActive, isDragAccept, isDragReject, getInputProps }) => (
                               <div
                                 {...getRootProps()}
                                 className={cn(
                                   "focus:border-primary flex aspect-square w-full cursor-pointer items-center justify-center rounded-md border-2 border-dashed transition-colors hover:bg-gray-50 focus:outline-none",
                                   {
-                                    "border-red-500 bg-red-50":
-                                      isDragActive && isDragReject,
-                                    "border-primary bg-blue-50":
-                                      isDragActive && isDragAccept,
+                                    "border-red-500 bg-red-50": isDragActive && isDragReject,
+                                    "border-primary bg-blue-50": isDragActive && isDragAccept,
                                   },
                                 )}
                               >
                                 <input {...getInputProps()} />
                                 <div className="p-4 text-center">
-                                  <ImageIcon
-                                    className="mx-auto mb-2 h-12 w-12 text-gray-400"
-                                    strokeWidth={1.25}
-                                  />
-                                  <p className="text-sm text-gray-600">
-                                    {isDragActive
-                                      ? "Drop the image here..."
-                                      : "Drag & drop an image here, or click to select"}
-                                  </p>
+                                  <ImageIcon className="mx-auto mb-2 h-12 w-12 text-gray-400" strokeWidth={1.25} />
+                                  <p className="text-sm text-gray-600">{isDragActive ? "Drop the image here..." : "Drag & drop an image here, or click to select"}</p>
                                   <p className="mt-1 text-xs text-gray-400">
                                     {2 - plotImages.length} image
-                                    {2 - plotImages.length !== 1
-                                      ? "s"
-                                      : ""}{" "}
-                                    remaining
+                                    {2 - plotImages.length !== 1 ? "s" : ""} remaining
                                   </p>
                                 </div>
                               </div>
@@ -502,11 +427,7 @@ export default function EditMapDialog({
                         )}
 
                         {/* 📝 No images state */}
-                        {plotImages.length === 0 && (
-                          <p className="mt-2 text-center text-sm text-gray-500">
-                            No images uploaded yet
-                          </p>
-                        )}
+                        {plotImages.length === 0 && <p className="mt-2 text-center text-sm text-gray-500">No images uploaded yet</p>}
                       </div>
                     </FormControl>
                     <FormMessage />

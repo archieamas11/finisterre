@@ -9,10 +9,7 @@ import { Label } from "@/components/ui/label";
 
 const ImagePreview = ({ onRemove }: { onRemove: () => void; url: string }) => (
   <div className="relative aspect-square">
-    <button
-      className="absolute top-0 right-0 translate-x-1/2 -translate-y-1/2"
-      onClick={onRemove}
-    >
+    <button className="absolute top-0 right-0 translate-x-1/2 -translate-y-1/2" onClick={onRemove}>
       <XCircleIcon className="fill-primary text-primary-foreground h-5 w-5" />
     </button>
   </div>
@@ -46,23 +43,13 @@ export default function InputDemo() {
             }}
             maxFiles={1}
           >
-            {({
-              getRootProps,
-              isDragActive,
-              isDragAccept,
-              isDragReject,
-              getInputProps,
-            }) => (
+            {({ getRootProps, isDragActive, isDragAccept, isDragReject, getInputProps }) => (
               <div
                 {...getRootProps()}
-                className={cn(
-                  "focus:border-primary flex aspect-square items-center justify-center rounded-md border border-dashed focus:outline-none",
-                  {
-                    "border-primary bg-secondary": isDragActive && isDragAccept,
-                    "border-destructive bg-destructive/20":
-                      isDragActive && isDragReject,
-                  },
-                )}
+                className={cn("focus:border-primary flex aspect-square items-center justify-center rounded-md border border-dashed focus:outline-none", {
+                  "border-primary bg-secondary": isDragActive && isDragAccept,
+                  "border-destructive bg-destructive/20": isDragActive && isDragReject,
+                })}
               >
                 <input {...getInputProps()} id="profile" />
                 <ImageIcon className="h-16 w-16" strokeWidth={1.25} />

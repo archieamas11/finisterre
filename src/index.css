@@ -143,7 +143,7 @@
 /* global.css or tailwind.css */
 .leaflet-theme-popup .leaflet-popup-content-wrapper,
 .leaflet-theme-popup .leaflet-popup-tip {
-  @apply bg-[#f1eff5]/90 dark:bg-[#16141e]/80 shadow-xl backdrop-blur-md;
+  @apply bg-[#f1eff5]/90 shadow-xl backdrop-blur-md dark:bg-[#16141e]/80;
 }
 
 .leaflet-container a.leaflet-popup-close-button {
@@ -151,8 +151,5 @@
 }
 
 .bg-gradient-u {
-  background: radial-gradient(ellipse at bottom,
-      theme('colors.background') 0%,
-      theme('colors.background / 0.6') 50%,
-      transparent 75%);
+  background: radial-gradient(ellipse at bottom, theme("colors.background") 0%, theme("colors.background / 0.6") 50%, transparent 75%);
 }

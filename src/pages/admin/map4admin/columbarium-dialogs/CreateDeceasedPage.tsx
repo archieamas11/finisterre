@@ -20,9 +20,9 @@ export default function CreateDeceased({ lotId, onSuccess }: CreateDeceasedProps
     try {
       const mutationPromise = mutateAsync(payload);
       toast.promise(mutationPromise, {
-        loading: 'Saving deceased record...',
-        success: 'Deceased record created successfully!',
-        error: 'Error saving deceased record'
+        loading: "Saving deceased record...",
+        success: "Deceased record created successfully!",
+        error: "Error saving deceased record",
       });
       await mutationPromise;
       setOpen(false);
@@ -34,20 +34,10 @@ export default function CreateDeceased({ lotId, onSuccess }: CreateDeceasedProps
 
   return (
     <>
-      <Button
-        className="flex-1"
-        onClick={() => setOpen(true)}
-        size="sm"
-      >
+      <Button className="flex-1" onClick={() => setOpen(true)} size="sm">
         Add Deceased Record
       </Button>
-      <CreateDeceasedRecordDialog
-        onOpenChange={setOpen}
-        isPending={isPending}
-        onSubmit={handleSubmit}
-        open={open}
-        mode="add"
-      />
+      <CreateDeceasedRecordDialog onOpenChange={setOpen} isPending={isPending} onSubmit={handleSubmit} open={open} mode="add" />
     </>
   );
 }

@@ -6,8 +6,5 @@
  */
 export function capitalizeWords(str: string): string {
   if (typeof str !== "string") return "";
-  return str.replace(
-    /\b\w+/g,
-    (word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase(),
-  );
+  return str.replace(/\b\w+/g, (word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase());
 }

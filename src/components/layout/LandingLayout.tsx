@@ -43,9 +43,7 @@ export default function LandingLayout() {
         <span
           className={[
             "text-md flex cursor-pointer items-center font-bold",
-            scrolled
-              ? "text-foreground dark:text-accent-foreground"
-              : "text-background dark:text-accent-foreground",
+            scrolled ? "text-foreground dark:text-accent-foreground" : "text-background dark:text-accent-foreground",
           ].join(" ")}
           onClick={() => navigate("/")}
           aria-label="Go to homepage"
@@ -57,11 +55,7 @@ export default function LandingLayout() {
         <div className="flex items-center gap-2 sm:gap-4">
           <ThemeToggleButton start="top-right" variant="circle-blur" />
           <Link to="/login">
-            <Button
-              className="rounded-full transition"
-              aria-label="Login"
-              variant="secondary"
-            >
+            <Button className="rounded-full transition" aria-label="Login" variant="secondary">
               Login
             </Button>
           </Link>

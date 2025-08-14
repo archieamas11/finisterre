@@ -1,10 +1,10 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { addDays, setHours, setMinutes, subDays } from "date-fns"
+import { useState } from "react";
+import { addDays, setHours, setMinutes, subDays } from "date-fns";
 
-import { type CalendarEvent } from "@/components/calendar/types"
-import { EventCalendar } from "@/components/calendar/event-calendar"
+import { type CalendarEvent } from "@/components/calendar/types";
+import { EventCalendar } from "@/components/calendar/event-calendar";
 
 // Sample events data with hardcoded times
 const sampleEvents: CalendarEvent[] = [
@@ -128,36 +128,26 @@ const sampleEvents: CalendarEvent[] = [
     color: "rose",
     location: "North Grove",
   },
-]
+];
 
 export default function Bookings() {
-  const [events, setEvents] = useState<CalendarEvent[]>(sampleEvents)
+  const [events, setEvents] = useState<CalendarEvent[]>(sampleEvents);
 
   const handleEventAdd = (event: CalendarEvent) => {
-    setEvents([...events, event])
-  }
+    setEvents([...events, event]);
+  };
 
   const handleEventUpdate = (updatedEvent: CalendarEvent) => {
-    setEvents(
-      events.map((event) =>
-        event.id === updatedEvent.id ? updatedEvent : event
-      )
-    )
-  }
+    setEvents(events.map((event) => (event.id === updatedEvent.id ? updatedEvent : event)));
+  };
 
   const handleEventDelete = (eventId: string) => {
-    setEvents(events.filter((event) => event.id !== eventId))
-  }
+    setEvents(events.filter((event) => event.id !== eventId));
+  };
 
   return (
     <div className="">
-      <EventCalendar
-        events={events}
-        onEventAdd={handleEventAdd}
-        onEventUpdate={handleEventUpdate}
-        onEventDelete={handleEventDelete}
-        className=""
-      />
+      <EventCalendar events={events} onEventAdd={handleEventAdd} onEventUpdate={handleEventUpdate} onEventDelete={handleEventDelete} className="" />
     </div>
-  )
+  );
 }

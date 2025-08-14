@@ -20,11 +20,7 @@ const Logout: React.FC = () => {
   if (!loading) return null;
 
   return (
-    <div
-      className="flex h-full items-center justify-center"
-      aria-live="polite"
-      role="status"
-    >
+    <div className="flex h-full items-center justify-center" aria-live="polite" role="status">
       <SpinnerCircle4 />
     </div>
   );

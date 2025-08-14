@@ -4,12 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { ChevronsUpDown, BadgeCheck, LogOut, Bell } from "lucide-react";
 
 import { AvatarFallback, AvatarImage, Avatar } from "@/components/ui/avatar";
-import {
-  SidebarMenuButton,
-  SidebarMenuItem,
-  SidebarMenu,
-  useSidebar,
-} from "@/components/ui/sidebar";
+import { SidebarMenuButton, SidebarMenuItem, SidebarMenu, useSidebar } from "@/components/ui/sidebar";
 import {
   DropdownMenuSeparator,
   DropdownMenuContent,
@@ -41,10 +36,7 @@ export function NavUser({
       <SidebarMenuItem>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <SidebarMenuButton
-              className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
-              size="lg"
-            >
+            <SidebarMenuButton className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground" size="lg">
               <Avatar className="h-8 w-8 rounded-lg">
                 <AvatarImage src={user.avatar} alt={user.name} />
                 <AvatarFallback className="rounded-lg">AA</AvatarFallback>
@@ -56,12 +48,7 @@ export function NavUser({
               <ChevronsUpDown className="ml-auto size-4" />
             </SidebarMenuButton>
           </DropdownMenuTrigger>
-          <DropdownMenuContent
-            className="w-(--radix-dropdown-menu-trigger-width) min-w-56 rounded-lg"
-            side={isMobile ? "bottom" : "right"}
-            sideOffset={4}
-            align="end"
-          >
+          <DropdownMenuContent className="w-(--radix-dropdown-menu-trigger-width) min-w-56 rounded-lg" side={isMobile ? "bottom" : "right"} sideOffset={4} align="end">
             <DropdownMenuLabel className="p-0 font-normal">
               <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
                 <Avatar className="h-8 w-8 rounded-lg">

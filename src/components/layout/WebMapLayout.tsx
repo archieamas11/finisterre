@@ -6,19 +6,10 @@ import iconUrl from "leaflet/dist/images/marker-icon.png";
 import { useEffect, useState, Suspense, lazy } from "react";
 import shadowUrl from "leaflet/dist/images/marker-shadow.png";
 import iconRetinaUrl from "leaflet/dist/images/marker-icon-2x.png";
-import {
-  MapContainer,
-  useMapEvents,
-  TileLayer,
-  Polyline,
-  Marker,
-  Popup,
-} from "react-leaflet";
+import { MapContainer, useMapEvents, TileLayer, Polyline, Marker, Popup } from "react-leaflet";
 
 import WebMapNavs from "@/pages/webmap/WebMapNavs";
-const PlotLocations = lazy(() =>
-  import("../WebMap.popup").then((mod) => ({ default: mod.PlotLocations })),
-);
+const PlotLocations = lazy(() => import("../WebMap.popup").then((mod) => ({ default: mod.PlotLocations })));
 import { GiOpenGate } from "react-icons/gi";
 import { BiSolidChurch } from "react-icons/bi";
 import { XCircle, Route, Timer } from "lucide-react";
@@ -29,14 +20,8 @@ import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { CardContent, Card } from "@/components/ui/card";
 import { usePlots } from "@/hooks/plots-hooks/plot.hooks";
-import {
-  getCategoryBackgroundColor,
-  convertPlotToMarker,
-  getStatusColor,
-} from "@/types/map.types";
-const ColumbariumPopup = lazy(
-  () => import("@/pages/admin/map4admin/ColumbariumPopup"),
-);
+import { getCategoryBackgroundColor, convertPlotToMarker, getStatusColor } from "@/types/map.types";
+const ColumbariumPopup = lazy(() => import("@/pages/admin/map4admin/ColumbariumPopup"));
 
 const DefaultIcon = L.icon({
   iconUrl,
@@ -118,9 +103,7 @@ export default function MapPage() {
       <div className="relative flex h-screen w-full items-center justify-center">
         <div className="text-center">
           <p className="mb-2 text-red-600">Error loading plot data</p>
-          <p className="text-sm text-gray-600">
-            {error?.message || "Unknown error"}
-          </p>
+          <p className="text-sm text-gray-600">{error?.message || "Unknown error"}</p>
         </div>
       </div>
     );
@@ -128,9 +111,7 @@ export default function MapPage() {
 
   function startLiveTracking() {
     if (!navigator.geolocation) {
-      console.log(
-        "❌ navigator.geolocation not available. Cannot start live GPS tracking.",
-      );
+      console.log("❌ navigator.geolocation not available. Cannot start live GPS tracking.");
       return;
     }
     if (watchIdRef.current) {
@@ -142,10 +123,7 @@ export default function MapPage() {
 
     watchIdRef.current = navigator.geolocation.watchPosition(
       (position) => {
-        const newLatLng = L.latLng(
-          position.coords.latitude,
-          position.coords.longitude,
-        );
+        const newLatLng = L.latLng(position.coords.latitude, position.coords.longitude);
         setUserPosition(newLatLng);
 
         // Check for drift and recalculate route if needed
@@ -233,10 +211,7 @@ export default function MapPage() {
     distance: number;
     duration: number;
   }> {
-    const serviceUrl =
-      type === "private"
-        ? "https://finisterreosm-production.up.railway.app/route/v1/foot"
-        : "https://router.project-osrm.org/route/v1/foot";
+    const serviceUrl = type === "private" ? "https://finisterreosm-production.up.railway.app/route/v1/foot" : "https://router.project-osrm.org/route/v1/foot";
 
     const url = `${serviceUrl}/${from[1]},${from[0]};${to[1]},${to[0]}?overview=full&geometries=geojson`;
 
@@ -249,9 +224,7 @@ export default function MapPage() {
 
       const route = data.routes[0];
       // Convert [lng,lat] to [lat,lng]
-      const polyline: [number, number][] = route.geometry.coordinates.map(
-        (c: number[]) => [c[1], c[0]],
-      );
+      const polyline: [number, number][] = route.geometry.coordinates.map((c: number[]) => [c[1], c[0]]);
 
       return {
         polyline,
@@ -271,28 +244,17 @@ export default function MapPage() {
   }
 
   // Calculate distance between two points
-  function calculateDistance(
-    from: [number, number],
-    to: [number, number],
-  ): number {
+  function calculateDistance(from: [number, number], to: [number, number]): number {
     const R = 6371000; // Earth's radius in meters
     const dLat = ((to[0] - from[0]) * Math.PI) / 180;
     const dLng = ((to[1] - from[1]) * Math.PI) / 180;
-    const a =
-      Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-      Math.cos((from[0] * Math.PI) / 180) *
-      Math.cos((to[0] * Math.PI) / 180) *
-      Math.sin(dLng / 2) *
-      Math.sin(dLng / 2);
+    const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) + Math.cos((from[0] * Math.PI) / 180) * Math.cos((to[0] * Math.PI) / 180) * Math.sin(dLng / 2) * Math.sin(dLng / 2);
     const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
     return R * c;
   }
 
   // Start navigation: set public/private routes and fetch polylines
-  async function handleStartNavigation(
-    userLatLng: L.LatLng,
-    dest: [number, number],
-  ) {
+  async function handleStartNavigation(userLatLng: L.LatLng, dest: [number, number]) {
     try {
       setIsRecalculating(false);
 
@@ -301,22 +263,15 @@ export default function MapPage() {
       const publicTo: [number, number] = [CEMETERY_GATE.lat, CEMETERY_GATE.lng];
 
       // Step 2: private route (gate to marker)
-      const privateFrom: [number, number] = [
-        CEMETERY_GATE.lat,
-        CEMETERY_GATE.lng,
-      ];
+      const privateFrom: [number, number] = [CEMETERY_GATE.lat, CEMETERY_GATE.lng];
       const privateTo: [number, number] = dest;
 
       // Fetch polylines
-      const [publicRouteData, privateRouteData] = await Promise.all([
-        fetchRoutePolyline(publicFrom, publicTo, "public"),
-        fetchRoutePolyline(privateFrom, privateTo, "private"),
-      ]);
+      const [publicRouteData, privateRouteData] = await Promise.all([fetchRoutePolyline(publicFrom, publicTo, "public"), fetchRoutePolyline(privateFrom, privateTo, "private")]);
 
       // Ensure route continuity - force gate connection
       if (publicRouteData.polyline.length > 0) {
-        publicRouteData.polyline[publicRouteData.polyline.length - 1] =
-          publicTo;
+        publicRouteData.polyline[publicRouteData.polyline.length - 1] = publicTo;
       }
       if (privateRouteData.polyline.length > 0) {
         privateRouteData.polyline[0] = privateFrom;
@@ -373,10 +328,8 @@ export default function MapPage() {
   };
 
   // Calculate total distance and duration
-  const totalDistance =
-    (publicRoute?.distance || 0) + (privateRoute?.distance || 0);
-  const totalDuration =
-    (publicRoute?.duration || 0) + (privateRoute?.duration || 0);
+  const totalDistance = (publicRoute?.distance || 0) + (privateRoute?.distance || 0);
+  const totalDuration = (publicRoute?.duration || 0) + (privateRoute?.duration || 0);
 
   // Format distance helper
   const formatDistance = (meters: number): string => {
@@ -403,9 +356,7 @@ export default function MapPage() {
                     <div className="rounded-lg bg-blue-50 p-2 dark:bg-blue-900/30">
                       <Route className="h-5 w-5 text-blue-600" />
                     </div>
-                    <span className="font-semibold text-stone-800 dark:text-stone-200">
-                      {formatDistance(totalDistance)}
-                    </span>
+                    <span className="font-semibold text-stone-800 dark:text-stone-200">{formatDistance(totalDistance)}</span>
                   </div>
 
                   <div className="h-5 w-px bg-stone-300 dark:bg-stone-600"></div>
@@ -413,9 +364,7 @@ export default function MapPage() {
                     <div className="rounded-lg bg-green-50 p-2 dark:bg-green-900/30">
                       <Timer className="h-5 w-5 text-green-600" />
                     </div>
-                    <span className="font-semibold text-stone-800 dark:text-stone-200">
-                      {Math.round(totalDuration / 60)} min
-                    </span>
+                    <span className="font-semibold text-stone-800 dark:text-stone-200">{Math.round(totalDuration / 60)} min</span>
                   </div>
                 </div>
               </CardContent>
@@ -437,25 +386,12 @@ export default function MapPage() {
         {/* Recalculating Indicator */}
         {isRecalculating && (
           <div className="absolute top-28 left-1/2 z-[9999] -translate-x-1/2">
-            <span className="rounded bg-yellow-200 px-4 py-2 text-yellow-900 shadow">
-              🚧 Recalculating route...
-            </span>
+            <span className="rounded bg-yellow-200 px-4 py-2 text-yellow-900 shadow">🚧 Recalculating route...</span>
           </div>
         )}
 
-        <MapContainer
-          className="h-full w-full"
-          scrollWheelZoom={true}
-          zoomControl={false}
-          bounds={bounds}
-          maxZoom={25}
-          zoom={18}
-        >
-          <TileLayer
-            url="https://services.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"
-            maxNativeZoom={18}
-            maxZoom={25}
-          />
+        <MapContainer className="h-full w-full" scrollWheelZoom={true} zoomControl={false} bounds={bounds} maxZoom={25} zoom={18}>
+          <TileLayer url="https://services.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}" maxNativeZoom={18} maxZoom={25} />
 
           <LocationMarker />
 
@@ -522,12 +458,8 @@ export default function MapPage() {
           >
             <Popup>
               <div className="text-center">
-                <div className="font-semibold text-orange-600">
-                  🚪 Cemetery Gate
-                </div>
-                <div className="mt-1 text-xs text-gray-500">
-                  Entry point for cemetery visitors
-                </div>
+                <div className="font-semibold text-orange-600">🚪 Cemetery Gate</div>
+                <div className="mt-1 text-xs text-gray-500">Entry point for cemetery visitors</div>
               </div>
             </Popup>
           </Marker>
@@ -564,12 +496,8 @@ export default function MapPage() {
           >
             <Popup>
               <div className="text-center">
-                <div className="font-semibold text-orange-600">
-                  🚪 Cemetery Gate
-                </div>
-                <div className="mt-1 text-xs text-gray-500">
-                  Entry point for cemetery visitors
-                </div>
+                <div className="font-semibold text-orange-600">🚪 Cemetery Gate</div>
+                <div className="mt-1 text-xs text-gray-500">Entry point for cemetery visitors</div>
               </div>
             </Popup>
           </Marker>
@@ -607,9 +535,7 @@ export default function MapPage() {
             <Popup>
               <div className="text-center">
                 <div className="font-semibold text-orange-600">🚪 Chapel</div>
-                <div className="mt-1 text-xs text-gray-500">
-                  Entry point for chapel visitors
-                </div>
+                <div className="mt-1 text-xs text-gray-500">Entry point for chapel visitors</div>
               </div>
             </Popup>
           </Marker>
@@ -626,32 +552,18 @@ export default function MapPage() {
             // When direction is requested, start navigation with two-step route
             const handleDirectionClick = () => {
               if (userPosition) {
-                handleStartNavigation(
-                  userPosition,
-                  markers.position as [number, number],
-                );
+                handleStartNavigation(userPosition, markers.position as [number, number]);
               } else {
                 // Store destination and trigger location request
-                pendingDestinationRef.current = markers.position as [
-                  number,
-                  number,
-                ];
+                pendingDestinationRef.current = markers.position as [number, number];
                 if (locateRef.current) locateRef.current();
               }
             };
 
             return (
-              <Marker
-                key={`plot-${markers.plot_id}`}
-                position={markers.position}
-                icon={circleIcon}
-              >
+              <Marker key={`plot-${markers.plot_id}`} position={markers.position} icon={circleIcon}>
                 {markers.rows && markers.columns ? (
-                  <Popup className="leaflet-theme-popup"
-                    offset={[-2, 5]}
-                    minWidth={450}
-                    closeButton={false}
-                  >
+                  <Popup className="leaflet-theme-popup" offset={[-2, 5]} minWidth={450} closeButton={false}>
                     <div className="w-full py-2">
                       <Suspense
                         fallback={
@@ -663,23 +575,16 @@ export default function MapPage() {
                           </>
                         }
                       >
-                        <ColumbariumPopup
-                          onDirectionClick={handleDirectionClick}
-                          marker={markers}
-                        />
+                        <ColumbariumPopup onDirectionClick={handleDirectionClick} marker={markers} />
                       </Suspense>
                     </div>
                   </Popup>
                 ) : (
-                  <Popup className="leaflet-theme-popup"
-                    offset={[-2, 5]}
-                    minWidth={250}
-                    closeButton={false}
-                  >
+                  <Popup className="leaflet-theme-popup" offset={[-2, 5]} minWidth={250} closeButton={false}>
                     <Suspense
                       fallback={
                         <>
-                          <div className="mb-3 items-center justify-between flex gap-2">
+                          <div className="mb-3 flex items-center justify-between gap-2">
                             <Skeleton className="h-[40px] w-full rounded" />
                             <Skeleton className="h-[40px] w-full rounded" />
                             <Skeleton className="h-[40px] w-full rounded" />
@@ -703,13 +608,7 @@ export default function MapPage() {
                         </>
                       }
                     >
-                      <PlotLocations
-                        backgroundColor={getCategoryBackgroundColor(
-                          markers.category,
-                        )}
-                        onDirectionClick={handleDirectionClick}
-                        marker={markers}
-                      />
+                      <PlotLocations backgroundColor={getCategoryBackgroundColor(markers.category)} onDirectionClick={handleDirectionClick} marker={markers} />
                     </Suspense>
                   </Popup>
                 )}
