@@ -3,7 +3,7 @@ import { useContext } from "react";
 import { Link } from "react-router-dom";
 import { RefreshCw, Search, Filter, Locate, Layers, Home } from "lucide-react";
 
-import { isAdmin } from "@/utils/auth.utils";
+import { isAdmin } from "@/utils/auth.utils.temp";
 import { Button } from "@/components/ui/button";
 import { LocateContext } from "@/components/layout/WebMapLayout";
 

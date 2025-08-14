@@ -9,7 +9,7 @@ import {
   XCircle,
 } from "lucide-react";
 import type { ConvertedMarker } from "@/types/map.types";
-import { isAdmin } from "@/utils/auth.utils";
+import { isAdmin } from "@/utils/auth.utils.temp";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
