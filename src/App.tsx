@@ -1,7 +1,6 @@
 import { Suspense } from "react";
 import { BrowserRouter, Navigate, Routes, Route } from "react-router-dom";
-import LoginV2 from "@/auth/page";
-import Layout from "@/auth/layout";
+import { LoginPage } from "@/auth/LoginPage";
 import Logout from "@/auth/Logout";
 import UserMap from "@/pages/user/contents/Map";
 import ResetPassword from "@/auth/ResetPassword";
@@ -33,14 +32,7 @@ export default function App() {
           {/* Public Routes */}
           <Route path="/" element={<LandingLayout />} />
           <Route path="/map" element={<MapPage />} />
-          <Route
-            path="/login"
-            element={
-              <Layout>
-                <LoginV2 />
-              </Layout>
-            }
-          />
+          <Route path="/login" element={<LoginPage />} />
           <Route path="/forgot-password" element={<ForgotPassword />} />
           <Route path="/reset-password" element={<ResetPassword />} />
           <Route path="/logout" element={<Logout />} />

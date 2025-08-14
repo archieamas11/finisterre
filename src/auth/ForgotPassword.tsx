@@ -1,6 +1,5 @@
 import { z } from "zod";
 import { toast } from "sonner";
-import { useState } from "react";
 import { MapPin } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { useNavigate, Link } from "react-router-dom";
@@ -10,6 +9,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { forgotPassword } from "@/api/auth.api";
 import { FormControl, FormMessage, FormField, FormLabel, FormItem, Form } from "@/components/ui/form";
+import { Card } from "@/components/ui/card";
 
 const FormSchema = z.object({
   username: z.string().min(3, {
@@ -19,7 +19,6 @@ const FormSchema = z.object({
 
 export default function ForgotPassword() {
   const navigate = useNavigate();
-  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
@@ -29,9 +28,7 @@ export default function ForgotPassword() {
   });
 
   const onSubmit = async (data: z.infer<typeof FormSchema>) => {
-    setIsSubmitting(true);
-
-    try {
+    const verifyPromise = async () => {
       console.log("Sending forgot password request:", data);
       const res = await forgotPassword(data.username);
       console.log("Forgot password response:", res);
@@ -40,36 +37,35 @@ export default function ForgotPassword() {
         navigate("/reset-password", {
           state: { username: data.username },
         });
-        toast.success("Property ID verified successfully!", {
-          closeButton: true,
-        });
+        return "Property ID verified successfully!";
       } else {
-        toast.error(res.message || "Failed to process request", {
-          closeButton: true,
-          description: "Please check your Property ID and try again.",
-        });
+        throw new Error(res.message || "Failed to process request");
       }
-    } catch (err: any) {
-      toast.error("An unexpected error occurred. Please try again.", {
-        closeButton: true,
-      });
-    } finally {
-      setIsSubmitting(false);
-    }
+    };
+
+    toast.promise(verifyPromise(), {
+      loading: "🔍 Verifying your Property ID...",
+      success: (message) => message,
+      error: (err) => ({
+        message: err.message,
+        description: "Please check your Property ID and try again.",
+      }),
+    });
   };
 
   return (
-    <div className="flex min-h-screen items-center justify-center p-12">
-      <div className="mx-auto flex flex-col justify-center space-y-8 sm:w-[350px]">
-        <div className="space-y-2 text-center">
-          <div className="flex justify-center">
-            <Link className="border-primary/10 bg-primary/10 mb-5 flex aspect-square h-16 w-16 items-center justify-center rounded-full border p-3" to="/">
-              <MapPin className="h-20 w-20" />
-            </Link>
-          </div>
-          <h1 className="text-3xl font-medium">Forgot Password</h1>
-          <p className="text-muted-foreground text-sm">Please enter your property id to verify your account.</p>
+    <div className="flex min-h-screen items-center justify-center">
+      <Card className="mx-auto w-full max-w-sm p-8">
+        <div className="mb-8 flex flex-col items-center">
+          <Link className="mb-4" to="/">
+            <div className="border-primary bg-accent rounded-lg border p-2">
+              <MapPin size={30} />
+            </div>
+          </Link>
+          <h1 className="text-2xl font-bold tracking-tight">Forgot Password</h1>
+          <p className="text-muted-foreground mt-1 text-center text-sm">Please enter your property id to verify your account.</p>
         </div>
+
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
             <FormField
@@ -85,15 +81,17 @@ export default function ForgotPassword() {
               control={form.control}
               name="username"
             />
-            <Button className="mt-2 w-full" disabled={isSubmitting} type="submit">
-              {isSubmitting ? "Verifying..." : "Verify"}
-            </Button>
-            <Button onClick={() => navigate(-1)} className="w-full" variant="outline" type="button">
-              Back
-            </Button>
+            <div className="space-y-2">
+              <Button className="mt-2 w-full" type="submit">
+                Verify
+              </Button>
+              <Button onClick={() => navigate(-1)} className="w-full" variant="outline" type="button">
+                Back
+              </Button>
+            </div>
           </form>
         </Form>
-      </div>
+      </Card>
     </div>
   );
 }

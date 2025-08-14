@@ -1,44 +1,25 @@
 import React from "react";
 import { useLocation, Navigate } from "react-router-dom";
+import { useAuthQuery } from "@/hooks/useAuthQuery";
 
 interface AuthState {
   isAdmin: boolean;
   isAuthenticated: boolean;
+  isLoading: boolean;
 }
 
 export function useAuth(): AuthState {
-  // Read auth state once per render
-  const [auth, setAuth] = React.useState<AuthState>(() => {
-    const token = localStorage.getItem("token");
-    const isAdmin = localStorage.getItem("isAdmin") === "1";
-    return {
-      isAdmin,
-      isAuthenticated: !!token,
-    };
-  });
-
-  React.useEffect(() => {
-    // Listen for changes to localStorage (e.g., logout/login in other tabs)
-    const handleStorage = () => {
-      const token = localStorage.getItem("token");
-      const isAdmin = localStorage.getItem("isAdmin") === "1";
-      setAuth({
-        isAdmin,
-        isAuthenticated: !!token,
-      });
-    };
-    window.addEventListener("storage", handleStorage);
-    return () => {
-      window.removeEventListener("storage", handleStorage);
-    };
-  }, []);
-
-  return auth;
+  const { data, isSuccess, isPending } = useAuthQuery();
+  const tokenExists = typeof window !== "undefined" && !!localStorage.getItem("token");
+  const isAuthenticated = !!(tokenExists && isSuccess && data?.success);
+  const isAdmin = !!data?.user?.isAdmin;
+  return { isAdmin, isAuthenticated, isLoading: tokenExists && isPending };
 }
 
 export const RequireAuth = ({ children }: { children: React.ReactNode }) => {
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, isLoading } = useAuth();
   const location = useLocation();
+  if (isLoading) return null;
   if (!isAuthenticated) {
     return <Navigate state={{ from: location }} to="/login" replace />;
   }
@@ -46,8 +27,9 @@ export const RequireAuth = ({ children }: { children: React.ReactNode }) => {
 };
 
 export const RequireAdmin = ({ children }: { children: React.ReactNode }) => {
-  const { isAdmin, isAuthenticated } = useAuth();
+  const { isAdmin, isAuthenticated, isLoading } = useAuth();
   const location = useLocation();
+  if (isLoading) return null;
   if (!isAuthenticated || !isAdmin) {
     return <Navigate state={{ from: location }} to="/unauthorized" replace />;
   }
@@ -55,8 +37,9 @@ export const RequireAdmin = ({ children }: { children: React.ReactNode }) => {
 };
 
 export const RequireUser = ({ children }: { children: React.ReactNode }) => {
-  const { isAdmin, isAuthenticated } = useAuth();
+  const { isAdmin, isAuthenticated, isLoading } = useAuth();
   const location = useLocation();
+  if (isLoading) return null;
   if (!isAuthenticated || isAdmin) {
     return <Navigate state={{ from: location }} to="/unauthorized" replace />;
   }

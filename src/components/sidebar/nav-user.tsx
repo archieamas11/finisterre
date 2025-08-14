@@ -1,6 +1,5 @@
 "use client";
 
-import { useNavigate } from "react-router-dom";
 import { ChevronsUpDown, BadgeCheck, LogOut, Bell } from "lucide-react";
 
 import { AvatarFallback, AvatarImage, Avatar } from "@/components/ui/avatar";
@@ -14,7 +13,7 @@ import {
   DropdownMenuItem,
   DropdownMenu,
 } from "@/components/ui/dropdown-menu";
-
+import { useLogout } from "@/hooks/useLogout";
 export function NavUser({
   user,
 }: {
@@ -25,11 +24,7 @@ export function NavUser({
   };
 }) {
   const { isMobile } = useSidebar();
-
-  const navigate = useNavigate();
-  const handleLogout = () => {
-    navigate("/logout");
-  };
+  const { performLogout, isPending } = useLogout("/");
 
   return (
     <SidebarMenu>
@@ -73,7 +68,7 @@ export function NavUser({
               </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
-            <DropdownMenuItem onClick={handleLogout}>
+            <DropdownMenuItem onClick={() => performLogout()} disabled={isPending}>
               <LogOut />
               Log out
             </DropdownMenuItem>
