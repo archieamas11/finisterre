@@ -17,7 +17,7 @@ import {
 import type { Customer } from "@/api/customer.api";
 
 import { Input } from "@/components/ui/input";
-import { customerColumns } from "@/pages/admin/interment/customer/CustomerColumns";
+import { customerColumns } from "@/pages/admin/interment/columns/CustomerColumns";
 import CreateCustomer from "./CreateCustomer";
 import { DataTable } from "@/components/data-table/data-table";
 import { DataTableToolbar } from "@/components/data-table/data-table-toolbar";

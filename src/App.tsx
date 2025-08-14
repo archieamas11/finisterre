@@ -21,7 +21,7 @@ import IntermentSetup from "@/pages/admin/interment/IntermentSetup";
 import { RequireAdmin, RequireAuth, RequireUser } from "@/authRoutes";
 import AdminControlPanel from "@/pages/admin/control/AdminControlPanel";
 import AdminIntermentDeceasedPage from "@/pages/admin/interment/deceased";
-import AdminIntermentLotOwnersPage from "@/pages/admin/interment/lot-owners";
+import AdminIntermentLotOwnersPage from "@/pages/admin/interment/lot-owners/lot-owners";
 import AdminIntermentCustomerPage from "./pages/admin/interment/customer/customers";
 
 export default function App() {

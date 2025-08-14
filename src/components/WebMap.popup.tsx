@@ -4,7 +4,7 @@ import { BiCheckCircle } from "react-icons/bi";
 import { FaHourglassStart } from "react-icons/fa";
 import { MapPin, Award, Ruler, Info } from "lucide-react";
 
-import { isAdmin } from "@/utils/Auth.utils";
+import { isAdmin } from "@/utils/auth.utils";
 import { Button } from "@/components/ui/button";
 import { type ConvertedMarker } from "@/types/map.types";
 import { CardDescription, CardTitle } from "@/components/ui/card";

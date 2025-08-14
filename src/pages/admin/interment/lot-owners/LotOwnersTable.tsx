@@ -1,5 +1,5 @@
 "use client";
-import * as React from "react";
+import React from "react";
 import { ArrowRightIcon, SearchIcon } from "lucide-react";
 import {
   type ColumnFiltersState,
@@ -12,11 +12,9 @@ import {
   getCoreRowModel,
   useReactTable,
 } from "@tanstack/react-table";
-
 import type { LotOwners } from "@/types/interment.types";
-
 import { Input } from "@/components/ui/input";
-import { lotOwnerColumns } from "./columns/columns";
+import { lotOwnerColumns } from "../columns/LotOwnersColumns";
 import { DataTable } from "@/components/data-table/data-table";
 import { DataTableToolbar } from "@/components/data-table/data-table-toolbar";
 import { Card } from "@/components/ui/card";

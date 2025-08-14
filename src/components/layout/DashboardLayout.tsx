@@ -3,7 +3,7 @@ import { useLocation, useNavigate, Outlet } from "react-router-dom";
 
 import { AppSidebar } from "@/components/sidebar/app-sidebar";
 import { SiteHeader } from "@/components/sidebar/site-header";
-import { isAuthenticated, isAdmin } from "@/utils/Auth.utils";
+import { isAuthenticated, isAdmin } from "@/utils/auth.utils";
 import { SidebarProvider, SidebarInset } from "@/components/ui/sidebar";
 import { findSidebarItemByPath, getSidebarItems } from "@/navigation/sidebar/sidebar-items";
 
