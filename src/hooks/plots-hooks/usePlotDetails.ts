@@ -2,6 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { getPlotDetails } from "@/api/plots.api";
 
 interface OwnerData {
+  lot_id?: string; // include lot id for binding deceased records
   fullname: string;
   email: string;
   contact: string;
@@ -48,7 +49,7 @@ export const usePlotDetails = (plot_id: string) => {
       };
     },
     enabled: !!plot_id,
-    staleTime: 30 * 1000, // Reduced to 30 seconds for fresher data
+    staleTime: 0, // Always consider data stale for immediate refetch when invalidated
     gcTime: 2 * 60 * 1000, // 2 minutes garbage collection time
     refetchOnWindowFocus: true, // Refetch when window gains focus
     refetchOnMount: true, // Always refetch on component mount

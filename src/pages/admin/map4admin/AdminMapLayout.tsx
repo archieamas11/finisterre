@@ -2,7 +2,7 @@ import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 import { Suspense, lazy } from "react";
 import { GiOpenGate } from "react-icons/gi";
-import { createContext, useRef } from "react";
+import { createContext, useRef, useState } from "react";
 import { BiSolidChurch } from "react-icons/bi";
 import { renderToStaticMarkup } from "react-dom/server";
 import iconUrl from "leaflet/dist/images/marker-icon.png";
@@ -44,6 +44,9 @@ export default function AdminMapLayout() {
   const requestLocate = () => {
     if (locateRef.current) locateRef.current();
   };
+
+  // Track popup close events to reset child UI (like comboboxes)
+  const [popupCloseTick, setPopupCloseTick] = useState(0);
 
   // Function to handle popup opening - invalidate cache for fresh data
   const handlePopupOpen = (plot_id: string) => {
@@ -197,9 +200,9 @@ export default function AdminMapLayout() {
               </Popup>
             </Marker>
 
+            {/* Plot Markers */}
             {markers.map((marker: ConvertedMarker) => {
               const statusColor = getStatusColor(marker.plotStatus);
-
               const circleIcon = L.divIcon({
                 className: "",
                 iconSize: [24, 24],
@@ -215,7 +218,15 @@ export default function AdminMapLayout() {
               const backgroundColor = getCategoryBackgroundColor(marker.category);
 
               return (
-                <Marker key={`plot-${marker.plot_id}`} position={marker.position} icon={circleIcon}>
+                <Marker
+                  key={`plot-${marker.plot_id}`}
+                  position={marker.position}
+                  icon={circleIcon}
+                  eventHandlers={{
+                    popupopen: () => handlePopupOpen(marker.plot_id),
+                    popupclose: () => setPopupCloseTick((t) => t + 1),
+                  }}
+                >
                   {marker.rows && marker.columns ? (
                     // 🏢 Columbarium Popup
                     <Popup className="leaflet-theme-popup" closeButton={false} offset={[-2, 5]} minWidth={450}>
@@ -236,16 +247,7 @@ export default function AdminMapLayout() {
                     </Popup>
                   ) : (
                     // 🏠 Single Plot Popup
-                    <Popup
-                      className="leaflet-theme-popup"
-                      closeButton={false}
-                      offset={[-2, 5]}
-                      minWidth={600}
-                      maxWidth={600}
-                      eventHandlers={{
-                        add: () => handlePopupOpen(marker.plot_id),
-                      }}
-                    >
+                    <Popup className="leaflet-theme-popup" closeButton={false} offset={[-2, 5]} minWidth={600} maxWidth={600}>
                       <Suspense
                         fallback={
                           <>
@@ -273,7 +275,7 @@ export default function AdminMapLayout() {
                           </>
                         }
                       >
-                        <SinglePlotLocations backgroundColor={backgroundColor} marker={marker} />
+                        <SinglePlotLocations backgroundColor={backgroundColor} marker={marker} popupCloseTick={popupCloseTick} />
                       </Suspense>
                     </Popup>
                   )}

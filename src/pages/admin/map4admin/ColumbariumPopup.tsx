@@ -14,7 +14,7 @@ import { cn } from "@/lib/utils";
 import { isAdmin } from "@/utils/auth.utils.temp";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { createLotOwner } from "@/api/lotOwner.api";
+import { useCreateLotOwner } from "@/hooks/lot-owner-hooks/useCreateLotOwner";
 import { useNichesByPlot } from "@/hooks/plots-hooks/niche.hooks";
 import { useCustomers } from "@/hooks/customer-hooks/customer.hooks";
 import { CardContent, CardHeader, CardTitle, Card } from "@/components/ui/card";
@@ -43,6 +43,7 @@ export default function ColumbariumPopup({ marker, onDirectionClick }: Columbari
   const rows = parseInt(marker.rows);
   const cols = parseInt(marker.columns);
   const queryClient = useQueryClient();
+  const createLotOwnerMutation = useCreateLotOwner();
 
   const handleCustomerSelect = (customerId: string) => {
     console.log("👤 Customer selected:", customerId);
@@ -74,31 +75,24 @@ export default function ColumbariumPopup({ marker, onDirectionClick }: Columbari
     };
 
     try {
-      // Create the promise for the API call
-      const reservationPromise = createLotOwner(lotOwnerData).then((result) => {
-        if (!result.success) {
-          throw new Error(result.message || "Failed to reserve niche");
-        }
-        return result;
+      // ✨ Use the mutation hook instead of direct API call
+      const result = await createLotOwnerMutation.mutateAsync(lotOwnerData);
+
+      if (!result?.success) {
+        throw new Error(result?.message || "Failed to reserve niche");
+      }
+
+      toast.success("Niche reserved successfully!");
+
+      // 🔄 Invalidate niche data to refresh the grid
+      queryClient.invalidateQueries({
+        queryKey: ["niches", marker.plot_id, rows, cols],
       });
 
-      await toast.promise(reservationPromise, {
-        loading: "Reserving niche...",
-        success: () => {
-          queryClient.invalidateQueries({
-            queryKey: ["niches", marker.plot_id, rows, cols],
-          });
-          queryClient.invalidateQueries({ queryKey: ["map-stats", "serenity"] });
-          queryClient.invalidateQueries({ queryKey: ["map-stats", "chambers"] });
-          handleCancelReservation();
-          setIsDetailOpen(false);
-          return "Niche reserved successfully!";
-        },
-        error: (error) => {
-          return error.message || "Failed to save reservation";
-        },
-      });
-    } catch (error) {
+      handleCancelReservation();
+      setIsDetailOpen(false);
+    } catch (error: any) {
+      toast.error(error?.message || "Failed to save reservation");
       console.error("❌ Error saving reservation:", error);
     } finally {
       setIsSaving(false);
