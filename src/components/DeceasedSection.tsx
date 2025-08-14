@@ -5,7 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
-import { calculateYearsBuried, formatDate } from "@/utils/dateUtils";
+import { calculateYearsBuried, formatDate } from "@/utils/date.utils";
 
 interface DeceasedData {
   deceased_id: string;
