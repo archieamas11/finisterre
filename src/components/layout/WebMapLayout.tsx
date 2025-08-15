@@ -1,5 +1,5 @@
 import { MdLocalParking } from "react-icons/md";
-import { FaDirections, FaToilet } from "react-icons/fa";
+import { FaToilet } from "react-icons/fa";
 import "leaflet/dist/leaflet.css";
 import L from "leaflet";
 import { createContext, useRef } from "react";
