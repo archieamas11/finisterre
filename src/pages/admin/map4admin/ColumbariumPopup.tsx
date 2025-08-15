@@ -103,13 +103,11 @@ export default function ColumbariumPopup({ marker, onDirectionClick }: Columbari
   const { error, isLoading, data: nicheData = [] } = useNichesByPlot(marker.plot_id, rows, cols);
 
   const handleNicheClick = (niche: nicheData) => {
-    console.log("🎯 Niche selected:", niche);
     if (isAdmin()) {
       setSelectedNiche(niche);
       setIsDetailOpen(true);
     } else {
       setIsDetailOpen(false);
-      console.warn("🚫 Admin access required to view niche details");
       toast.error("Admin access required to view niche details");
     }
   };
@@ -160,7 +158,7 @@ export default function ColumbariumPopup({ marker, onDirectionClick }: Columbari
         {!isAdmin() && (
           <Button
             className="flex h-12 w-12 items-center justify-center rounded-full p-0 shadow-md transition-colors"
-            style={{ minWidth: "2rem", minHeight: "2rem" }}
+            style={{ minWidth: "2rem", minHeight: "2rem", background: "#4f46e5" }}
             onClick={onDirectionClick}
             variant="secondary"
           >

@@ -74,16 +74,11 @@ export function useNichesByPlot(plotId: string, rows: number, cols: number) {
     queryKey: ["niches", plotId, rows, cols],
     enabled: !!plotId && rows > 0 && cols > 0, // Only run if all required params exist
     queryFn: async () => {
-      console.log("🚀 Fetching niche data for plot:", plotId);
-
-      // 🏗️ Try to get existing niche data first
       let existingNiches: any[] = [];
       try {
         const response = await getNichesByPlot(plotId);
         existingNiches = response.nicheData || [];
-        console.log("✅ Found existing niche data:", existingNiches);
       } catch (nicheError) {
-        console.log("ℹ️ No existing niche data found, will generate empty grid");
         existingNiches = [];
       }
 

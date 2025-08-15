@@ -21,13 +21,10 @@ export function ThemeToggleButton({ variant = "circle-blur", start = "top-left",
 
   const styleId = "theme-transition-styles";
 
-  const updateStyles = React.useCallback((css: string, name: string) => {
+  const updateStyles = React.useCallback((css: string, _name: string) => {
     if (typeof window === "undefined") return;
 
     let styleElement = document.getElementById(styleId) as HTMLStyleElement;
-
-    console.log("style ELement", styleElement);
-    console.log("name", name);
 
     if (!styleElement) {
       styleElement = document.createElement("style");
@@ -36,8 +33,6 @@ export function ThemeToggleButton({ variant = "circle-blur", start = "top-left",
     }
 
     styleElement.textContent = css;
-
-    console.log("content updated");
   }, []);
 
   const toggleTheme = React.useCallback(() => {

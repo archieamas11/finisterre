@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import { ArrowRight, Sparkles, MapPin, Heart } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 
 export default function HeroSection() {
   return (
@@ -50,7 +51,11 @@ export default function HeroSection() {
         <div className="flex flex-col items-center justify-center gap-6 sm:flex-row">
           {/* Primary CTA */}
           <Button
-            className="group from-chart-4 to-chart-5 hover:from-chart-4 hover:to-chart-5 text-foreground dark:text-accent relative overflow-hidden rounded-full border-0 bg-gradient-to-r px-8 py-4 font-semibold shadow-2xl transition-all duration-300 hover:scale-105 hover:shadow-blue-500/25"
+            className={cn(
+              "group relative overflow-hidden rounded-full border-0 px-8 py-4 font-semibold shadow-lg transition-all duration-300",
+              "from-primary to-primary/80 text-primary-foreground bg-gradient-to-r",
+              "hover:shadow-primary/25 hover:from-primary/90 hover:to-primary hover:scale-105",
+            )}
             size="lg"
             asChild
           >

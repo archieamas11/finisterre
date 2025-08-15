@@ -1,3 +1,5 @@
+import { MdLocalParking } from "react-icons/md";
+import { FaDirections, FaToilet } from "react-icons/fa";
 import "leaflet/dist/leaflet.css";
 import L from "leaflet";
 import { createContext, useRef } from "react";
@@ -18,7 +20,7 @@ import ReactLeafletDriftMarker from "react-leaflet-drift-marker";
 
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
-import { CardContent, Card } from "@/components/ui/card";
+import { CardContent, Card, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { usePlots } from "@/hooks/plots-hooks/plot.hooks";
 import { getCategoryBackgroundColor, convertPlotToMarker, getStatusColor } from "@/types/map.types";
 const ColumbariumPopup = lazy(() => import("@/pages/admin/map4admin/ColumbariumPopup"));
@@ -62,14 +64,14 @@ export default function MapPage() {
 
   // 📊 Process data after hooks
   const markers = plotsData?.map(convertPlotToMarker) || [];
-  console.log("🗺️ Plots data loaded:", {
-    error,
-    isLoading,
-    plotsCount: markers.length,
-  });
-
   // Cemetery entrance constant for routing
   const CEMETERY_GATE = L.latLng(10.248107820799307, 123.797607547609545);
+  const CENTER_MAP = L.latLng(10.249306880563585, 123.797848311330114);
+  const CR_MARKER = L.latLng(10.24864620598991, 123.798102525943648);
+  const PLAYGROUND_1 = L.latLng(10.248972753171127, 123.79755735707532);
+  const PLAYGROUND_2 = L.latLng(10.249180343704229, 123.798238818160755);
+  const PARKING_1 = L.latLng(10.248467771138005, 123.797668761148387);
+  const PARKING_2 = L.latLng(10.248150553375426, 123.797848903904878);
 
   // 🎣 Start live GPS tracking when navigation is active
   useEffect(() => {
@@ -458,8 +460,248 @@ export default function MapPage() {
           >
             <Popup>
               <div className="text-center">
-                <div className="font-semibold text-orange-600">🚪 Cemetery Gate</div>
-                <div className="mt-1 text-xs text-gray-500">Entry point for cemetery visitors</div>
+                <div className="font-semibold text-orange-600">🚪 Fnisterre Main Entrance</div>
+                <div className="mt-1 text-xs text-gray-500">Entry point for Fnisterre visitors</div>
+              </div>
+            </Popup>
+          </Marker>
+
+          {/* PLAYGROUND_1 */}
+          <Marker
+            icon={L.divIcon({
+              iconSize: [32, 32],
+              className: "destination-marker",
+              html: renderToStaticMarkup(
+                <div
+                  style={{
+                    display: "inline-block",
+                    border: "1px solid #000",
+                    borderRadius: "6px",
+                    overflow: "hidden",
+                  }}
+                >
+                  <img
+                    src="https://res.cloudinary.com/djrkvgfvo/image/upload/v1753206700/playground_mxeqep.jpg"
+                    style={{
+                      display: "block",
+                      width: "32px",
+                      height: "32px",
+                    }}
+                  />
+                </div>,
+              ),
+            })}
+            position={[PLAYGROUND_1.lat, PLAYGROUND_1.lng]}
+          >
+            <Popup maxWidth={350} className="leaflet-theme-popup p-0">
+              <div className="w-[220px]">
+                <CardHeader className="p-0">
+                  <img
+                    src="https://res.cloudinary.com/djrkvgfvo/image/upload/v1753206700/playground_mxeqep.jpg"
+                    alt="Cemetery Gate"
+                    className="h-32 w-full rounded-md object-cover"
+                  />
+                </CardHeader>
+                <CardContent className="p-3">
+                  <CardTitle className="text-sm font-bold text-orange-600">Playground 1</CardTitle>
+                  <CardDescription className="mt-1 text-xs text-gray-500">Playground for visitors</CardDescription>
+                </CardContent>
+              </div>
+            </Popup>
+          </Marker>
+
+          <Marker
+            icon={L.divIcon({
+              iconSize: [32, 32],
+              className: "destination-marker",
+              html: renderToStaticMarkup(
+                <div
+                  style={{
+                    display: "inline-block",
+                    border: "1px solid #000",
+                    borderRadius: "6px",
+                    overflow: "hidden",
+                  }}
+                >
+                  <img
+                    src="https://res.cloudinary.com/djrkvgfvo/image/upload/v1753206700/playground_mxeqep.jpg"
+                    style={{
+                      display: "block",
+                      width: "32px",
+                      height: "32px",
+                    }}
+                  />
+                </div>,
+              ),
+            })}
+            position={[PLAYGROUND_2.lat, PLAYGROUND_2.lng]}
+          >
+            <Popup maxWidth={350} className="leaflet-theme-popup p-0">
+              <div className="w-[220px]">
+                <CardHeader className="p-0">
+                  <img
+                    src="https://res.cloudinary.com/djrkvgfvo/image/upload/v1753206700/playground_mxeqep.jpg"
+                    alt="Cemetery Gate"
+                    className="h-32 w-full rounded-md object-cover"
+                  />
+                </CardHeader>
+                <CardContent className="p-3">
+                  <CardTitle className="text-sm font-bold text-orange-600">Playground 2</CardTitle>
+                  <CardDescription className="mt-1 text-xs text-gray-500">Playground for visitors</CardDescription>
+                </CardContent>
+              </div>
+            </Popup>
+          </Marker>
+
+          <Marker
+            icon={L.divIcon({
+              iconSize: [32, 32],
+              className: "destination-marker",
+              html: renderToStaticMarkup(
+                <div
+                  style={{
+                    padding: "4px",
+                    background: "#2563EB",
+                    display: "inline-block",
+                    border: "2px solid #fff",
+                    transform: "rotate(-45deg)",
+                    borderRadius: "50% 50% 50% 0",
+                    boxShadow: "0 0 8px rgba(0,0,0,0.15)",
+                  }}
+                >
+                  <MdLocalParking
+                    style={{
+                      transform: "rotate(45deg)",
+                    }}
+                    className="z-999 text-white"
+                    size={16}
+                  />
+                </div>,
+              ),
+            })}
+            position={[PARKING_1.lat, PARKING_1.lng]}
+          >
+            <Popup>
+              <div className="text-center">
+                <div className="font-semibold text-orange-600">🚪 Parking 1</div>
+                <div className="mt-1 text-xs text-gray-500">Parking 1 for finisterre visitors</div>
+              </div>
+            </Popup>
+          </Marker>
+
+          <Marker
+            icon={L.divIcon({
+              iconSize: [32, 32],
+              className: "destination-marker",
+              html: renderToStaticMarkup(
+                <div
+                  style={{
+                    padding: "4px",
+                    background: "#2563EB",
+                    display: "inline-block",
+                    border: "2px solid #fff",
+                    transform: "rotate(-45deg)",
+                    borderRadius: "50% 50% 50% 0",
+                    boxShadow: "0 0 8px rgba(0,0,0,0.15)",
+                  }}
+                >
+                  <MdLocalParking
+                    style={{
+                      transform: "rotate(45deg)",
+                    }}
+                    className="z-999 text-white"
+                    size={16}
+                  />
+                </div>,
+              ),
+            })}
+            position={[PARKING_2.lat, PARKING_2.lng]}
+          >
+            <Popup>
+              <div className="text-center">
+                <div className="font-semibold text-orange-600">🚪 Parking 2</div>
+                <div className="mt-1 text-xs text-gray-500">Parking 2 for finisterre visitors</div>
+              </div>
+            </Popup>
+          </Marker>
+
+          <Marker
+            icon={L.divIcon({
+              iconSize: [32, 32],
+              className: "destination-marker",
+              html: renderToStaticMarkup(
+                <div
+                  style={{
+                    padding: "4px",
+                    background: "#059669",
+                    display: "inline-block",
+                    border: "2px solid #fff",
+                    transform: "rotate(-45deg)",
+                    borderRadius: "50% 50% 50% 0",
+                    boxShadow: "0 0 8px rgba(0,0,0,0.15)",
+                  }}
+                >
+                  <FaToilet
+                    style={{
+                      transform: "rotate(45deg)",
+                    }}
+                    className="z-999 text-white"
+                    strokeWidth={2.5}
+                    size={16}
+                  />
+                </div>,
+              ),
+            })}
+            position={[CR_MARKER.lat, CR_MARKER.lng]}
+          >
+            <Popup>
+              <div className="text-center">
+                <div className="font-semibold text-orange-600">🚻 Comfort Room</div>
+                <div className="mt-1 text-xs text-gray-500">Comfort room for boys and girls</div>
+              </div>
+            </Popup>
+          </Marker>
+
+          {/* Center Marker */}
+          <Marker
+            icon={L.divIcon({
+              iconSize: [32, 32],
+              className: "destination-marker",
+              html: renderToStaticMarkup(
+                <div
+                  style={{
+                    display: "inline-block",
+                    border: "1px solid #000",
+                    borderRadius: "6px",
+                    overflow: "hidden",
+                  }}
+                >
+                  <img
+                    src="https://res.cloudinary.com/djrkvgfvo/image/upload/v1755253760/Finisterre-Gardenz-columbarium_ewopci.png"
+                    style={{
+                      display: "block",
+                      width: "32px",
+                      height: "32px",
+                    }}
+                  />
+                </div>,
+              ),
+            })}
+            position={[CENTER_MAP.lat, CENTER_MAP.lng]}
+          >
+            <Popup maxWidth={350} className="leaflet-theme-popup p-0">
+              <div className="w-[220px]">
+                <CardHeader className="p-0">
+                  <img
+                    src="https://res.cloudinary.com/djrkvgfvo/image/upload/v1755253760/Finisterre-Gardenz-columbarium_ewopci.png"
+                    alt="Cemetery Gate"
+                    className="h-32 w-full rounded-md object-cover"
+                  />
+                </CardHeader>
+                <CardContent className="p-3">
+                  <CardTitle className="text-sm font-bold text-orange-600">Title</CardTitle>
+                  <CardDescription className="mt-1 text-xs text-gray-500">Sample description </CardDescription>
+                </CardContent>
               </div>
             </Popup>
           </Marker>
@@ -496,8 +738,8 @@ export default function MapPage() {
           >
             <Popup>
               <div className="text-center">
-                <div className="font-semibold text-orange-600">🚪 Cemetery Gate</div>
-                <div className="mt-1 text-xs text-gray-500">Entry point for cemetery visitors</div>
+                <div className="font-semibold text-orange-600">🚪 Finisterre Main Entrance</div>
+                <div className="mt-1 text-xs text-gray-500">Entry point for Fnisterre visitors</div>
               </div>
             </Popup>
           </Marker>
@@ -554,7 +796,6 @@ export default function MapPage() {
               if (userPosition) {
                 handleStartNavigation(userPosition, markers.position as [number, number]);
               } else {
-                // Store destination and trigger location request
                 pendingDestinationRef.current = markers.position as [number, number];
                 if (locateRef.current) locateRef.current();
               }
