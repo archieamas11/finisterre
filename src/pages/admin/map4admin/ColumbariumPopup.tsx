@@ -455,7 +455,7 @@ export default function ColumbariumPopup({ marker, onDirectionClick }: Columbari
                               }}
                               disabled={isSaving}
                               className="flex-1"
-                              variant="outline"
+                              variant="destructive"
                               size="sm"
                             >
                               <X className="mr-1 h-4 w-4" />

@@ -157,10 +157,10 @@ export default function SinglePlotLocations({ marker, popupCloseTick }: PlotLoca
 
       {/* Customer selection dialog for assigning owner */}
       {showCustomerCombo && (
-        <div className="mb-3 rounded-lg border p-3">
-          <h4 className="text-muted-foreground mb-2 text-sm font-medium">Select Customer</h4>
+        <div className="bg-card relative mb-3 rounded-lg border p-3">
+          <h4 className="text-card-foreground mb-2 text-sm font-medium">Select Customer for Reservation</h4>
           <Popover open={comboOpen} onOpenChange={setComboOpen}>
-            <PopoverTrigger asChild>
+            <PopoverTrigger asChild className="bg-accent text-muted-foreground">
               <Button className="w-full justify-between" disabled={isLoadingCustomers} aria-expanded={comboOpen} variant="outline" role="combobox">
                 {selectedCustomer
                   ? (() => {
@@ -173,8 +173,8 @@ export default function SinglePlotLocations({ marker, popupCloseTick }: PlotLoca
                 <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
               </Button>
             </PopoverTrigger>
-            <PopoverContent className="w-107 p-0">
-              <Command>
+            <PopoverContent className="w-130 p-0">
+              <Command className="w-full">
                 <CommandInput placeholder="Search customer..." className="h-9" />
                 <CommandList>
                   <CommandEmpty>{isLoadingCustomers ? "Loading customers..." : "No customer found."}</CommandEmpty>
@@ -196,14 +196,14 @@ export default function SinglePlotLocations({ marker, popupCloseTick }: PlotLoca
                 setShowCustomerCombo(false);
                 setSelectedCustomer("");
               }}
-              variant="outline"
+              variant="destructive"
               size="sm"
-              className="flex-1"
+              className="flex-1 leading-none"
             >
               <X className="mr-1 h-4 w-4" />
               Cancel
             </Button>
-            <Button onClick={handleSaveOwner} disabled={isSavingOwner || !selectedCustomer} size="sm" className="flex-1">
+            <Button onClick={handleSaveOwner} disabled={isSavingOwner || !selectedCustomer} size="sm" className="flex-1 leading-none">
               <Save className="mr-1 h-4 w-4" />
               {isSavingOwner ? "Saving..." : "Save"}
             </Button>
