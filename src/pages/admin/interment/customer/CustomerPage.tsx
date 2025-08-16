@@ -11,7 +11,7 @@ export default function CustomersPage() {
   if (isLoading && !customers) {
     return (
       <Card className="p-4">
-        <DataTableSkeleton columnCount={9} filterCount={1} />
+        <DataTableSkeleton columnCount={9} filterCount={2} />
       </Card>
     );
   }

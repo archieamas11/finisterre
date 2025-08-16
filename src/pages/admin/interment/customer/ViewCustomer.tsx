@@ -7,6 +7,7 @@ import { Sheet, SheetContent } from "@/components/ui/sheet";
 import type { Customer, LotInfo } from "@/api/customer.api";
 import CustomerForm from "@/pages/admin/interment/customer/CustomerForm";
 import { editCustomer } from "@/api/customer.api";
+import { calculateYearsBuried } from "@/utils/date.utils";
 
 interface ViewCustomerDialogProps {
   open: boolean;
@@ -32,40 +33,96 @@ function formatDate(date?: string | null) {
   });
 }
 
-// Component for rendering lot information
-function LotInfoCard({ lot }: { lot: LotInfo }) {
+// Component for rendering deceased information
+function DeceasedInfoCard({ deceased }: { deceased: any }) {
+  return (
+    <div className="bg-muted/30 space-y-2 rounded-lg border border-dashed p-3">
+      <div className="flex items-center gap-2">
+        <div className="bg-primary/10 text-primary flex h-8 w-8 items-center justify-center rounded-full text-sm font-medium">👤</div>
+        <div>
+          <div className="text-sm font-medium">{deceased.dead_fullname}</div>
+          <div className="text-muted-foreground text-xs">Deceased ID: {deceased.deceased_id}</div>
+        </div>
+      </div>
+      <div className="grid grid-cols-2 gap-2 text-xs">
+        <div>
+          <span className="text-muted-foreground">Death Date:</span>
+          <div className="font-medium">{formatDate(deceased.dead_date_death)}</div>
+        </div>
+        <div>
+          <span className="text-muted-foreground">Interment:</span>
+          <div className="font-medium">{formatDate(deceased.dead_interment)}</div>
+        </div>
+      </div>
+      <div className="text-xs">
+        <span className="text-muted-foreground">Years Buried:</span>
+        <Badge variant="secondary" className="ml-2 text-xs">
+          {calculateYearsBuried(deceased.dead_date_death)}
+        </Badge>
+      </div>
+    </div>
+  );
+}
+
+// Component for rendering combined property and deceased information
+function PropertyDeceasedCard({ lot }: { lot: LotInfo }) {
   const hasGraveLot = lot.block != null && lot.block !== "" && lot.lot_plot_id != null;
   const hasNiche = lot.category != null && lot.category !== "" && lot.niche_number != null;
+  const hasDeceased = Array.isArray(lot.deceased_info) && lot.deceased_info.length > 0;
 
-  if (hasGraveLot) {
-    return (
-      <div className="bg-card hover:bg-muted/50 rounded-lg border p-3 transition-colors">
-        <div className="flex items-center gap-2">
-          <div>
-            <div className="font-medium">Block {lot.block}</div>
-            <div className="text-muted-foreground text-sm">Grave {lot.lot_plot_id}</div>
-          </div>
-        </div>
+  return (
+    <div className="bg-card space-y-4 rounded-lg border p-4">
+      {/* Property Information Header */}
+      <div className="border-b pb-2">
+        <h4 className="flex items-center gap-2 text-sm font-medium">🏛️ Property Information</h4>
       </div>
-    );
-  }
 
-  if (hasNiche) {
-    return (
-      <div className="bg-card hover:bg-muted/50 rounded-lg border p-3 transition-colors">
-        <div className="flex items-center gap-2">
-          <div>
-            <div className="font-medium">
-              {lot.category} {lot.plot_id ?? ""}
+      {/* Property Details */}
+      <div className="space-y-2">
+        {hasGraveLot && (
+          <div className="flex items-center gap-3">
+            <div className="bg-primary/10 text-primary rounded p-2 text-sm">🪦</div>
+            <div>
+              <div className="font-medium">Block {lot.block}</div>
+              <div className="text-muted-foreground text-sm">Grave {lot.lot_plot_id}</div>
             </div>
-            <div className="text-muted-foreground text-sm">Niche {lot.niche_number}</div>
           </div>
-        </div>
-      </div>
-    );
-  }
+        )}
 
-  return <div className="text-muted-foreground rounded-lg border border-dashed p-3 text-center">Unknown lot data</div>;
+        {hasNiche && (
+          <div className="flex items-center gap-3">
+            <div className="bg-primary/10 text-primary rounded p-2 text-sm">🏢</div>
+            <div>
+              <div className="font-medium">
+                {lot.category} {lot.plot_id ?? ""}
+              </div>
+              <div className="text-muted-foreground text-sm">Niche {lot.niche_number}</div>
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* Deceased Information Section */}
+      <div className="space-y-3">
+        <div className="border-b pb-2">
+          <h4 className="flex items-center gap-2 text-sm font-medium">👥 Deceased Information</h4>
+        </div>
+
+        {hasDeceased ? (
+          <div className="space-y-3">
+            {lot.deceased_info.map((deceased, idx) => (
+              <DeceasedInfoCard key={`${deceased.deceased_id}-${idx}`} deceased={deceased} />
+            ))}
+          </div>
+        ) : (
+          <div className="bg-muted/20 rounded-lg border border-dashed py-4 text-center">
+            <p className="text-muted-foreground text-sm">No deceased records found for this property</p>
+            <p className="text-muted-foreground mt-1 text-xs">This property is available for interment</p>
+          </div>
+        )}
+      </div>
+    </div>
+  );
 }
 
 // Section header component
@@ -142,6 +199,12 @@ export default function ViewCustomer({ open, customer, onOpenChange }: ViewCusto
                 Lot Owned
                 <span className="bg-accent text-accent-foreground rounded-full border px-2 py-0.5 text-xs font-medium">{customer.lot_info?.length ?? 0}</span>
               </Badge>
+              <Badge variant="outline" className="flex items-center gap-2 capitalize">
+                Deceased
+                <span className="bg-accent text-accent-foreground rounded-full border px-2 py-0.5 text-xs font-medium">
+                  {customer.lot_info?.reduce((total, lot) => total + (Array.isArray(lot.deceased_info) ? lot.deceased_info.length : 0), 0) ?? 0}
+                </span>
+              </Badge>
               <Badge className="capitalize" variant="outline">
                 {customer.gender}
               </Badge>
@@ -174,34 +237,19 @@ export default function ViewCustomer({ open, customer, onOpenChange }: ViewCusto
               </div>
             </div>
 
-            {/* Property Section */}
+            {/* Property & Deceased Information - Combined */}
             <div className="bg-card rounded-lg border p-4">
-              <SectionHeader title="Property Information" />
+              <SectionHeader title="Property & Deceased Information" />
               {Array.isArray(customer.lot_info) && customer.lot_info.length > 0 ? (
-                <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                <div className="space-y-4">
                   {customer.lot_info.map((lot, idx) => (
-                    <LotInfoCard key={`${lot.plot_id}-${lot.niche_number}-${idx}`} lot={lot} />
+                    <PropertyDeceasedCard key={`${lot.plot_id}-${lot.niche_number}-${idx}`} lot={lot} />
                   ))}
                 </div>
               ) : (
                 <div className="rounded-lg border border-dashed py-6 text-center">
                   <p className="text-muted-foreground">No property information available</p>
-                </div>
-              )}
-            </div>
-
-            {/* Property Section */}
-            <div className="bg-card rounded-lg border p-4">
-              <SectionHeader title="Deceased Information" />
-              {Array.isArray(customer.lot_info) && customer.lot_info.length > 0 ? (
-                <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-                  {customer.lot_info.map((lot, idx) => (
-                    <LotInfoCard key={`${lot.plot_id}-${lot.niche_number}-${idx}`} lot={lot} />
-                  ))}
-                </div>
-              ) : (
-                <div className="rounded-lg border border-dashed py-6 text-center">
-                  <p className="text-muted-foreground">No deceased information available</p>
+                  <p className="text-muted-foreground mt-1 text-sm">This customer doesn't own any plots or niches</p>
                 </div>
               )}
             </div>

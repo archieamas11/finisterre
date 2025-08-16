@@ -146,6 +146,53 @@ export const customerColumns: ColumnDef<Customer>[] = [
     },
   },
   {
+    id: "deceased_count",
+    header: ({ column }) => (
+      <div className="flex justify-center">
+        <DataTableColumnHeader column={column} title="Deceased" />
+      </div>
+    ),
+    enableSorting: true,
+    enableColumnFilter: true,
+    accessorFn: (row) => {
+      if (!Array.isArray(row.lot_info)) return 0;
+      return row.lot_info.reduce((total, lot) => {
+        return total + (Array.isArray(lot.deceased_info) ? lot.deceased_info.length : 0);
+      }, 0);
+    },
+    cell: ({ row }) => {
+      const count = Array.isArray(row.original.lot_info)
+        ? row.original.lot_info.reduce((total, lot) => {
+            return total + (Array.isArray(lot.deceased_info) ? lot.deceased_info.length : 0);
+          }, 0)
+        : 0;
+      return (
+        <div className="flex justify-center">
+          <Badge variant={count > 0 ? "secondary" : "outline"}>{count}</Badge>
+        </div>
+      );
+    },
+    filterFn: (row, _id, value) => {
+      const selected = Array.isArray(value) ? value : [];
+      if (selected.length === 0) return true;
+      const count = Array.isArray((row.original as Customer).lot_info)
+        ? (row.original as Customer).lot_info!.reduce((total, lot) => {
+            return total + (Array.isArray(lot.deceased_info) ? lot.deceased_info.length : 0);
+          }, 0)
+        : 0;
+      const hasDeceased = count > 0;
+      return selected.some((v: string) => (v === "yes" ? hasDeceased : !hasDeceased));
+    },
+    meta: {
+      label: "Deceased",
+      variant: "select",
+      options: [
+        { label: "Has Deceased", value: "yes" },
+        { label: "No Deceased", value: "no" },
+      ],
+    },
+  },
+  {
     id: "actions",
     size: 40,
     enableHiding: false,

@@ -6,6 +6,14 @@ export interface LotInfo {
   block: string | null;
   lot_plot_id: number | null;
   category: string | null;
+  deceased_info: DeceasedInfo[];
+}
+
+export interface DeceasedInfo {
+  deceased_id: string | null;
+  dead_fullname: string | null;
+  dead_date_death: string | null;
+  dead_interment: string | null;
 }
 
 export type Customer = {

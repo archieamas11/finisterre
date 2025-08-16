@@ -12,9 +12,9 @@ export const calculateYearsBuried = (intermentDate: string): string => {
     const yearsDiff = currentYear - intermentYear;
 
     if (yearsDiff < 0) {
-      return "less than a year";
+      return "Less than a year";
     } else if (yearsDiff === 0) {
-      return "less than a year";
+      return "Less than a year";
     } else if (yearsDiff === 1) {
       return "1 year";
     } else {
