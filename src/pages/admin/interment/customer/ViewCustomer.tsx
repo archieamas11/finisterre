@@ -190,6 +190,22 @@ export default function ViewCustomer({ open, customer, onOpenChange }: ViewCusto
               )}
             </div>
 
+            {/* Property Section */}
+            <div className="bg-card rounded-lg border p-4">
+              <SectionHeader title="Deceased Information" />
+              {Array.isArray(customer.lot_info) && customer.lot_info.length > 0 ? (
+                <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                  {customer.lot_info.map((lot, idx) => (
+                    <LotInfoCard key={`${lot.plot_id}-${lot.niche_number}-${idx}`} lot={lot} />
+                  ))}
+                </div>
+              ) : (
+                <div className="rounded-lg border border-dashed py-6 text-center">
+                  <p className="text-muted-foreground">No deceased information available</p>
+                </div>
+              )}
+            </div>
+
             {/* Footer Dates */}
             <div className="text-muted-foreground flex justify-around text-center text-sm">
               <div>
