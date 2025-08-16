@@ -2,7 +2,7 @@ import { BiLocationPlus } from "react-icons/bi";
 import { RiLoginBoxLine } from "react-icons/ri";
 import { RiListSettingsFill } from "react-icons/ri";
 import { useContext } from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { RefreshCw, Search, Filter, Locate, Layers, Home } from "lucide-react";
 
 import { isAdmin, isAuthenticated } from "@/utils/auth.utils.temp";
@@ -11,6 +11,7 @@ import { LocateContext } from "@/pages/admin/map4admin/AdminMapLayout";
 
 export default function WebMapNavs() {
   const locateCtx = useContext(LocateContext);
+  const location = useLocation();
 
   // 🎯 Handle add marker button click
   const onAddMarkerClick = () => {
@@ -33,24 +34,28 @@ export default function WebMapNavs() {
       <Button variant={"secondary"} className="rounded-full" size="icon">
         <RefreshCw className="text-accent-foreground" />
       </Button>
-      {!isAdmin() && (
+      {(isAdmin() && location.pathname === "/") || (!isAdmin() && location.pathname === "/map") ? (
         <Button variant={"secondary"} className="rounded-full" onClick={() => locateCtx?.requestLocate()} aria-label="Locate me" size="icon">
           <Locate className="text-accent-foreground" />
         </Button>
-      )}
+      ) : null}
+
+      {/* 🗺️ Layer Toggle Button */}
       <Button variant={"secondary"} className="rounded-full" size="icon">
         <Layers className="text-accent-foreground" />
       </Button>
-      {!isAdmin() && (
+
+      {/* 🏠 Home Button */}
+      {(isAdmin() && location.pathname === "/map") || (!isAdmin() && location.pathname === "/map") ? (
         <Link to="/">
           <Button variant={"secondary"} className="rounded-full" size="icon">
             <Home className="text-accent-foreground" />
           </Button>
         </Link>
-      )}
+      ) : null}
 
       {/* ➕ Add Marker Button for Admin */}
-      {isAdmin() && (
+      {isAdmin() && location.pathname === "/admin/map" && (
         <Button variant={locateCtx?.isAddingMarker ? "default" : "secondary"} className="rounded-full" size="icon" onClick={onAddMarkerClick} aria-label="Add new marker">
           <BiLocationPlus className={locateCtx?.isAddingMarker ? "text-primary-foreground" : "text-accent-foreground"} />
         </Button>
