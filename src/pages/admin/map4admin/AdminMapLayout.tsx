@@ -17,7 +17,7 @@ import WebMapNavs from "@/pages/webmap/WebMapNavs";
 import { Skeleton } from "@/components/ui/skeleton";
 import { usePlots } from "@/hooks/plots-hooks/plot.hooks";
 import { getCategoryBackgroundColor, convertPlotToMarker, getStatusColor } from "@/types/map.types";
-import SpinnerCircle4 from "@/components/ui/spinner-10";
+import Spinner from "@/components/ui/spinner";
 import { ErrorMessage } from "@/components/ErrorMessage";
 import MapStats from "./MapStats";
 const ColumbariumPopup = lazy(() => import("@/pages/admin/map4admin/ColumbariumPopup"));
@@ -59,7 +59,7 @@ export default function AdminMapLayout() {
   if (isLoading) {
     return (
       <div className="flex h-full items-center justify-center">
-        <SpinnerCircle4 />
+        <Spinner />
       </div>
     );
   }

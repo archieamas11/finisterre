@@ -1,6 +1,6 @@
 import { toast } from "sonner";
 import React, { useEffect } from "react";
-import SpinnerCircle4 from "@/components/ui/spinner-10";
+import Spinner from "@/components/ui/spinner";
 import { useLogout } from "@/hooks/useLogout";
 
 // Create a reusable logout function that can be called from anywhere
@@ -80,7 +80,7 @@ const Logout: React.FC<{
 
   return (
     <div className="flex h-full items-center justify-center" aria-live="polite" role="status">
-      <SpinnerCircle4 />
+      <Spinner />
     </div>
   );
 };
