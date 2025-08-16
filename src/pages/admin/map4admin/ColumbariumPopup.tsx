@@ -24,6 +24,7 @@ import { CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList, Com
 import { Skeleton } from "@/components/ui/skeleton";
 import CreateDeceased from "./columbarium-dialogs/CreateDeceasedPage";
 import { ErrorMessage } from "@/components/ErrorMessage";
+import { motion } from "framer-motion";
 
 interface ColumbariumPopupProps {
   marker: ConvertedMarker;
@@ -136,7 +137,7 @@ export default function ColumbariumPopup({ marker, onDirectionClick }: Columbari
   }
 
   return (
-    <div className="w-full">
+    <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3 }} className="w-full">
       <div className="bg-background dark:bg-muted mb-2 flex items-center justify-between rounded-lg border p-3">
         <div>
           <h3 className="text-accent-foreground flex items-center gap-2 text-lg font-bold">
@@ -472,7 +473,7 @@ export default function ColumbariumPopup({ marker, onDirectionClick }: Columbari
           )}
         </DialogContent>
       </Dialog>
-    </div>
+    </motion.div>
   );
 }
 

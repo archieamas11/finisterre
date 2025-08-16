@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { type ConvertedMarker } from "@/types/map.types";
 import { CardDescription, CardTitle } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
+import { motion } from "framer-motion";
 
 interface PlotLocationsProps {
   marker: ConvertedMarker;
@@ -17,7 +18,7 @@ interface PlotLocationsProps {
 
 export function PlotLocations({ marker, backgroundColor, onDirectionClick }: PlotLocationsProps) {
   return (
-    <div className="mt-5">
+    <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3 }} className="mt-5">
       <div className="bg-background dark:bg-muted rounded-t-lg p-3 transition-colors" style={backgroundColor ? { background: backgroundColor } : {}}>
         <CardDescription className="text-primary-background">Finisterre</CardDescription>
         <CardTitle className="text-primary-background">Plot Information</CardTitle>
@@ -92,6 +93,6 @@ export function PlotLocations({ marker, backgroundColor, onDirectionClick }: Plo
           </span>
         </div>
       </div>
-    </div>
+    </motion.div>
   );
 }
