@@ -1,4 +1,4 @@
-import type { plots } from "@/types/map.types";
+import type { plots, CreatePlotRequest } from "@/types/map.types";
 import { api } from "./axiosInstance";
 
 // // Chambers api
@@ -42,7 +42,7 @@ export async function getPlotMedia(data: plots) {
   return res.data;
 }
 
-export async function createPlots(data: plots) {
+export async function createPlots(data: CreatePlotRequest) {
   const res = await api.post("plots/create_plot.php", data);
   return res.data;
 }

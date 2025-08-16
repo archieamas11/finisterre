@@ -43,6 +43,17 @@ export interface plots {
   coordinates: [number, number];
 }
 
+// 🆕 Interface for creating new plots
+export interface CreatePlotRequest {
+  area: string;
+  block: string;
+  width: string;
+  length: string;
+  category: string;
+  coordinates: string; // String format for API: "lng, lat"
+  status?: string;
+}
+
 // 🔧 Map utility functions
 export const convertPlotToMarker = (plot: {
   file_names_array?: string[];

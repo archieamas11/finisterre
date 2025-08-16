@@ -7,10 +7,15 @@ import { RefreshCw, Search, Filter, Locate, Layers, Home } from "lucide-react";
 
 import { isAdmin, isAuthenticated } from "@/utils/auth.utils.temp";
 import { Button } from "@/components/ui/button";
-import { LocateContext } from "@/components/layout/WebMapLayout";
+import { LocateContext } from "@/pages/admin/map4admin/AdminMapLayout";
 
 export default function WebMapNavs() {
   const locateCtx = useContext(LocateContext);
+
+  // 🎯 Handle add marker button click
+  const onAddMarkerClick = () => {
+    locateCtx?.toggleAddMarker();
+  };
   return (
     <nav
       className="pointer-events-auto absolute top-4 right-4 z-[990] flex flex-col gap-3 sm:top-8 sm:right-8 sm:gap-4 md:top-8 md:right-auto md:left-1/2 md:-translate-x-1/2 md:flex-row md:gap-4"
@@ -44,10 +49,10 @@ export default function WebMapNavs() {
         </Link>
       )}
 
-      {/* TODO: Adding new marker in the map*/}
+      {/* ➕ Add Marker Button for Admin */}
       {isAdmin() && (
-        <Button variant={"secondary"} className="rounded-full" size="icon">
-          <BiLocationPlus />
+        <Button variant={locateCtx?.isAddingMarker ? "default" : "secondary"} className="rounded-full" size="icon" onClick={onAddMarkerClick} aria-label="Add new marker">
+          <BiLocationPlus className={locateCtx?.isAddingMarker ? "text-primary-foreground" : "text-accent-foreground"} />
         </Button>
       )}
 

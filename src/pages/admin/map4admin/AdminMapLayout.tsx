@@ -2,7 +2,7 @@ import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 import { Suspense, lazy } from "react";
 import { GiOpenGate } from "react-icons/gi";
-import { createContext, useRef, useState } from "react";
+import { createContext, useRef, useState, useEffect } from "react";
 import { BiSolidChurch } from "react-icons/bi";
 import { renderToStaticMarkup } from "react-dom/server";
 import iconUrl from "leaflet/dist/images/marker-icon.png";
@@ -20,6 +20,9 @@ import { getCategoryBackgroundColor, convertPlotToMarker, getStatusColor } from 
 import Spinner from "@/components/ui/spinner";
 import { ErrorMessage } from "@/components/ErrorMessage";
 import MapStats from "./MapStats";
+import AddPlotDialog from "@/components/map/AddPlotDialog";
+import MapClickHandler from "@/components/map/MapClickHandler";
+import AddMarkerInstructions from "@/components/map/AddMarkerInstructions";
 const ColumbariumPopup = lazy(() => import("@/pages/admin/map4admin/ColumbariumPopup"));
 const SinglePlotLocations = lazy(() => import("@/pages/admin/map4admin/SinglePlotPopup"));
 
@@ -32,6 +35,8 @@ L.Marker.prototype.options.icon = DefaultIcon;
 
 export const LocateContext = createContext<{
   requestLocate: () => void;
+  isAddingMarker: boolean;
+  toggleAddMarker: () => void;
 } | null>(null);
 
 export default function AdminMapLayout() {
@@ -44,6 +49,44 @@ export default function AdminMapLayout() {
   const requestLocate = () => {
     if (locateRef.current) locateRef.current();
   };
+
+  // 🎯 Add marker state
+  const [isAddingMarker, setIsAddingMarker] = useState(false);
+  const [selectedCoordinates, setSelectedCoordinates] = useState<[number, number] | null>(null);
+  const [showAddDialog, setShowAddDialog] = useState(false);
+
+  const toggleAddMarker = () => {
+    setIsAddingMarker(!isAddingMarker);
+    // ✨ Toggle CSS class for cursor style
+    if (!isAddingMarker) {
+      document.body.classList.add("add-marker-mode");
+    } else {
+      document.body.classList.remove("add-marker-mode");
+    }
+  };
+
+  // 📍 Handle map click when adding marker
+  const onMapClick = (coordinates: [number, number]) => {
+    setSelectedCoordinates(coordinates);
+    setShowAddDialog(true);
+    setIsAddingMarker(false);
+    document.body.classList.remove("add-marker-mode");
+  };
+
+  // 🚫 Handle dialog close
+  const onDialogClose = (open: boolean) => {
+    setShowAddDialog(open);
+    if (!open) {
+      setSelectedCoordinates(null);
+    }
+  };
+
+  // 🧹 Cleanup effect to remove cursor class on unmount
+  useEffect(() => {
+    return () => {
+      document.body.classList.remove("add-marker-mode");
+    };
+  }, []);
 
   // Track popup close events to reset child UI (like comboboxes)
   const [popupCloseTick, setPopupCloseTick] = useState(0);
@@ -70,10 +113,14 @@ export default function AdminMapLayout() {
 
   return (
     <div className="h-full w-full rounded-lg border p-2">
-      <LocateContext.Provider value={{ requestLocate }}>
+      <LocateContext.Provider value={{ requestLocate, isAddingMarker, toggleAddMarker }}>
         <div className="relative z-1 h-full w-full">
           <WebMapNavs />
           <MapStats />
+
+          {/* 🎯 Instructions for add marker mode */}
+          <AddMarkerInstructions isVisible={isAddingMarker} />
+
           <MapContainer
             className="h-full w-full rounded-lg"
             markerZoomAnimation={true}
@@ -85,6 +132,9 @@ export default function AdminMapLayout() {
             zoom={18}
           >
             <TileLayer url="https://services.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}" maxNativeZoom={18} maxZoom={25} />
+
+            {/* 🎯 Map click handler for adding markers */}
+            <MapClickHandler isAddingMarker={isAddingMarker} onMapClick={onMapClick} />
 
             {/* Cemetery Entrance Marker */}
             <Marker
@@ -284,6 +334,9 @@ export default function AdminMapLayout() {
             })}
           </MapContainer>
         </div>
+
+        {/* 📝 Add Plot Dialog */}
+        <AddPlotDialog open={showAddDialog} onOpenChange={onDialogClose} coordinates={selectedCoordinates} />
       </LocateContext.Provider>
     </div>
   );
