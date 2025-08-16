@@ -74,7 +74,7 @@ export default function CustomersTable({ data }: CustomersTableProps) {
   return (
     <Card className="p-4">
       <DataTableToolbar table={table}>
-        <div className="*:not-first:mt-2">
+        <div className="flex w-full flex-col justify-between gap-2 sm:flex-row">
           <div className="relative">
             <Input
               className="peer h-8 ps-9 pe-9"
@@ -95,8 +95,8 @@ export default function CustomersTable({ data }: CustomersTableProps) {
               <ArrowRightIcon size={16} aria-hidden="true" />
             </button>
           </div>
+          <CreateCustomer />
         </div>
-        <CreateCustomer />
       </DataTableToolbar>
       <DataTable table={table} />
     </Card>

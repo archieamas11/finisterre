@@ -30,12 +30,12 @@ export default function CreateCustomer() {
   };
 
   return (
-    <>
+    <div className="items-right flex flex-row justify-end">
       <Button onClick={() => setOpen(true)} variant="outline" size="sm">
         <Plus />
         Add Customer
       </Button>
       <CustomerForm onOpenChange={setOpen} isPending={isPending} onSubmit={handleSubmit} open={open} mode="add" />
-    </>
+    </div>
   );
 }
