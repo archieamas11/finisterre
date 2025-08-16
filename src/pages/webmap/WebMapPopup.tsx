@@ -4,7 +4,6 @@ import { BiCheckCircle } from "react-icons/bi";
 import { FaHourglassStart } from "react-icons/fa";
 import { MapPin, Award, Ruler, Info } from "lucide-react";
 
-import { isAdmin } from "@/utils/auth.utils.temp";
 import { Button } from "@/components/ui/button";
 import { type ConvertedMarker } from "@/types/map.types";
 import { CardDescription, CardTitle } from "@/components/ui/card";
@@ -27,7 +26,7 @@ export function PlotLocations({ marker, backgroundColor, onDirectionClick }: Plo
         <div className="flex items-center justify-between gap-1">
           <div className="flex items-center gap-1">
             <MapPin className="text-primary/80 dark:text-primary" size={16} />
-            <span className="text-foreground text-sm font-medium">{marker.location}</span>
+            <span className="text-foreground text-sm leading-none font-medium">{marker.location}</span>
           </div>
           <Button
             className="flex h-8 w-8 items-center justify-center rounded-full shadow-md transition-colors"
@@ -42,12 +41,12 @@ export function PlotLocations({ marker, backgroundColor, onDirectionClick }: Plo
       {/* Plot Status */}
       <div className="bg-accent/40 dark:bg-accent/60 mb-3 flex items-center justify-between gap-2 rounded-lg p-2 shadow-sm transition-colors">
         <div className="flex items-center gap-1">
-          <Info className="text-primary/80 dark:text-primary" size={16} />
-          <span className="text-foreground text-sm">Plot Status</span>
+          <Info className="text-primary/80 dark:text-primary leading-none" size={16} />
+          <span className="text-foreground text-sm leading-none">Plot Status</span>
         </div>
         <span
           className={cn(
-            "flex items-center gap-1 rounded px-1.5 py-0.5 text-xs font-semibold",
+            "flex items-center gap-1 rounded-full px-1.5 py-0.5 text-xs font-semibold",
             marker.plotStatus === "reserved" && "bg-yellow-100 text-yellow-800",
             marker.plotStatus === "occupied" && "bg-red-100 text-red-800",
             marker.plotStatus !== "reserved" && marker.plotStatus !== "occupied" && "bg-green-100 text-green-800",
@@ -82,10 +81,10 @@ export function PlotLocations({ marker, backgroundColor, onDirectionClick }: Plo
           </div>
           <span
             className={cn(
-              "flex items-center justify-center rounded px-2 py-1 text-xs font-semibold shadow",
-              marker.category === "Bronze" && "bg-amber-200 text-amber-900 dark:bg-amber-900 dark:text-amber-200",
-              marker.category === "Silver" && "bg-gray-200 text-gray-800 dark:bg-gray-700 dark:text-gray-200",
-              marker.category !== "Bronze" && marker.category !== "Silver" && "bg-yellow-200 text-yellow-900 dark:bg-yellow-900 dark:text-yellow-200",
+              "flex items-center justify-center rounded-full py-1 text-xs font-semibold",
+              marker.category === "bronze" && "bg-amber-200 text-amber-900 dark:bg-amber-900 dark:text-amber-200",
+              marker.category === "silver" && "bg-gray-200 text-gray-800 dark:bg-gray-700 dark:text-gray-200",
+              marker.category !== "bronze" && marker.category !== "silver" && "bg-yellow-200 text-yellow-900 dark:bg-yellow-900 dark:text-yellow-200",
             )}
           >
             <Award className="inline" size={14} />
@@ -93,26 +92,6 @@ export function PlotLocations({ marker, backgroundColor, onDirectionClick }: Plo
           </span>
         </div>
       </div>
-      {(() => {
-        // 🖼️ Check both file_names_array and file_name properties
-        const images = marker.file_names_array || marker.file_name || [];
-        if (!isAdmin()) {
-          return Array.isArray(images) && images.length > 0 ? (
-            <div className="mt-5 grid grid-cols-2 gap-2">
-              {images.map((imageUrl, idx) => (
-                <img
-                  className="h-30 w-full rounded object-cover transition-transform duration-200 hover:scale-105 hover:transform"
-                  alt={`Plot media ${idx + 1}`}
-                  src={imageUrl}
-                  key={idx}
-                />
-              ))}
-            </div>
-          ) : (
-            <div className="mt-2 text-center text-xs text-gray-400">No photos available</div>
-          );
-        }
-      })()}
     </div>
   );
 }

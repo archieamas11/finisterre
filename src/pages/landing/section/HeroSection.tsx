@@ -2,6 +2,7 @@ import { Link } from "react-router-dom";
 import { ArrowRight, Sparkles, MapPin, Heart } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { RainbowButton } from "@/components/magicui/rainbow-button";
 
 export default function HeroSection() {
   return (
@@ -50,21 +51,13 @@ export default function HeroSection() {
         {/* CTA Section */}
         <div className="flex flex-col items-center justify-center gap-6 sm:flex-row">
           {/* Primary CTA */}
-          <Button
-            className={cn(
-              "group relative overflow-hidden rounded-full border-0 px-8 py-4 font-semibold shadow-lg transition-all duration-300",
-              "from-primary to-primary/80 text-primary-foreground bg-gradient-to-r",
-              "hover:shadow-primary/25 hover:from-primary/90 hover:to-primary hover:scale-105",
-            )}
-            size="lg"
-            asChild
-          >
+          <RainbowButton variant={"outline"} size={"lg"} className="rounded-full">
             <Link className="flex items-center gap-3" aria-label="Explore Map" to="/map">
               <MapPin className="h-5 w-5" />
               Explore Sacred Grounds
               <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
             </Link>
-          </Button>
+          </RainbowButton>
 
           {/* Secondary CTA */}
           <Button

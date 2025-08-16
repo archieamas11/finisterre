@@ -11,7 +11,6 @@ import iconRetinaUrl from "leaflet/dist/images/marker-icon-2x.png";
 import { MapContainer, useMapEvents, TileLayer, Polyline, Marker, Popup } from "react-leaflet";
 
 import WebMapNavs from "@/pages/webmap/WebMapNavs";
-const PlotLocations = lazy(() => import("../WebMap.popup").then((mod) => ({ default: mod.PlotLocations })));
 import { GiOpenGate } from "react-icons/gi";
 import { BiSolidChurch } from "react-icons/bi";
 import { XCircle, Route, Timer } from "lucide-react";
@@ -23,7 +22,9 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { CardContent, Card, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { usePlots } from "@/hooks/plots-hooks/plot.hooks";
 import { getCategoryBackgroundColor, convertPlotToMarker, getStatusColor } from "@/types/map.types";
+import Spinner from "@/components/ui/spinner";
 const ColumbariumPopup = lazy(() => import("@/pages/admin/map4admin/ColumbariumPopup"));
+const PlotLocations = lazy(() => import("../../pages/webmap/WebMapPopup").then((mod) => ({ default: mod.PlotLocations })));
 
 const DefaultIcon = L.icon({
   iconUrl,
@@ -52,7 +53,7 @@ export default function MapPage() {
   ];
 
   // 🎣 All hooks must be called at the top level before any early returns
-  const { error, isLoading, data: plotsData } = usePlots();
+  const { isLoading, data: plotsData } = usePlots();
   const locateRef = useRef<(() => void) | null>(null);
   const [userPosition, setUserPosition] = useState<L.LatLng | null>(null);
   const [publicRoute, setPublicRoute] = useState<RouteData | null>(null);
@@ -86,27 +87,10 @@ export default function MapPage() {
     };
   }, [publicRoute, privateRoute]);
 
-  // 🔄 Show loading state while fetching plots
   if (isLoading) {
     return (
-      <div className="relative flex h-screen w-full items-center justify-center">
-        <div className="text-center">
-          <div className="border-primary mx-auto mb-4 h-12 w-12 animate-spin rounded-full border-b-2"></div>
-          <p className="text-gray-600">Loading plot data...</p>
-        </div>
-      </div>
-    );
-  }
-
-  // ❌ Show error state if plots failed to load
-  if (error) {
-    console.error("🚨 Error loading plots:", { error });
-    return (
-      <div className="relative flex h-screen w-full items-center justify-center">
-        <div className="text-center">
-          <p className="mb-2 text-red-600">Error loading plot data</p>
-          <p className="text-sm text-gray-600">{error?.message || "Unknown error"}</p>
-        </div>
+      <div className="flex h-screen w-full items-center justify-center">
+        <Spinner />
       </div>
     );
   }
@@ -394,9 +378,7 @@ export default function MapPage() {
 
         <MapContainer className="h-full w-full" scrollWheelZoom={true} zoomControl={false} bounds={bounds} maxZoom={25} zoom={18}>
           <TileLayer url="https://services.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}" maxNativeZoom={18} maxZoom={25} />
-
           <LocationMarker />
-
           {/* Show public route polyline (user to gate) - Blue */}
           {publicRoute && (
             <Polyline
@@ -804,6 +786,7 @@ export default function MapPage() {
             return (
               <Marker key={`plot-${markers.plot_id}`} position={markers.position} icon={circleIcon}>
                 {markers.rows && markers.columns ? (
+                  // Memorial Chambers Popup
                   <Popup className="leaflet-theme-popup" offset={[-2, 5]} minWidth={450} closeButton={false}>
                     <div className="w-full py-2">
                       <Suspense
@@ -821,6 +804,7 @@ export default function MapPage() {
                     </div>
                   </Popup>
                 ) : (
+                  // Serenity Lawn Popup
                   <Popup className="leaflet-theme-popup" offset={[-2, 5]} minWidth={250} closeButton={false}>
                     <Suspense
                       fallback={

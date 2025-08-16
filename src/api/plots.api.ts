@@ -1,63 +1,33 @@
-import { toast } from "sonner";
-
 import type { plots } from "@/types/map.types";
-
 import { api } from "./axiosInstance";
 
 // // Chambers api
 // 🏛️ Get niches for specific plot/columbarium
 export async function getNichesByPlot(plot_id: string) {
   const res = await api.post("plots/get_niche_data.php", { plot_id });
-  if (!res.data?.success) {
-    throw new Error(res.data?.message || "Failed to fetch niche data");
-  }
-  if (!Array.isArray(res.data.nicheData)) {
-    throw new Error("Invalid response format - nicheData should be an array");
-  } else {
-    console.log("🚀 Fetched niches for plot:", plot_id, res.data.nicheData);
-  }
   return res.data;
 }
 
 // 🏗️ Get all plots with valid rows and columns for grid generation
 export async function getPlotsWithGrids() {
   const res = await api.post("plots/get_plots_with_grids.php");
-  if (!res.data?.success) {
-    throw new Error(res.data?.message || "Failed to fetch plots with grids");
-  } else {
-    console.log("🏗️ Fetched plots with grids:", res.data.plots);
-  }
   return res.data;
 }
 
 export async function editPlots(data: plots) {
   // 🛠️ Accepts plot data to update plot details
   const res = await api.post("plots/update_plot.php", data);
-  if (!res.data?.success) {
-    toast.error("Failed to update plot details");
-    throw new Error("Failed to update plot details");
-  }
   return res.data;
 }
 
 export async function getPlots() {
   const res = await api.post("plots/get_plots.php");
-  if (!res.data || !Array.isArray(res.data.plots)) {
-    throw new Error("Invalid response format");
-  } else {
-    console.log("Fetched plots:", res.data.plots);
-  }
   return res.data;
 }
 
 // 🏛️ Get detailed niches with owner and deceased info for specific plot
 export async function generateNicheGrid() {
   const res = await api.post("plots/make_niche_grids.php");
-  if (!res.data) {
-    throw new Error("Invalid response format");
-  } else {
-    console.log("🔍 Fetched detailed niches for plot:", res.data);
-  }
   return res.data;
 }
 
@@ -85,24 +55,11 @@ export async function getPlotsCategory() {
 // Serenity Lawn
 export async function getSerenityByPlot(plot_id: string) {
   const res = await api.post("plots/get_plots_media.php", { plot_id });
-  if (!res.data?.success) {
-    throw new Error(res.data?.message || "Failed to fetch plot media");
-  }
-  if (!Array.isArray(res.data.mediaData)) {
-    throw new Error("Invalid response format - mediaData should be an array");
-  } else {
-    console.log("🚀 Fetched media for plot:", plot_id, res.data.mediaData);
-  }
   return res.data;
 }
 
 // 🏠 Get plot owner and deceased details
 export async function getPlotDetails(plot_id: string) {
   const res = await api.post("plots/get_plot_details.php", { plot_id });
-  if (!res.data?.success) {
-    throw new Error(res.data?.message || "Failed to fetch plot details");
-  } else {
-    console.log("🚀 Fetched plot details for plot:", plot_id, res.data);
-  }
   return res.data;
 }

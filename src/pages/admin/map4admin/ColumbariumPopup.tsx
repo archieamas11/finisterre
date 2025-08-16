@@ -6,7 +6,7 @@ import { ChevronsUpDown, Check, Heart } from "lucide-react";
 import { BsFillPatchCheckFill } from "react-icons/bs";
 import { useQueryClient } from "@tanstack/react-query";
 import { Crown, Phone, User, Mail, Save, X } from "lucide-react";
-
+import { calculateYearsBuried } from "@/utils/date.utils";
 import type { nicheData } from "@/types/niche.types";
 import type { ConvertedMarker } from "@/types/map.types";
 
@@ -359,12 +359,8 @@ export default function ColumbariumPopup({ marker, onDirectionClick }: Columbari
                         <p className="mt-1 text-sm font-medium">{selectedNiche.deceased.dateOfInterment}</p>
                       </div>
                       <div className="bg-accent rounded-lg p-3">
-                        <p className="text-accent-foreground text-xs font-medium">Years Buried</p>
-                        <p className="mt-1 text-sm font-medium">
-                          {new Date().getFullYear() - new Date(selectedNiche.deceased.dateOfInterment).getFullYear() < 1
-                            ? "Less than a year"
-                            : `${new Date().getFullYear() - new Date(selectedNiche.deceased.dateOfInterment).getFullYear()} Year(s)`}
-                        </p>
+                        <p className="text-accent-foreground text-xs font-medium">YEARS BURIED</p>
+                        <p className="mt-1 text-sm font-medium">{calculateYearsBuried(selectedNiche.deceased.dateOfInterment)}</p>
                       </div>
                     </div>
                   </CardContent>

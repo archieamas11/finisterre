@@ -48,7 +48,13 @@ export default function App() {
   return (
     <BrowserRouter>
       <ErrorBoundary FallbackComponent={ErrorFallback}>
-        <Suspense fallback={<Spinner />}>
+        <Suspense
+          fallback={
+            <div className="relative flex h-screen w-full items-center justify-center">
+              <Spinner />
+            </div>
+          }
+        >
           <Routes>
             {/* Public Routes */}
             <Route path="/" element={<LandingLayout />} />
