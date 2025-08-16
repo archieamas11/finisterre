@@ -44,7 +44,11 @@ export default function AdminMapLayout() {
   const { isError, refetch, isLoading, data: plotsData } = usePlots();
   const queryClient = useQueryClient();
   const markers = plotsData?.map(convertPlotToMarker) || [];
-  const bounds: [[number, number]] = [[10.24930711375518, 123.79784801248411]];
+  // const bounds: [[number, number]] = [[10.24930711375518, 123.79784801248411]];
+  const bounds: [[number, number], [number, number]] = [
+    [10.248073279164613, 123.79742173990627],
+    [10.249898252065757, 123.79838766292835],
+  ];
   const locateRef = useRef<(() => void) | null>(null);
   const requestLocate = () => {
     if (locateRef.current) locateRef.current();
@@ -128,7 +132,7 @@ export default function AdminMapLayout() {
             fadeAnimation={false}
             zoomControl={false}
             bounds={bounds}
-            maxZoom={20}
+            maxZoom={25}
             zoom={18}
           >
             <TileLayer url="https://services.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}" maxNativeZoom={18} maxZoom={25} />

@@ -3,6 +3,7 @@ import React from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { toast } from "sonner";
 
 import { createPlots } from "@/api/plots.api";
 import type { CreatePlotRequest } from "@/types/map.types";
@@ -70,7 +71,7 @@ export default function AddPlotDialog({ open, onOpenChange, coordinates }: AddPl
     },
   });
 
-  // 📤 Handle form submission
+  // 📤 Handle form submission with toast
   const onSubmit = (data: AddPlotFormData) => {
     if (!coordinates) return;
 
@@ -83,7 +84,13 @@ export default function AddPlotDialog({ open, onOpenChange, coordinates }: AddPl
     };
 
     console.log("Submitting plot data:", plotData);
-    createPlotMutation.mutate(plotData);
+
+    // 🍞 Show promise toast
+    toast.promise(createPlotMutation.mutateAsync(plotData), {
+      loading: "Creating plot...",
+      success: "Plot created successfully!",
+      error: "Failed to create plot. Please try again.",
+    });
   };
 
   // 🚫 Handle cancel - clear form and close

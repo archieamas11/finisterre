@@ -52,7 +52,6 @@ export default function MapPage() {
     [10.249302749341647, 123.7988598710129],
   ];
 
-  // 🎣 All hooks must be called at the top level before any early returns
   const { isLoading, data: plotsData } = usePlots();
   const locateRef = useRef<(() => void) | null>(null);
   const [userPosition, setUserPosition] = useState<L.LatLng | null>(null);
@@ -330,7 +329,6 @@ export default function MapPage() {
     <LocateContext.Provider value={{ requestLocate }}>
       <div className="relative h-screen w-full">
         <WebMapNavs />
-
         {/* Navigation Control Panel */}
         {(publicRoute || privateRoute) && (
           <div className="absolute top-6 left-1/2 z-[9999] flex -translate-x-1/2 flex-col items-center gap-4 md:top-20 lg:top-20">
