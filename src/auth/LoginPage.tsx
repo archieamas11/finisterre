@@ -20,7 +20,7 @@ const FormSchema = z.object({
   username: z.string().min(2, { message: "Property ID must be at least 2 characters." }),
 });
 
-export function LoginPage() {
+export default function LoginPage() {
   const navigate = useNavigate();
   const { data, isSuccess, setAuthFromToken } = useAuthQuery();
   const form = useForm<z.infer<typeof FormSchema>>({

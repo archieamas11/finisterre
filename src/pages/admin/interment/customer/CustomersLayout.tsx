@@ -3,7 +3,6 @@ import CustomersPage from "./CustomerPage";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 export default function AdminIntermentCustomerPage() {
-  // sample data for dashboard totals
   const totalCustomers = 128;
   const totalLots = 42;
 
@@ -12,7 +11,7 @@ export default function AdminIntermentCustomerPage() {
       {/* Header Section */}
       <div className="bg-card rounded-lg border p-6 shadow-sm">
         <div className="mb-2 flex items-center gap-3">
-          <UserCircle className="text-primary h-8 w-8" strokeWidth={2.5} />
+          <UserCircle className="text-primary h-7 w-7" strokeWidth={2.5} />
           <h1 className="text-primary text-3xl font-bold">Customer Management</h1>
         </div>
         <p className="text-muted-foreground text-lg">View, search, and manage your customer records.</p>

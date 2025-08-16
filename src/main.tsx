@@ -6,16 +6,18 @@ import { QueryClientProvider, QueryClient } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/sonner.tsx";
 import App from "./App.tsx";
 import { ThemeProvider } from "@/components/provider/theme-provider.tsx";
-
+import { NuqsAdapter } from "nuqs/adapters/react";
 const queryClient = new QueryClient();
 
 createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
     <ThemeProvider attribute="class" defaultTheme="system" disableTransitionOnChange enableSystem>
       <QueryClientProvider client={queryClient}>
-        <App />
-        <ReactQueryDevtools initialIsOpen={false} />
-        <Toaster position="top-right" richColors />
+        <NuqsAdapter>
+          <App />
+          <ReactQueryDevtools initialIsOpen={false} />
+          <Toaster position="top-right" richColors />
+        </NuqsAdapter>
       </QueryClientProvider>
     </ThemeProvider>
   </React.StrictMode>,
