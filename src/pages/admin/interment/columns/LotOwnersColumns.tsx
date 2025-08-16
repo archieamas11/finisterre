@@ -154,7 +154,6 @@ export const lotOwnerColumns: ColumnDef<LotOwners>[] = [
             <DropdownMenuContent className="z-50" align="end">
               <DropdownMenuLabel>Actions</DropdownMenuLabel>
               <DropdownMenuSeparator />
-              <DropdownMenuItem>Edit lot owner</DropdownMenuItem>
               <DropdownMenuItem>View lot owner</DropdownMenuItem>
               <DropdownMenuSeparator />
               <DropdownMenuItem onClick={() => navigator.clipboard.writeText(row.original.customer_id)} className="text-red-600 hover:bg-red-100">

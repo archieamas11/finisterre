@@ -1,117 +1,144 @@
-import { AiOutlineUser } from "react-icons/ai";
-import ViewCustomerDialog from "@/pages/admin/interment/customer/ViewCustomer";
-import { type Customer } from "@/api/customer.api";
-import { DataTableColumnHeader } from "@/components/data-table/data-table-column-header";
-import EditCustomerDialog from "@/pages/admin/interment/customer/UpdateCustomer";
+"use client";
+
 import type { ColumnDef } from "@tanstack/react-table";
-import { Badge } from "@/components/ui/badge";
 import React from "react";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
-import { Archive, MoreHorizontal } from "lucide-react";
+import { MoreHorizontal, Archive } from "lucide-react";
+import type { DeceasedRecords } from "@/types/interment.types";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
+import { capitalizeWords } from "@/lib/stringUtils";
+import { DropdownMenuSeparator, DropdownMenuContent, DropdownMenuTrigger, DropdownMenuLabel, DropdownMenuItem, DropdownMenu } from "@/components/ui/dropdown-menu";
 
-const IndeterminateCheckbox = React.forwardRef<HTMLInputElement, React.InputHTMLAttributes<HTMLInputElement> & { indeterminate?: boolean }>(({ indeterminate, ...props }, ref) => {
-  const localRef = React.useRef<HTMLInputElement>(null);
-  const resolvedRef = (ref as React.RefObject<HTMLInputElement>) ?? localRef;
-
+// Fix: Checkbox with indeterminate state for header
+function SelectAllCheckbox({ table }: { table: any }) {
+  // Use ref to set indeterminate on the native input
+  const wrapperRef = React.useRef<HTMLDivElement>(null);
   React.useEffect(() => {
-    if (resolvedRef.current) {
-      resolvedRef.current.indeterminate = Boolean(indeterminate) && !props.checked;
+    if (wrapperRef.current) {
+      const input = wrapperRef.current.querySelector('input[type="checkbox"]');
+      // 🛡️ Only set indeterminate if input is HTMLInputElement
+      if (input instanceof HTMLInputElement) {
+        input.indeterminate = table.getIsSomePageRowsSelected() && !table.getIsAllPageRowsSelected();
+      }
     }
-  }, [indeterminate, props.checked, resolvedRef]);
+  }, [table.getIsSomePageRowsSelected(), table.getIsAllPageRowsSelected()]);
+  return (
+    <div ref={wrapperRef}>
+      <Checkbox
+        onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
+        className="border-gray-500 dark:border-gray-600"
+        checked={table.getIsAllPageRowsSelected()}
+        aria-label="Select all"
+      />
+    </div>
+  );
+}
 
-  return <input ref={resolvedRef} type="checkbox" {...props} />;
-});
-IndeterminateCheckbox.displayName = "IndeterminateCheckbox";
-
-export const customerColumns: ColumnDef<Customer>[] = [
+export const deceasedRecordsColumns: ColumnDef<DeceasedRecords>[] = [
   {
     id: "select",
-    header: ({ table: tbl }) => (
-      <IndeterminateCheckbox
-        aria-label="Select all rows"
-        checked={tbl.getIsAllPageRowsSelected()}
-        indeterminate={tbl.getIsSomePageRowsSelected()}
-        onChange={tbl.getToggleAllPageRowsSelectedHandler()}
-      />
-    ),
-    cell: ({ row }) => (
-      <IndeterminateCheckbox aria-label={`Select row ${row.index + 1}`} checked={row.getIsSelected()} disabled={!row.getCanSelect?.()} onChange={row.getToggleSelectedHandler()} />
-    ),
     size: 40,
-  },
-  {
-    size: 40,
-    accessorKey: "customer_id",
-    header: ({ column }) => <DataTableColumnHeader column={column} title="ID" />,
-    meta: { label: "ID" },
-  },
-  {
-    id: "full_name",
-    header: ({ column }) => <DataTableColumnHeader column={column} title="Full Name" />,
-    accessorFn: (row) => `${row.first_name}${row.middle_name ? ` ${row.middle_name}` : ""} ${row.last_name}`,
+    enableHiding: false,
+    enableSorting: false,
+    header: ({ table }) => <SelectAllCheckbox table={table} />,
     cell: ({ row }) => {
-      const fullName = `${row.original.first_name}${row.original.middle_name ? ` ${row.original.middle_name}` : ""} ${row.original.last_name}`;
+      if (!row || typeof row.getIsSelected !== "function" || typeof row.toggleSelected !== "function") return null;
+      return (
+        <Checkbox
+          onCheckedChange={(value) => {
+            row.toggleSelected(!!value);
+          }}
+          className="border-gray-300 dark:border-gray-600"
+          checked={row.getIsSelected()}
+          aria-label="Select row"
+        />
+      );
+    },
+  },
+  {
+    header: "ID",
+    size: 40,
+    accessorKey: "deceased_id",
+  },
+  {
+    header: "Decesed Name",
+    accessorKey: "dead_fullname",
+    cell: ({ row }) =>
+      row.original.dead_fullname ? (
+        row.original.dead_fullname
+      ) : (
+        <Badge variant="secondary" asChild={false}>
+          <span>N/A</span>
+        </Badge>
+      ),
+  },
+  {
+    header: "Kin",
+    accessorKey: "full_name",
+    cell: ({ row }) =>
+      row.original.full_name ? (
+        row.original.full_name
+      ) : (
+        <Badge variant="secondary" asChild={false}>
+          <span>N/A</span>
+        </Badge>
+      ),
+  },
+  {
+    id: "location",
+    header: "Buried Location",
+    accessorFn: (row) =>
+      row.block && row.plot_id
+        ? `Block ${row.block} • Grave ${row.plot_id}`
+        : row.category && row.niche_number
+          ? `${capitalizeWords(row.category)} • Niche ${row.niche_number}`
+          : null,
+    cell: ({ row }) => {
+      // 🧩 Show block/plot if present, else category/niche_id, else N/A badge
+      if (row.original.block && row.original.plot_id) {
+        return `Block ${row.original.block} • Grave ${row.original.plot_id}`;
+      } else if (row.original.category && row.original.niche_number) {
+        return `${capitalizeWords(row.original.category)} • Niche ${row.original.niche_number}`;
+      } else {
+        return (
+          <Badge variant="secondary" asChild={false}>
+            <span>N/A</span>
+          </Badge>
+        );
+      }
+    },
+  },
+  {
+    header: "Interment Date",
+    accessorKey: "dead_interment",
+    cell: ({ row }) =>
+      row.original.dead_interment ? (
+        row.original.dead_interment
+      ) : (
+        <Badge variant="secondary" asChild={false}>
+          <span>N/A</span>
+        </Badge>
+      ),
+  },
+  {
+    header: "Status",
+    id: "years_buried",
+    cell: ({ row }) => {
+      const buriedDateStr = row.original.dead_interment;
+      if (!buriedDateStr) return "Unknown";
 
-      return (
-        <div className="flex items-center gap-2">
-          <div className="bg-muted flex h-8 w-8 items-center justify-center rounded-full text-sm font-medium">
-            <AiOutlineUser />
-          </div>
-          <span>{fullName}</span>
-        </div>
-      );
-    },
-    meta: { label: "Full Name" },
-  },
-  {
-    header: ({ column }) => <DataTableColumnHeader column={column} title="Address" />,
-    accessorKey: "address",
-    meta: { label: "Address" },
-  },
-  {
-    accessorKey: "contact_number",
-    header: ({ column }) => <DataTableColumnHeader column={column} title="Phone" />,
-    meta: { label: "Phone Number" },
-  },
-  {
-    accessorKey: "email",
-    header: ({ column }) => <DataTableColumnHeader column={column} title="Email" />,
-    enableSorting: true,
-    meta: { label: "Email" },
-  },
-  {
-    id: "lot_count",
-    header: ({ column }) => (
-      <div className="flex justify-center">
-        <DataTableColumnHeader column={column} title="Lot Owned" />
-      </div>
-    ),
-    enableSorting: true,
-    enableColumnFilter: true,
-    accessorFn: (row) => (Array.isArray(row.lot_info) ? row.lot_info.length : 0),
-    cell: ({ row }) => {
-      const count = Array.isArray(row.original.lot_info) ? row.original.lot_info.length : 0;
-      return (
-        <div className="flex justify-center">
-          <Badge variant={count > 0 ? "secondary" : "outline"}>{count}</Badge>
-        </div>
-      );
-    },
-    filterFn: (row, _id, value) => {
-      const selected = Array.isArray(value) ? value : [];
-      if (selected.length === 0) return true;
-      const count = Array.isArray((row.original as Customer).lot_info) ? (row.original as Customer).lot_info!.length : 0;
-      const hasLot = count > 0;
-      return selected.some((v: string) => (v === "yes" ? hasLot : !hasLot));
-    },
-    meta: {
-      label: "Lot Owned",
-      variant: "select",
-      options: [
-        { label: "Has Lot", value: "yes" },
-        { label: "No Lot", value: "no" },
-      ],
+      const buriedDate = new Date(buriedDateStr);
+      const now = new Date();
+
+      const yearsBuried = now.getFullYear() - buriedDate.getFullYear();
+      const monthDiff = now.getMonth() - buriedDate.getMonth();
+      const dayDiff = now.getDate() - buriedDate.getDate();
+
+      // If less than a full year
+      const isLessThanOneYear = yearsBuried < 1 || (yearsBuried === 1 && (monthDiff < 0 || (monthDiff === 0 && dayDiff < 0)));
+
+      return isLessThanOneYear ? "Less than a year" : `${yearsBuried} year${yearsBuried > 1 ? "s" : ""}`;
     },
   },
   {
@@ -119,45 +146,31 @@ export const customerColumns: ColumnDef<Customer>[] = [
     size: 40,
     enableHiding: false,
     cell: ({ row }) => {
-      const [open, setOpen] = React.useState(false);
-      const [viewOpen, setViewOpen] = React.useState(false);
       if (!row?.original) return null;
       return (
-        <>
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button className="h-8 w-8 p-0" variant="ghost">
-                <span className="sr-only">Open menu</span>
-                <MoreHorizontal />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent className="z-50" align="end">
-              <DropdownMenuLabel>Actions</DropdownMenuLabel>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem
-                onClick={() => {
-                  setOpen(true);
-                }}
-              >
-                Edit Customer
-              </DropdownMenuItem>
-              <DropdownMenuItem
-                onClick={() => {
-                  setViewOpen(true);
-                }}
-              >
-                View Customer
-              </DropdownMenuItem>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem onClick={() => navigator.clipboard.writeText(String(row.original.customer_id))} className="text-red-600 hover:bg-red-100">
-                <Archive className="mr-2 h-4 w-4 text-red-600" />
-                Archive
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-          <EditCustomerDialog customer={row.original} onOpenChange={setOpen} open={open} />
-          <ViewCustomerDialog onOpenChange={setViewOpen} customer={row.original} open={viewOpen} />
-        </>
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button className="h-8 w-8 p-0" variant="ghost">
+              <span className="sr-only">Open menu</span>
+              <MoreHorizontal />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent className="z-50" align="end">
+            <DropdownMenuLabel>Actions</DropdownMenuLabel>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem>View deceased</DropdownMenuItem>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem
+              onClick={() => {
+                alert("Archive clicked");
+              }}
+              className="text-red-600 hover:bg-red-100"
+            >
+              <Archive className="mr-2 h-4 w-4 text-red-600" />
+              Archive
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
       );
     },
   },

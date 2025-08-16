@@ -16,7 +16,7 @@ import {
 import type { DeceasedRecords } from "@/types/interment.types";
 
 import { Input } from "@/components/ui/input";
-import { deceasedRecordsColumns } from "./columns/columns";
+import { deceasedRecordsColumns } from "./columns/DeceasedColumns";
 import { DataTable } from "@/components/data-table/data-table";
 import { DataTableToolbar } from "@/components/data-table/data-table-toolbar";
 import { Card } from "@/components/ui/card";
