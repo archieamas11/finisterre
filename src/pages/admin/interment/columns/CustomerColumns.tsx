@@ -49,16 +49,17 @@ export const customerColumns: ColumnDef<Customer>[] = [
   {
     id: "full_name",
     header: ({ column }) => <DataTableColumnHeader column={column} title="Full Name" />,
-    accessorFn: (row) => `${row.first_name}${row.middle_name ? ` ${row.middle_name}` : ""} ${row.last_name}`,
+    accessorFn: (row) => [row.first_name, row.middle_name, row.last_name].filter(Boolean).join(" "),
     cell: ({ row }) => {
-      const fullName = `${row.original.first_name}${row.original.middle_name ? ` ${row.original.middle_name}` : ""} ${row.original.last_name}`;
-
+      const fullName = String(row.getValue("full_name"));
       return (
         <div className="flex items-center gap-2">
-          <div className="bg-muted flex h-6 w-6 items-center justify-center rounded-full text-sm font-medium">
+          <div className="bg-muted flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-sm font-medium" aria-hidden="true">
             <AiOutlineUser size={14} />
           </div>
-          <span>{fullName}</span>
+          <span title={fullName} className="max-w-[14rem] truncate">
+            {fullName}
+          </span>
         </div>
       );
     },
