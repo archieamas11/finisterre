@@ -10,9 +10,7 @@ import shadowUrl from "leaflet/dist/images/marker-shadow.png";
 import iconRetinaUrl from "leaflet/dist/images/marker-icon-2x.png";
 import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
 import { useQueryClient } from "@tanstack/react-query";
-
 import type { ConvertedMarker } from "@/types/map.types";
-
 import WebMapNavs from "@/pages/webmap/WebMapNavs";
 import { Skeleton } from "@/components/ui/skeleton";
 import { usePlots } from "@/hooks/plots-hooks/plot.hooks";
@@ -20,8 +18,9 @@ import { getCategoryBackgroundColor, convertPlotToMarker, getStatusColor } from 
 import Spinner from "@/components/ui/spinner";
 import { ErrorMessage } from "@/components/ErrorMessage";
 import MapStats from "./MapStats";
-import AddPlotMarkerDialog from "@/components/map/AddPlotMarkerDialog";
 import MapClickHandler from "@/components/map/MapClickHandler";
+
+import AddPlotMarkerDialog from "@/components/map/AddPlotMarkerDialog";
 import AddMarkerInstructions from "@/components/map/AddMarkerInstructions";
 import EditMarkerInstructions from "@/components/map/EditMarkerInstructions";
 import EditableMarker from "@/components/map/EditableMarker";
