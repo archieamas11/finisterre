@@ -61,6 +61,7 @@ export default function MapPage() {
   const pendingDestinationRef = useRef<[number, number] | null>(null);
   const lastUserPositionRef = useRef<L.LatLng | null>(null);
   const [isRecalculating, setIsRecalculating] = useState(false);
+  const [isNavLoading, setIsNavLoading] = useState(false);
   const watchIdRef = useRef<number | null>(null);
 
   // 📊 Process data after hooks
@@ -113,7 +114,7 @@ export default function MapPage() {
             setIsRecalculating(true);
             // Recalculate route from new position
             if (privateRoute) {
-              handleStartNavigation(newLatLng, privateRoute.to);
+              handleStartNavigation(newLatLng, privateRoute.to, false);
             }
           }
         }
@@ -233,8 +234,9 @@ export default function MapPage() {
   }
 
   // Start navigation: set public/private routes and fetch polylines
-  async function handleStartNavigation(userLatLng: L.LatLng, dest: [number, number]) {
+  async function handleStartNavigation(userLatLng: L.LatLng, dest: [number, number], showLoading: boolean = true) {
     try {
+      if (showLoading) setIsNavLoading(true);
       setIsRecalculating(false);
 
       // Step 1: public route (user to gate)
@@ -288,6 +290,8 @@ export default function MapPage() {
     } catch (error) {
       console.error("Navigation error:", error);
       setIsRecalculating(false);
+    } finally {
+      if (showLoading) setIsNavLoading(false);
     }
   }
 
@@ -445,7 +449,7 @@ export default function MapPage() {
                           </>
                         }
                       >
-                        <ColumbariumPopup onDirectionClick={handleDirectionClick} marker={markers} />
+                        <ColumbariumPopup isDirectionLoading={isNavLoading} onDirectionClick={handleDirectionClick} marker={markers} />
                       </Suspense>
                     </div>
                   </Popup>
@@ -479,7 +483,12 @@ export default function MapPage() {
                         </>
                       }
                     >
-                      <PlotLocations backgroundColor={getCategoryBackgroundColor(markers.category)} onDirectionClick={handleDirectionClick} marker={markers} />
+                      <PlotLocations
+                        isDirectionLoading={isNavLoading}
+                        backgroundColor={getCategoryBackgroundColor(markers.category)}
+                        onDirectionClick={handleDirectionClick}
+                        marker={markers}
+                      />
                     </Suspense>
                   </Popup>
                 )}

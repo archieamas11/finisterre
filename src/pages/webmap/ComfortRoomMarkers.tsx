@@ -13,33 +13,28 @@ export default function ComfortRoomMarker() {
         iconSize: [32, 32],
         className: "destination-marker",
         html: renderToStaticMarkup(
-          <div
-            style={{
-              padding: "4px",
-              background: "#059669",
-              display: "inline-block",
-              border: "2px solid #fff",
-              transform: "rotate(-45deg)",
-              borderRadius: "50% 50% 50% 0",
-              boxShadow: "0 0 8px rgba(0,0,0,0.15)",
-              animation: "marker-pop-in 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards",
-            }}
-          >
-            <style>{`
-              @keyframes marker-pop-in {
-                0% { transform: rotate(-45deg) scale(0); opacity: 0; }
-                70% { transform: rotate(-45deg) scale(1.1); opacity: 1; }
-                100% { transform: rotate(-45deg) scale(1); opacity: 1; }
-              }
-            `}</style>
-            <FaToilet
+          <div className="marker-pop-in">
+            <div
               style={{
-                transform: "rotate(45deg)",
+                padding: "4px",
+                background: "#059669",
+                display: "inline-block",
+                border: "2px solid #fff",
+                transform: "rotate(-45deg)",
+                borderRadius: "50% 50% 50% 0",
+                boxShadow: "0 0 8px rgba(0,0,0,0.15)",
               }}
-              className="z-999 text-white"
-              strokeWidth={2.5}
-              size={16}
-            />
+            >
+              <FaToilet
+                style={{
+                  transform: "rotate(45deg)",
+                }}
+                className="z-999 text-white"
+                strokeWidth={2.5}
+                title="Comfort Room"
+                size={16}
+              />
+            </div>
           </div>,
         ),
       })}

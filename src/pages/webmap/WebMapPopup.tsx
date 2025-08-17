@@ -9,14 +9,15 @@ import { type ConvertedMarker } from "@/types/map.types";
 import { CardDescription, CardTitle } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 import { motion } from "framer-motion";
-
+import { Spinner } from "@/components/ui/spinner";
 interface PlotLocationsProps {
   marker: ConvertedMarker;
   backgroundColor?: string;
   onDirectionClick?: () => void;
+  isDirectionLoading?: boolean;
 }
 
-export function PlotLocations({ marker, backgroundColor, onDirectionClick }: PlotLocationsProps) {
+export function PlotLocations({ marker, backgroundColor, onDirectionClick, isDirectionLoading = false }: PlotLocationsProps) {
   return (
     <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3 }} className="mt-5">
       <div className="bg-background dark:bg-muted rounded-t-lg p-3 transition-colors" style={backgroundColor ? { background: backgroundColor } : {}}>
@@ -33,9 +34,12 @@ export function PlotLocations({ marker, backgroundColor, onDirectionClick }: Plo
             className="flex h-8 w-8 items-center justify-center rounded-full shadow-md transition-colors"
             style={backgroundColor ? { background: backgroundColor } : {}}
             onClick={onDirectionClick}
+            disabled={isDirectionLoading}
+            aria-busy={isDirectionLoading}
+            type="button"
             variant="secondary"
           >
-            <FaDirections className="text-white" />
+            {isDirectionLoading ? <Spinner className="h-4 w-4 text-white" /> : <FaDirections className="text-white" />}
           </Button>
         </div>
       </div>

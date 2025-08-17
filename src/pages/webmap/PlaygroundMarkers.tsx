@@ -28,26 +28,16 @@ export default function ParkingMarkers() {
                 height: "32px",
               }}
             >
-              <style>{`
-                @keyframes marker-pop-in {
-                  0% { transform: scale(0); opacity: 0; }
-                  70% { transform: scale(1.1); opacity: 1; }
-                  100% { transform: scale(1); opacity: 1; }
-                }
-                .animated-marker {
-                  animation: marker-pop-in 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
-                  transform-origin: center center;
-                }
-              `}</style>
               <img
                 src="https://res.cloudinary.com/djrkvgfvo/image/upload/v1753206700/playground_mxeqep.jpg"
-                className="animated-marker"
+                className="marker-pop-in"
                 style={{
                   display: "block",
                   width: "100%",
                   height: "100%",
                   objectFit: "cover",
                 }}
+                alt=""
               />
             </div>,
           ),
@@ -84,26 +74,16 @@ export default function ParkingMarkers() {
                 height: "32px",
               }}
             >
-              <style>{`
-                @keyframes marker-pop-in {
-                  0% { transform: scale(0); opacity: 0; }
-                  70% { transform: scale(1.1); opacity: 1; }
-                  100% { transform: scale(1); opacity: 1; }
-                }
-                .animated-marker {
-                  animation: marker-pop-in 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
-                  transform-origin: center center;
-                }
-              `}</style>
               <img
                 src="https://res.cloudinary.com/djrkvgfvo/image/upload/v1753206700/playground_mxeqep.jpg"
-                className="animated-marker"
+                className="marker-pop-in"
                 style={{
                   display: "block",
                   width: "100%",
                   height: "100%",
                   objectFit: "cover",
                 }}
+                alt=""
               />
             </div>,
           ),

@@ -3,6 +3,7 @@ import { useState } from "react";
 import { ImLibrary } from "react-icons/im";
 import { FaDirections } from "react-icons/fa";
 import { ChevronsUpDown, Check, Heart } from "lucide-react";
+import { Spinner } from "@/components/ui/spinner";
 import { BsFillPatchCheckFill } from "react-icons/bs";
 import { useQueryClient } from "@tanstack/react-query";
 import { Crown, Phone, User, Mail, Save, X } from "lucide-react";
@@ -29,9 +30,10 @@ import { motion } from "framer-motion";
 interface ColumbariumPopupProps {
   marker: ConvertedMarker;
   onDirectionClick?: () => void;
+  isDirectionLoading?: boolean;
 }
 
-export default function ColumbariumPopup({ marker, onDirectionClick }: ColumbariumPopupProps) {
+export default function ColumbariumPopup({ marker, onDirectionClick, isDirectionLoading = false }: ColumbariumPopupProps) {
   const { data: customersData, isLoading: isLoadingCustomers } = useCustomers();
   const customers = customersData || [];
   const [selectedNiche, setSelectedNiche] = useState<nicheData | null>(null);
@@ -161,9 +163,12 @@ export default function ColumbariumPopup({ marker, onDirectionClick }: Columbari
             className="flex h-12 w-12 items-center justify-center rounded-full p-0 shadow-md transition-colors"
             style={{ minWidth: "2rem", minHeight: "2rem", background: "#4f46e5" }}
             onClick={onDirectionClick}
+            disabled={isDirectionLoading}
+            aria-busy={isDirectionLoading}
+            type="button"
             variant="secondary"
           >
-            <FaDirections className="text-base text-white" />
+            {isDirectionLoading ? <Spinner className="h-5 w-5 text-white" /> : <FaDirections className="text-base text-white" />}
           </Button>
         )}
       </div>

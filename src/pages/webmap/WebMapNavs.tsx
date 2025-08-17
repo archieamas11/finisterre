@@ -61,12 +61,11 @@ export default function WebMapNavs() {
         </Button>
       )}
 
-      {/* Show Login button only when the user is NOT authenticated */}
       {!isAuthenticated() && (
-        <Link to={"/login"}>
-          <Button variant={"secondary"} className="rounded-full" size="default">
-            <RiLoginBoxLine />
-            Login
+        <Link to="/login">
+          <Button variant="secondary" size="default" className="lg:size-default md:size-icon sm:size-icon rounded-full transition-all duration-200 lg:gap-2">
+            <RiLoginBoxLine className="h-4 w-4" />
+            <span className="hidden lg:inline">Login</span>
           </Button>
         </Link>
       )}
