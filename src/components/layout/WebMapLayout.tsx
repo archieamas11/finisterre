@@ -18,7 +18,7 @@ import { CardContent, Card } from "@/components/ui/card";
 import { usePlots } from "@/hooks/plots-hooks/plot.hooks";
 import { getCategoryBackgroundColor, convertPlotToMarker, getStatusColor } from "@/types/map.types";
 import Spinner from "@/components/ui/spinner";
-import PlaygroundMarkers from "@/pages/webmap/PlaygroundMarkers";
+const PlaygroundMarkers = lazy(() => import("@/pages/webmap/PlaygroundMarkers"));
 const ColumbariumPopup = lazy(() => import("@/pages/admin/map4admin/ColumbariumPopup"));
 const PlotLocations = lazy(() => import("../../pages/webmap/WebMapPopup").then((mod) => ({ default: mod.PlotLocations })));
 const ComfortRoomMarker = lazy(() => import("../../pages/webmap/ComfortRoomMarkers"));
