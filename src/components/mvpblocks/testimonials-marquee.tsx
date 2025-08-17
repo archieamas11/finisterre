@@ -169,10 +169,7 @@ const testimonials = [
 
 export default function Testimonials() {
   return (
-    <section className="relative container mx-auto w-[85vw] py-10">
-      {/* Decorative elements */}
-      <div className="absolute top-20 -left-20 z-10 h-64 w-64 rounded-full bg-green-600/5 blur-3xl" />
-      <div className="absolute -right-20 bottom-20 z-10 h-64 w-64 rounded-full bg-green-600/5 blur-3xl" />
+    <section className="relative mx-auto max-w-screen-xl overflow-x-clip px-4 py-10 sm:px-6 lg:px-8">
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
         <h2 className="text-foreground mb-4 text-center text-4xl leading-[1.2] font-bold tracking-tighter md:text-5xl">What Families Are Saying</h2>
         <h3 className="text-muted-foreground mx-auto mb-8 max-w-lg text-center text-lg font-medium tracking-tight text-balance">
@@ -182,7 +179,7 @@ export default function Testimonials() {
         </h3>
       </motion.div>
       <div className="relative mt-6 max-h-screen overflow-hidden">
-        <div className="gap-4 md:columns-2 xl:columns-3 2xl:columns-4">
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
           {Array(Math.ceil(testimonials.length / 3))
             .fill(0)
             .map((_, i) => (

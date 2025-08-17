@@ -1,3 +1,4 @@
+import * as React from 'react';
 import { cn } from '@/lib/utils';
 import { type ComponentPropsWithoutRef } from 'react';
 
@@ -41,33 +42,45 @@ export function Marquee({
   repeat = 4,
   ...props
 }: MarqueeProps) {
+  const directionClass = vertical ? 'flex-col animate-marquee-vertical' : 'flex-row animate-marquee';
+  const hoverClass = pauseOnHover ? 'group-hover:[animation-play-state:paused]' : '';
+  const reverseClass = reverse ? '[animation-direction:reverse]' : '';
+
+  // Clone the content twice for a seamless, continuous loop
+  const content = Array.from({ length: repeat }).map((_, idx) => (
+    <React.Fragment key={idx}>{children}</React.Fragment>
+  ));
+
   return (
-    <div
+  <div
       {...props}
       className={cn(
-        'group flex [gap:var(--gap)] overflow-hidden p-2 [--duration:40s] [--gap:1rem]',
-        {
-          'flex-row': !vertical,
-          'flex-col': vertical,
-        },
-        className,
+    'group relative flex overflow-hidden p-2 [--duration:40s] [--gap:1rem]',
+    vertical ? 'flex-col' : 'flex-row',
+    className,
       )}
     >
-      {Array(repeat)
-        .fill(0)
-        .map((_, i) => (
-          <div
-            key={i}
-            className={cn('flex shrink-0 justify-around [gap:var(--gap)]', {
-              'animate-marquee flex-row': !vertical,
-              'animate-marquee-vertical flex-col': vertical,
-              'group-hover:[animation-play-state:paused]': pauseOnHover,
-              '[animation-direction:reverse]': reverse,
-            })}
-          >
-            {children}
-          </div>
-        ))}
+      <div
+        className={cn(
+          'flex shrink-0 [gap:var(--gap)]',
+          directionClass,
+          hoverClass,
+          reverseClass,
+        )}
+      >
+        {content}
+      </div>
+      <div
+        aria-hidden="true"
+        className={cn(
+          'flex shrink-0 [gap:var(--gap)]',
+          directionClass,
+          hoverClass,
+          reverseClass,
+        )}
+      >
+        {content}
+      </div>
     </div>
   );
 }
