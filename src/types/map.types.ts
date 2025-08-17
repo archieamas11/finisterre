@@ -45,10 +45,7 @@ export interface plots {
 
 // 🆕 Interface for creating new plots
 export interface CreatePlotRequest {
-  area: string;
   block: string;
-  width: string;
-  length: string;
   category: string;
   coordinates: string; // String format for API: "lng, lat"
   status?: string;

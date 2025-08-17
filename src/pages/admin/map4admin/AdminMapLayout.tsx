@@ -20,7 +20,7 @@ import { getCategoryBackgroundColor, convertPlotToMarker, getStatusColor } from 
 import Spinner from "@/components/ui/spinner";
 import { ErrorMessage } from "@/components/ErrorMessage";
 import MapStats from "./MapStats";
-import AddPlotDialog from "@/components/map/AddPlotDialog";
+import AddPlotDialog from "@/components/map/AddSerinityMarker";
 import MapClickHandler from "@/components/map/MapClickHandler";
 import AddMarkerInstructions from "@/components/map/AddMarkerInstructions";
 const ColumbariumPopup = lazy(() => import("@/pages/admin/map4admin/ColumbariumPopup"));
