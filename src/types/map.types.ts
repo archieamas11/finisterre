@@ -70,7 +70,7 @@ export interface CreateMemorialChambersRequest {
   status?: string;
 }
 
-// 🏺 Columbarium plot request  
+// 🏺 Columbarium plot request
 export interface CreateColumbariumRequest {
   rows: string;
   columns: string;

@@ -470,7 +470,7 @@ export default function AddPlotMarkerDialog({ open, onOpenChange, coordinates }:
           )}
 
           {!selectedMarkerType && (
-            <div className="py-8 text-center text-muted-foreground">
+            <div className="text-muted-foreground py-8 text-center">
               <p>Please go back and select a marker type first.</p>
               <DialogStackFooter className="mt-4">
                 <DialogStackPrevious asChild>
