@@ -25,3 +25,4 @@ dist-ssr
 *.sw?
 .github/*
 docs
+testsprite_tests

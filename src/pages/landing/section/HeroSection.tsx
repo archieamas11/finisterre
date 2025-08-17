@@ -2,6 +2,7 @@ import { Link } from "react-router-dom";
 import { ArrowRight, Sparkles, MapPin, Heart } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { RainbowButton } from "@/components/magicui/rainbow-button";
+import { AnimatedGradientText } from "@/components/magicui/animated-gradient-text";
 
 export default function HeroSection() {
   return (
@@ -53,7 +54,8 @@ export default function HeroSection() {
           <RainbowButton variant={"outline"} size={"lg"} className="rounded-full">
             <Link className="flex items-center gap-3" aria-label="Explore Map" to="/map">
               <MapPin className="h-5 w-5" />
-              Explore Sacred Grounds
+              <hr className="mx-2 h-4 w-px shrink-0 bg-neutral-500" />
+              <AnimatedGradientText className="flex items-center">Explore Sacred Grounds</AnimatedGradientText>
               <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
             </Link>
           </RainbowButton>
