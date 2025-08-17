@@ -51,6 +51,33 @@ export interface CreatePlotRequest {
   status?: string;
 }
 
+// 🏛️ Marker types for different plot categories
+export type MarkerType = "Serenity Lawn" | "Columbarium" | "Memorial Chambers";
+
+// 🌿 Serenity Lawn plot request
+export interface CreateSerenityLawnRequest {
+  block: string;
+  category: string;
+  coordinates: string;
+  status?: string;
+}
+
+// 🏛️ Memorial Chambers plot request
+export interface CreateMemorialChambersRequest {
+  rows: string;
+  columns: string;
+  coordinates: string;
+  status?: string;
+}
+
+// 🏺 Columbarium plot request  
+export interface CreateColumbariumRequest {
+  rows: string;
+  columns: string;
+  coordinates: string;
+  status?: string;
+}
+
 // 🔧 Map utility functions
 export const convertPlotToMarker = (plot: {
   file_names_array?: string[];

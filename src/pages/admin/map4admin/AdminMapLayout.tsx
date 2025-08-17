@@ -20,7 +20,7 @@ import { getCategoryBackgroundColor, convertPlotToMarker, getStatusColor } from 
 import Spinner from "@/components/ui/spinner";
 import { ErrorMessage } from "@/components/ErrorMessage";
 import MapStats from "./MapStats";
-import AddPlotDialog from "@/components/map/AddSerinityMarker";
+import AddPlotMarkerDialog from "@/components/map/AddPlotMarkerDialog";
 import MapClickHandler from "@/components/map/MapClickHandler";
 import AddMarkerInstructions from "@/components/map/AddMarkerInstructions";
 const ColumbariumPopup = lazy(() => import("@/pages/admin/map4admin/ColumbariumPopup"));
@@ -340,7 +340,7 @@ export default function AdminMapLayout() {
         </div>
 
         {/* 📝 Add Plot Dialog */}
-        <AddPlotDialog open={showAddDialog} onOpenChange={onDialogClose} coordinates={selectedCoordinates} />
+        <AddPlotMarkerDialog open={showAddDialog} onOpenChange={onDialogClose} coordinates={selectedCoordinates} />
       </LocateContext.Provider>
     </div>
   );

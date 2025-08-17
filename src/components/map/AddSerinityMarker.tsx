@@ -7,7 +7,6 @@ import { toast } from "sonner";
 import { createPlots } from "@/api/plots.api";
 import type { CreatePlotRequest } from "@/types/map.types";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
