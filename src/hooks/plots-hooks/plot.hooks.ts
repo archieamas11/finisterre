@@ -19,7 +19,6 @@ import { createPlots, editPlots, getPlots } from "@/api/plots.api";
 //   });
 // }
 
-// 3) Mutation for edit
 export function useEditPlots() {
   const qc = useQueryClient();
   return useMutation<plots, Error, plots>({
@@ -38,7 +37,6 @@ export function useEditPlots() {
   });
 }
 
-// 1) Query for list
 export function usePlots() {
   return useQuery({
     queryKey: ["plots"],

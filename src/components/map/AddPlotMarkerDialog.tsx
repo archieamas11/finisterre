@@ -66,6 +66,8 @@ interface AddPlotMarkerDialogProps {
 export default function AddPlotMarkerDialog({ open, onOpenChange, coordinates }: AddPlotMarkerDialogProps) {
   const queryClient = useQueryClient();
   const [selectedMarkerType, setSelectedMarkerType] = useState<MarkerType | null>(null);
+  // Remount key to reset internal DialogStack step to index 0 when forms reset without closing
+  const [stackKey, setStackKey] = useState(0);
 
   // 🔄 Form setup for marker type selection
   const markerTypeForm = useForm<MarkerTypeFormData>({
@@ -113,9 +115,6 @@ export default function AddPlotMarkerDialog({ open, onOpenChange, coordinates }:
       onOpenChange(false);
       resetAllForms();
     },
-    onError: (error) => {
-      console.error("Error creating Serenity Lawn plot:", error);
-    },
   });
 
   const createMemorialChambersMutation = useMutation({
@@ -127,9 +126,6 @@ export default function AddPlotMarkerDialog({ open, onOpenChange, coordinates }:
       queryClient.invalidateQueries({ queryKey: ["map-stats", "serenity"] });
       onOpenChange(false);
       resetAllForms();
-    },
-    onError: (error) => {
-      console.error("Error creating Memorial Chambers plot:", error);
     },
   });
 
@@ -143,9 +139,6 @@ export default function AddPlotMarkerDialog({ open, onOpenChange, coordinates }:
       onOpenChange(false);
       resetAllForms();
     },
-    onError: (error) => {
-      console.error("Error creating Columbarium plot:", error);
-    },
   });
 
   // 🧹 Reset all forms
@@ -155,6 +148,8 @@ export default function AddPlotMarkerDialog({ open, onOpenChange, coordinates }:
     memorialChambersForm.reset();
     columbariumForm.reset();
     setSelectedMarkerType(null);
+    // Ensure the stack returns to the first dialog when staying open
+    setStackKey((k) => k + 1);
   };
 
   // 🎯 Handle marker type selection and move to next step
@@ -220,15 +215,17 @@ export default function AddPlotMarkerDialog({ open, onOpenChange, coordinates }:
   };
 
   // 🚫 Handle dialog close - reset forms and state
-  const onDialogOpenChange = (open: boolean) => {
-    if (!open) {
+  const onDialogOpenChange = (nextOpen: boolean) => {
+    // 🛑 Prevent update loops by ignoring redundant callbacks
+    if (nextOpen === open) return;
+    if (!nextOpen) {
       resetAllForms();
     }
-    onOpenChange(open);
+    onOpenChange(nextOpen);
   };
 
   return (
-    <DialogStack open={open} onOpenChange={onDialogOpenChange}>
+    <DialogStack key={stackKey} open={open} onOpenChange={onDialogOpenChange}>
       <DialogStackOverlay />
       <DialogStackBody>
         {/* 🎯 First Dialog: Marker Type Selection */}
@@ -250,7 +247,7 @@ export default function AddPlotMarkerDialog({ open, onOpenChange, coordinates }:
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Marker Type</FormLabel>
-                    <Select onValueChange={field.onChange} defaultValue={field.value}>
+                    <Select onValueChange={field.onChange} value={field.value ?? ""}>
                       <FormControl>
                         <SelectTrigger className="w-full">
                           <SelectValue placeholder="Choose marker type to add" />
@@ -279,7 +276,7 @@ export default function AddPlotMarkerDialog({ open, onOpenChange, coordinates }:
           </Form>
         </DialogStackContent>
 
-        {/* � Second Dialog: Dynamic Form Based on Selection */}
+        {/* 🎨 Second Dialog: Dynamic Form Based on Selection */}
         <DialogStackContent index={1}>
           <DialogStackHeader>
             <DialogStackTitle>
@@ -301,7 +298,7 @@ export default function AddPlotMarkerDialog({ open, onOpenChange, coordinates }:
                       render={({ field }) => (
                         <FormItem>
                           <FormLabel>Category</FormLabel>
-                          <Select onValueChange={field.onChange} defaultValue={field.value}>
+                          <Select onValueChange={field.onChange} value={field.value ?? ""}>
                             <FormControl>
                               <SelectTrigger className="w-full">
                                 <SelectValue placeholder="Select category" />
@@ -326,7 +323,7 @@ export default function AddPlotMarkerDialog({ open, onOpenChange, coordinates }:
                       render={({ field }) => (
                         <FormItem>
                           <FormLabel>Block</FormLabel>
-                          <Select onValueChange={field.onChange} defaultValue={field.value}>
+                          <Select onValueChange={field.onChange} value={field.value ?? ""}>
                             <FormControl>
                               <SelectTrigger className="w-full">
                                 <SelectValue placeholder="Select block" />

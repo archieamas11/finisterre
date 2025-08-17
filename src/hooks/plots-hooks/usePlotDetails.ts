@@ -26,7 +26,7 @@ interface DeceasedData {
 
 interface PlotDetailsData {
   owner: OwnerData | null;
-  deceased: DeceasedData[]; // Changed to array
+  deceased: DeceasedData[];
 }
 
 export const usePlotDetails = (plot_id: string) => {
