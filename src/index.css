@@ -223,3 +223,12 @@
 .add-marker-mode * {
   cursor: crosshair !important;
 }
+
+/* ✏️ Edit marker mode styling */
+.edit-marker-mode {
+  cursor: pointer !important;
+}
+
+.edit-marker-mode * {
+  cursor: pointer !important;
+}

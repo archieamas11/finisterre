@@ -38,7 +38,6 @@ export default function AddPlotMarkerDialog({ open, onOpenChange, coordinates }:
 
   // 🚫 Handle dialog close - reset forms and state
   const onDialogOpenChange = (nextOpen: boolean) => {
-    // 🛑 Prevent update loops by ignoring redundant callbacks
     if (nextOpen === open) return;
     if (!nextOpen) {
       resetAllForms();

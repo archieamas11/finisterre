@@ -20,6 +20,12 @@ export async function editPlots(data: plots) {
   return res.data;
 }
 
+export async function updatePlotCoordinates(plot_id: string, coordinates: string) {
+  // 📍 Update only the coordinates of a specific plot
+  const res = await api.post("plots/update_plot_coordinates.php", { plot_id, coordinates });
+  return res.data;
+}
+
 export async function getPlots() {
   const res = await api.post("plots/get_plots.php");
   return res.data;

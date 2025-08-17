@@ -1,13 +1,14 @@
-import { BiLocationPlus } from "react-icons/bi";
+import { RiMapPinAddLine } from "react-icons/ri";
 import { RiLoginBoxLine } from "react-icons/ri";
 import { RiListSettingsFill } from "react-icons/ri";
-import { useContext } from "react";
+import { useContext, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { RefreshCw, Search, Filter, Locate, Layers, Home } from "lucide-react";
 
 import { isAdmin, isAuthenticated } from "@/utils/auth.utils.temp";
 import { Button } from "@/components/ui/button";
 import { LocateContext } from "@/pages/admin/map4admin/AdminMapLayout";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 
 export default function WebMapNavs() {
   const locateCtx = useContext(LocateContext);
@@ -17,6 +18,24 @@ export default function WebMapNavs() {
   const onAddMarkerClick = () => {
     locateCtx?.toggleAddMarker();
   };
+  const onEditMarkerClick = () => {
+    locateCtx?.toggleEditMarker?.();
+  };
+
+  useEffect(() => {
+    if (!locateCtx?.isAddingMarker) return;
+
+    function onKeyDown(e: KeyboardEvent) {
+      if (e.key === "Escape") {
+        e.preventDefault();
+        locateCtx?.toggleAddMarker?.();
+      }
+    }
+
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, [locateCtx?.isAddingMarker, locateCtx?.toggleAddMarker]);
+
   return (
     <nav
       className="pointer-events-auto absolute top-4 right-4 z-[990] flex flex-col gap-3 sm:top-8 sm:right-8 sm:gap-4 md:top-8 md:right-auto md:left-1/2 md:-translate-x-1/2 md:flex-row md:gap-4"
@@ -56,9 +75,20 @@ export default function WebMapNavs() {
 
       {/* ➕ Add Marker Button for Admin */}
       {isAdmin() && location.pathname === "/admin/map" && (
-        <Button variant={locateCtx?.isAddingMarker ? "default" : "secondary"} className="rounded-full" size="icon" onClick={onAddMarkerClick} aria-label="Add new marker">
-          <BiLocationPlus className={locateCtx?.isAddingMarker ? "text-primary-foreground" : "text-accent-foreground"} />
-        </Button>
+        <>
+          {/* Dropdown for Add Marker Options */}
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="secondary" className="rounded-full" size="icon">
+                <RiMapPinAddLine className={locateCtx?.isAddingMarker ? "text-primary-foreground" : "text-accent-foreground"} />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent>
+              <DropdownMenuItem onClick={onAddMarkerClick}>{locateCtx?.isAddingMarker ? "Cancel Add" : "Add Marker"}</DropdownMenuItem>
+              <DropdownMenuItem onClick={onEditMarkerClick}>{locateCtx?.isEditingMarker ? "Cancel Edit" : "Edit Marker"}</DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </>
       )}
 
       {!isAuthenticated() && (

@@ -23,6 +23,8 @@ import MapStats from "./MapStats";
 import AddPlotMarkerDialog from "@/components/map/AddPlotMarkerDialog";
 import MapClickHandler from "@/components/map/MapClickHandler";
 import AddMarkerInstructions from "@/components/map/AddMarkerInstructions";
+import EditMarkerInstructions from "@/components/map/EditMarkerInstructions";
+import EditableMarker from "@/components/map/EditableMarker";
 const ColumbariumPopup = lazy(() => import("@/pages/admin/map4admin/ColumbariumPopup"));
 const SinglePlotLocations = lazy(() => import("@/pages/admin/map4admin/SinglePlotPopup"));
 
@@ -37,6 +39,8 @@ export const LocateContext = createContext<{
   requestLocate: () => void;
   isAddingMarker: boolean;
   toggleAddMarker: () => void;
+  isEditingMarker: boolean;
+  toggleEditMarker: () => void;
 } | null>(null);
 
 export default function AdminMapLayout() {
@@ -44,7 +48,6 @@ export default function AdminMapLayout() {
   const { isError, refetch, isLoading, data: plotsData } = usePlots();
   const queryClient = useQueryClient();
   const markers = plotsData?.map(convertPlotToMarker) || [];
-  // const bounds: [[number, number]] = [[10.24930711375518, 123.79784801248411]];
   const bounds: [[number, number], [number, number]] = [
     [10.248073279164613, 123.79742173990627],
     [10.249898252065757, 123.79838766292835],
@@ -59,6 +62,10 @@ export default function AdminMapLayout() {
   const [selectedCoordinates, setSelectedCoordinates] = useState<[number, number] | null>(null);
   const [showAddDialog, setShowAddDialog] = useState(false);
 
+  // ✏️ Edit marker state
+  const [isEditingMarker, setIsEditingMarker] = useState(false);
+  const [selectedPlotForEdit, setSelectedPlotForEdit] = useState<string | null>(null);
+
   const toggleAddMarker = () => {
     setIsAddingMarker(!isAddingMarker);
     // ✨ Toggle CSS class for cursor style
@@ -67,6 +74,34 @@ export default function AdminMapLayout() {
     } else {
       document.body.classList.remove("add-marker-mode");
     }
+  };
+
+  const toggleEditMarker = () => {
+    setIsEditingMarker(!isEditingMarker);
+    // 🔄 Reset selected plot when toggling off
+    if (isEditingMarker) {
+      setSelectedPlotForEdit(null);
+    }
+    // ✨ Toggle CSS class for cursor style
+    if (!isEditingMarker) {
+      document.body.classList.add("edit-marker-mode");
+    } else {
+      document.body.classList.remove("edit-marker-mode");
+    }
+  };
+
+  // ✏️ Handle marker selection for editing
+  const onMarkerClickForEdit = (plotId: string) => {
+    if (isEditingMarker) {
+      setSelectedPlotForEdit(plotId);
+    }
+  };
+
+  // ✅ Handle edit completion (save or cancel)
+  const onEditComplete = () => {
+    setSelectedPlotForEdit(null);
+    setIsEditingMarker(false);
+    document.body.classList.remove("edit-marker-mode");
   };
 
   // 📍 Handle map click when adding marker
@@ -89,6 +124,7 @@ export default function AdminMapLayout() {
   useEffect(() => {
     return () => {
       document.body.classList.remove("add-marker-mode");
+      document.body.classList.remove("edit-marker-mode");
     };
   }, []);
 
@@ -117,13 +153,16 @@ export default function AdminMapLayout() {
 
   return (
     <div className="h-full w-full rounded-lg border p-2">
-      <LocateContext.Provider value={{ requestLocate, isAddingMarker, toggleAddMarker }}>
+      <LocateContext.Provider value={{ requestLocate, isAddingMarker, toggleAddMarker, isEditingMarker, toggleEditMarker }}>
         <div className="relative z-1 h-full w-full">
           <WebMapNavs />
           <MapStats />
 
           {/* 🎯 Instructions for add marker mode */}
           <AddMarkerInstructions isVisible={isAddingMarker} />
+
+          {/* ✏️ Instructions for edit marker mode */}
+          <EditMarkerInstructions isVisible={isEditingMarker} step={selectedPlotForEdit ? "edit" : "select"} />
 
           <MapContainer
             className="h-full w-full rounded-lg"
@@ -259,7 +298,6 @@ export default function AdminMapLayout() {
               const statusColor = getStatusColor(marker.plotStatus);
               const circleIcon = L.divIcon({
                 className: "",
-                iconSize: [24, 24],
                 html: `<div style="
                 width: 20px;
                 height: 20px;
@@ -272,14 +310,17 @@ export default function AdminMapLayout() {
               const backgroundColor = getCategoryBackgroundColor(marker.category);
 
               return (
-                <Marker
+                <EditableMarker
                   key={`plot-${marker.plot_id}`}
+                  plotId={marker.plot_id}
                   position={marker.position}
                   icon={circleIcon}
-                  eventHandlers={{
-                    popupopen: () => handlePopupOpen(marker.plot_id),
-                    popupclose: () => setPopupCloseTick((t) => t + 1),
-                  }}
+                  isEditable={isEditingMarker}
+                  isSelected={selectedPlotForEdit === marker.plot_id}
+                  onMarkerClick={onMarkerClickForEdit}
+                  onEditComplete={onEditComplete}
+                  onPopupOpen={() => handlePopupOpen(marker.plot_id)}
+                  onPopupClose={() => setPopupCloseTick((t) => t + 1)}
                 >
                   {marker.rows && marker.columns ? (
                     // 🏢 Columbarium Popup
@@ -333,7 +374,7 @@ export default function AdminMapLayout() {
                       </Suspense>
                     </Popup>
                   )}
-                </Marker>
+                </EditableMarker>
               );
             })}
           </MapContainer>
