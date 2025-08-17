@@ -40,8 +40,7 @@ export default function HeroSection() {
 
           <p className="mx-auto max-w-4xl text-lg leading-relaxed font-light text-white/90 sm:text-xl lg:text-2xl">
             Inspired by Spain's <span className="font-semibold text-blue-200">El Camino de Santiago</span>
-            ,
-            <br className="hidden sm:block" />
+            ,<br className="hidden sm:block" />
             Finisterre Gardenz celebrates life and honors the pilgrimage we all make
             <br className="hidden sm:block" />
             as we live life to the fullest.
@@ -53,9 +52,9 @@ export default function HeroSection() {
           {/* Primary CTA */}
           <RainbowButton variant={"outline"} size={"lg"} className="rounded-full">
             <Link className="flex items-center gap-3" aria-label="Explore Map" to="/map">
-              <MapPin className="h-5 w-5" />
+              <MapPin />
               <hr className="h-4 w-px shrink-0 bg-neutral-500" />
-              <AnimatedGradientText className="flex items-center">Explore Grounds</AnimatedGradientText>
+              <AnimatedGradientText className="flex items-center">Explore Plots</AnimatedGradientText>
               <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
             </Link>
           </RainbowButton>

@@ -1,5 +1,10 @@
 import FinisterreMarkers from "@/components/ui/popup-content";
 
+interface Props {
+  onDirectionClick?: (dest: [number, number]) => void;
+  isDirectionLoading?: boolean;
+}
+
 const playgrounds = [
   {
     id: "playground-1",
@@ -19,6 +24,6 @@ const playgrounds = [
   },
 ];
 
-export default function PlaygroundMarkers() {
-  return <FinisterreMarkers playgrounds={playgrounds} />;
+export default function PlaygroundMarkers({ onDirectionClick, isDirectionLoading }: Props) {
+  return <FinisterreMarkers playgrounds={playgrounds} onDirectionClick={onDirectionClick} isDirectionLoading={isDirectionLoading} />;
 }

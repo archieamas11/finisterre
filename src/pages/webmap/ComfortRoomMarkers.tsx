@@ -3,8 +3,15 @@ import { renderToStaticMarkup } from "react-dom/server";
 import { FaToilet } from "react-icons/fa";
 import { Marker, Popup } from "react-leaflet";
 import { motion } from "framer-motion";
+import { Button } from "@/components/ui/button";
+import { FaDirections } from "react-icons/fa";
 
-export default function ComfortRoomMarker() {
+interface Props {
+  onDirectionClick?: (dest: [number, number]) => void;
+  isDirectionLoading?: boolean;
+}
+
+export default function ComfortRoomMarker({ onDirectionClick, isDirectionLoading = false }: Props) {
   const CR_MARKER = L.latLng(10.24864620598991, 123.798102525943648);
 
   return (
@@ -48,6 +55,20 @@ export default function ComfortRoomMarker() {
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.2 }} className="mt-1 text-xs text-gray-500">
             Comfort room for boys and girls
           </motion.div>
+          <div className="mt-2">
+            <Button
+              onClick={(e) => {
+                e.stopPropagation();
+                onDirectionClick?.([CR_MARKER.lat, CR_MARKER.lng]);
+              }}
+              disabled={isDirectionLoading}
+              type="button"
+              variant="default"
+            >
+              {isDirectionLoading ? "Loading..." : <FaDirections />}
+              <span className="ml-2">Get Directions</span>
+            </Button>
+          </div>
         </motion.div>
       </Popup>
     </Marker>

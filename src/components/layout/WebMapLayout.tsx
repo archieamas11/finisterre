@@ -1,17 +1,11 @@
 import "leaflet/dist/leaflet.css";
 import L from "leaflet";
 import { createContext, useRef } from "react";
-// Fix default icon paths so markers actually show up
-import iconUrl from "leaflet/dist/images/marker-icon.png";
 import { useEffect, useState, Suspense, lazy } from "react";
-import shadowUrl from "leaflet/dist/images/marker-shadow.png";
-import iconRetinaUrl from "leaflet/dist/images/marker-icon-2x.png";
 import { MapContainer, useMapEvents, TileLayer, Polyline, Marker, Popup } from "react-leaflet";
-
 import WebMapNavs from "@/pages/webmap/WebMapNavs";
 import { XCircle, Route, Timer } from "lucide-react";
 import ReactLeafletDriftMarker from "react-leaflet-drift-marker";
-
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { CardContent, Card } from "@/components/ui/card";
@@ -20,21 +14,12 @@ import { getCategoryBackgroundColor, convertPlotToMarker, getStatusColor } from 
 import Spinner from "@/components/ui/spinner";
 const PlaygroundMarkers = lazy(() => import("@/pages/webmap/PlaygroundMarkers"));
 const ColumbariumPopup = lazy(() => import("@/pages/admin/map4admin/ColumbariumPopup"));
-const PlotLocations = lazy(() => import("../../pages/webmap/WebMapPopup").then((mod) => ({ default: mod.PlotLocations })));
+const PlotLocations = lazy(() => import("../../pages/webmap/WebMapPopup"));
 const ComfortRoomMarker = lazy(() => import("../../pages/webmap/ComfortRoomMarkers"));
 const ParkingMarkers = lazy(() => import("../../pages/webmap/ParkingMarkers"));
 const CenterSerenityMarkers = lazy(() => import("../../pages/webmap/CenterSerenityMarkers"));
 const MainEntranceMarkers = lazy(() => import("../../pages/webmap/MainEntranceMarkers"));
 const ChapelMarkers = lazy(() => import("../../pages/webmap/ChapelMarkers"));
-
-const DefaultIcon = L.icon({
-  iconUrl,
-  shadowUrl,
-  iconRetinaUrl,
-});
-L.Marker.prototype.options.icon = DefaultIcon;
-
-// Context to signal a locate request from navs to map
 export const LocateContext = createContext<{
   requestLocate: () => void;
 } | null>(null);
@@ -123,11 +108,6 @@ export default function MapPage() {
       (error) => {
         console.warn("Live tracking error:", error);
       },
-      {
-        timeout: 5000,
-        maximumAge: 1000,
-        enableHighAccuracy: true,
-      },
     );
 
     if (watchIdRef.current !== null) {
@@ -142,6 +122,16 @@ export default function MapPage() {
       navigator.geolocation.clearWatch(watchIdRef.current);
       watchIdRef.current = null;
       console.log("🛑 Stopped live GPS tracking");
+    }
+  }
+
+  // Reusable handler to start navigation to any destination [lat, lng]
+  function handleDirectionTo(dest: [number, number]) {
+    if (userPosition) {
+      handleStartNavigation(userPosition, dest);
+    } else {
+      pendingDestinationRef.current = dest;
+      if (locateRef.current) locateRef.current();
     }
   }
 
@@ -404,16 +394,6 @@ export default function MapPage() {
               positions={privateRoute.polyline}
             />
           )}
-
-          {/* Markers */}
-          <Suspense fallback={null}>
-            <ComfortRoomMarker />
-            <ParkingMarkers />
-            <PlaygroundMarkers />
-            <CenterSerenityMarkers />
-            <MainEntranceMarkers />
-            <ChapelMarkers />
-          </Suspense>
           {markers.map((markers: any) => {
             const statusColor = getStatusColor(markers.plotStatus);
             const circleIcon = L.divIcon({
@@ -495,6 +475,15 @@ export default function MapPage() {
               </Marker>
             );
           })}
+          {/* Markers */}
+          <Suspense fallback={null}>
+            <ComfortRoomMarker onDirectionClick={(dest) => handleDirectionTo(dest)} isDirectionLoading={isNavLoading} />
+            <ParkingMarkers onDirectionClick={(dest) => handleDirectionTo(dest)} isDirectionLoading={isNavLoading} />
+            <PlaygroundMarkers onDirectionClick={(dest) => handleDirectionTo(dest)} isDirectionLoading={isNavLoading} />
+            <CenterSerenityMarkers onDirectionClick={(dest) => handleDirectionTo(dest)} isDirectionLoading={isNavLoading} />
+            <MainEntranceMarkers onDirectionClick={(dest) => handleDirectionTo(dest)} isDirectionLoading={isNavLoading} />
+            <ChapelMarkers onDirectionClick={(dest) => handleDirectionTo(dest)} isDirectionLoading={isNavLoading} />
+          </Suspense>
         </MapContainer>
       </div>
     </LocateContext.Provider>

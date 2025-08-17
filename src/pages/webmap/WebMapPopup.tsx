@@ -17,7 +17,7 @@ interface PlotLocationsProps {
   isDirectionLoading?: boolean;
 }
 
-export function PlotLocations({ marker, backgroundColor, onDirectionClick, isDirectionLoading = false }: PlotLocationsProps) {
+export default function PlotLocations({ marker, backgroundColor, onDirectionClick, isDirectionLoading = false }: PlotLocationsProps) {
   return (
     <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3 }} className="mt-5">
       <div className="bg-background dark:bg-muted rounded-t-lg p-3 transition-colors" style={backgroundColor ? { background: backgroundColor } : {}}>

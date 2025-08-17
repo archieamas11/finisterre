@@ -304,7 +304,7 @@ export default function CemeteryShowcase() {
 
       {/* Lightbox Modal - shadcn Dialog */}
       <Dialog open={isLightboxOpen} onOpenChange={setIsLightboxOpen}>
-        <DialogContent className="max-w-5xl p-2 sm:p-4" showCloseButton>
+        <DialogContent className="max-w-5xl border p-2 sm:p-4" showCloseButton>
           <div className="relative">
             {visibleImages.length > 0 ? (
               <>

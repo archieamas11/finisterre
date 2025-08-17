@@ -3,8 +3,15 @@ import { renderToStaticMarkup } from "react-dom/server";
 import { MdLocalParking } from "react-icons/md";
 import { Marker, Popup } from "react-leaflet";
 import { motion } from "framer-motion";
+import { Button } from "@/components/ui/button";
+import { FaDirections } from "react-icons/fa";
 
-export default function ParkingMarkers() {
+interface Props {
+  onDirectionClick?: (dest: [number, number]) => void;
+  isDirectionLoading?: boolean;
+}
+
+export default function ParkingMarkers({ onDirectionClick, isDirectionLoading = false }: Props) {
   const PARKING_1 = L.latLng(10.248467771138005, 123.797668761148387);
   const PARKING_2 = L.latLng(10.248150553375426, 123.797848903904878);
   return (
@@ -48,6 +55,20 @@ export default function ParkingMarkers() {
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.2 }} className="mt-1 text-xs text-gray-500">
               Parking 1 for finisterre visitors
             </motion.div>
+            <div className="mt-2">
+              <Button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onDirectionClick?.([PARKING_1.lat, PARKING_1.lng]);
+                }}
+                disabled={isDirectionLoading}
+                type="button"
+                variant="default"
+              >
+                {isDirectionLoading ? "Loading..." : <FaDirections />}
+                <span className="ml-2">Get Directions</span>
+              </Button>
+            </div>
           </motion.div>
         </Popup>
       </Marker>
@@ -90,6 +111,20 @@ export default function ParkingMarkers() {
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.2 }} className="mt-1 text-xs text-gray-500">
               Parking 2 for finisterre visitors
             </motion.div>
+            <div className="mt-2">
+              <Button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onDirectionClick?.([PARKING_2.lat, PARKING_2.lng]);
+                }}
+                disabled={isDirectionLoading}
+                type="button"
+                variant="default"
+              >
+                {isDirectionLoading ? "Loading..." : <FaDirections />}
+                <span className="ml-2">Get Directions</span>
+              </Button>
+            </div>
           </motion.div>
         </Popup>
       </Marker>

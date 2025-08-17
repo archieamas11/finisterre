@@ -3,8 +3,15 @@ import { renderToStaticMarkup } from "react-dom/server";
 import { BiSolidChurch } from "react-icons/bi";
 import { Marker, Popup } from "react-leaflet";
 import { motion } from "framer-motion";
+import { Button } from "@/components/ui/button";
+import { FaDirections } from "react-icons/fa";
 
-export default function MainEntranceMarkers() {
+interface Props {
+  onDirectionClick?: (dest: [number, number]) => void;
+  isDirectionLoading?: boolean;
+}
+
+export default function MainEntranceMarkers({ onDirectionClick, isDirectionLoading = false }: Props) {
   const CHAPEL = L.latLng(10.248435228156183, 123.79787795587316);
 
   return (
@@ -50,6 +57,20 @@ export default function MainEntranceMarkers() {
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.2 }} className="mt-1 text-xs text-gray-500">
               Entry point for chapel visitors
             </motion.div>
+            <div className="mt-2">
+              <Button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onDirectionClick?.([CHAPEL.lat, CHAPEL.lng]);
+                }}
+                disabled={isDirectionLoading}
+                type="button"
+                variant="default"
+              >
+                {isDirectionLoading ? "Loading..." : <FaDirections />}
+                <span className="ml-2">Get Directions</span>
+              </Button>
+            </div>
           </motion.div>
         </Popup>
       </Marker>
