@@ -7,6 +7,7 @@ import reactX from "eslint-plugin-react-x";
 import tseslint from "typescript-eslint";
 import globals from "globals";
 import js from "@eslint/js";
+import perfectionist from "eslint-plugin-perfectionist";
 
 export default tseslint.config([
   perfectionist.configs["recommended-line-length"],
