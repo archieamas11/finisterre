@@ -1,6 +1,5 @@
 import { Suspense } from "react";
 import { BrowserRouter, Navigate, Routes, Route } from "react-router-dom";
-import LandingLayout from "@/components/layout/LandingLayout";
 import { RequireAdmin, RequireAuth, RequireUser } from "@/authRoutes";
 import { ErrorBoundary } from "react-error-boundary";
 import React from "react";
@@ -27,6 +26,7 @@ const AdminIntermentLotOwnersPage = React.lazy(() => import("@/pages/admin/inter
 const AdminIntermentCustomerPage = React.lazy(() => import("./pages/admin/interment/customer/CustomersLayout"));
 const MapPage = React.lazy(() => import("@/components/layout/WebMapLayout"));
 const DashboardLayout = React.lazy(() => import("@/components/layout/DashboardLayout"));
+const LandingLayout = React.lazy(() => import("@/components/layout/LandingLayout"));
 
 // Type for ErrorFallback props
 interface ErrorFallbackProps {
