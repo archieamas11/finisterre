@@ -376,7 +376,7 @@ export default function MapPage() {
                 lineJoin: "round",
               }}
               positions={publicRoute.polyline}
-              className="animate-glow-pulse"
+              className="animate-glow-pulse z-99999"
             />
           )}
           {/* Show private route polyline (gate to marker) - Green */}
@@ -385,7 +385,7 @@ export default function MapPage() {
               pathOptions={{
                 weight: 8,
                 opacity: 1,
-                color: "#34A853",
+                color: "#4285F4",
                 lineCap: "round",
                 lineJoin: "round",
                 dashArray: "10, 10",
