@@ -41,6 +41,7 @@ export default function EditableMarker({
   useEffect(() => {
     const [currentLat, currentLng] = localPosition;
     const [newLat, newLng] = position;
+
     if (currentLat !== newLat || currentLng !== newLng) {
       setLocalPosition(position);
     }
@@ -51,6 +52,7 @@ export default function EditableMarker({
     if (markerRef.current) {
       const currentLatLng = markerRef.current.getLatLng();
       const [newLat, newLng] = localPosition;
+
       // Only update if the position has actually changed
       if (currentLatLng.lat !== newLat || currentLatLng.lng !== newLng) {
         markerRef.current.setLatLng(localPosition);
@@ -128,21 +130,15 @@ export default function EditableMarker({
     });
   }, [icon, isSelected, isEditable]);
 
-  // Function to update coordinates with promise toast
-  const updateCoordinates = async ({ plot_id, coordinates }: { plot_id: string; coordinates: string }) => {
-    return toast.promise(updatePlotCoordinates(plot_id, coordinates), {
-      loading: "Updating marker coordinates...",
-      success: "Marker coordinates updated successfully!",
-      error: "Failed to update marker coordinates. Please try again.",
-    });
-  };
-
   // Mutation for updating coordinates with optimistic updates
   const updateCoordinatesMutation = useMutation({
-    mutationFn: updateCoordinates,
+    mutationFn: async ({ plot_id, coordinates }: { plot_id: string; coordinates: string }) => {
+      return updatePlotCoordinates(plot_id, coordinates);
+    },
     onMutate: async ({ plot_id, coordinates }) => {
       await queryClient.cancelQueries({ queryKey: ["plots"] });
       await queryClient.cancelQueries({ queryKey: ["plotDetails", plot_id] });
+
       const previousPlots = queryClient.getQueryData<any[]>(["plots"]);
       const previousPlotsClone = previousPlots ? JSON.parse(JSON.stringify(previousPlots)) : undefined;
 
@@ -174,10 +170,12 @@ export default function EditableMarker({
           );
         });
       }
+
       return { previousPlots: previousPlotsClone };
     },
+
     onError: (_err, _variables, context) => {
-      // If the mutation fails, use the context returned from onMutate to roll back
+      // Roll back cache if we saved a snapshot in onMutate
       if (context?.previousPlots) {
         queryClient.setQueryData(["plots"], context.previousPlots);
       }
@@ -192,19 +190,26 @@ export default function EditableMarker({
       }
     },
     onSuccess: () => {
-      setTimeout(() => {
-        onEditComplete();
-      }, 1000);
+      onEditComplete();
     },
   });
 
   // Save current position
-  const savePosition = useCallback(() => {
+  const savePosition = useCallback(async () => {
     const [lat, lng] = currentPositionRef.current;
-    updateCoordinatesMutation.mutate({
-      plot_id: plotId,
-      coordinates: `${lng}, ${lat}`,
-    });
+    try {
+      await toast.promise(
+        updateCoordinatesMutation.mutateAsync({
+          plot_id: plotId,
+          coordinates: `${lng}, ${lat}`,
+        }),
+        {
+          loading: "Updating marker position...",
+          success: "Marker position updated.",
+          error: "Failed to update marker position.",
+        },
+      );
+    } catch (e) {}
   }, [plotId, updateCoordinatesMutation]);
 
   // Cancel editing and reset position

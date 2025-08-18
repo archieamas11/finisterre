@@ -12,7 +12,6 @@ export function useCreatePlotMutations({ onDone }: UseCreatePlotMutationsArgs) {
   const queryClient = useQueryClient();
 
   function onSuccessCommon() {
-    // ✅ Invalidate all relevant queries then notify parent and close dialogs
     queryClient.invalidateQueries({ queryKey: ["plots"] });
     queryClient.invalidateQueries({ queryKey: ["map-stats"] });
     queryClient.invalidateQueries({ queryKey: ["map-stats", "chambers"] });
