@@ -1,115 +1,140 @@
-import { Leaf, MapIcon, Medal, ShieldCheck, TrendingUp, Wrench, type LucideIcon } from "lucide-react";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { ShieldCheck, TrendingUp, Medal, Wrench, MapIcon, Leaf, ArrowRight } from "lucide-react";
 
-// Define the feature item type
-type FeatureItem = {
-  icon: LucideIcon;
+interface Feature {
+  icon: React.ElementType;
   title: string;
   description: string;
-  position?: "left" | "right";
-  cornerStyle?: string;
-};
+  color: string;
+  image: string;
+  imagePosition: "bottom" | "top" | "right";
+}
 
-// Create feature data arrays for left and right columns
-const leftFeatures: FeatureItem[] = [
+const features: Feature[] = [
   {
     icon: ShieldCheck,
     title: "Lifetime Memorial Rights",
-    description: "Secure your family’s legacy for generations.",
-    position: "left",
-    cornerStyle: "sm:translate-x-4 sm:rounded-br-[2px]",
+    description: "Secure your family's legacy for generations.",
+    color: "from-blue-500 to-indigo-600",
+    image: "https://images.unsplash.com/photo-1505142468610-359e7d316be0?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1770&q=80",
+    imagePosition: "bottom",
   },
   {
     icon: TrendingUp,
     title: "Growing Value",
     description: "Watch your investment appreciate over time.",
-    position: "left",
-    cornerStyle: "sm:-translate-x-4 sm:rounded-br-[2px]",
+    color: "from-emerald-500 to-teal-600",
+    image: "https://images.unsplash.com/photo-1556740738-b6a63e27c4df?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1770&q=80",
+    imagePosition: "top",
   },
   {
     icon: Medal,
     title: "Premier Grounds",
     description: "World-class spaces of dignity and comfort.",
-    position: "left",
-    cornerStyle: "sm:translate-x-4 sm:rounded-tr-[2px]",
+    color: "from-amber-500 to-orange-600",
+    image: "https://images.unsplash.com/photo-1542272201-b1ca55555eba?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1770&q=80",
+    imagePosition: "top",
   },
-];
-
-const rightFeatures: FeatureItem[] = [
   {
     icon: Wrench,
     title: "Complete Services",
     description: "Modern equipment and expert care.",
-    position: "right",
-    cornerStyle: "sm:-translate-x-4 sm:rounded-bl-[2px]",
+    color: "from-rose-500 to-pink-600",
+    image: "https://images.unsplash.com/photo-1581094794329-c8112a89af12?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1770&q=80",
+    imagePosition: "top",
   },
   {
     icon: MapIcon,
     title: "Digital Map",
     description: "Find memorials easily online.",
-    position: "right",
-    cornerStyle: "sm:translate-x-4 sm:rounded-bl-[2px]",
+    color: "from-violet-500 to-purple-600",
+    image: "https://images.unsplash.com/photo-1558655146-9f40138edfeb?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1770&q=80",
+    imagePosition: "right",
   },
   {
     icon: Leaf,
     title: "Serene Gardens",
     description: "Peaceful, beautifully maintained spaces.",
-    position: "right",
-    cornerStyle: "sm:-translate-x-4 sm:rounded-tl-[2px]",
+    color: "from-lime-500 to-green-600",
+    image: "https://images.unsplash.com/photo-1512428813834-c702c7702b78?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1770&q=80",
+    imagePosition: "top",
   },
 ];
 
-// Feature card component
-const FeatureCard = ({ feature }: { feature: FeatureItem }) => {
+const FeatureCard = ({ feature }: { feature: Feature }) => {
   const Icon = feature.icon;
 
   return (
-    <div>
-      <div className={cn("relative rounded-2xl px-4 pt-4 pb-4 text-sm", "bg-secondary/50 ring-border ring", feature.cornerStyle)}>
-        <div className="text-primary mb-3 text-[2rem]">
-          <Icon />
+    <Card
+      className={cn(
+        "group relative overflow-hidden transition-all duration-300 hover:shadow-lg",
+        "border border-gray-200 backdrop-blur-sm dark:border-gray-700",
+        "flex h-full flex-col",
+      )}
+    >
+      {/* Image overlay with position based on imagePosition */}
+      <div
+        className={cn(
+          "absolute inset-0 z-0 opacity-0 transition-opacity duration-500 group-hover:opacity-20",
+          "bg-cover bg-center",
+          feature.imagePosition === "bottom" && "bg-bottom",
+          feature.imagePosition === "top" && "bg-top",
+          feature.imagePosition === "right" && "bg-right",
+        )}
+        style={{ backgroundImage: `url(${feature.image})` }}
+      />
+
+      <CardHeader className="relative z-10 pb-2">
+        <div className={cn("mb-3 flex h-12 w-12 items-center justify-center rounded-lg", "bg-gradient-to-br text-white shadow-md", feature.color)}>
+          <Icon className="h-6 w-6" />
         </div>
-        <h2 className="text-foreground mb-2.5 text-2xl">{feature.title}</h2>
-        <p className="text-muted-foreground text-base text-pretty">{feature.description}</p>
-        {/* Decorative elements */}
-        <span className="from-primary/0 via-primary to-primary/0 absolute -bottom-px left-1/2 h-px w-1/2 -translate-x-1/2 bg-gradient-to-r opacity-60"></span>
-        <span className="absolute inset-0 bg-[radial-gradient(30%_5%_at_50%_100%,hsl(var(--primary)/0.15)_0%,transparent_100%)] opacity-60"></span>
-      </div>
-    </div>
+        <CardTitle className="text-xl font-bold text-gray-900 dark:text-white">{feature.title}</CardTitle>
+      </CardHeader>
+
+      <CardContent className="relative z-10 flex flex-grow flex-col">
+        <CardDescription className="mb-4 flex-grow text-gray-600 dark:text-gray-300">{feature.description}</CardDescription>
+
+        <Button
+          variant="ghost"
+          className={cn(
+            "h-auto justify-start p-0 transition-transform duration-300 group-hover:translate-x-1",
+            "text-gray-700 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white",
+          )}
+        >
+          Learn more <ArrowRight className="ml-2 h-4 w-4" />
+        </Button>
+      </CardContent>
+    </Card>
   );
 };
 
-export default function Feature3() {
+const FeatureSection = () => {
   return (
-    <section className="pt-20 pb-8" id="features">
-      <div className="mx-6 max-w-[1120px] pt-2 pb-16 max-[300px]:mx-4 min-[1150px]:mx-auto">
-        <div className="flex flex-col-reverse gap-6 md:grid md:grid-cols-3">
-          {/* Left column */}
-          <div className="flex flex-col gap-6">
-            {leftFeatures.map((feature, index) => (
-              <FeatureCard key={`left-feature-${index}`} feature={feature} />
-            ))}
-          </div>
+    <section className="px-4 py-16 md:py-24">
+      <div className="mx-auto max-w-[85%]">
+        {/* Section Header */}
+        <div className="mx-auto mb-16 max-w-3xl text-center">
+          <Badge variant="outline" className="mb-4 rounded-full border-gray-200 bg-white px-4 py-1.5 text-sm dark:border-gray-700 dark:bg-gray-800">
+            Our Promise
+          </Badge>
+          <h2 className="mb-4 text-4xl font-bold tracking-tight text-gray-900 md:text-5xl dark:text-white">Why Choose Finisterre</h2>
+          <p className="mx-auto max-w-2xl text-lg text-gray-600 dark:text-gray-300">
+            A sacred place inspired by El Camino de Santiago, providing peace, dignity, and beauty for generations to come.
+          </p>
+        </div>
 
-          {/* Center column */}
-          <div className="order-[1] mb-6 self-center sm:order-[0] md:mb-0">
-            <div className="bg-secondary text-foreground ring-border relative mx-auto mb-4.5 w-fit rounded-full rounded-bl-[2px] px-4 py-2 text-sm ring">
-              <span className="relative z-1 flex items-center gap-2">Features</span>
-              <span className="from-primary/0 via-primary to-primary/0 absolute -bottom-px left-1/2 h-px w-2/5 -translate-x-1/2 bg-gradient-to-r"></span>
-              <span className="absolute inset-0 bg-[radial-gradient(30%_40%_at_50%_100%,hsl(var(--primary)/0.25)_0%,transparent_100%)]"></span>
-            </div>
-            <h2 className="text-foreground mb-2 text-center text-2xl sm:mb-2.5 md:text-[2rem]">Why Finisterre</h2>
-            <p className="text-muted-foreground mx-auto max-w-[18rem] text-center text-pretty">A sacred place inspired by El Camino de Santiago.</p>
-          </div>
-
-          {/* Right column */}
-          <div className="flex flex-col gap-6">
-            {rightFeatures.map((feature, index) => (
-              <FeatureCard key={`right-feature-${index}`} feature={feature} />
-            ))}
-          </div>
+        {/* Features Grid */}
+        <div className="grid grid-cols-1 gap-6 md:grid-cols-2 md:gap-8 lg:grid-cols-3">
+          {features.map((feature, index) => (
+            <FeatureCard key={index} feature={feature} />
+          ))}
         </div>
       </div>
     </section>
   );
-}
+};
+
+export default FeatureSection;

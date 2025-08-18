@@ -169,7 +169,7 @@ const testimonials = [
 
 export default function Testimonials() {
   return (
-    <section className="relative mx-auto max-w-screen-xl overflow-x-clip px-4 py-10 sm:px-6 lg:px-8">
+    <section className="relative mx-auto max-w-[85%] overflow-x-clip px-4 py-10 sm:px-6 lg:px-8">
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
         <h2 className="text-foreground mb-4 text-center text-4xl leading-[1.2] font-bold tracking-tighter md:text-5xl">What Families Are Saying</h2>
         <h3 className="text-muted-foreground mx-auto mb-8 max-w-lg text-center text-lg font-medium tracking-tight text-balance">

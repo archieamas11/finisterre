@@ -139,7 +139,7 @@ export default function CemeteryShowcase() {
 
   return (
     <section id="showcase-section" className="w-full py-20" aria-labelledby="showcase-heading">
-      <div className="mx-auto max-w-7xl px-6">
+      <div className="mx-auto max-w-[85%]">
         {/* Section Header */}
         <div className="mb-16 text-center">
           <h2 className="text-foreground mb-4 text-3xl font-bold sm:text-4xl">A Sacred Place of Natural Beauty</h2>
