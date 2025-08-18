@@ -15,6 +15,7 @@ interface EditableMarkerProps {
   isSelected: boolean;
   onMarkerClick: (plotId: string) => void;
   onEditComplete: () => void;
+  onSaveSuccess?: () => void;
   onPopupOpen?: () => void;
   onPopupClose?: () => void;
 }
@@ -28,6 +29,7 @@ export default function EditableMarker({
   isSelected,
   onMarkerClick,
   onEditComplete,
+  onSaveSuccess,
   onPopupOpen,
   onPopupClose,
 }: EditableMarkerProps) {
@@ -190,7 +192,8 @@ export default function EditableMarker({
       }
     },
     onSuccess: () => {
-      onEditComplete();
+      // ✅ Keep edit session active; return to select mode
+      onSaveSuccess?.();
     },
   });
 

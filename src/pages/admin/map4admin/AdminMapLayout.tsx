@@ -1,14 +1,11 @@
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 import { Suspense, lazy } from "react";
-import { GiOpenGate } from "react-icons/gi";
 import { createContext, useRef, useState, useEffect } from "react";
-import { BiSolidChurch } from "react-icons/bi";
-import { renderToStaticMarkup } from "react-dom/server";
 import iconUrl from "leaflet/dist/images/marker-icon.png";
 import shadowUrl from "leaflet/dist/images/marker-shadow.png";
 import iconRetinaUrl from "leaflet/dist/images/marker-icon-2x.png";
-import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
+import { MapContainer, TileLayer, Popup, GeoJSON } from "react-leaflet";
 import { useQueryClient } from "@tanstack/react-query";
 import type { ConvertedMarker } from "@/types/map.types";
 import WebMapNavs from "@/pages/webmap/WebMapNavs";
@@ -19,11 +16,13 @@ import Spinner from "@/components/ui/spinner";
 import { ErrorMessage } from "@/components/ErrorMessage";
 import MapStats from "./MapStats";
 import MapClickHandler from "@/components/map/MapClickHandler";
-
+import guide4BlockCUrl from "./guide-4-block-c.geojson?url";
 import AddPlotMarkerDialog from "@/components/map/AddPlotMarkerDialog";
 import AddMarkerInstructions from "@/components/map/AddMarkerInstructions";
 import EditMarkerInstructions from "@/components/map/EditMarkerInstructions";
 import EditableMarker from "@/components/map/EditableMarker";
+import MainEntranceMarkers from "@/pages/webmap/MainEntranceMarkers";
+import ChapelMarkers from "@/pages/webmap/ChapelMarkers";
 const ColumbariumPopup = lazy(() => import("@/pages/admin/map4admin/ColumbariumPopup"));
 const SinglePlotLocations = lazy(() => import("@/pages/admin/map4admin/SinglePlotPopup"));
 
@@ -43,10 +42,11 @@ export const LocateContext = createContext<{
 } | null>(null);
 
 export default function AdminMapLayout() {
-  const CEMETERY_GATE = L.latLng(10.248107820799307, 123.797607547609545);
+  const showGuide4 = false;
   const { isError, refetch, isLoading, data: plotsData } = usePlots();
   const queryClient = useQueryClient();
   const markers = plotsData?.map(convertPlotToMarker) || [];
+  const [guide4Data, setGuide4Data] = useState<GeoJSON.GeoJSON | null>(null);
   const bounds: [[number, number], [number, number]] = [
     [10.248073279164613, 123.79742173990627],
     [10.249898252065757, 123.79838766292835],
@@ -107,6 +107,7 @@ export default function AdminMapLayout() {
   const onMapClick = (coordinates: [number, number]) => {
     setSelectedCoordinates(coordinates);
     setShowAddDialog(true);
+    // Pause add mode while dialog is open to prevent accidental clicks
     setIsAddingMarker(false);
     document.body.classList.remove("add-marker-mode");
   };
@@ -119,11 +120,67 @@ export default function AdminMapLayout() {
     }
   };
 
+  // ✅ After a successful add, immediately return to add mode for rapid entry
+  const onAddDone = () => {
+    setSelectedCoordinates(null);
+    setShowAddDialog(false);
+    setIsAddingMarker(true);
+    document.body.classList.add("add-marker-mode");
+  };
+
   // 🧹 Cleanup effect to remove cursor class on unmount
   useEffect(() => {
     return () => {
       document.body.classList.remove("add-marker-mode");
       document.body.classList.remove("edit-marker-mode");
+    };
+  }, []);
+
+  // ⎋ Allow Escape to cancel add-marker mode when dialog is not open
+  useEffect(() => {
+    if (!isAddingMarker || showAddDialog) return;
+    function onKeyDown(e: KeyboardEvent) {
+      if (e.key === "Escape") {
+        e.preventDefault();
+      }
+    }
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, [isAddingMarker, showAddDialog]);
+
+  // ⎋ Allow Escape to cancel the "Select marker to edit" step
+  useEffect(() => {
+    if (!isEditingMarker || selectedPlotForEdit) return;
+
+    function onKeyDown(e: KeyboardEvent) {
+      if (e.key === "Escape") {
+        e.preventDefault();
+        setSelectedPlotForEdit(null);
+        setIsEditingMarker(false);
+        document.body.classList.remove("edit-marker-mode");
+      }
+    }
+
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, [isEditingMarker, selectedPlotForEdit]);
+
+  // 📦 Load local GeoJSON asset at runtime (avoids bundler parsing issues)
+  useEffect(() => {
+    let mounted = true;
+    async function load() {
+      try {
+        const res = await fetch(guide4BlockCUrl);
+        if (!res.ok) return;
+        const json = (await res.json()) as GeoJSON.GeoJSON;
+        if (mounted) setGuide4Data(json);
+      } catch {
+        // 🧯 Ignore optional layer load failure
+      }
+    }
+    load();
+    return () => {
+      mounted = false;
     };
   }, []);
 
@@ -175,123 +232,26 @@ export default function AdminMapLayout() {
           >
             <TileLayer url="https://services.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}" maxNativeZoom={18} maxZoom={25} />
 
+            {/* GeoJSON overlay: Guide 4 Block C */}
+            {showGuide4 && guide4Data && (
+              <GeoJSON
+                data={guide4Data}
+                style={() => ({
+                  color: "#00E5FF",
+                  weight: 3,
+                  opacity: 0.9,
+                })}
+                onEachFeature={(feature, layer) => {
+                  const id = (feature.properties as { id?: string | number | null } | undefined)?.id ?? "Guide Path";
+                  layer.bindTooltip(String(id), { sticky: true });
+                }}
+              />
+            )}
+
             {/* 🎯 Map click handler for adding markers */}
             <MapClickHandler isAddingMarker={isAddingMarker} onMapClick={onMapClick} />
-
-            {/* Cemetery Entrance Marker */}
-            <Marker
-              icon={L.divIcon({
-                iconSize: [32, 32],
-                className: "destination-marker",
-                html: renderToStaticMarkup(
-                  <div
-                    style={{
-                      padding: "4px",
-                      background: "#000000",
-                      display: "inline-block",
-                      border: "2px solid #fff",
-                      transform: "rotate(-45deg)",
-                      borderRadius: "50% 50% 50% 0",
-                      boxShadow: "0 0 8px rgba(0,0,0,0.15)",
-                    }}
-                  >
-                    <GiOpenGate
-                      style={{
-                        transform: "rotate(45deg)",
-                      }}
-                      className="z-999 text-white"
-                      strokeWidth={2.5}
-                      size={16}
-                    />
-                  </div>,
-                ),
-              })}
-              position={[CEMETERY_GATE.lat, CEMETERY_GATE.lng]}
-            >
-              <Popup>
-                <div className="text-center">
-                  <div className="font-semibold text-orange-600">🚪 Cemetery Gate</div>
-                  <div className="mt-1 text-xs text-gray-500">Entry point for cemetery visitors</div>
-                </div>
-              </Popup>
-            </Marker>
-
-            {/* Cemetery Exit Marker */}
-            <Marker
-              icon={L.divIcon({
-                iconSize: [32, 32],
-                className: "destination-marker",
-                html: renderToStaticMarkup(
-                  <div
-                    style={{
-                      padding: "4px",
-                      background: "#000000",
-                      display: "inline-block",
-                      border: "2px solid #fff",
-                      transform: "rotate(-45deg)",
-                      borderRadius: "50% 50% 50% 0",
-                      boxShadow: "0 0 8px rgba(0,0,0,0.15)",
-                    }}
-                  >
-                    <GiOpenGate
-                      style={{
-                        transform: "rotate(45deg)",
-                      }}
-                      className="z-999 text-white"
-                      strokeWidth={2.5}
-                      size={16}
-                    />
-                  </div>,
-                ),
-              })}
-              position={[10.248166481872728, 123.79754558858059]}
-            >
-              <Popup>
-                <div className="text-center">
-                  <div className="font-semibold text-orange-600">🚪 Cemetery Gate</div>
-                  <div className="mt-1 text-xs text-gray-500">Entry point for cemetery visitors</div>
-                </div>
-              </Popup>
-            </Marker>
-
-            {/* Cemetery Chapel Marker */}
-            <Marker
-              icon={L.divIcon({
-                iconSize: [32, 32],
-                className: "destination-marker",
-                html: renderToStaticMarkup(
-                  <div
-                    style={{
-                      padding: "4px",
-                      background: "#FF9800",
-                      display: "inline-block",
-                      border: "2px solid #fff",
-                      transform: "rotate(-45deg)",
-                      borderRadius: "50% 50% 50% 0",
-                      boxShadow: "0 0 8px rgba(0,0,0,0.15)",
-                    }}
-                  >
-                    <BiSolidChurch
-                      style={{
-                        transform: "rotate(45deg)",
-                      }}
-                      className="z-999 text-white"
-                      strokeWidth={2.5}
-                      size={16}
-                    />
-                  </div>,
-                ),
-              })}
-              position={[10.248435228156183, 123.79787795587316]}
-            >
-              <Popup>
-                <div className="text-center">
-                  <div className="font-semibold text-orange-600">🚪 Chapel</div>
-                  <div className="mt-1 text-xs text-gray-500">Entry point for chapel visitors</div>
-                </div>
-              </Popup>
-            </Marker>
-
+            <MainEntranceMarkers />
+            <ChapelMarkers />
             {/* Plot Markers */}
             {markers.map((marker: ConvertedMarker) => {
               const statusColor = getStatusColor(marker.plotStatus);
@@ -318,6 +278,7 @@ export default function AdminMapLayout() {
                   isSelected={selectedPlotForEdit === marker.plot_id}
                   onMarkerClick={onMarkerClickForEdit}
                   onEditComplete={onEditComplete}
+                  onSaveSuccess={() => setSelectedPlotForEdit(null)}
                   onPopupOpen={() => handlePopupOpen(marker.plot_id)}
                   onPopupClose={() => setPopupCloseTick((t) => t + 1)}
                 >
@@ -378,9 +339,8 @@ export default function AdminMapLayout() {
             })}
           </MapContainer>
         </div>
-
         {/* 📝 Add Plot Dialog */}
-        <AddPlotMarkerDialog open={showAddDialog} onOpenChange={onDialogClose} coordinates={selectedCoordinates} />
+        <AddPlotMarkerDialog open={showAddDialog} onOpenChange={onDialogClose} coordinates={selectedCoordinates} onDoneAdd={onAddDone} />
       </LocateContext.Provider>
     </div>
   );

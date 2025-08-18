@@ -14,11 +14,17 @@ export default function WebMapNavs() {
   const locateCtx = useContext(LocateContext);
   const location = useLocation();
 
-  // 🎯 Handle add marker button click
   const onAddMarkerClick = () => {
-    locateCtx?.toggleAddMarker();
+    if (locateCtx?.isEditingMarker) {
+      locateCtx?.toggleEditMarker?.();
+    }
+    locateCtx?.toggleAddMarker?.();
   };
+
   const onEditMarkerClick = () => {
+    if (locateCtx?.isAddingMarker) {
+      locateCtx?.toggleAddMarker?.();
+    }
     locateCtx?.toggleEditMarker?.();
   };
 

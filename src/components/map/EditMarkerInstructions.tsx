@@ -45,7 +45,7 @@ export default function EditMarkerInstructions({ isVisible, step }: EditMarkerIn
                   <p className="text-muted-foreground text-sm">Click on any marker to select it for editing.</p>
                   <div className="bg-muted/50 mx-auto flex w-full items-center justify-center gap-2 rounded-lg px-3 py-2 text-xs">
                     <MousePointer className="text-muted-foreground h-3 w-3" />
-                    <span>Press Edit again to cancel</span>
+                    <span>Press Edit again or Esc to cancel</span>
                   </div>
                 </>
               ) : (

@@ -11,9 +11,13 @@ interface AddPlotMarkerDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   coordinates: [number, number] | null;
+  // Called when a plot is successfully created and we should resume add mode
+  onDoneAdd?: () => void;
+  // Called when user cancels adding; should end the add session
+  onCancelAdd?: () => void;
 }
 
-export default function AddPlotMarkerDialog({ open, onOpenChange, coordinates }: AddPlotMarkerDialogProps) {
+export default function AddPlotMarkerDialog({ open, onOpenChange, coordinates, onDoneAdd, onCancelAdd }: AddPlotMarkerDialogProps) {
   const [selectedMarkerType, setSelectedMarkerType] = useState<MarkerType | null>(null);
   // 🧭 Inner dialog controls the second step (type-specific form)
   const [innerOpen, setInnerOpen] = useState(false);
@@ -33,6 +37,8 @@ export default function AddPlotMarkerDialog({ open, onOpenChange, coordinates }:
   // 🚫 Handle cancel - clear forms and close
   const onCancel = () => {
     resetAllForms();
+    // 🔔 Notify parent that the add session was explicitly cancelled
+    onCancelAdd?.();
     onOpenChange(false);
   };
 
@@ -77,6 +83,8 @@ export default function AddPlotMarkerDialog({ open, onOpenChange, coordinates }:
               onCancel={onCancel}
               onDone={() => {
                 resetAllForms();
+                // ✅ Inform parent to resume add mode after successful save
+                onDoneAdd?.();
                 onOpenChange(false);
               }}
             />
@@ -89,6 +97,7 @@ export default function AddPlotMarkerDialog({ open, onOpenChange, coordinates }:
               onCancel={onCancel}
               onDone={() => {
                 resetAllForms();
+                onDoneAdd?.();
                 onOpenChange(false);
               }}
             />
@@ -101,6 +110,7 @@ export default function AddPlotMarkerDialog({ open, onOpenChange, coordinates }:
               onCancel={onCancel}
               onDone={() => {
                 resetAllForms();
+                onDoneAdd?.();
                 onOpenChange(false);
               }}
             />
