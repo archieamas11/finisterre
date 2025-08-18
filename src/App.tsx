@@ -1,19 +1,11 @@
 import { Suspense } from "react";
 import { BrowserRouter, Navigate, Routes, Route } from "react-router-dom";
 import LandingLayout from "@/components/layout/LandingLayout";
-import DashboardLayout from "@/components/layout/DashboardLayout";
-import MapPage from "@/components/layout/WebMapLayout";
 import { RequireAdmin, RequireAuth, RequireUser } from "@/authRoutes";
 import { ErrorBoundary } from "react-error-boundary";
 import React from "react";
 import Spinner from "@/components/ui/spinner";
 import { Button } from "./components/ui/button";
-
-// Type for ErrorFallback props
-interface ErrorFallbackProps {
-  error: Error;
-  resetErrorBoundary: () => void;
-}
 
 // Lazy imports
 const LoginPage = React.lazy(() => import("@/auth/LoginPage"));
@@ -33,6 +25,14 @@ const AdminControlPanel = React.lazy(() => import("@/pages/admin/control/AdminCo
 const AdminIntermentDeceasedPage = React.lazy(() => import("@/pages/admin/interment/deceased-records/deceased"));
 const AdminIntermentLotOwnersPage = React.lazy(() => import("@/pages/admin/interment/lot-owners/lot-owners"));
 const AdminIntermentCustomerPage = React.lazy(() => import("./pages/admin/interment/customer/CustomersLayout"));
+const MapPage = React.lazy(() => import("@/components/layout/WebMapLayout"));
+const DashboardLayout = React.lazy(() => import("@/components/layout/DashboardLayout"));
+
+// Type for ErrorFallback props
+interface ErrorFallbackProps {
+  error: Error;
+  resetErrorBoundary: () => void;
+}
 
 const ErrorFallback: React.FC<ErrorFallbackProps> = ({ error, resetErrorBoundary }) => (
   <div className="bg-background flex min-h-screen items-center justify-center">
