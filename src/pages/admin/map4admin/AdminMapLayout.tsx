@@ -302,7 +302,7 @@ export default function AdminMapLayout() {
                 height: 15px;
                 border-radius: 50%;
                 background: ${statusColor};
-                border: 2px solid #fff;
+                border: 1px solid #fff;
                 box-shadow: 0 0 4px rgba(0,0,0,0.15);
                 "></div>`,
               });

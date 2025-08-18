@@ -400,7 +400,7 @@ export default function MapPage() {
               className: "",
               iconSize: [24, 24],
               html: `
-              <div style="width: 20px; height: 20px; border-radius: 50%; background: ${statusColor}; border: 2px solid #fff;"></div>`,
+              <div style="width: 15px; height: 15px; border-radius: 50%; background: ${statusColor}; border: 1px solid #fff;"></div>`,
             });
 
             // When direction is requested, start navigation with two-step route
