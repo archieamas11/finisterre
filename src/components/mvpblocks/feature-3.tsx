@@ -35,7 +35,7 @@ const features: Feature[] = [
     title: "Premier Grounds",
     description: "World-class spaces of dignity and comfort.",
     color: "from-amber-500 to-orange-600",
-    image: "https://images.unsplash.com/photo-1542272201-b1ca55555eba?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1770&q=80",
+    image: "https://picsum.photos/200/300",
     imagePosition: "top",
   },
   {
