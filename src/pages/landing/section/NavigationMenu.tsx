@@ -1,107 +1,73 @@
 import * as React from "react";
 import { Link } from "react-router-dom";
-import { ChevronDownIcon, type LucideIcon, CalendarIcon, MapPinIcon, ShieldIcon, UsersIcon, PhoneIcon, ClockIcon, HeartIcon, LeafIcon, MenuIcon } from "lucide-react";
-
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
-import { SheetDescription, SheetContent, SheetTrigger, SheetHeader, SheetTitle, Sheet } from "@/components/ui/sheet";
+import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import {
-  navigationMenuTriggerStyle,
+  NavigationMenu,
   NavigationMenuContent,
-  NavigationMenuTrigger,
   NavigationMenuItem,
   NavigationMenuLink,
   NavigationMenuList,
-  NavigationMenu,
+  NavigationMenuTrigger,
+  navigationMenuTriggerStyle,
 } from "@/components/ui/navigation-menu";
+import { ChevronDownIcon, type LucideIcon, MapPinIcon, ClockIcon, MenuIcon, BoneIcon, LayersIcon, TreesIcon, Building2Icon, ArrowLeftRightIcon } from "lucide-react";
 
-// Sample services data
-const services: {
-  description: string;
-  icon: LucideIcon;
+type NavItem = {
   title: string;
+  description: string;
   href: string;
-}[] = [
+  icon: LucideIcon;
+};
+
+// Products (Our Products)
+const products: NavItem[] = [
   {
-    icon: LeafIcon,
-    title: "Memorial Plots",
-    href: "/services/memorial-plots",
-    description: "Beautifully landscaped plots for honoring your loved ones in a serene environment.",
+    icon: TreesIcon,
+    title: "Serenity Lawn",
+    href: "#products",
+    description: "Double-depth in-ground burial plot with marble marker and well-manicured grass.",
   },
   {
-    icon: CalendarIcon,
-    title: "Event Planning",
-    href: "/services/event-planning",
-    description: "Custom memorial services and celebrations of life tailored to your family's needs.",
+    icon: LayersIcon,
+    title: "Columbarium (Niche)",
+    href: "#products",
+    description: "Best-in-class burial unit crafted with premium concrete and marble markers.",
   },
   {
-    icon: LeafIcon,
-    title: "Garden Maintenance",
-    href: "/services/garden-maintenance",
-    description: "Professional care for memorial gardens to keep them pristine year-round.",
+    icon: BoneIcon,
+    title: "Bone Chamber & Ash Vault",
+    href: "#products",
+    description: "Concrete repository for bone and ash remains at the upper park level with garden views.",
   },
   {
-    icon: UsersIcon,
-    title: "Family Services",
-    href: "/services/family-services",
-    description: "Special packages for families with multiple memorial needs.",
-  },
-  {
-    icon: HeartIcon,
-    title: "Custom Memorials",
-    href: "/services/custom-memorials",
-    description: "Personalized monuments and markers to celebrate unique lives.",
-  },
-  {
-    icon: MapPinIcon,
-    title: "Virtual Tours",
-    href: "/services/virtual-tours",
-    description: "Explore our memorial park from anywhere with our 360° virtual tour.",
+    icon: Building2Icon,
+    title: "Family Estate",
+    href: "#products",
+    description: "A sacred way to honor family—an estate of your own.",
   },
 ];
 
-// Sample FAQs data
-const faqs: {
-  description: string;
-  icon: LucideIcon;
-  title: string;
-  href: string;
-}[] = [
+// Services (Our Services)
+const coreServices: NavItem[] = [
+  {
+    icon: MapPinIcon,
+    title: "Interment",
+    href: "#services",
+    description: "Complete interment services with modern equipment and dignified care.",
+  },
+  {
+    icon: ArrowLeftRightIcon,
+    title: "Transfer & Reburial",
+    href: "#services",
+    description: "Careful relocation of remains including documentation and coordination.",
+  },
   {
     icon: ClockIcon,
-    title: "Visiting Hours",
-    href: "/faqs/visiting-hours",
-    description: "What are the park's opening and closing times?",
-  },
-  {
-    icon: CalendarIcon,
-    title: "Reservation Process",
-    href: "/faqs/reservation-process",
-    description: "How to book a memorial plot or service?",
-  },
-  {
-    icon: LeafIcon,
-    title: "Maintenance Policy",
-    href: "/faqs/maintenance-policy",
-    description: "How is the garden maintained and cared for?",
-  },
-  {
-    icon: UsersIcon,
-    title: "Pet Policy",
-    href: "/faqs/pet-policy",
-    description: "Are pets allowed in the memorial park?",
-  },
-  {
-    icon: PhoneIcon,
-    title: "Contact Us",
-    href: "/faqs/contact-us",
-    description: "How to reach our customer service team?",
-  },
-  {
-    icon: ShieldIcon,
-    title: "Privacy & Security",
-    href: "/faqs/privacy-security",
-    description: "How do we protect visitor information?",
+    title: "Exhumation & Reburial",
+    href: "#services",
+    description: "For fresh, skeletal, and cinerary remains handled with utmost respect.",
   },
 ];
 
@@ -165,33 +131,48 @@ export function NavigationMenuSection() {
         <NavigationMenuList>
           <NavigationMenuItem>
             <NavigationMenuLink className={cn(navigationMenuTriggerStyle(), "bg-transparent")} asChild>
-              <Link to="/home">Home</Link>
+              <Link to="/">Home</Link>
             </NavigationMenuLink>
           </NavigationMenuItem>
           <NavigationMenuItem>
-            <NavigationMenuTrigger className="bg-transparent">Services</NavigationMenuTrigger>
+            <NavigationMenuTrigger className="bg-transparent">Products</NavigationMenuTrigger>
             <NavigationMenuContent className="p-4">
               <div className="grid w-[900px] grid-cols-3 gap-3 divide-x p-4">
                 <div className="col-span-2">
-                  <h6 className="text-muted-foreground pl-2.5 text-sm font-semibold uppercase">Our Services</h6>
+                  <h6 className="text-muted-foreground pl-2.5 text-sm font-semibold uppercase">Our Products</h6>
                   <ul className="mt-2.5 grid grid-cols-2 gap-3">
-                    {services.map((service) => (
-                      <ListItem title={service.title} key={service.title} icon={service.icon} to={service.href}>
-                        {service.description}
+                    {products.map((product) => (
+                      <ListItem title={product.title} key={product.title} icon={product.icon} to={product.href}>
+                        {product.description}
                       </ListItem>
                     ))}
                   </ul>
                 </div>
                 <div className="pl-4">
-                  <h6 className="text-muted-foreground pl-2.5 text-sm font-semibold uppercase">Special Features</h6>
+                  <h6 className="text-muted-foreground pl-2.5 text-sm font-semibold uppercase">Highlights</h6>
                   <ul className="mt-2.5 grid gap-3">
-                    {services.slice(0, 3).map((service) => (
-                      <ListItem title={service.title} key={service.title} icon={service.icon} to={service.href}>
-                        {service.description}
+                    {products.slice(0, 3).map((product) => (
+                      <ListItem title={product.title} key={product.title} icon={product.icon} to={product.href}>
+                        {product.description}
                       </ListItem>
                     ))}
                   </ul>
                 </div>
+              </div>
+            </NavigationMenuContent>
+          </NavigationMenuItem>
+          <NavigationMenuItem>
+            <NavigationMenuTrigger className="bg-transparent">Services</NavigationMenuTrigger>
+            <NavigationMenuContent className="px-4 py-6">
+              <div className="pl-4">
+                <h6 className="text-muted-foreground pl-2.5 text-sm font-semibold uppercase">Our Services</h6>
+                <ul className="mt-2.5 grid w-[400px] gap-3 md:w-[500px] md:grid-cols-2 lg:w-[600px]">
+                  {coreServices.map((svc) => (
+                    <ListItem title={svc.title} key={svc.title} icon={svc.icon} to={svc.href}>
+                      {svc.description}
+                    </ListItem>
+                  ))}
+                </ul>
               </div>
             </NavigationMenuContent>
           </NavigationMenuItem>
@@ -202,23 +183,8 @@ export function NavigationMenuSection() {
           </NavigationMenuItem>
           <NavigationMenuItem>
             <NavigationMenuLink className={cn(navigationMenuTriggerStyle(), "bg-transparent")} asChild>
-              <Link to="/location">Location</Link>
+              <Link to="#contact">Contact</Link>
             </NavigationMenuLink>
-          </NavigationMenuItem>
-          <NavigationMenuItem>
-            <NavigationMenuTrigger className="bg-transparent">FAQs</NavigationMenuTrigger>
-            <NavigationMenuContent className="px-4 py-6">
-              <div className="pl-4">
-                <h6 className="text-muted-foreground pl-2.5 text-sm font-semibold uppercase">Frequently Asked Questions</h6>
-                <ul className="mt-2.5 grid w-[400px] gap-3 md:w-[500px] md:grid-cols-2 lg:w-[600px]">
-                  {faqs.map((faq) => (
-                    <ListItem title={faq.title} key={faq.title} icon={faq.icon} to={faq.href}>
-                      {faq.description}
-                    </ListItem>
-                  ))}
-                </ul>
-              </div>
-            </NavigationMenuContent>
           </NavigationMenuItem>
         </NavigationMenuList>
       </NavigationMenu>
@@ -228,7 +194,7 @@ export function NavigationMenuSection() {
         <div className="flex items-center gap-2 p-2 py-8 lg:py-0">
           <Sheet onOpenChange={setIsOpen} open={isOpen}>
             <SheetTrigger asChild>
-              <Button className="absolute left-12 h-10 w-10" variant="ghost" size="icon">
+              <Button className="absolute left-12 h-10 w-10" variant="ghost" size="icon" type="button">
                 <MenuIcon className="h-6 w-6" />
                 <span className="sr-only">Toggle menu</span>
               </Button>
@@ -241,36 +207,36 @@ export function NavigationMenuSection() {
               </SheetHeader>
               <div className="flex flex-1 flex-col overflow-y-auto">
                 <nav className="py-2">
-                  <MobileMenuItem onSelect={handleMobileMenuClose} title="Home" href="/home" />
-                  <MobileMenuItem title="Services" href="#">
+                  <MobileMenuItem onSelect={handleMobileMenuClose} title="Home" href="/" />
+                  <MobileMenuItem title="Products" href="#">
                     <div className="bg-background py-2">
                       <div className="px-6 py-2">
-                        <h6 className="text-xs font-semibold text-gray-500 uppercase">Our Services</h6>
+                        <h6 className="text-xs font-semibold text-gray-500 uppercase">Our Products</h6>
                       </div>
-                      {services.map((service) => (
+                      {products.map((product) => (
                         <MobileSubMenuItem
-                          description={service.description}
+                          description={product.description}
                           onSelect={handleMobileMenuClose}
-                          title={service.title}
-                          key={service.title}
-                          href={service.href}
-                          icon={service.icon}
+                          title={product.title}
+                          key={product.title}
+                          href={product.href}
+                          icon={product.icon}
                         />
                       ))}
                     </div>
                   </MobileMenuItem>
-                  <MobileMenuItem onSelect={handleMobileMenuClose} title="About" href="/about" />
-                  <MobileMenuItem onSelect={handleMobileMenuClose} title="Location" href="/location" />
-                  <MobileMenuItem title="FAQs" href="#">
+                  <MobileMenuItem title="Services" href="#">
                     <div className="py-2">
                       <div className="px-6 py-2">
-                        <h6 className="text-xs font-semibold text-gray-500 uppercase">Frequently Asked Questions</h6>
+                        <h6 className="text-xs font-semibold text-gray-500 uppercase">Our Services</h6>
                       </div>
-                      {faqs.map((faq) => (
-                        <MobileSubMenuItem onSelect={handleMobileMenuClose} description={faq.description} title={faq.title} key={faq.title} href={faq.href} icon={faq.icon} />
+                      {coreServices.map((svc) => (
+                        <MobileSubMenuItem onSelect={handleMobileMenuClose} description={svc.description} title={svc.title} key={svc.title} href={svc.href} icon={svc.icon} />
                       ))}
                     </div>
                   </MobileMenuItem>
+                  <MobileMenuItem onSelect={handleMobileMenuClose} title="About" href="/about" />
+                  <MobileMenuItem onSelect={handleMobileMenuClose} title="Contact" href="#contact" />
                 </nav>
               </div>
             </SheetContent>

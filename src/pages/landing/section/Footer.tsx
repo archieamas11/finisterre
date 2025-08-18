@@ -6,13 +6,12 @@ export default function Footer() {
 
   const handleNewsletterSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    // Handle newsletter signup
-    console.log("Newsletter signup:", email);
+    // ✉️ Placeholder for form handling
     setEmail("");
   };
 
   return (
-    <footer className="bg-card border-muted w-full border-t">
+    <footer id="contact" className="bg-card border-muted w-full border-t">
       <div className="mx-auto max-w-7xl px-6 py-16">
         <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-4">
           {/* Company Info */}
@@ -72,13 +71,13 @@ export default function Footer() {
             <h3 className="text-foreground mb-6 font-semibold">Contact Us</h3>
             <div className="text-muted-foreground space-y-4">
               <div>
-                <span className="text-foreground font-medium">Email:</span> info@finisterre.com
+                <span className="text-foreground font-medium">Email:</span> info@finisterre.ph
               </div>
               <div>
                 <span className="text-foreground font-medium">Phone:</span> 0998 841 1173 | 0917 621 6823
               </div>
               <div>
-                <span className="text-foreground font-medium">Landline:</span>407 3099 | 254 3065
+                <span className="text-foreground font-medium">Landline:</span> 407 3099 | 254 3065
               </div>
               <div>
                 <span className="text-foreground font-medium">Address:</span> Poblacion, Ward III, Minglanilla, Cebu
@@ -89,7 +88,7 @@ export default function Footer() {
           {/* Newsletter */}
           <div>
             <h3 className="text-foreground mb-6 font-semibold">Email Us</h3>
-            <p className="text-muted-foreground mb-4">For inquiries, please reach out to us at info@finisterre.com.</p>
+            <p className="text-muted-foreground mb-4">For inquiries, please reach out to us at info@finisterre.ph.</p>
             <form onSubmit={handleNewsletterSubmit} className="space-y-3">
               <input
                 type="email"

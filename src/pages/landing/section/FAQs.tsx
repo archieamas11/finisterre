@@ -53,10 +53,12 @@ export default function FAQs() {
             <div className="sticky top-20">
               <h2 className="mt-4 text-3xl font-bold">Frequently Asked Questions</h2>
               <p className="text-muted-foreground mt-4">
-                Can't find what you're looking for? Contact our{" "}
-                <Link to="#" className="text-primary font-medium hover:underline">
-                  customer support team
+                Can’t find what you’re looking for? Reach our
+                <Link to="#contact" className="text-primary font-medium hover:underline">
+                  {" "}
+                  support team
                 </Link>
+                .
               </p>
             </div>
           </div>

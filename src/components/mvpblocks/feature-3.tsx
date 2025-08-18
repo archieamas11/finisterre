@@ -15,7 +15,7 @@ const leftFeatures: FeatureItem[] = [
   {
     icon: ShieldCheck,
     title: "Lifetime Memorial Rights",
-    description: "Your family’s legacy, secured for generations.",
+    description: "Secure your family’s legacy for generations.",
     position: "left",
     cornerStyle: "sm:translate-x-4 sm:rounded-br-[2px]",
   },
@@ -28,8 +28,8 @@ const leftFeatures: FeatureItem[] = [
   },
   {
     icon: Medal,
-    title: "Premier Burial Grounds",
-    description: "World-class spaces for dignity and comfort.",
+    title: "Premier Grounds",
+    description: "World-class spaces of dignity and comfort.",
     position: "left",
     cornerStyle: "sm:translate-x-4 sm:rounded-tr-[2px]",
   },
@@ -38,7 +38,7 @@ const leftFeatures: FeatureItem[] = [
 const rightFeatures: FeatureItem[] = [
   {
     icon: Wrench,
-    title: "Complete Burial Services",
+    title: "Complete Services",
     description: "Modern equipment and expert care.",
     position: "right",
     cornerStyle: "sm:-translate-x-4 sm:rounded-bl-[2px]",
@@ -98,8 +98,8 @@ export default function Feature3() {
               <span className="from-primary/0 via-primary to-primary/0 absolute -bottom-px left-1/2 h-px w-2/5 -translate-x-1/2 bg-gradient-to-r"></span>
               <span className="absolute inset-0 bg-[radial-gradient(30%_40%_at_50%_100%,hsl(var(--primary)/0.25)_0%,transparent_100%)]"></span>
             </div>
-            <h2 className="text-foreground mb-2 text-center text-2xl sm:mb-2.5 md:text-[2rem]">Finisterre Advantage</h2>
-            <p className="text-muted-foreground mx-auto max-w-[18rem] text-center text-pretty">A peaceful memorial park with caring support for families.</p>
+            <h2 className="text-foreground mb-2 text-center text-2xl sm:mb-2.5 md:text-[2rem]">Why Finisterre</h2>
+            <p className="text-muted-foreground mx-auto max-w-[18rem] text-center text-pretty">A sacred place inspired by El Camino de Santiago.</p>
           </div>
 
           {/* Right column */}

@@ -1,6 +1,5 @@
 import { MapPin } from "lucide-react";
 import { Link } from "react-router-dom";
-import { useNavigate } from "react-router-dom";
 import { useEffect, Suspense, useState, lazy } from "react";
 
 import { Button } from "@/components/ui/button";
@@ -15,7 +14,6 @@ const Feature3 = lazy(() => import("../mvpblocks/feature-3"));
 const TestimonialCard = lazy(() => import("../mvpblocks/testimonials-marquee"));
 
 export default function LandingLayout() {
-  const navigate = useNavigate();
   const [scrolled, setScrolled] = useState(false);
 
   useEffect(() => {
@@ -40,25 +38,23 @@ export default function LandingLayout() {
         ].join(" ")}
         aria-label="Main Navigation"
       >
-        <span
+        <Link
+          to="/"
           className={[
-            "text-md flex cursor-pointer items-center font-bold",
+            "text-md focus:ring-primary flex items-center rounded-md font-bold focus:ring-2 focus:ring-offset-2 focus:outline-none",
             scrolled ? "text-foreground dark:text-accent-foreground" : "text-background dark:text-accent-foreground",
           ].join(" ")}
-          onClick={() => navigate("/")}
           aria-label="Go to homepage"
         >
-          <MapPin className="mr-2" size={20} />
+          <MapPin className="mr-2" size={20} aria-hidden="true" />
           <span className="text-md hidden md:inline">Finisterre</span>
-        </span>
+        </Link>
         <NavigationMenuSection />
         <div className="flex items-center gap-2 sm:gap-4">
           <ThemeToggleButton start="top-right" variant="circle-blur" />
-          <Link to="/login">
-            <Button className="rounded-full transition" aria-label="Login" variant="secondary">
-              Login
-            </Button>
-          </Link>
+          <Button asChild type="button" className="rounded-full transition" aria-label="Login" variant="secondary">
+            <Link to="/login">Login</Link>
+          </Button>
         </div>
       </nav>
       <Suspense fallback={null}>
