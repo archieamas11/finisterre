@@ -38,14 +38,17 @@ export default function EditableMarker({
 
   // Update position ref when prop changes
   useEffect(() => {
-    currentPositionRef.current = position;
+    if (markerRef.current) {
+      markerRef.current.setLatLng(position);
+      currentPositionRef.current = position;
+    }
   }, [position]);
 
   // Inject CSS once on mount
   useEffect(() => {
-    if (document.getElementById("selected-marker-styles")) return;
-
-    const style = document.createElement("style");
+    let style = document.getElementById("selected-marker-styles");
+    if (style) return;
+    style = document.createElement("style");
     style.id = "selected-marker-styles";
     style.innerHTML = `
       @keyframes markerPulse {
@@ -121,28 +124,69 @@ export default function EditableMarker({
     mutationFn: async ({ plot_id, coordinates }: { plot_id: string; coordinates: string }) => {
       return updatePlotCoordinates(plot_id, coordinates);
     },
-    onSuccess: () => {
-      toast.success("📍 Marker coordinates updated successfully!");
-      queryClient.invalidateQueries({ queryKey: ["plots"] });
-      onEditComplete();
+
+    // Run before the mutation. Snapshot old data and update cache to new coords.
+    onMutate: async ({ plot_id, coordinates }) => {
+      await queryClient.cancelQueries({ queryKey: ["plots"] });
+
+      const previousPlots = queryClient.getQueryData<any[]>(["plots"]);
+
+      // Parse "lng, lat" -> numbers
+      const parts = coordinates.split(",").map((s) => parseFloat(s.trim()));
+      const [lng, lat] = parts;
+
+      // Update cache so UI shows new position right away
+      queryClient.setQueryData(["plots"], (old: any[] | undefined) => {
+        if (!old) return old;
+        return old.map((p) =>
+          p.plot_id === plot_id
+            ? {
+                ...p,
+                // adjust fields your app uses for coords
+                coordinates: `${lng}, ${lat}`,
+                latitude: lat,
+                longitude: lng,
+                // optional: keep a position tuple if your UI reads this
+                position: [lat, lng],
+              }
+            : p,
+        );
+      });
+
+      return { previousPlots };
     },
-    onError: (error) => {
-      console.error("Failed to update coordinates:", error);
+
+    onError: (_error, context: any) => {
       toast.error("❌ Failed to update marker coordinates. Please try again.");
-      // Reset marker position on error
+      // Roll back cache to previous snapshot
+      if (context?.previousPlots) {
+        queryClient.setQueryData(["plots"], context.previousPlots);
+      }
+
+      // Restore marker visual position to the prop value
       if (markerRef.current) {
         markerRef.current.setLatLng(position);
         currentPositionRef.current = position;
       }
     },
+
+    onSuccess: () => {
+      toast.success("📍 Marker coordinates updated!");
+      onEditComplete();
+    },
+
+    // Ensure server state sync: refetch after settle
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: ["plots"] });
+    },
   });
 
   // Save current position
   const savePosition = useCallback(() => {
-    const coordinates = `${currentPositionRef.current[1]}, ${currentPositionRef.current[0]}`;
+    const [lat, lng] = currentPositionRef.current;
     updateCoordinatesMutation.mutate({
       plot_id: plotId,
-      coordinates,
+      coordinates: `${lng}, ${lat}`,
     });
   }, [plotId, updateCoordinatesMutation]);
 

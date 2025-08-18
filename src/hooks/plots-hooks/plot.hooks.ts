@@ -46,8 +46,8 @@ export function usePlots() {
     },
     staleTime: 0, // Always consider data stale for immediate refetch when invalidated
     gcTime: 5 * 60 * 1000, // 5 minutes garbage collection time
-    refetchOnWindowFocus: true, // Refetch when window gains focus
-    refetchOnMount: true, // Always refetch on component mount
+    refetchOnWindowFocus: true,
+    refetchOnMount: true,
   });
 }
 
