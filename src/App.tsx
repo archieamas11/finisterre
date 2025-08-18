@@ -24,8 +24,9 @@ const AdminControlPanel = React.lazy(() => import("@/pages/admin/control/AdminCo
 const AdminIntermentDeceasedPage = React.lazy(() => import("@/pages/admin/interment/deceased-records/deceased"));
 const AdminIntermentLotOwnersPage = React.lazy(() => import("@/pages/admin/interment/lot-owners/lot-owners"));
 const AdminIntermentCustomerPage = React.lazy(() => import("./pages/admin/interment/customer/CustomersLayout"));
-const MapPage = React.lazy(() => import("@/components/layout/WebMapLayout"));
-const DashboardLayout = React.lazy(() => import("@/components/layout/DashboardLayout"));
+// const MapPage = React.lazy(() => import("@/components/layout/WebMapLayout"));
+import MapPage from "@/components/layout/WebMapLayout";
+import DashboardLayout from "@/components/layout/DashboardLayout";
 import LandingLayout from "@/components/layout/LandingLayout";
 // Type for ErrorFallback props
 interface ErrorFallbackProps {
