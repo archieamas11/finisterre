@@ -1,6 +1,6 @@
 "use client";
 import * as React from "react";
-import { CartesianGrid, AreaChart, XAxis, Area } from "recharts";
+import { CartesianGrid, AreaChart, XAxis, Area, ResponsiveContainer } from "recharts";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { ToggleGroupItem, ToggleGroup } from "@/components/ui/toggle-group";
 import { SelectContent, SelectTrigger, SelectValue, SelectItem, Select } from "@/components/ui/select";
@@ -103,7 +103,7 @@ export function ChartAreaInteractive() {
   });
 
   return (
-    <Card className="@container/card">
+    <Card className="@container/card flex h-full flex-col">
       <CardHeader>
         <CardTitle>Total Customers</CardTitle>
         <CardDescription>
@@ -148,58 +148,60 @@ export function ChartAreaInteractive() {
           </Select>
         </CardAction>
       </CardHeader>
-      <CardContent className="px-2 pt-4 sm:px-6 sm:pt-6">
-        <ChartContainer className="aspect-auto h-[250px] w-full" config={chartConfig}>
-          <AreaChart data={filteredData}>
-            <defs>
-              <linearGradient id="fillSerenityLawn" x1="0" y1="0" x2="0" y2="1">
-                <stop stopColor="var(--color-serenityLawn)" stopOpacity={1.0} offset="5%" />
-                <stop stopColor="var(--color-serenityLawn)" stopOpacity={0.1} offset="95%" />
-              </linearGradient>
-              <linearGradient id="fillColumbarium" x1="0" y1="0" x2="0" y2="1">
-                <stop stopColor="var(--color-columbarium)" stopOpacity={0.8} offset="5%" />
-                <stop stopColor="var(--color-columbarium)" stopOpacity={0.1} offset="95%" />
-              </linearGradient>
-              <linearGradient id="fillMemorialChambers" x1="0" y1="0" x2="0" y2="1">
-                <stop stopColor="var(--color-memorialChambers)" stopOpacity={0.8} offset="5%" />
-                <stop stopColor="var(--color-memorialChambers)" stopOpacity={0.1} offset="95%" />
-              </linearGradient>
-            </defs>
-            <CartesianGrid vertical={false} />
-            <XAxis
-              tickFormatter={(value) => {
-                const date = new Date(value);
-                return date.toLocaleDateString("en-US", {
-                  month: "short",
-                  day: "numeric",
-                });
-              }}
-              tickLine={false}
-              axisLine={false}
-              minTickGap={32}
-              dataKey="date"
-              tickMargin={8}
-            />
-            <ChartTooltip
-              content={
-                <ChartTooltipContent
-                  labelFormatter={(value) => {
-                    return new Date(value).toLocaleDateString("en-US", {
-                      month: "short",
-                      day: "numeric",
-                      year: "numeric",
-                    });
-                  }}
-                  indicator="dot"
-                />
-              }
-              defaultIndex={isMobile ? -1 : 10}
-              cursor={false}
-            />
-            <Area stroke="var(--color-serenityLawn)" fill="url(#fillSerenityLawn)" dataKey="serenityLawn" type="natural" stackId="a" />
-            <Area stroke="var(--color-columbarium)" fill="url(#fillColumbarium)" dataKey="columbarium" type="natural" stackId="a" />
-            <Area stroke="var(--color-memorialChambers)" fill="url(#fillMemorialChambers)" dataKey="memorialChambers" type="natural" stackId="a" />
-          </AreaChart>
+      <CardContent className="min-h-0 flex-1 px-2 pt-4 sm:px-6 sm:pt-6">
+        <ChartContainer className="h-full min-h-0 w-full" config={chartConfig}>
+          <ResponsiveContainer width="100%" height="100%">
+            <AreaChart data={filteredData}>
+              <defs>
+                <linearGradient id="fillSerenityLawn" x1="0" y1="0" x2="0" y2="1">
+                  <stop stopColor="var(--color-serenityLawn)" stopOpacity={1.0} offset="5%" />
+                  <stop stopColor="var(--color-serenityLawn)" stopOpacity={0.1} offset="95%" />
+                </linearGradient>
+                <linearGradient id="fillColumbarium" x1="0" y1="0" x2="0" y2="1">
+                  <stop stopColor="var(--color-columbarium)" stopOpacity={0.8} offset="5%" />
+                  <stop stopColor="var(--color-columbarium)" stopOpacity={0.1} offset="95%" />
+                </linearGradient>
+                <linearGradient id="fillMemorialChambers" x1="0" y1="0" x2="0" y2="1">
+                  <stop stopColor="var(--color-memorialChambers)" stopOpacity={0.8} offset="5%" />
+                  <stop stopColor="var(--color-memorialChambers)" stopOpacity={0.1} offset="95%" />
+                </linearGradient>
+              </defs>
+              <CartesianGrid vertical={false} />
+              <XAxis
+                tickFormatter={(value) => {
+                  const date = new Date(value);
+                  return date.toLocaleDateString("en-US", {
+                    month: "short",
+                    day: "numeric",
+                  });
+                }}
+                tickLine={false}
+                axisLine={false}
+                minTickGap={32}
+                dataKey="date"
+                tickMargin={8}
+              />
+              <ChartTooltip
+                content={
+                  <ChartTooltipContent
+                    labelFormatter={(value) => {
+                      return new Date(value).toLocaleDateString("en-US", {
+                        month: "short",
+                        day: "numeric",
+                        year: "numeric",
+                      });
+                    }}
+                    indicator="dot"
+                  />
+                }
+                defaultIndex={isMobile ? -1 : 10}
+                cursor={false}
+              />
+              <Area stroke="var(--color-serenityLawn)" fill="url(#fillSerenityLawn)" dataKey="serenityLawn" type="natural" stackId="a" />
+              <Area stroke="var(--color-columbarium)" fill="url(#fillColumbarium)" dataKey="columbarium" type="natural" stackId="a" />
+              <Area stroke="var(--color-memorialChambers)" fill="url(#fillMemorialChambers)" dataKey="memorialChambers" type="natural" stackId="a" />
+            </AreaChart>
+          </ResponsiveContainer>
         </ChartContainer>
       </CardContent>
     </Card>
