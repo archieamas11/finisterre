@@ -298,8 +298,8 @@ export default function AdminMapLayout() {
               const circleIcon = L.divIcon({
                 className: "",
                 html: `<div style="
-                width: 20px;
-                height: 20px;
+                width: 15px;
+                height: 15px;
                 border-radius: 50%;
                 background: ${statusColor};
                 border: 2px solid #fff;
@@ -323,7 +323,7 @@ export default function AdminMapLayout() {
                 >
                   {marker.rows && marker.columns ? (
                     // 🏢 Columbarium Popup
-                    <Popup className="leaflet-theme-popup" closeButton={false} offset={[4.5, 10]} minWidth={450}>
+                    <Popup className="leaflet-theme-popup" closeButton={false} offset={[2, 10]} minWidth={450}>
                       <div className="w-full py-2">
                         <Suspense
                           fallback={
@@ -341,7 +341,7 @@ export default function AdminMapLayout() {
                     </Popup>
                   ) : (
                     // 🏠 Single Plot Popup
-                    <Popup className="leaflet-theme-popup" closeButton={false} offset={[4.5, 10]} minWidth={600} maxWidth={600}>
+                    <Popup className="leaflet-theme-popup" closeButton={false} offset={[2, 10]} minWidth={600} maxWidth={600}>
                       <Suspense
                         fallback={
                           <>

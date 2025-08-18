@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useRef } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Marker } from "react-leaflet";
 import { useMapEvents } from "react-leaflet";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
@@ -31,20 +31,37 @@ export default function EditableMarker({
   onPopupOpen,
   onPopupClose,
 }: EditableMarkerProps) {
-  const markerRef = useRef<L.Marker>(null);
+  const markerRef = useRef<L.Marker | null>(null);
   const isDraggingRef = useRef(false);
   const currentPositionRef = useRef<[number, number]>(position);
+  const [localPosition, setLocalPosition] = useState<[number, number]>(position);
   const queryClient = useQueryClient();
 
-  // Update position ref when prop changes
+  // Update local position when prop changes, but only if it's different
+  useEffect(() => {
+    const [currentLat, currentLng] = localPosition;
+    const [newLat, newLng] = position;
+
+    if (currentLat !== newLat || currentLng !== newLng) {
+      setLocalPosition(position);
+    }
+  }, [position, localPosition]);
+
+  // Update marker position when local position changes
   useEffect(() => {
     if (markerRef.current) {
-      markerRef.current.setLatLng(position);
-      currentPositionRef.current = position;
-    }
-  }, [position]);
+      const currentLatLng = markerRef.current.getLatLng();
+      const [newLat, newLng] = localPosition;
 
-  // Inject CSS once on mount
+      // Only update if the position has actually changed
+      if (currentLatLng.lat !== newLat || currentLatLng.lng !== newLng) {
+        markerRef.current.setLatLng(localPosition);
+        currentPositionRef.current = localPosition;
+      }
+    }
+  }, [localPosition]);
+
+  // Selected plot marker style to edit
   useEffect(() => {
     let style = document.getElementById("selected-marker-styles");
     if (style) return;
@@ -66,12 +83,12 @@ export default function EditableMarker({
       
       .marker-editing-indicator {
         position: absolute;
-        top: 50%;
-        left: 50%;
+        top: 45%;
+        left: 49%;
         transform: translate(-50%, -50%);
         width: 150%;
         height: 150%;
-        border: 2px dashed #3b82f6;
+        border: 3px dashed #3b82f6;
         border-radius: 50%;
         animation: rotate 10s linear infinite;
         z-index: -1;
@@ -90,28 +107,22 @@ export default function EditableMarker({
     document.head.appendChild(style);
   }, []);
 
-  // Memoize the icon to prevent unnecessary recreations
   const markerIcon = useMemo(() => {
     if (!isSelected || !isEditable) {
       return icon;
     }
-
-    // Create enhanced icon for selected/editable state
-    // Safely get originalHtml from icon.options.html
     let originalHtml = "";
     if (typeof icon.options.html === "string") {
       originalHtml = icon.options.html;
     } else if (icon.options.html && typeof icon.options.html === "object" && "outerHTML" in icon.options.html) {
       originalHtml = (icon.options.html as HTMLElement).outerHTML;
     }
-
     const enhancedHtml = `
       <div style="position: relative; display: inline-block;">
         ${originalHtml}
         <div class="marker-editing-indicator"></div>
       </div>
     `;
-
     return L.divIcon({
       ...icon.options,
       html: enhancedHtml,
@@ -119,65 +130,69 @@ export default function EditableMarker({
     });
   }, [icon, isSelected, isEditable]);
 
-  // Mutation for updating coordinates
+  // Mutation for updating coordinates with optimistic updates
   const updateCoordinatesMutation = useMutation({
     mutationFn: async ({ plot_id, coordinates }: { plot_id: string; coordinates: string }) => {
       return updatePlotCoordinates(plot_id, coordinates);
     },
-
-    // Run before the mutation. Snapshot old data and update cache to new coords.
     onMutate: async ({ plot_id, coordinates }) => {
       await queryClient.cancelQueries({ queryKey: ["plots"] });
+      await queryClient.cancelQueries({ queryKey: ["plotDetails", plot_id] });
 
       const previousPlots = queryClient.getQueryData<any[]>(["plots"]);
+      const previousPlotsClone = previousPlots ? JSON.parse(JSON.stringify(previousPlots)) : undefined;
 
-      // Parse "lng, lat" -> numbers
-      const parts = coordinates.split(",").map((s) => parseFloat(s.trim()));
-      const [lng, lat] = parts;
+      // parse "lng, lat" safely
+      const parts = String(coordinates)
+        .split(",")
+        .map((s) => parseFloat(s.trim()));
+      const [lng, lat] = parts.length >= 2 && !Number.isNaN(parts[0]) && !Number.isNaN(parts[1]) ? [parts[0], parts[1]] : [undefined, undefined];
 
-      // Update cache so UI shows new position right away
-      queryClient.setQueryData(["plots"], (old: any[] | undefined) => {
-        if (!old) return old;
-        return old.map((p) =>
-          p.plot_id === plot_id
-            ? {
-                ...p,
-                // adjust fields your app uses for coords
-                coordinates: `${lng}, ${lat}`,
-                latitude: lat,
-                longitude: lng,
-                // optional: keep a position tuple if your UI reads this
-                position: [lat, lng],
-              }
-            : p,
-        );
-      });
+      if (lat !== undefined && lng !== undefined) {
+        // set local marker position so UI moves right away
+        setLocalPosition([lat, lng]);
+        currentPositionRef.current = [lat, lng];
+      }
 
-      return { previousPlots };
+      // update cache fields that your UI may read
+      if (previousPlots) {
+        queryClient.setQueryData(["plots"], (old: any) => {
+          if (!old) return old;
+          return old.map((plot: any) =>
+            plot.plot_id === plot_id
+              ? {
+                  ...plot,
+                  // change the exact field your UI reads. keep the string too if needed.
+                  coordinates: `${lng}, ${lat}`,
+                  position: lat !== undefined && lng !== undefined ? [lat, lng] : plot.position,
+                }
+              : plot,
+          );
+        });
+      }
+
+      return { previousPlots: previousPlotsClone };
     },
 
-    onError: (_error, context: any) => {
-      toast.error("❌ Failed to update marker coordinates. Please try again.");
-      // Roll back cache to previous snapshot
+    onError: (_err, _variables, context) => {
+      // If the mutation fails, use the context returned from onMutate to roll back
       if (context?.previousPlots) {
         queryClient.setQueryData(["plots"], context.previousPlots);
       }
-
-      // Restore marker visual position to the prop value
-      if (markerRef.current) {
-        markerRef.current.setLatLng(position);
-        currentPositionRef.current = position;
+      toast.error("Failed to update marker coordinates. Please try again.");
+      // Reset marker position on error
+      setLocalPosition(position);
+      currentPositionRef.current = position;
+    },
+    onSettled: (_data, _error, variables) => {
+      queryClient.invalidateQueries({ queryKey: ["plots"] });
+      if (variables?.plot_id) {
+        queryClient.invalidateQueries({ queryKey: ["plotDetails", variables.plot_id] });
       }
     },
-
     onSuccess: () => {
-      toast.success("📍 Marker coordinates updated!");
+      toast.success("Marker coordinates updated successfully!");
       onEditComplete();
-    },
-
-    // Ensure server state sync: refetch after settle
-    onSettled: () => {
-      queryClient.invalidateQueries({ queryKey: ["plots"] });
     },
   });
 
@@ -192,18 +207,14 @@ export default function EditableMarker({
 
   // Cancel editing and reset position
   const cancelEditing = useCallback(() => {
-    if (markerRef.current) {
-      markerRef.current.setLatLng(position);
-      currentPositionRef.current = position;
-    }
+    setLocalPosition(position);
     onEditComplete();
   }, [position, onEditComplete]);
 
-  // Handle keyboard events
+  // Handle keyboard events (unchanged)
   useMapEvents({
     keydown(e: L.LeafletKeyboardEvent) {
       if (!isSelected) return;
-
       if (e.originalEvent.key === "Enter") {
         e.originalEvent.preventDefault();
         savePosition();
@@ -214,13 +225,13 @@ export default function EditableMarker({
     },
   });
 
-  // Setup dragging behavior
+  // Setup dragging behavior (unchanged)
   useEffect(() => {
     const marker = markerRef.current;
     if (!marker) return;
 
     // Clear existing event listeners
-    marker.off("dragstart drag dragend");
+    marker.off("dragstart").off("drag").off("dragend");
 
     if (isSelected && isEditable) {
       // Enable dragging
@@ -240,8 +251,6 @@ export default function EditableMarker({
 
       marker.on("dragend", () => {
         isDraggingRef.current = false;
-        // Optional: Auto-save on drag end
-        // savePosition();
       });
 
       // Focus map container for keyboard events
@@ -262,10 +271,8 @@ export default function EditableMarker({
   const handleMarkerClick = useCallback(() => {
     // Prevent click during drag
     if (isDraggingRef.current) return;
-
     if (isEditable) {
       onMarkerClick(plotId);
-
       // Focus map for keyboard events
       setTimeout(() => {
         const mapContainer = document.querySelector(".leaflet-container") as HTMLElement;
@@ -281,18 +288,16 @@ export default function EditableMarker({
     const handlers: any = {
       click: handleMarkerClick,
     };
-
     // Only add popup handlers when not in edit mode
     if (!isEditable) {
       if (onPopupOpen) handlers.popupopen = onPopupOpen;
       if (onPopupClose) handlers.popupclose = onPopupClose;
     }
-
     return handlers;
   }, [handleMarkerClick, isEditable, onPopupOpen, onPopupClose]);
 
   return (
-    <Marker ref={markerRef} position={position} icon={markerIcon} eventHandlers={eventHandlers} draggable={isSelected && isEditable}>
+    <Marker ref={markerRef} position={localPosition} icon={markerIcon} eventHandlers={eventHandlers} draggable={isSelected && isEditable}>
       {/* Only render popup content when not in editable mode */}
       {!isEditable && children}
     </Marker>
