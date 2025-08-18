@@ -30,7 +30,7 @@ const UserDashboard = React.lazy(() => import("@/pages/user/contents/UserDashboa
 const AdminMapLayout = React.lazy(() => import("@/pages/admin/map4admin/AdminMapLayout"));
 const IntermentSetup = React.lazy(() => import("@/pages/admin/interment/IntermentSetup"));
 const AdminControlPanel = React.lazy(() => import("@/pages/admin/control/AdminControlPanel"));
-const AdminIntermentDeceasedPage = React.lazy(() => import("@/pages/admin/interment/deceased"));
+const AdminIntermentDeceasedPage = React.lazy(() => import("@/pages/admin/interment/deceased-records/deceased"));
 const AdminIntermentLotOwnersPage = React.lazy(() => import("@/pages/admin/interment/lot-owners/lot-owners"));
 const AdminIntermentCustomerPage = React.lazy(() => import("./pages/admin/interment/customer/CustomersLayout"));
 
