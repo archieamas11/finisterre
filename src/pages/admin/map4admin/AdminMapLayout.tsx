@@ -323,7 +323,7 @@ export default function AdminMapLayout() {
                 >
                   {marker.rows && marker.columns ? (
                     // 🏢 Columbarium Popup
-                    <Popup className="leaflet-theme-popup" closeButton={false} offset={[-2, 5]} minWidth={450}>
+                    <Popup className="leaflet-theme-popup" closeButton={false} offset={[4.5, 10]} minWidth={450}>
                       <div className="w-full py-2">
                         <Suspense
                           fallback={
@@ -341,7 +341,7 @@ export default function AdminMapLayout() {
                     </Popup>
                   ) : (
                     // 🏠 Single Plot Popup
-                    <Popup className="leaflet-theme-popup" closeButton={false} offset={[-2, 5]} minWidth={600} maxWidth={600}>
+                    <Popup className="leaflet-theme-popup" closeButton={false} offset={[4.5, 10]} minWidth={600} maxWidth={600}>
                       <Suspense
                         fallback={
                           <>
