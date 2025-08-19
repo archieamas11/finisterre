@@ -9,11 +9,9 @@ import { isAdmin, isAuthenticated } from "@/utils/auth.utils.temp";
 import { Button } from "@/components/ui/button";
 import { LocateContext } from "@/pages/admin/map4admin/AdminMapLayout";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
-
 export default function WebMapNavs() {
   const locateCtx = useContext(LocateContext);
   const location = useLocation();
-
   const onAddMarkerClick = () => {
     if (locateCtx?.isEditingMarker) {
       locateCtx?.toggleEditMarker?.();

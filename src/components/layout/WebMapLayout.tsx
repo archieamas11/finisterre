@@ -12,6 +12,7 @@ import { usePlots } from "@/hooks/plots-hooks/plot.hooks";
 import { convertPlotToMarker } from "@/types/map.types";
 import Spinner from "@/components/ui/spinner";
 import RoutingMachine from "./RoutingMachine";
+import * as turf from "@turf/turf";
 const PlotMarkers = lazy(() => import("@/pages/webmap/PlotMarkers"));
 const DirectionsCard = lazy(() => import("@/components/map/DirectionsCard"));
 const PlaygroundMarkers = lazy(() => import("@/pages/webmap/PlaygroundMarkers"));
@@ -20,12 +21,11 @@ const ParkingMarkers = lazy(() => import("@/pages/webmap/ParkingMarkers"));
 const CenterSerenityMarkers = lazy(() => import("@/pages/webmap/CenterSerenityMarkers"));
 const MainEntranceMarkers = lazy(() => import("@/pages/webmap/MainEntranceMarkers"));
 const ChapelMarkers = lazy(() => import("@/pages/webmap/ChapelMarkers"));
-
 export const LocateContext = createContext<{ requestLocate: () => void; clearRoute: () => void } | null>(null);
 
 export default function MapPage() {
   const { isLoading, data: plotsData } = usePlots();
-  const markers = plotsData?.map(convertPlotToMarker) || [];
+  const markers = Array.isArray(plotsData) ? plotsData.map(convertPlotToMarker) : [];
   const locateRef = useRef<(() => void) | null>(null);
   const [userPosition, setUserPosition] = useState<L.LatLng | null>(null);
   const [route, setRoute] = useState<{ from: [number, number]; to: [number, number] } | null>(null);
@@ -33,7 +33,7 @@ export default function MapPage() {
   const [isDirectionsOpen, setIsDirectionsOpen] = useState(false);
   const [routeInfo, setRouteInfo] = useState<any | null>(null);
   const [isRerouting, setIsRerouting] = useState(false);
-  const [routeCoords, setRouteCoords] = useState<[number, number][] | null>(null);
+  const [routePolyline, setRoutePolyline] = useState<any>(null);
   const [watchId, setWatchId] = useState<number | null>(null);
 
   const pendingDestinationRef = useRef<[number, number] | null>(null);
@@ -125,44 +125,25 @@ export default function MapPage() {
     };
   }, [route]);
 
-  // Calculate distance from user to route
-  const calculateDistanceToRoute = (userPos: L.LatLng, coords: [number, number][]): number => {
-    if (!coords || coords.length < 2) return Infinity;
+  // Calculate distance from user to route using Turf.js
+  const calculateDistanceToRoute = (userPos: L.LatLng): number => {
+    if (!routePolyline) return Infinity;
 
-    let minDistance = Infinity;
-    const userPoint = L.latLng(userPos);
-
-    for (let i = 0; i < coords.length - 1; i++) {
-      const start = L.latLng(coords[i]);
-      const end = L.latLng(coords[i + 1]);
-
-      const distance = distanceToSegment(userPoint, start, end);
-      if (distance < minDistance) {
-        minDistance = distance;
-      }
+    try {
+      // Create a point for the user's position (Turf uses [lng, lat])
+      const userPoint = turf.point([userPos.lng, userPos.lat]);
+      return turf.pointToLineDistance(userPoint, routePolyline, { units: "meters" });
+    } catch (error) {
+      console.error("Error calculating distance to route:", error);
+      return Infinity;
     }
-
-    return minDistance;
-  };
-
-  const distanceToSegment = (point: L.LatLng, start: L.LatLng, end: L.LatLng): number => {
-    const segmentLength = start.distanceTo(end);
-    if (segmentLength === 0) return point.distanceTo(start);
-
-    // Calculate projection factor (0 to 1)
-    const t = Math.max(0, Math.min(1, ((point.lat - start.lat) * (end.lat - start.lat) + (point.lng - start.lng) * (end.lng - start.lng)) / (segmentLength * segmentLength)));
-
-    // Find the closest point on the segment
-    const projection = L.latLng(start.lat + t * (end.lat - start.lat), start.lng + t * (end.lng - start.lng));
-
-    return point.distanceTo(projection);
   };
 
   // Check for route deviation and trigger reroute
   useEffect(() => {
-    if (!userPosition || !route || !routeCoords || isRerouting) return;
+    if (!userPosition || !route || !routePolyline || isRerouting) return;
 
-    const distance = calculateDistanceToRoute(userPosition, routeCoords);
+    const distance = calculateDistanceToRoute(userPosition);
 
     if (distance > 20) {
       setIsRerouting(true);
@@ -171,14 +152,26 @@ export default function MapPage() {
         to: route.to,
       });
     }
-  }, [userPosition, routeCoords, route, isRerouting]);
+  }, [userPosition, routePolyline, route, isRerouting]);
 
-  // Update route coordinates when route info changes
+  // Update route polyline when route info changes
   useEffect(() => {
-    if (routeInfo?.coordinates) {
-      setRouteCoords(routeInfo.coordinates);
+    if (routeInfo?.coordinates && Array.isArray(routeInfo.coordinates)) {
+      try {
+        // Filter out invalid coordinates and convert to [lng, lat] format
+        const coords = routeInfo.coordinates.filter((coord: string | any[]) => Array.isArray(coord) && coord.length >= 2).map(([lat, lng]: [number, number]) => [lng, lat]);
+
+        if (coords.length > 1) {
+          setRoutePolyline(turf.lineString(coords));
+        } else {
+          setRoutePolyline(null);
+        }
+      } catch (error) {
+        console.error("Error creating route polyline:", error);
+        setRoutePolyline(null);
+      }
     } else {
-      setRouteCoords(null);
+      setRoutePolyline(null);
     }
   }, [routeInfo]);
 
@@ -189,7 +182,7 @@ export default function MapPage() {
   const clearRoute = () => {
     setRoute(null);
     setRouteInfo(null);
-    setRouteCoords(null);
+    setRoutePolyline(null);
     setIsDirectionLoading(false);
     setIsDirectionsOpen(false);
     setIsRerouting(false);
@@ -255,7 +248,7 @@ export default function MapPage() {
             <CenterSerenityMarkers onDirectionClick={handleDirectionClick} isDirectionLoading={isDirectionLoading} />
             <MainEntranceMarkers onDirectionClick={handleDirectionClick} isDirectionLoading={isDirectionLoading} />
             <ChapelMarkers onDirectionClick={handleDirectionClick} isDirectionLoading={isDirectionLoading} />
-            <PlotMarkers markers={markers as any} isDirectionLoading={isDirectionLoading} onDirectionClick={(to) => handleDirectionClick(to)} />
+            <PlotMarkers markers={markers} isDirectionLoading={isDirectionLoading} onDirectionClick={(to) => handleDirectionClick(to)} />
             <DirectionsCard
               isOpen={isDirectionsOpen}
               onClose={() => {
