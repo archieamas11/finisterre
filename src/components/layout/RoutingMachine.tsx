@@ -6,7 +6,8 @@ import "leaflet-routing-machine";
 interface RoutingMachineProps {
   from: [number, number];
   to: [number, number];
-  onRouteFound?: () => void;
+  // Called when route is found; provides the first route object from LRM
+  onRouteFound?: (route?: any) => void;
   onRouteError?: () => void;
 }
 
@@ -15,36 +16,62 @@ export default function RoutingMachine({ from, to, onRouteFound, onRouteError }:
   const routingControlRef = useRef<any>(null);
   const routerRef = useRef<any>(null);
   const isUnmountedRef = useRef(false);
+  const onRouteFoundRef = useRef<RoutingMachineProps["onRouteFound"] | undefined>(undefined);
+  const onRouteErrorRef = useRef<RoutingMachineProps["onRouteError"] | undefined>(undefined);
+  const fromRef = useRef<[number, number]>(from);
+  const toRef = useRef<[number, number]>(to);
+  const pendingRequestRef = useRef<boolean>(false);
 
+  // Keep latest callbacks without retriggering routing setup
+  useEffect(() => {
+    onRouteFoundRef.current = onRouteFound;
+  }, [onRouteFound]);
+
+  useEffect(() => {
+    onRouteErrorRef.current = onRouteError;
+  }, [onRouteError]);
+
+  // keep latest waypoints in refs for event handlers
+  useEffect(() => {
+    fromRef.current = from;
+    toRef.current = to;
+  }, [from, to]);
+
+  // Mount once: create the routing control and listeners
   useEffect(() => {
     isUnmountedRef.current = false;
 
-    // 🧹 Clean up existing routing control before creating new one
-    if (routingControlRef.current) {
-      try {
-        routerRef.current?.abort?.();
-      } catch {
-        // noop
+    const handleRoutesFound = (e: any) => {
+      if (isUnmountedRef.current) return;
+      pendingRequestRef.current = false;
+      const route = e?.routes?.[0];
+      onRouteFoundRef.current?.(route);
+
+      const routes = e?.routes;
+      if (routes && routes.length > 0) {
+        const coordinates = routes[0].coordinates;
+        if (coordinates && coordinates.length > 0) {
+          const [fx, fy] = fromRef.current;
+          const [tx, ty] = toRef.current;
+          coordinates[0] = L.latLng(fx, fy);
+          coordinates[coordinates.length - 1] = L.latLng(tx, ty);
+        }
       }
+    };
 
-      try {
-        routingControlRef.current.off?.("routesfound");
-        routingControlRef.current.off?.("routingerror");
-        routingControlRef.current.off?.("routingstart");
-      } catch {
-        // noop
-      }
+    const handleRoutingError = (e: any) => {
+      if (isUnmountedRef.current) return;
+      pendingRequestRef.current = false;
+      console.error("Routing error:", e);
+      onRouteErrorRef.current?.();
+    };
 
-      try {
-        map.removeControl(routingControlRef.current);
-      } catch {
-        // noop
-      }
+    const handleRoutingStart = () => {
+      if (isUnmountedRef.current) return;
+      pendingRequestRef.current = true;
+    };
 
-      routingControlRef.current = null;
-    }
-
-    const createRoutingControl = () => {
+    try {
       const router = L.Routing.osrmv1({
         serviceUrl: "https://routing.openstreetmap.de/routed-foot/route/v1",
         profile: "foot",
@@ -52,7 +79,7 @@ export default function RoutingMachine({ from, to, onRouteFound, onRouteError }:
       });
       routerRef.current = router;
 
-      return L.Routing.control({
+      const control = L.Routing.control({
         waypoints: [L.latLng(from[0], from[1]), L.latLng(to[0], to[1])],
         router,
         show: false,
@@ -61,34 +88,20 @@ export default function RoutingMachine({ from, to, onRouteFound, onRouteError }:
         fitSelectedRoutes: true,
         showAlternatives: false,
         lineOptions: {
-          styles: [
-            {
-              color: "#3b82f6",
-              weight: 6,
-              opacity: 0.9,
-            },
-          ],
+          styles: [{ color: "#3b82f6", weight: 6, opacity: 0.9 }],
           extendToWaypoints: true,
           missingRouteTolerance: 1,
         },
         createMarker: function (i: number, waypoint: any) {
-          // Custom markers for start and end points
           if (i === 0) {
             return L.marker(waypoint.latLng, {
-              icon: L.divIcon({
-                className: "custom-user-marker",
-                html: '<div aria-label="Your location" role="img" style="width:16px;height:16px;border-radius:50%;background:#3b82f6;border:2px solid #fff;box-shadow:0 0 0 4px rgba(59,130,246,0.25)"></div>',
-                iconSize: [20, 20],
-                iconAnchor: [10, 10],
-              }),
+              icon: L.divIcon({ className: "custom-user-marker" }),
             });
-          } else {
-            return L.marker(waypoint.latLng, {
-              icon: L.divIcon({
-                className: "custom-destination-marker",
-                html:
-                  // Accessible inline SVG map pin with subtle pulse
-                  '<div role="img" aria-label="Destination" style="position:relative;display:inline-block;width:28px;height:40px;">\
+          }
+          return L.marker(waypoint.latLng, {
+            icon: L.divIcon({
+              className: "custom-destination-marker",
+              html: '<div role="img" aria-label="Destination" style="position:relative;display:inline-block;width:28px;height:40px;">\
                       <svg width="28" height="40" viewBox="0 0 24 34" xmlns="http://www.w3.org/2000/svg" focusable="false" aria-hidden="true">\
                         <title>Destination</title>\
                         <defs>\
@@ -100,51 +113,18 @@ export default function RoutingMachine({ from, to, onRouteFound, onRouteError }:
                         <circle cx="12" cy="9" r="3.2" fill="#fff"/>\
                       </svg>\
                     </div>',
-                iconSize: [28, 40],
-                iconAnchor: [20, 34],
-              }),
-            });
-          }
+              iconSize: [28, 40],
+              iconAnchor: [20, 34],
+            }),
+          });
         },
       } as any);
-    };
 
-    // Define handlers once so we can detach them on cleanup
-    const handleRoutesFound = (e: any) => {
-      if (isUnmountedRef.current) return;
-      onRouteFound?.();
-
-      // Force extend to waypoints by manually adjusting the polyline
-      const routes = e?.routes;
-      if (routes && routes.length > 0) {
-        const coordinates = routes[0].coordinates;
-        if (coordinates && coordinates.length > 0) {
-          // Ensure the route connects exactly to the waypoints
-          coordinates[0] = L.latLng(from[0], from[1]);
-          coordinates[coordinates.length - 1] = L.latLng(to[0], to[1]);
-        }
-      }
-    };
-
-    const handleRoutingError = (e: any) => {
-      if (isUnmountedRef.current) return;
-      console.error("Routing error:", e);
-      onRouteError?.();
-    };
-
-    const handleRoutingStart = () => {
-      if (isUnmountedRef.current) return;
-      // Route calculation started - loading state should already be active
-    };
-
-    try {
-      routingControlRef.current = createRoutingControl();
-      routingControlRef.current.addTo(map);
-
-      // Add event listeners
-      routingControlRef.current.on("routesfound", handleRoutesFound);
-      routingControlRef.current.on("routingerror", handleRoutingError);
-      routingControlRef.current.on("routingstart", handleRoutingStart);
+      routingControlRef.current = control;
+      control.addTo(map);
+      control.on("routesfound", handleRoutesFound);
+      control.on("routingerror", handleRoutingError);
+      control.on("routingstart", handleRoutingStart);
     } catch (error) {
       console.error("Error creating routing control:", error);
       onRouteError?.();
@@ -152,31 +132,107 @@ export default function RoutingMachine({ from, to, onRouteFound, onRouteError }:
 
     return () => {
       isUnmountedRef.current = true;
-      if (routingControlRef.current) {
-        // Abort any in-flight XHRs to prevent callbacks on a detached map
+
+      // 🛡️ Wait for any pending requests to complete before cleanup
+      if (pendingRequestRef.current && routerRef.current) {
         try {
-          routerRef.current?.abort?.();
-        } catch {
-          // noop
+          routerRef.current.abort?.();
+        } catch (error) {
+          console.warn("Error aborting router:", error);
         }
-        // Detach events
+      }
+
+      if (routingControlRef.current) {
         try {
+          // 🧹 Remove event listeners first
           routingControlRef.current.off?.("routesfound", handleRoutesFound);
           routingControlRef.current.off?.("routingerror", handleRoutingError);
           routingControlRef.current.off?.("routingstart", handleRoutingStart);
-        } catch {
-          // noop
-        }
-        try {
-          map.removeControl(routingControlRef.current);
         } catch (error) {
-          console.error("Error removing routing control:", error);
+          console.warn("Error removing event listeners:", error);
+        }
+
+        try {
+          // 🗑️ Clear any existing routes before removing control
+          if (routingControlRef.current._routes && routingControlRef.current._routes.length > 0) {
+            routingControlRef.current.getPlan()?.setWaypoints?.([]);
+          }
+
+          // 🧹 Also clear any route lines manually
+          if (routingControlRef.current._routeLines) {
+            routingControlRef.current._routeLines.forEach((line: any) => {
+              if (map.hasLayer(line)) {
+                map.removeLayer(line);
+              }
+            });
+            routingControlRef.current._routeLines = [];
+          }
+        } catch (error) {
+          console.warn("Error clearing routes:", error);
+        }
+
+        // 🗑️ Immediately remove control without delay
+        try {
+          if (routingControlRef.current && map.hasLayer?.(routingControlRef.current)) {
+            map.removeControl(routingControlRef.current);
+          }
+        } catch (error) {
+          console.warn("Error removing routing control:", error);
         }
         routingControlRef.current = null;
       }
+
       routerRef.current = null;
+      pendingRequestRef.current = false;
     };
-  }, [from, to, map, onRouteFound, onRouteError]);
+  }, [map]);
+
+  // When from/to change, update waypoints on the existing control
+  useEffect(() => {
+    const control = routingControlRef.current;
+    if (!control || isUnmountedRef.current) return;
+
+    // 🚫 Cancel any pending requests
+    if (pendingRequestRef.current && routerRef.current) {
+      try {
+        routerRef.current.abort?.();
+      } catch (error) {
+        console.warn("Error aborting previous route request:", error);
+      }
+    }
+
+    try {
+      const waypoints = [L.latLng(from[0], from[1]), L.latLng(to[0], to[1])];
+
+      // 🔄 Always clear existing routes first, regardless of their existence
+      control.getPlan()?.setWaypoints?.([]);
+
+      // 🧹 Also clear any route lines manually
+      if (control._routeLines) {
+        control._routeLines.forEach((line: any) => {
+          if (map.hasLayer(line)) {
+            map.removeLayer(line);
+          }
+        });
+        control._routeLines = [];
+      }
+
+      // ⏱️ Delay to ensure cleanup before new route
+      setTimeout(() => {
+        if (!isUnmountedRef.current && routingControlRef.current === control) {
+          try {
+            control.getPlan()?.setWaypoints?.(waypoints);
+          } catch (error) {
+            console.warn("Error setting waypoints after cleanup:", error);
+            onRouteErrorRef.current?.();
+          }
+        }
+      }, 50);
+    } catch (error) {
+      console.error("Error updating waypoints:", error);
+      onRouteErrorRef.current?.();
+    }
+  }, [from, to]);
 
   return null;
 }
