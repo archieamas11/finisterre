@@ -52,7 +52,7 @@ export default function LandingLayout() {
         <NavigationMenuSection />
         <div className="flex items-center gap-2 sm:gap-4">
           <ThemeToggleButton start="top-right" variant="circle-blur" />
-          <Button asChild type="button" className="rounded-full transition" aria-label="Login" variant="secondary">
+          <Button asChild type="button" className="rounded-full border transition" aria-label="Login" variant="secondary">
             <Link to="/login">Login</Link>
           </Button>
         </div>

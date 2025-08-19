@@ -113,17 +113,14 @@ export default function FinisterreMarkers({ playgrounds, onDirectionClick, isDir
             <Button
               className="mt-1 mb-1 w-full rounded-lg"
               onClick={(e) => {
-                // Prevent Leaflet map from panning/dragging when clicking this button
                 e.stopPropagation();
-                e.nativeEvent?.stopImmediatePropagation?.();
                 onDirectionClick?.([pg.lat, pg.lng]);
               }}
               disabled={isDirectionLoading}
               aria-busy={isDirectionLoading}
               variant="default"
-              type="button"
             >
-              {isDirectionLoading ? <Spinner className="h-4 w-4 text-white" /> : <FaDirections />}
+              {isDirectionLoading ? <Spinner className="h-4 w-4" /> : <FaDirections />}
               Get Direction
             </Button>
           </Popup>

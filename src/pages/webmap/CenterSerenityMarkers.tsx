@@ -16,6 +16,6 @@ const playgrounds = [
   },
 ];
 
-export default function CenterSerenityMarkers({ onDirectionClick, isDirectionLoading }: Props) {
+export default function CenterSerenityMarkers({ onDirectionClick, isDirectionLoading = false }: Props) {
   return <FinisterreMarkers playgrounds={playgrounds} onDirectionClick={onDirectionClick} isDirectionLoading={isDirectionLoading} />;
 }

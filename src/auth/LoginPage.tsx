@@ -144,10 +144,10 @@ export default function LoginPage() {
               name="remember"
             />
             <div className="space-y-2">
-              <Button className="mt-2 w-full" variant={"default"} type="submit">
+              <Button className="mt-2 w-full" variant={"default"}>
                 Login
               </Button>
-              <Button onClick={() => navigate(-1)} className="w-full" variant="outline" type="button">
+              <Button onClick={() => navigate(-1)} className="w-full" variant="outline">
                 Back
               </Button>
             </div>
