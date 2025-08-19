@@ -181,7 +181,7 @@ export default function MapPage() {
     distance: number;
     duration: number;
   }> {
-    const serviceUrl = type === "private" ? "https://finisterreosm-production.up.railway.app/route/v1/foot" : "https://router.project-osrm.org/route/v1/foot";
+    const serviceUrl = type === "private" ? "https://cememaposm-production.up.railway.app/route/v1/foot" : "https://router.project-osrm.org/route/v1/foot";
 
     const url = `${serviceUrl}/${from[1]},${from[0]};${to[1]},${to[0]}?overview=full&geometries=geojson`;
 
