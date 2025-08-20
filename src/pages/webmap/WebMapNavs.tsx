@@ -10,10 +10,10 @@ import { Button } from "@/components/ui/button";
 import { LocateContext as WebMapLocateContext } from "@/components/layout/WebMapLayout";
 import { LocateContext as AdminLocateContext } from "@/pages/admin/map4admin/AdminMapLayout";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+
 export default function WebMapNavs() {
   const webMapCtx = useContext(WebMapLocateContext);
   const adminCtx = useContext(AdminLocateContext);
-
   // 🎯 Use admin context if available, otherwise use web map context
   const locateCtx = adminCtx || webMapCtx;
 

@@ -5,6 +5,7 @@ import { Marker, Popup } from "react-leaflet";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { FaDirections } from "react-icons/fa";
+import Spinner from "@/components/ui/spinner";
 
 interface Props {
   onDirectionClick?: (dest: [number, number]) => void;
@@ -59,16 +60,17 @@ export default function MainEntranceMarkers({ onDirectionClick, isDirectionLoadi
             </motion.div>
             <div className="mt-2">
               <Button
+                className="mt-1 mb-1 w-full rounded-lg"
                 onClick={(e) => {
                   e.stopPropagation();
                   onDirectionClick?.([CHAPEL.lat, CHAPEL.lng]);
                 }}
                 disabled={isDirectionLoading}
-                type="button"
+                aria-busy={isDirectionLoading}
                 variant="default"
               >
-                {isDirectionLoading ? "Loading..." : <FaDirections />}
-                <span className="ml-2">Get Directions</span>
+                {isDirectionLoading ? <Spinner className="h-4 w-4" /> : <FaDirections />}
+                Get Direction
               </Button>
             </div>
           </motion.div>

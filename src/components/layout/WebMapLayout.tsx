@@ -160,7 +160,7 @@ export default function MapPage() {
 
       // � Start navigation
       await startNavigation({ latitude: userLocation.latitude, longitude: userLocation.longitude }, { latitude: to[0], longitude: to[1] });
-
+      requestLocate();
       setIsNavigationInstructionsOpen(true);
       setIsDirectionLoading(false);
     } catch (error) {
@@ -202,12 +202,11 @@ export default function MapPage() {
         <MapContainer className="h-full w-full" scrollWheelZoom={true} zoomControl={false} bounds={bounds} maxZoom={25} zoom={18}>
           <TileLayer url="https://services.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}" maxNativeZoom={18} maxZoom={25} />
           {/* 🎯 All the markers */}
+          {/* 👤 User location marker (only when no route is displayed to avoid duplicates) */}
+          {!(route && routeCoordinates.length > 0) && (
+            <UserLocationMarker userLocation={currentLocation} centerOnFirst={shouldCenterOnUser} enableAnimation={true} showAccuracyCircle={true} />
+          )}
           <Suspense fallback={null}>
-            {/* 👤 User location marker (only when no route is displayed to avoid duplicates) */}
-            {!(route && routeCoordinates.length > 0) && (
-              <UserLocationMarker userLocation={currentLocation} centerOnFirst={shouldCenterOnUser} enableAnimation={true} showAccuracyCircle={true} />
-            )}
-
             {/* 🗺️ Valhalla route */}
             {route && routeCoordinates.length > 0 && (
               <ValhallaRoute
