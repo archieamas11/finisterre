@@ -42,7 +42,7 @@ export const LocateContext = createContext<{
 } | null>(null);
 
 export default function AdminMapLayout() {
-  const showGuide4 = true;
+  const showGuide4 = false;
   const { isError, refetch, isLoading, data: plotsData } = usePlots();
   const queryClient = useQueryClient();
   const markers = plotsData?.map(convertPlotToMarker) || [];
