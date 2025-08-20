@@ -16,7 +16,7 @@ import Spinner from "@/components/ui/spinner";
 import { ErrorMessage } from "@/components/ErrorMessage";
 import MapStats from "./MapStats";
 import MapClickHandler from "@/components/map/MapClickHandler";
-import guide4BlockCUrl from "./guide-4-block-c.geojson?url";
+import guide4BlockCUrl from "./guide-4-block-b.geojson?url";
 import AddPlotMarkerDialog from "@/components/map/AddPlotMarkerDialog";
 import AddMarkerInstructions from "@/components/map/AddMarkerInstructions";
 import EditMarkerInstructions from "@/components/map/EditMarkerInstructions";
@@ -42,7 +42,7 @@ export const LocateContext = createContext<{
 } | null>(null);
 
 export default function AdminMapLayout() {
-  const showGuide4 = false;
+  const showGuide4 = true;
   const { isError, refetch, isLoading, data: plotsData } = usePlots();
   const queryClient = useQueryClient();
   const markers = plotsData?.map(convertPlotToMarker) || [];
