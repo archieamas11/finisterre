@@ -140,7 +140,7 @@ export default function ColumbariumPopup({ marker, onDirectionClick, isDirection
 
   return (
     <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3 }} className="w-full">
-      <div className="bg-background dark:bg-muted mb-2 flex items-center justify-between rounded-lg border p-3">
+      <div className="bg-background dark:bg-muted mb-2 flex h-full items-center justify-between rounded-lg border p-3">
         <div>
           <h3 className="text-accent-foreground flex items-center gap-2 text-lg font-bold">
             <ImLibrary /> Chamber {marker.plot_id}
