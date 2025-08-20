@@ -1,6 +1,6 @@
 import "leaflet/dist/leaflet.css";
 import L from "leaflet";
-import { createContext, useRef } from "react";
+import { createContext, useRef, useEffect } from "react";
 import { useState, Suspense, lazy } from "react";
 import { MapContainer, useMapEvents, TileLayer, Popup } from "react-leaflet";
 import iconUrl from "leaflet/dist/images/marker-icon.png";
@@ -11,32 +11,81 @@ import ReactLeafletDriftMarker from "react-leaflet-drift-marker";
 import { usePlots } from "@/hooks/plots-hooks/plot.hooks";
 import { convertPlotToMarker } from "@/types/map.types";
 import Spinner from "@/components/ui/spinner";
-import RoutingMachine from "./RoutingMachine";
+import { useLocationTracking } from "@/hooks/useLocationTracking";
+import { useValhalla } from "@/hooks/useValhalla";
+import { ValhallaRoute } from "@/components/map/ValhallaRoute";
+import { NavigationInstructions } from "@/components/map/NavigationInstructions";
 const PlotMarkers = lazy(() => import("@/pages/webmap/PlotMarkers"));
-const DirectionsCard = lazy(() => import("@/components/map/DirectionsCard"));
-const PlaygroundMarkers = lazy(() => import("@/pages/webmap/PlaygroundMarkers"));
 const ComfortRoomMarker = lazy(() => import("@/pages/webmap/ComfortRoomMarkers"));
 const ParkingMarkers = lazy(() => import("@/pages/webmap/ParkingMarkers"));
 const CenterSerenityMarkers = lazy(() => import("@/pages/webmap/CenterSerenityMarkers"));
 const MainEntranceMarkers = lazy(() => import("@/pages/webmap/MainEntranceMarkers"));
 const ChapelMarkers = lazy(() => import("@/pages/webmap/ChapelMarkers"));
+const PlaygroundMarkers = lazy(() => import("@/pages/webmap/PlaygroundMarkers"));
 
 export const LocateContext = createContext<{ requestLocate: () => void; clearRoute: () => void } | null>(null);
+
 export default function MapPage() {
   const { isLoading, data: plotsData } = usePlots();
   const markers = plotsData?.map(convertPlotToMarker) || [];
-  const locateRef = useRef<(() => void) | null>(null);
-  const [userPosition, setUserPosition] = useState<L.LatLng | null>(null);
-  const [route, setRoute] = useState<{ from: [number, number]; to: [number, number] } | null>(null);
+
+  // 🧭 Location tracking
+  const {
+    currentLocation,
+    startTracking,
+    stopTracking,
+    getCurrentLocation,
+    isTracking,
+    error: locationError,
+  } = useLocationTracking({
+    enableHighAccuracy: true,
+    distanceFilter: 5, // 📏 5 meters minimum distance
+  });
+
+  // 🗺️ Valhalla routing
+  const {
+    route,
+    routeCoordinates,
+    originalStart,
+    originalEnd,
+    navigation,
+    isNavigating,
+    isRerouting,
+    startNavigation,
+    stopNavigation,
+    handleLocationUpdate,
+    totalDistance,
+    totalTime,
+    rerouteCount,
+    error: routingError,
+  } = useValhalla({
+    costingType: "pedestrian", // 🚶 Default to walking
+    enableAutoReroute: true,
+    offRouteThreshold: 25, // 📏 25 meters off-route threshold
+  });
+
+  const [isNavigationInstructionsOpen, setIsNavigationInstructionsOpen] = useState(false);
   const [isDirectionLoading, setIsDirectionLoading] = useState(false);
-  const [isDirectionsOpen, setIsDirectionsOpen] = useState(false);
-  const [routeInfo, setRouteInfo] = useState<any | null>(null);
-  // local UI state for directions moved to DirectionsCard
-  const pendingDestinationRef = useRef<[number, number] | null>(null);
+  const locateRef = useRef<(() => void) | null>(null);
+
   const bounds: [[number, number], [number, number]] = [
     [10.247883800064669, 123.79691285546676],
     [10.249302749341647, 123.7988598710129],
   ];
+
+  // 📍 Handle location updates for navigation
+  useEffect(() => {
+    if (currentLocation && isNavigating) {
+      handleLocationUpdate(currentLocation);
+    }
+  }, [currentLocation, isNavigating, handleLocationUpdate]);
+
+  // 🧹 Cleanup tracking on unmount
+  useEffect(() => {
+    return () => {
+      stopTracking();
+    };
+  }, [stopTracking]);
 
   if (isLoading) {
     return (
@@ -64,31 +113,36 @@ export default function MapPage() {
   });
 
   function LocationMarker() {
-    const map = useMapEvents({
-      locationfound(e) {
-        setUserPosition(e.latlng);
-        if (pendingDestinationRef.current) {
-          setRoute({
-            from: [e.latlng.lat, e.latlng.lng],
-            to: pendingDestinationRef.current,
-          });
-          pendingDestinationRef.current = null;
-          setIsDirectionLoading(false);
-        }
+    useMapEvents({
+      locationfound() {
+        // ✅ This will be handled by useLocationTracking hook
       },
       locationerror() {
-        pendingDestinationRef.current = null;
-        setIsDirectionLoading(false);
+        console.warn("🚫 Map location error");
       },
     });
+
     locateRef.current = () => {
-      map.locate({ enableHighAccuracy: true, timeout: 10000, maximumAge: 60000 });
+      if (isTracking) {
+        // 🔄 Already tracking, just start navigation if we have current location
+        if (currentLocation) {
+          // Location already available
+        }
+      } else {
+        startTracking();
+      }
     };
-    return userPosition === null ? null : (
-      <ReactLeafletDriftMarker position={userPosition} duration={800} icon={customIcon}>
-        <Popup>You are here</Popup>
+
+    return currentLocation ? (
+      <ReactLeafletDriftMarker position={[currentLocation.latitude, currentLocation.longitude]} duration={800} icon={customIcon}>
+        <Popup>
+          <div>
+            <p>📍 Your location</p>
+            <p className="text-muted-foreground text-xs">Accuracy: ±{Math.round(currentLocation.accuracy)}m</p>
+          </div>
+        </Popup>
       </ReactLeafletDriftMarker>
-    );
+    ) : null;
   }
 
   const requestLocate = () => {
@@ -96,79 +150,99 @@ export default function MapPage() {
   };
 
   const clearRoute = () => {
-    setRoute(null);
-    setRouteInfo(null);
+    stopNavigation();
+    setIsNavigationInstructionsOpen(false);
     setIsDirectionLoading(false);
-    setIsDirectionsOpen(false);
-    pendingDestinationRef.current = null;
   };
 
-  // [lat, lng]
-  function handleDirectionClick(to: [number, number]) {
-    // 🚦 Guard: If requesting directions to the same destination from the same origin, just reopen the drawer
-    if (route && route.to[0] === to[0] && route.to[1] === to[1] && userPosition && route.from[0] === userPosition.lat && route.from[1] === userPosition.lng) {
-      setIsDirectionsOpen(true);
-      return;
-    }
-
-    // 🧹 Always clear any existing route state first
-    clearRoute();
-
-    // ⏱️ Small delay to allow previous routing machine to cleanup properly
-    setTimeout(() => {
+  // 🎯 Handle direction requests from markers
+  async function handleDirectionClick(to: [number, number]) {
+    try {
       setIsDirectionLoading(true);
+      setIsNavigationInstructionsOpen(false);
 
-      if (userPosition) {
-        setRoute({ from: [userPosition.lat, userPosition.lng], to });
-        return;
+      let userLocation = currentLocation;
+
+      // 📍 Get current location if not available
+      if (!userLocation) {
+        try {
+          userLocation = await getCurrentLocation();
+        } catch (error) {
+          console.error("🚫 Failed to get location:", error);
+          // 🚨 Fall back to tracking
+          if (!isTracking) {
+            startTracking();
+          }
+          setIsDirectionLoading(false);
+          return;
+        }
       }
 
-      pendingDestinationRef.current = to;
-      if (locateRef.current) locateRef.current();
-    }, 100);
-  }
+      // � Start navigation
+      await startNavigation({ latitude: userLocation.latitude, longitude: userLocation.longitude }, { latitude: to[0], longitude: to[1] });
 
-  const onRouteFound = (foundRoute?: any) => {
-    setIsDirectionLoading(false);
-    if (foundRoute) {
-      setRouteInfo(foundRoute);
-      setIsDirectionsOpen(true);
+      setIsNavigationInstructionsOpen(true);
+      setIsDirectionLoading(false);
+    } catch (error) {
+      console.error("🚫 Failed to start navigation:", error);
+      setIsDirectionLoading(false);
     }
-  };
-
-  const onRouteError = () => {
-    setIsDirectionLoading(false);
-  };
+  }
 
   return (
     <LocateContext.Provider value={{ requestLocate, clearRoute }}>
       <div className="relative h-screen w-full">
         <WebMapNavs />
+
+        {/* 🧭 Navigation Instructions */}
+        <NavigationInstructions
+          isOpen={isNavigationInstructionsOpen}
+          onClose={() => {
+            clearRoute();
+            setIsNavigationInstructionsOpen(false);
+          }}
+          navigationState={navigation}
+          allManeuvers={route?.trip.legs[0]?.maneuvers || []}
+          isNavigating={isNavigating}
+          isRerouting={isRerouting}
+          totalDistance={totalDistance || undefined}
+          totalTime={totalTime || undefined}
+          rerouteCount={rerouteCount}
+        />
+
+        {/* 🚨 Error notifications */}
+        {(locationError || routingError) && (
+          <div className="absolute top-4 right-4 z-[999] max-w-sm">
+            <div className="rounded-md border border-red-200 bg-red-50 p-4">
+              <p className="text-sm text-red-800">{locationError?.message || routingError || "Unknown error"}</p>
+            </div>
+          </div>
+        )}
+
         <MapContainer className="h-full w-full" scrollWheelZoom={true} zoomControl={false} bounds={bounds} maxZoom={25} zoom={18}>
           <TileLayer url="https://services.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}" maxNativeZoom={18} maxZoom={25} />
           <LocationMarker />
-          {route && (
-            <RoutingMachine key={`${route.from.join(",")}-${route.to.join(",")}`} from={route.from} to={route.to} onRouteFound={onRouteFound} onRouteError={onRouteError} />
-          )}
-          {/* Markers */}
+          {/* 🎯 All the markers */}
           <Suspense fallback={null}>
+            {/* 🗺️ Valhalla route */}
+            {route && routeCoordinates.length > 0 && (
+              <ValhallaRoute
+                route={route}
+                routeCoordinates={routeCoordinates}
+                originalStart={originalStart || undefined}
+                originalEnd={originalEnd || undefined}
+                isNavigating={isNavigating}
+                showMarkers={true}
+                fitBounds={!isNavigating} // 🎯 Only auto-fit when not actively navigating
+              />
+            )}
             <ComfortRoomMarker onDirectionClick={handleDirectionClick} isDirectionLoading={isDirectionLoading} />
             <ParkingMarkers onDirectionClick={handleDirectionClick} isDirectionLoading={isDirectionLoading} />
             <PlaygroundMarkers onDirectionClick={handleDirectionClick} isDirectionLoading={isDirectionLoading} />
             <CenterSerenityMarkers onDirectionClick={handleDirectionClick} isDirectionLoading={isDirectionLoading} />
             <MainEntranceMarkers onDirectionClick={handleDirectionClick} isDirectionLoading={isDirectionLoading} />
             <ChapelMarkers onDirectionClick={handleDirectionClick} isDirectionLoading={isDirectionLoading} />
-            {/* Plot Markers | Serenity Lawn, Columbarium and Memorial Chambers */}
-            <PlotMarkers markers={markers as any} isDirectionLoading={isDirectionLoading} onDirectionClick={(to) => handleDirectionClick(to)} />
-            {/* Directions Cards */}
-            <DirectionsCard
-              isOpen={isDirectionsOpen}
-              onClose={() => {
-                clearRoute();
-                setIsDirectionsOpen(false);
-              }}
-              routeInfo={routeInfo}
-            />
+            <PlotMarkers markers={markers as any} isDirectionLoading={isDirectionLoading} onDirectionClick={handleDirectionClick} />
           </Suspense>
         </MapContainer>
       </div>

@@ -232,7 +232,3 @@
 .edit-marker-mode * {
   cursor: pointer !important;
 }
-
-.leaflet-routing-container {
-  display: none !important;
-}
