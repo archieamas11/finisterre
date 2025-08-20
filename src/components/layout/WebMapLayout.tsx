@@ -260,12 +260,12 @@ export default function MapPage() {
                 return L.divIcon({
                   html: `
                   <div class="relative flex flex-col items-center justify-center">
-                    <div 
-                      class="bg-secondary w-12 h-12 rounded-full flex items-center justify-center text-primary font-bold text-xs shadow-[0_4px_6px_-1px_rgba(0,0,0,0.1),0_2px_4px_-1px_rgba(0,0,0,0.06)]"
+                    <div
+                      class="border-2 border-white text-white bg-black/50 w-12 h-12 rounded-full flex items-center justify-center font-bold text-xs shadow-[0_4px_6px_-1px_rgba(0,0,0,0.1),0_2px_4px_-1px_rgba(0,0,0,0.06)]"
                     >
                       ${count}
                     </div>
-                    <span class="mt-1 text-xs font-bold text-gray-200">${label}</span>
+                    <span class="shadow-md mt-1 text-xs font-bold text-gray-200">${label}</span>
                   </div>
                 `,
                   className: "custom-marker-cluster",
