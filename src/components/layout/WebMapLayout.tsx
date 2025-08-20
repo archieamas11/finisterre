@@ -105,46 +105,6 @@ export default function MapPage() {
   });
   L.Marker.prototype.options.icon = DefaultIcon;
 
-  const customIcon = L.divIcon({
-    className: "custom-user-marker",
-    html: '<div aria-label="Your location" role="img" style="width:16px;height:16px;border-radius:50%;background:#3b82f6;border:2px solid #fff;box-shadow:0 0 0 4px rgba(59,130,246,0.25)"></div>',
-    iconSize: [20, 20],
-    iconAnchor: [10, 10],
-  });
-
-  function LocationMarker() {
-    useMapEvents({
-      locationfound() {
-        // ✅ This will be handled by useLocationTracking hook
-      },
-      locationerror() {
-        console.warn("🚫 Map location error");
-      },
-    });
-
-    locateRef.current = () => {
-      if (isTracking) {
-        // 🔄 Already tracking, just start navigation if we have current location
-        if (currentLocation) {
-          // Location already available
-        }
-      } else {
-        startTracking();
-      }
-    };
-
-    return currentLocation ? (
-      <ReactLeafletDriftMarker position={[currentLocation.latitude, currentLocation.longitude]} duration={800} icon={customIcon}>
-        <Popup>
-          <div>
-            <p>📍 Your location</p>
-            <p className="text-muted-foreground text-xs">Accuracy: ±{Math.round(currentLocation.accuracy)}m</p>
-          </div>
-        </Popup>
-      </ReactLeafletDriftMarker>
-    ) : null;
-  }
-
   const requestLocate = () => {
     if (locateRef.current) locateRef.current();
   };
@@ -221,7 +181,6 @@ export default function MapPage() {
 
         <MapContainer className="h-full w-full" scrollWheelZoom={true} zoomControl={false} bounds={bounds} maxZoom={25} zoom={18}>
           <TileLayer url="https://services.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}" maxNativeZoom={18} maxZoom={25} />
-          <LocationMarker />
           {/* 🎯 All the markers */}
           <Suspense fallback={null}>
             {/* 🗺️ Valhalla route */}
