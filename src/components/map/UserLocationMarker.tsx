@@ -1,7 +1,8 @@
 import React from "react";
-import { Marker, Circle, useMap } from "react-leaflet";
+import { Circle, useMap } from "react-leaflet";
 import L from "leaflet";
 import { type UserLocation } from "@/hooks/useLocationTracking";
+import ReactLeafletDriftMarker from "react-leaflet-drift-marker";
 
 interface UserLocationMarkerProps {
   userLocation: UserLocation | null;
@@ -111,7 +112,7 @@ export function UserLocationMarker({
       )}
 
       {/* 📍 User location marker */}
-      <Marker position={position} icon={userLocationIcon} />
+      <ReactLeafletDriftMarker position={position} icon={userLocationIcon} duration={2000} />
     </>
   );
 }
