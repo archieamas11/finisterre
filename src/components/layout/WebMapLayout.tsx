@@ -7,7 +7,7 @@ import iconRetinaUrl from "leaflet/dist/images/marker-icon-2x.png";
 import shadowUrl from "leaflet/dist/images/marker-shadow.png";
 import WebMapNavs from "@/pages/webmap/WebMapNavs";
 import { usePlots } from "@/hooks/plots-hooks/plot.hooks";
-import { convertPlotToMarker } from "@/types/map.types";
+import { convertPlotToMarker, type ConvertedMarker } from "@/types/map.types";
 import Spinner from "@/components/ui/spinner";
 import { useLocationTracking } from "@/hooks/useLocationTracking";
 import { useValhalla } from "@/hooks/useValhalla";
@@ -16,7 +16,6 @@ import { UserLocationMarker } from "@/components/map/UserLocationMarker";
 import { NavigationInstructions } from "@/components/map/NavigationInstructions";
 import MarkerClusterGroup from "react-leaflet-markercluster";
 import "leaflet.markercluster/dist/MarkerCluster.css";
-import "leaflet.markercluster/dist/MarkerCluster.Default.css";
 
 // Lazy load all marker components
 const PlotMarkers = lazy(() => import("@/pages/webmap/PlotMarkers"));
@@ -116,7 +115,7 @@ export default function MapPage() {
     }
   }, [shouldCenterOnUser, currentLocation]);
 
-  // 4. Memoize callback functions to prevent them from being recreated on every render.
+  // Memoize callback functions to prevent them from being recreated on every render.
   const requestLocate = useCallback(() => {
     if (!isTracking) {
       startTracking();
@@ -154,7 +153,7 @@ export default function MapPage() {
     [currentLocation, getCurrentLocation, isTracking, startNavigation, startTracking, requestLocate],
   );
 
-  // 5. Memoize the context value to prevent consumers from re-rendering unnecessarily.
+  // Memoize the context value to prevent consumers from re-rendering unnecessarily.
   const contextValue = useMemo(() => ({ requestLocate, clearRoute }), [requestLocate, clearRoute]);
 
   if (isLoading) {
@@ -218,15 +217,80 @@ export default function MapPage() {
                 fitBounds={!isNavigating}
               />
             )}
-            <MarkerClusterGroup chunkedLoading disableClusteringAtZoom={20}>
-              <MemoizedComfortRoomMarker onDirectionClick={handleDirectionClick} isDirectionLoading={isDirectionLoading} />
-              <MemoizedParkingMarkers onDirectionClick={handleDirectionClick} isDirectionLoading={isDirectionLoading} />
-              <MemoizedPlaygroundMarkers onDirectionClick={handleDirectionClick} isDirectionLoading={isDirectionLoading} />
-              <MemoizedCenterSerenityMarkers onDirectionClick={handleDirectionClick} isDirectionLoading={isDirectionLoading} />
-              <MemoizedMainEntranceMarkers onDirectionClick={handleDirectionClick} isDirectionLoading={isDirectionLoading} />
-              <MemoizedChapelMarkers onDirectionClick={handleDirectionClick} isDirectionLoading={isDirectionLoading} />
-              <MemoizedPlotMarkers markers={markers as any} isDirectionLoading={isDirectionLoading} onDirectionClick={handleDirectionClick} />
-            </MarkerClusterGroup>
+
+            {!(route && routeCoordinates.length > 0) && (
+              <UserLocationMarker userLocation={currentLocation} centerOnFirst={shouldCenterOnUser} enableAnimation={true} showAccuracyCircle={true} />
+            )}
+
+            <MemoizedComfortRoomMarker onDirectionClick={handleDirectionClick} isDirectionLoading={isDirectionLoading} />
+            <MemoizedParkingMarkers onDirectionClick={handleDirectionClick} isDirectionLoading={isDirectionLoading} />
+            <MemoizedPlaygroundMarkers onDirectionClick={handleDirectionClick} isDirectionLoading={isDirectionLoading} />
+            <MemoizedCenterSerenityMarkers onDirectionClick={handleDirectionClick} isDirectionLoading={isDirectionLoading} />
+            <MemoizedMainEntranceMarkers onDirectionClick={handleDirectionClick} isDirectionLoading={isDirectionLoading} />
+            <MemoizedChapelMarkers onDirectionClick={handleDirectionClick} isDirectionLoading={isDirectionLoading} />
+            {(() => {
+              const markersByGroup: Record<string, ConvertedMarker[]> = {};
+              markers.forEach((marker: ConvertedMarker) => {
+                // Use block if exists and non-empty, otherwise use category
+                const groupKey = marker.block && String(marker.block).trim() !== "" ? `block:${marker.block}` : `category:${marker.category || "Uncategorized"}`;
+
+                if (!markersByGroup[groupKey]) markersByGroup[groupKey] = [];
+                markersByGroup[groupKey].push(marker);
+              });
+
+              const getLabel = (groupKey: string): string => {
+                if (groupKey.startsWith("block:")) {
+                  const block = groupKey.split("block:")[1];
+                  return `Block ${block}`;
+                } else {
+                  const category = groupKey
+                    .split("category:")[1]
+                    .split(" ")
+                    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+                    .join(" ");
+                  return category;
+                }
+              };
+
+              // Create cluster icon with formatted label
+              const createClusterIcon = (groupKey: string) => (cluster: any) => {
+                const count = cluster.getChildCount();
+                const label = getLabel(groupKey);
+
+                return L.divIcon({
+                  html: `
+                  <div class="relative flex flex-col items-center justify-center">
+                    <div 
+                      class="bg-secondary w-12 h-12 rounded-full flex items-center justify-center text-primary font-bold text-xs shadow-[0_4px_6px_-1px_rgba(0,0,0,0.1),0_2px_4px_-1px_rgba(0,0,0,0.06)]"
+                    >
+                      ${count}
+                    </div>
+                    <span class="mt-1 text-xs font-bold text-gray-200">${label}</span>
+                  </div>
+                `,
+                  className: "custom-marker-cluster",
+                  iconSize: [50, 60],
+                  iconAnchor: [25, 30],
+                });
+              };
+
+              return Object.entries(markersByGroup).map(([groupKey, groupMarkers]) => (
+                <MarkerClusterGroup
+                  key={`cluster-${groupKey}`}
+                  iconCreateFunction={createClusterIcon(groupKey)}
+                  chunkedLoading
+                  maxClusterRadius={Infinity}
+                  disableClusteringAtZoom={20}
+                >
+                  <MemoizedPlotMarkers
+                    markers={groupMarkers}
+                    isDirectionLoading={isDirectionLoading}
+                    onDirectionClick={handleDirectionClick}
+                    block={groupKey.startsWith("block:") ? groupKey.split("block:")[1] : ""}
+                  />
+                </MarkerClusterGroup>
+              ));
+            })()}
           </Suspense>
         </MapContainer>
       </div>
