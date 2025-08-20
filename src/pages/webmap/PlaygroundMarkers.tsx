@@ -11,8 +11,8 @@ const playgroundMarkersData: CustomMarkerData[] = [
     id: "playground-1",
     lat: 10.248972753171127,
     lng: 123.79755735707532,
-    title: "Playground 1",
-    description: "Fun for all ages",
+    title: "Central Park Playground",
+    description: "A vibrant play area with modern equipment for children of all ages. Shaded seating available for parents.",
     marker: {
       type: "image",
       source: "https://res.cloudinary.com/djrkvgfvo/image/upload/v1753206700/playground_mxeqep.jpg",
@@ -23,8 +23,8 @@ const playgroundMarkersData: CustomMarkerData[] = [
     id: "playground-2",
     lat: 10.249180343704229,
     lng: 123.798238818160755,
-    title: "Playground 2",
-    description: "Newly built playground",
+    title: "Sunrise Community Playground",
+    description: "Recently opened with safe, eco-friendly structures and a dedicated toddler zone. Perfect for family outings.",
     marker: {
       type: "image",
       source: "https://res.cloudinary.com/djrkvgfvo/image/upload/v1753206700/playground_mxeqep.jpg",
