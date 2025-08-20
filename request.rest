@@ -1,2 +1,3 @@
 POST https://finisterre.x10.bz/customers/get_customer.php
 Content-Type: application/json
+Authorization: Bearer sample-token-123

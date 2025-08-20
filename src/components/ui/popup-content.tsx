@@ -9,54 +9,108 @@ import { Button } from "./button";
 import { Maximize2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import Spinner from "./spinner";
+import React, { cloneElement, isValidElement } from "react";
 
-// Define the FinisterreMarkers type
-export interface FinisterreMarkersType {
+// --- TYPE DEFINITIONS ---
+interface MarkerStyle {
+  backgroundColor?: string;
+  borderRadius?: string;
+  transform?: string;
+  padding?: string;
+}
+
+export interface CustomMarkerData {
   id: string;
   lat: number;
   lng: number;
   title: string;
   description: string;
-  imageSrc: string;
+  marker: {
+    type: "image" | "icon";
+    source: string | React.ReactElement;
+    style?: MarkerStyle;
+  };
+  popupType?: "image" | "simple";
+  popupImage?: string;
 }
 
-// Create a custom marker icon
-function createMarkerIcon(imageSrc: string) {
-  return L.divIcon({
-    iconSize: [32, 32],
-    className: "destination-marker",
-    html: renderToStaticMarkup(
-      <div
-        style={{
-          display: "inline-block",
-          border: "2px solid #FFFF",
-          borderRadius: "6px",
-          overflow: "hidden",
-          boxShadow: "0 0 8px rgba(0,0,0,0.15)",
-          width: "32px",
-          height: "32px",
-        }}
-      >
-        <img
-          src={imageSrc}
-          className="marker-pop-in"
-          style={{
-            display: "block",
-            width: "100%",
-            height: "100%",
-            objectFit: "cover",
-          }}
-          alt="Marker Image"
-        />
-      </div>,
-    ),
-  });
+// Export alias for backward compatibility
+export type FinisterreMarkerData = CustomMarkerData;
+
+// --- MARKER ICON CREATION ---
+function createMarkerIcon(marker: CustomMarkerData["marker"]) {
+  const baseWrapperStyle: React.CSSProperties = {
+    display: "inline-block",
+    border: "2px solid #FFFF",
+    boxShadow: "0 0 8px rgba(0,0,0,0.15)",
+    width: "32px",
+    height: "32px",
+    boxSizing: "border-box",
+  };
+
+  if (marker.type === "image" && typeof marker.source === "string") {
+    const imageIconStyle: React.CSSProperties = {
+      ...baseWrapperStyle,
+      borderRadius: "6px",
+      overflow: "hidden",
+    };
+    return L.divIcon({
+      iconSize: [32, 32],
+      className: "destination-marker",
+      html: renderToStaticMarkup(
+        <div style={imageIconStyle}>
+          <img src={marker.source} className="marker-pop-in" style={{ display: "block", width: "100%", height: "100%", objectFit: "cover" }} alt="Marker Image" />
+        </div>,
+      ),
+    });
+  }
+
+  if (marker.type === "icon" && isValidElement(marker.source)) {
+    const iconStyle = marker.style || {};
+    const dynamicIconStyle: React.CSSProperties = {
+      ...baseWrapperStyle,
+      padding: iconStyle.padding || "4px",
+      backgroundColor: iconStyle.backgroundColor || "#000",
+      transform: iconStyle.transform || "rotate(-45deg)",
+      borderRadius: iconStyle.borderRadius || "50% 50% 50% 0",
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+    };
+
+    // Properly clone the element with correct typing
+    const clonedIcon = cloneElement(marker.source as React.ReactElement<any>, {
+      size: 16,
+      color: "white",
+      style: {
+        transform: "rotate(45deg)",
+      },
+    });
+
+    return L.divIcon({
+      iconSize: [32, 32],
+      className: "destination-marker",
+      html: renderToStaticMarkup(
+        <div className="marker-pop-in">
+          <div style={dynamicIconStyle}>{clonedIcon}</div>
+        </div>,
+      ),
+    });
+  }
+
+  return new L.Icon.Default(); // Fallback
 }
 
-// Popup Component
-function FinisterrePopup({ title, description, imageSrc }: Pick<FinisterreMarkersType, "title" | "description" | "imageSrc">) {
+// --- POPUP COMPONENTS ---
+function ImagePopup({ title, description, imageSrc }: { title: string; description: string; imageSrc: string }) {
   return (
-    <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.25 }} className="mt-5 w-64">
+    <motion.div
+      initial={{ opacity: 0, y: 8, scale: 0.97 }}
+      animate={{ opacity: 1, y: 0, scale: 1 }}
+      exit={{ opacity: 0, y: 4, scale: 0.98 }}
+      transition={{ duration: 0.25, ease: "easeOut" }}
+      className="mt-5 w-64"
+    >
       <Dialog>
         <CardHeader className="relative p-0">
           <DialogTrigger asChild>
@@ -64,7 +118,6 @@ function FinisterrePopup({ title, description, imageSrc }: Pick<FinisterreMarker
               type="button"
               aria-label={`Open ${title} image in lightbox`}
               className={cn("focus-visible:ring-primary/30 group block w-full rounded-xl focus-visible:ring-4 focus-visible:outline-none")}
-              // 🛡️ Prevent Leaflet map interactions like drag when pressing on the trigger
               onMouseDown={(e) => e.stopPropagation()}
               onTouchStart={(e) => e.stopPropagation()}
             >
@@ -83,9 +136,7 @@ function FinisterrePopup({ title, description, imageSrc }: Pick<FinisterreMarker
             </button>
           </DialogTrigger>
         </CardHeader>
-
-        {/* Lightbox */}
-        <DialogContent className="z-9999 mx-auto w-full max-w-6xl border p-2 sm:p-2" onOpenAutoFocus={(e) => e.preventDefault()}>
+        <DialogContent className="z-[9999] mx-auto w-full max-w-6xl border p-2 sm:p-2" onOpenAutoFocus={(e) => e.preventDefault()}>
           <div className="relative flex items-center justify-center">
             <img src={imageSrc} alt={title} className="max-h-[90vh] w-full rounded-lg object-contain" />
           </div>
@@ -94,27 +145,52 @@ function FinisterrePopup({ title, description, imageSrc }: Pick<FinisterreMarker
     </motion.div>
   );
 }
+function SimplePopup({ title, description }: { title: string; description: string }) {
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 8, scale: 0.97 }}
+      animate={{ opacity: 1, y: 0, scale: 1 }}
+      exit={{ opacity: 0, y: 4, scale: 0.98 }}
+      transition={{ duration: 0.25, ease: "easeOut" }}
+      className="bg-primary mt-5 w-64 rounded-lg"
+    >
+      {/* 📝 Use larger, more prominent title and multiline description for clarity */}
+      <div className="flex flex-col p-4">
+        <h3 className="mb-1 line-clamp-2 text-lg font-bold text-gray-900">{title}</h3>
+        <p className="text-sm leading-relaxed whitespace-pre-line text-gray-700">{description}</p>
+      </div>
+    </motion.div>
+  );
+}
 
-// Main Reusable Component
-interface FinisterreMarkersProps {
-  playgrounds: FinisterreMarkersType[];
-  // Accept destination coordinates [lat, lng]
+// --- MAIN REUSABLE COMPONENT ---
+interface CustomMarkersProps {
+  items: CustomMarkerData[];
   onDirectionClick?: (dest: [number, number]) => void;
   isDirectionLoading?: boolean;
 }
 
-export default function FinisterreMarkers({ playgrounds, onDirectionClick, isDirectionLoading = false }: FinisterreMarkersProps) {
+// Export alias for backward compatibility
+function FinisterreMarkers({ items, onDirectionClick, isDirectionLoading = false }: CustomMarkersProps) {
   return (
     <>
-      {playgrounds.map((pg) => (
-        <Marker key={pg.id} icon={createMarkerIcon(pg.imageSrc)} position={[pg.lat, pg.lng] as [number, number]}>
+      {items.map((itemData) => (
+        <Marker key={itemData.id} icon={createMarkerIcon(itemData.marker)} position={[itemData.lat, itemData.lng] as [number, number]}>
           <Popup className="leaflet-theme-popup p-0">
-            <FinisterrePopup title={pg.title} description={pg.description} imageSrc={pg.imageSrc} />
+            {(() => {
+              if (itemData.popupType === "image") {
+                const imageSrc = itemData.popupImage || (typeof itemData.marker.source === "string" ? itemData.marker.source : undefined);
+                if (imageSrc) {
+                  return <ImagePopup title={itemData.title} description={itemData.description} imageSrc={imageSrc} />;
+                }
+              }
+              return <SimplePopup title={itemData.title} description={itemData.description} />;
+            })()}
             <Button
               className="mt-1 mb-1 w-full rounded-lg"
               onClick={(e) => {
                 e.stopPropagation();
-                onDirectionClick?.([pg.lat, pg.lng]);
+                onDirectionClick?.([itemData.lat, itemData.lng]);
               }}
               disabled={isDirectionLoading}
               aria-busy={isDirectionLoading}
@@ -129,3 +205,11 @@ export default function FinisterreMarkers({ playgrounds, onDirectionClick, isDir
     </>
   );
 }
+
+// Export with the original name
+export default function CustomMarkers({ items, onDirectionClick, isDirectionLoading = false }: CustomMarkersProps) {
+  return <FinisterreMarkers items={items} onDirectionClick={onDirectionClick} isDirectionLoading={isDirectionLoading} />;
+}
+
+// Export alias for backward compatibility
+export { FinisterreMarkers };

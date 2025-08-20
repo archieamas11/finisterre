@@ -26,3 +26,4 @@ dist-ssr
 .github/*
 docs
 testsprite_tests
+request.rest

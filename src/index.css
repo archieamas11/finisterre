@@ -200,7 +200,7 @@
 /* global.css or tailwind.css */
 .leaflet-theme-popup .leaflet-popup-content-wrapper,
 .leaflet-theme-popup .leaflet-popup-tip {
-  @apply bg-[#f1eff5]/90 shadow-xl backdrop-blur-md dark:bg-[#16141e]/80;
+  @apply bg-background/90 supports-[backdrop-filter]:bg-background/60 backdrop-blur;
 }
 
 .leaflet-control-attribution.leaflet-control {

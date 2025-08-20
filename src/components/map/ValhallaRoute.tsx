@@ -84,7 +84,7 @@ export function ValhallaRoute({
   const endIcon = L.divIcon({
     className: "custom-destination-marker",
     html: `
-      <div role="img" aria-label="Destination" style="position:relative;display:inline-block;width:28px;height:40px;">
+      <div role="img" aria-label="Destination" style="position:relative;display:inline-block;width:30px;height:50px;">
         <svg width="28" height="40" viewBox="0 0 24 34" xmlns="http://www.w3.org/2000/svg" focusable="false" aria-hidden="true">
           <title>Destination</title>
           <defs>
@@ -97,7 +97,7 @@ export function ValhallaRoute({
         </svg>
       </div>
     `,
-    iconAnchor: [18, 35],
+    iconAnchor: [15, 30],
   });
 
   // 🔗 Create complete polyline coordinates that connect original points to snapped route
@@ -137,7 +137,7 @@ export function ValhallaRoute({
       />
       {/* 🎯 Start (user location) and end markers */}
       {showMarkers && userLocation && <UserLocationMarker userLocation={userLocation} centerOnFirst={false} showAccuracyCircle={isNavigating} enableAnimation />}
-      {showMarkers && endPoint && <Marker position={endPoint} icon={endIcon}></Marker>}
+      {showMarkers && endPoint && <Marker position={endPoint} icon={endIcon} zIndexOffset={1000}></Marker>}
     </>
   );
 }

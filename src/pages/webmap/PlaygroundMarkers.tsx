@@ -1,18 +1,23 @@
-import FinisterreMarkers from "@/components/ui/popup-content";
+import CustomMarkers from "@/components/ui/popup-content";
+import type { CustomMarkerData } from "@/components/ui/popup-content";
 
 interface Props {
   onDirectionClick?: (dest: [number, number]) => void;
   isDirectionLoading?: boolean;
 }
 
-const playgrounds = [
+const playgroundMarkersData: CustomMarkerData[] = [
   {
     id: "playground-1",
     lat: 10.248972753171127,
     lng: 123.79755735707532,
     title: "Playground 1",
     description: "Fun for all ages",
-    imageSrc: "https://res.cloudinary.com/djrkvgfvo/image/upload/v1753206700/playground_mxeqep.jpg",
+    marker: {
+      type: "image",
+      source: "https://res.cloudinary.com/djrkvgfvo/image/upload/v1753206700/playground_mxeqep.jpg",
+    },
+    popupType: "image",
   },
   {
     id: "playground-2",
@@ -20,10 +25,14 @@ const playgrounds = [
     lng: 123.798238818160755,
     title: "Playground 2",
     description: "Newly built playground",
-    imageSrc: "https://res.cloudinary.com/djrkvgfvo/image/upload/v1753206700/playground_mxeqep.jpg",
+    marker: {
+      type: "image",
+      source: "https://res.cloudinary.com/djrkvgfvo/image/upload/v1753206700/playground_mxeqep.jpg",
+    },
+    popupType: "image",
   },
 ];
 
 export default function PlaygroundMarkers({ onDirectionClick, isDirectionLoading }: Props) {
-  return <FinisterreMarkers playgrounds={playgrounds} onDirectionClick={onDirectionClick} isDirectionLoading={isDirectionLoading} />;
+  return <CustomMarkers items={playgroundMarkersData} onDirectionClick={onDirectionClick} isDirectionLoading={isDirectionLoading} />;
 }

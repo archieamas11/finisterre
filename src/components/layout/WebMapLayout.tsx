@@ -1,7 +1,6 @@
 import "leaflet/dist/leaflet.css";
 import L from "leaflet";
-import { createContext, useEffect } from "react";
-import { useState, Suspense, lazy } from "react";
+import { createContext, useEffect, useMemo, useCallback, memo, useState, Suspense, lazy } from "react";
 import { MapContainer, TileLayer } from "react-leaflet";
 import iconUrl from "leaflet/dist/images/marker-icon.png";
 import iconRetinaUrl from "leaflet/dist/images/marker-icon-2x.png";
@@ -15,6 +14,9 @@ import { useValhalla } from "@/hooks/useValhalla";
 import { ValhallaRoute } from "@/components/map/ValhallaRoute";
 import { UserLocationMarker } from "@/components/map/UserLocationMarker";
 import { NavigationInstructions } from "@/components/map/NavigationInstructions";
+import MarkerClusterGroup from "react-leaflet-markercluster";
+
+// Lazy load all marker components
 const PlotMarkers = lazy(() => import("@/pages/webmap/PlotMarkers"));
 const ComfortRoomMarker = lazy(() => import("@/pages/webmap/ComfortRoomMarkers"));
 const ParkingMarkers = lazy(() => import("@/pages/webmap/ParkingMarkers"));
@@ -23,13 +25,33 @@ const MainEntranceMarkers = lazy(() => import("@/pages/webmap/MainEntranceMarker
 const ChapelMarkers = lazy(() => import("@/pages/webmap/ChapelMarkers"));
 const PlaygroundMarkers = lazy(() => import("@/pages/webmap/PlaygroundMarkers"));
 
+// 1. Set default icon for all markers once outside the component render cycle.
+const DefaultIcon = L.icon({
+  iconUrl,
+  iconRetinaUrl,
+  shadowUrl,
+  iconSize: [25, 41],
+  iconAnchor: [12, 41],
+  popupAnchor: [1, -34],
+});
+L.Marker.prototype.options.icon = DefaultIcon;
+
+// 2. Memoize static marker components to prevent re-renders.
+const MemoizedComfortRoomMarker = memo(ComfortRoomMarker);
+const MemoizedParkingMarkers = memo(ParkingMarkers);
+const MemoizedCenterSerenityMarkers = memo(CenterSerenityMarkers);
+const MemoizedMainEntranceMarkers = memo(MainEntranceMarkers);
+const MemoizedChapelMarkers = memo(ChapelMarkers);
+const MemoizedPlaygroundMarkers = memo(PlaygroundMarkers);
+const MemoizedPlotMarkers = memo(PlotMarkers);
+
 export const LocateContext = createContext<{ requestLocate: () => void; clearRoute: () => void } | null>(null);
 
 export default function MapPage() {
   const { isLoading, data: plotsData } = usePlots();
-  const markers = plotsData?.map(convertPlotToMarker) || [];
+  // Memoize the markers array to prevent re-calculation on every render.
+  const markers = useMemo(() => plotsData?.map(convertPlotToMarker) || [], [plotsData]);
 
-  // 🧭 Location tracking
   const {
     currentLocation,
     startTracking,
@@ -39,10 +61,9 @@ export default function MapPage() {
     error: locationError,
   } = useLocationTracking({
     enableHighAccuracy: true,
-    distanceFilter: 5, // 📏 5 meters minimum distance
+    distanceFilter: 5,
   });
 
-  // 🗺️ Valhalla routing
   const {
     route,
     routeCoordinates,
@@ -60,9 +81,9 @@ export default function MapPage() {
     rerouteCount,
     error: routingError,
   } = useValhalla({
-    costingType: "pedestrian", // 🚶 Default to walking
+    costingType: "pedestrian",
     enableAutoReroute: true,
-    offRouteThreshold: 25, // 📏 25 meters off-route threshold
+    offRouteThreshold: 25,
   });
 
   const [isNavigationInstructionsOpen, setIsNavigationInstructionsOpen] = useState(false);
@@ -74,28 +95,65 @@ export default function MapPage() {
     [10.249302749341647, 123.7988598710129],
   ];
 
-  // 📍 Handle location updates for navigation
   useEffect(() => {
     if (currentLocation && isNavigating) {
       handleLocationUpdate(currentLocation);
     }
   }, [currentLocation, isNavigating, handleLocationUpdate]);
 
-  // 🧹 Cleanup tracking on unmount
   useEffect(() => {
     return () => {
       stopTracking();
     };
   }, [stopTracking]);
 
-  // 🎯 Reset center flag after user location marker uses it
   useEffect(() => {
     if (shouldCenterOnUser && currentLocation) {
-      // 📍 Reset flag after a brief delay to allow the UserLocationMarker to center
       const timeoutId = setTimeout(() => setShouldCenterOnUser(false), 1000);
       return () => clearTimeout(timeoutId);
     }
   }, [shouldCenterOnUser, currentLocation]);
+
+  // 4. Memoize callback functions to prevent them from being recreated on every render.
+  const requestLocate = useCallback(() => {
+    if (!isTracking) {
+      startTracking();
+    }
+    setShouldCenterOnUser(true);
+  }, [isTracking, startTracking]);
+
+  const clearRoute = useCallback(() => {
+    stopNavigation();
+    setIsNavigationInstructionsOpen(false);
+    setIsDirectionLoading(false);
+  }, [stopNavigation]);
+
+  const handleDirectionClick = useCallback(
+    async (to: [number, number]) => {
+      setIsDirectionLoading(true);
+      setIsNavigationInstructionsOpen(false);
+      try {
+        let userLocation = currentLocation;
+        if (!userLocation) {
+          userLocation = await getCurrentLocation();
+        }
+        if (userLocation) {
+          await startNavigation({ latitude: userLocation.latitude, longitude: userLocation.longitude }, { latitude: to[0], longitude: to[1] });
+          requestLocate();
+          setIsNavigationInstructionsOpen(true);
+        }
+      } catch (error) {
+        console.error("🚫 Failed to start navigation:", error);
+        if (!isTracking) startTracking();
+      } finally {
+        setIsDirectionLoading(false);
+      }
+    },
+    [currentLocation, getCurrentLocation, isTracking, startNavigation, startTracking, requestLocate],
+  );
+
+  // 5. Memoize the context value to prevent consumers from re-rendering unnecessarily.
+  const contextValue = useMemo(() => ({ requestLocate, clearRoute }), [requestLocate, clearRoute]);
 
   if (isLoading) {
     return (
@@ -105,82 +163,14 @@ export default function MapPage() {
     );
   }
 
-  const DefaultIcon = L.icon({
-    iconUrl,
-    iconRetinaUrl,
-    shadowUrl,
-    iconSize: [25, 41],
-    iconAnchor: [12, 41],
-    popupAnchor: [1, -34],
-  });
-  L.Marker.prototype.options.icon = DefaultIcon;
-
-  const requestLocate = () => {
-    // 🧭 Start location tracking if not already tracking
-    if (!isTracking) {
-      startTracking();
-      setShouldCenterOnUser(true);
-    }
-
-    // 🎯 If we already have location, center on it
-    if (currentLocation) {
-      // 📍 We can access the map and center on user location
-      setShouldCenterOnUser(true);
-    }
-  };
-
-  const clearRoute = () => {
-    stopNavigation();
-    setIsNavigationInstructionsOpen(false);
-    setIsDirectionLoading(false);
-  };
-
-  // 🎯 Handle direction requests from markers
-  async function handleDirectionClick(to: [number, number]) {
-    try {
-      setIsDirectionLoading(true);
-      setIsNavigationInstructionsOpen(false);
-
-      let userLocation = currentLocation;
-
-      // 📍 Get current location if not available
-      if (!userLocation) {
-        try {
-          userLocation = await getCurrentLocation();
-        } catch (error) {
-          console.error("🚫 Failed to get location:", error);
-          // 🚨 Fall back to tracking
-          if (!isTracking) {
-            startTracking();
-          }
-          setIsDirectionLoading(false);
-          return;
-        }
-      }
-
-      // � Start navigation
-      await startNavigation({ latitude: userLocation.latitude, longitude: userLocation.longitude }, { latitude: to[0], longitude: to[1] });
-      requestLocate();
-      setIsNavigationInstructionsOpen(true);
-      setIsDirectionLoading(false);
-    } catch (error) {
-      console.error("🚫 Failed to start navigation:", error);
-      setIsDirectionLoading(false);
-    }
-  }
-
   return (
-    <LocateContext.Provider value={{ requestLocate, clearRoute }}>
+    <LocateContext.Provider value={contextValue}>
       <div className="relative h-screen w-full">
         <WebMapNavs />
 
-        {/* 🧭 Navigation Instructions */}
         <NavigationInstructions
           isOpen={isNavigationInstructionsOpen}
-          onClose={() => {
-            clearRoute();
-            setIsNavigationInstructionsOpen(false);
-          }}
+          onClose={clearRoute}
           navigationState={navigation}
           allManeuvers={route?.trip.legs[0]?.maneuvers || []}
           isNavigating={isNavigating}
@@ -190,7 +180,6 @@ export default function MapPage() {
           rerouteCount={rerouteCount}
         />
 
-        {/* 🚨 Error notifications */}
         {(locationError || routingError) && (
           <div className="absolute top-4 right-4 z-[999] max-w-sm">
             <div className="rounded-md border border-red-200 bg-red-50 p-4">
@@ -201,16 +190,21 @@ export default function MapPage() {
 
         <MapContainer className="h-full w-full" scrollWheelZoom={true} zoomControl={false} bounds={bounds} maxZoom={25} zoom={18}>
           <TileLayer url="https://services.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}" maxNativeZoom={18} maxZoom={25} />
-          {/* 🎯 All the markers */}
-          {/* 👤 User location marker (only when no route is displayed to avoid duplicates) */}
+
           {!(route && routeCoordinates.length > 0) && (
             <UserLocationMarker userLocation={currentLocation} centerOnFirst={shouldCenterOnUser} enableAnimation={true} showAccuracyCircle={true} />
           )}
-          <Suspense fallback={null}>
-            {/* 🗺️ Valhalla route */}
+
+          <Suspense
+            fallback={
+              <div className="flex h-full w-full items-center justify-center">
+                <Spinner />
+              </div>
+            }
+          >
             {route && routeCoordinates.length > 0 && (
               <ValhallaRoute
-                key={route.trip.summary.length} // Force re-render when route changes
+                key={route.trip.summary.length}
                 route={route}
                 routeCoordinates={routeCoordinates}
                 remainingCoordinates={remainingCoordinates}
@@ -219,16 +213,18 @@ export default function MapPage() {
                 userLocation={currentLocation}
                 isNavigating={isNavigating}
                 showMarkers={true}
-                fitBounds={!isNavigating} // 🎯 Only auto-fit when not actively navigating
+                fitBounds={!isNavigating}
               />
             )}
-            <ComfortRoomMarker onDirectionClick={handleDirectionClick} isDirectionLoading={isDirectionLoading} />
-            <ParkingMarkers onDirectionClick={handleDirectionClick} isDirectionLoading={isDirectionLoading} />
-            <PlaygroundMarkers onDirectionClick={handleDirectionClick} isDirectionLoading={isDirectionLoading} />
-            <CenterSerenityMarkers onDirectionClick={handleDirectionClick} isDirectionLoading={isDirectionLoading} />
-            <MainEntranceMarkers onDirectionClick={handleDirectionClick} isDirectionLoading={isDirectionLoading} />
-            <ChapelMarkers onDirectionClick={handleDirectionClick} isDirectionLoading={isDirectionLoading} />
-            <PlotMarkers markers={markers as any} isDirectionLoading={isDirectionLoading} onDirectionClick={handleDirectionClick} />
+            <MarkerClusterGroup chunkedLoading disableClusteringAtZoom={20}>
+              <MemoizedComfortRoomMarker onDirectionClick={handleDirectionClick} isDirectionLoading={isDirectionLoading} />
+              <MemoizedParkingMarkers onDirectionClick={handleDirectionClick} isDirectionLoading={isDirectionLoading} />
+              <MemoizedPlaygroundMarkers onDirectionClick={handleDirectionClick} isDirectionLoading={isDirectionLoading} />
+              <MemoizedCenterSerenityMarkers onDirectionClick={handleDirectionClick} isDirectionLoading={isDirectionLoading} />
+              <MemoizedMainEntranceMarkers onDirectionClick={handleDirectionClick} isDirectionLoading={isDirectionLoading} />
+              <MemoizedChapelMarkers onDirectionClick={handleDirectionClick} isDirectionLoading={isDirectionLoading} />
+              <MemoizedPlotMarkers markers={markers as any} isDirectionLoading={isDirectionLoading} onDirectionClick={handleDirectionClick} />
+            </MarkerClusterGroup>
           </Suspense>
         </MapContainer>
       </div>

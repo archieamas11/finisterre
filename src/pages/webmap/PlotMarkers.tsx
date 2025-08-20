@@ -1,5 +1,9 @@
 import L from "leaflet";
+import { memo } from "react";
 import { Marker, Popup } from "react-leaflet";
+import "leaflet.markercluster/dist/MarkerCluster.css";
+import "leaflet.markercluster/dist/MarkerCluster.Default.css";
+
 import ColumbariumPopup from "@/pages/admin/map4admin/ColumbariumPopup";
 import PlotLocations from "@/pages/webmap/WebMapPopup";
 import type { ConvertedMarker } from "@/types/map.types";
@@ -11,30 +15,41 @@ export interface PlotMarkersProps {
   onDirectionClick: (to: [number, number]) => void;
 }
 
-export default function PlotMarkers({ markers, isDirectionLoading, onDirectionClick }: PlotMarkersProps) {
+// Icon Caching to avoid re-creating icons on every render
+const iconCache: Record<string, L.DivIcon> = {};
+const getIcon = (color: string) => {
+  if (!iconCache[color]) {
+    iconCache[color] = L.divIcon({
+      className: "plot-marker-icon",
+      iconSize: [15, 15],
+      html: `<div style="width: 15px; height: 15px; border-radius: 50%; background: ${color}; border: 2px solid #fff; box-shadow: 0 0 5px rgba(0,0,0,0.5);"></div>`,
+    });
+  }
+  return iconCache[color];
+};
+
+function PlotMarkers({ markers, isDirectionLoading, onDirectionClick }: PlotMarkersProps) {
   return (
     <>
       {markers.map((marker) => {
         const statusColor = getStatusColor(marker.plotStatus);
-        const circleIcon = L.divIcon({
-          className: "",
-          iconSize: [24, 24],
-          html: `<div style="width: 15px; height: 15px; border-radius: 50%; background: ${statusColor}; border: 1px solid #fff;"></div>`,
-        });
+        const circleIcon = getIcon(statusColor);
+
+        // Memoize the callback to avoid creating a new function on each render
         const onDir = () => onDirectionClick(marker.position as [number, number]);
 
         return (
           <Marker key={`plot-${marker.plot_id}`} position={marker.position} icon={circleIcon}>
             {marker.rows && marker.columns ? (
               // Memorial Chambers Popup
-              <Popup className="leaflet-theme-popup" offset={[-2, 5]} minWidth={450} closeButton={false}>
+              <Popup className="leaflet-theme-popup" minWidth={450} closeButton={false}>
                 <div className="w-full py-2">
                   <ColumbariumPopup onDirectionClick={onDir} isDirectionLoading={isDirectionLoading} marker={marker} />
                 </div>
               </Popup>
             ) : (
               // Serenity Lawn Popup
-              <Popup className="leaflet-theme-popup" offset={[-2, 5]} minWidth={250} closeButton={false}>
+              <Popup className="leaflet-theme-popup" minWidth={250} closeButton={false}>
                 <PlotLocations backgroundColor={getCategoryBackgroundColor(marker.category)} onDirectionClick={onDir} isDirectionLoading={isDirectionLoading} marker={marker} />
               </Popup>
             )}
@@ -44,3 +59,5 @@ export default function PlotMarkers({ markers, isDirectionLoading, onDirectionCl
     </>
   );
 }
+
+export default memo(PlotMarkers);
