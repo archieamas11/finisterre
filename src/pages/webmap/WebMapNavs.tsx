@@ -7,38 +7,58 @@ import { RefreshCw, Search, Filter, Locate, Layers, Home } from "lucide-react";
 
 import { isAdmin, isAuthenticated } from "@/utils/auth.utils.temp";
 import { Button } from "@/components/ui/button";
-import { LocateContext } from "@/pages/admin/map4admin/AdminMapLayout";
+import { LocateContext as WebMapLocateContext } from "@/components/layout/WebMapLayout";
+import { LocateContext as AdminLocateContext } from "@/pages/admin/map4admin/AdminMapLayout";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 export default function WebMapNavs() {
-  const locateCtx = useContext(LocateContext);
+  const webMapCtx = useContext(WebMapLocateContext);
+  const adminCtx = useContext(AdminLocateContext);
+
+  // 🎯 Use admin context if available, otherwise use web map context
+  const locateCtx = adminCtx || webMapCtx;
+
+  // 🔧 Type guard for admin context
+  const isAdminContext = (
+    ctx: any,
+  ): ctx is { requestLocate: () => void; isAddingMarker: boolean; toggleAddMarker: () => void; isEditingMarker: boolean; toggleEditMarker: () => void } => {
+    return ctx && "isAddingMarker" in ctx;
+  };
+
   const location = useLocation();
+
   const onAddMarkerClick = () => {
-    if (locateCtx?.isEditingMarker) {
-      locateCtx?.toggleEditMarker?.();
+    if (isAdminContext(locateCtx)) {
+      if (locateCtx.isEditingMarker) {
+        locateCtx.toggleEditMarker();
+      }
+      locateCtx.toggleAddMarker();
     }
-    locateCtx?.toggleAddMarker?.();
   };
 
   const onEditMarkerClick = () => {
-    if (locateCtx?.isAddingMarker) {
-      locateCtx?.toggleAddMarker?.();
+    if (isAdminContext(locateCtx)) {
+      if (locateCtx.isAddingMarker) {
+        locateCtx.toggleAddMarker();
+      }
+      locateCtx.toggleEditMarker();
     }
-    locateCtx?.toggleEditMarker?.();
   };
 
   useEffect(() => {
-    if (!locateCtx?.isAddingMarker) return;
+    if (!isAdminContext(locateCtx) || !locateCtx.isAddingMarker) return;
 
     function onKeyDown(e: KeyboardEvent) {
       if (e.key === "Escape") {
         e.preventDefault();
-        locateCtx?.toggleAddMarker?.();
+        if (isAdminContext(locateCtx)) {
+          locateCtx.toggleAddMarker();
+        }
       }
     }
 
     window.addEventListener("keydown", onKeyDown);
     return () => window.removeEventListener("keydown", onKeyDown);
-  }, [locateCtx?.isAddingMarker, locateCtx?.toggleAddMarker]);
+  }, [locateCtx]);
 
   return (
     <nav
@@ -84,12 +104,12 @@ export default function WebMapNavs() {
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="secondary" className="rounded-full" size="icon">
-                <RiMapPinAddLine className={locateCtx?.isAddingMarker ? "text-primary-foreground" : "text-accent-foreground"} />
+                <RiMapPinAddLine className={isAdminContext(locateCtx) && locateCtx.isAddingMarker ? "text-primary-foreground" : "text-accent-foreground"} />
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent>
-              <DropdownMenuItem onClick={onAddMarkerClick}>{locateCtx?.isAddingMarker ? "Cancel Add" : "Add Marker"}</DropdownMenuItem>
-              <DropdownMenuItem onClick={onEditMarkerClick}>{locateCtx?.isEditingMarker ? "Cancel Edit" : "Edit Marker"}</DropdownMenuItem>
+              <DropdownMenuItem onClick={onAddMarkerClick}>{isAdminContext(locateCtx) && locateCtx.isAddingMarker ? "Cancel Add" : "Add Marker"}</DropdownMenuItem>
+              <DropdownMenuItem onClick={onEditMarkerClick}>{isAdminContext(locateCtx) && locateCtx.isEditingMarker ? "Cancel Edit" : "Edit Marker"}</DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
         </>

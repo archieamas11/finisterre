@@ -1,19 +1,19 @@
 import "leaflet/dist/leaflet.css";
 import L from "leaflet";
-import { createContext, useRef, useEffect } from "react";
+import { createContext, useEffect } from "react";
 import { useState, Suspense, lazy } from "react";
-import { MapContainer, useMapEvents, TileLayer, Popup } from "react-leaflet";
+import { MapContainer, TileLayer } from "react-leaflet";
 import iconUrl from "leaflet/dist/images/marker-icon.png";
 import iconRetinaUrl from "leaflet/dist/images/marker-icon-2x.png";
 import shadowUrl from "leaflet/dist/images/marker-shadow.png";
 import WebMapNavs from "@/pages/webmap/WebMapNavs";
-import ReactLeafletDriftMarker from "react-leaflet-drift-marker";
 import { usePlots } from "@/hooks/plots-hooks/plot.hooks";
 import { convertPlotToMarker } from "@/types/map.types";
 import Spinner from "@/components/ui/spinner";
 import { useLocationTracking } from "@/hooks/useLocationTracking";
 import { useValhalla } from "@/hooks/useValhalla";
 import { ValhallaRoute } from "@/components/map/ValhallaRoute";
+import { UserLocationMarker } from "@/components/map/UserLocationMarker";
 import { NavigationInstructions } from "@/components/map/NavigationInstructions";
 const PlotMarkers = lazy(() => import("@/pages/webmap/PlotMarkers"));
 const ComfortRoomMarker = lazy(() => import("@/pages/webmap/ComfortRoomMarkers"));
@@ -66,7 +66,7 @@ export default function MapPage() {
 
   const [isNavigationInstructionsOpen, setIsNavigationInstructionsOpen] = useState(false);
   const [isDirectionLoading, setIsDirectionLoading] = useState(false);
-  const locateRef = useRef<(() => void) | null>(null);
+  const [shouldCenterOnUser, setShouldCenterOnUser] = useState(false);
 
   const bounds: [[number, number], [number, number]] = [
     [10.247883800064669, 123.79691285546676],
@@ -87,6 +87,15 @@ export default function MapPage() {
     };
   }, [stopTracking]);
 
+  // 🎯 Reset center flag after user location marker uses it
+  useEffect(() => {
+    if (shouldCenterOnUser && currentLocation) {
+      // 📍 Reset flag after a brief delay to allow the UserLocationMarker to center
+      const timeoutId = setTimeout(() => setShouldCenterOnUser(false), 1000);
+      return () => clearTimeout(timeoutId);
+    }
+  }, [shouldCenterOnUser, currentLocation]);
+
   if (isLoading) {
     return (
       <div className="flex h-screen w-full items-center justify-center">
@@ -106,7 +115,17 @@ export default function MapPage() {
   L.Marker.prototype.options.icon = DefaultIcon;
 
   const requestLocate = () => {
-    if (locateRef.current) locateRef.current();
+    // 🧭 Start location tracking if not already tracking
+    if (!isTracking) {
+      startTracking();
+      setShouldCenterOnUser(true);
+    }
+
+    // 🎯 If we already have location, center on it
+    if (currentLocation) {
+      // 📍 We can access the map and center on user location
+      setShouldCenterOnUser(true);
+    }
   };
 
   const clearRoute = () => {
@@ -183,13 +202,20 @@ export default function MapPage() {
           <TileLayer url="https://services.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}" maxNativeZoom={18} maxZoom={25} />
           {/* 🎯 All the markers */}
           <Suspense fallback={null}>
-            {/* 🗺️ Valhalla route */}
+            {/* 👤 User location marker (only when no route is displayed to avoid duplicates) */}
+            {!(route && routeCoordinates.length > 0) && (
+              <UserLocationMarker userLocation={currentLocation} centerOnFirst={shouldCenterOnUser} enableAnimation={true} showAccuracyCircle={true} />
+            )}
+
+            {/* �🗺️ Valhalla route */}
             {route && routeCoordinates.length > 0 && (
               <ValhallaRoute
+                key={route.trip.summary.length} // Force re-render when route changes
                 route={route}
                 routeCoordinates={routeCoordinates}
                 originalStart={originalStart || undefined}
                 originalEnd={originalEnd || undefined}
+                userLocation={currentLocation}
                 isNavigating={isNavigating}
                 showMarkers={true}
                 fitBounds={!isNavigating} // 🎯 Only auto-fit when not actively navigating
