@@ -1,6 +1,6 @@
 // PlotMarkers.tsx
 import L from "leaflet";
-import { memo, useState } from "react";
+import { memo, useState, useCallback } from "react";
 import { Marker, Popup } from "react-leaflet";
 import ColumbariumPopup from "@/pages/admin/map4admin/ColumbariumPopup";
 import PlotLocations from "@/pages/webmap/WebMapPopup";
@@ -25,12 +25,23 @@ interface PlotMarkersProps {
   markers: ConvertedMarker[];
   isDirectionLoading: boolean;
   onDirectionClick: (to: [number, number]) => void;
-  block: string; // Add block prop so we can customize cluster later if needed
+  block: string;
 }
 
-// Memoize the entire component
 const PlotMarkers: React.FC<PlotMarkersProps> = memo(({ markers, isDirectionLoading, onDirectionClick, block: _block }) => {
   const [openDrawerPlotId, setOpenDrawerPlotId] = useState<string | number | null>(null);
+
+  const handleMarkerClick = useCallback((plotId: string | number) => {
+    requestAnimationFrame(() => {
+      setOpenDrawerPlotId(plotId);
+    });
+  }, []);
+
+  const handleDrawerOpenChange = useCallback((open: boolean, plotId: string | number) => {
+    requestAnimationFrame(() => {
+      setOpenDrawerPlotId(open ? plotId : null);
+    });
+  }, []);
 
   return (
     <>
@@ -47,7 +58,9 @@ const PlotMarkers: React.FC<PlotMarkersProps> = memo(({ markers, isDirectionLoad
             icon={circleIcon}
             eventHandlers={{
               click: () => {
-                if (marker.rows && marker.columns) setOpenDrawerPlotId(marker.plot_id);
+                if (marker.rows && marker.columns) {
+                  handleMarkerClick(marker.plot_id);
+                }
               },
             }}
           >
@@ -64,7 +77,7 @@ const PlotMarkers: React.FC<PlotMarkersProps> = memo(({ markers, isDirectionLoad
             )}
 
             {marker.rows && marker.columns ? (
-              <Drawer open={openDrawerPlotId === marker.plot_id} onOpenChange={(open) => setOpenDrawerPlotId(open ? marker.plot_id : null)}>
+              <Drawer open={openDrawerPlotId === marker.plot_id} onOpenChange={(open) => handleDrawerOpenChange(open, marker.plot_id)}>
                 <DrawerContent className="z-9999 max-h-[85vh] overflow-hidden rounded-t-xl md:hidden">
                   <DrawerTitle>
                     <span className="sr-only">Columbarium plot details</span>
