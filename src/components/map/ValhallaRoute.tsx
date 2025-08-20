@@ -7,6 +7,8 @@ import { type UserLocation } from "@/hooks/useLocationTracking";
 interface ValhallaRouteProps {
   route: ValhallaRouteResponse | null;
   routeCoordinates: [number, number][];
+  // 🎯 Dynamic coordinates showing remaining route during navigation
+  remainingCoordinates?: [number, number][];
   isNavigating?: boolean;
   // 📍 Original coordinates (not snapped to roads)
   originalStart?: [number, number];
@@ -29,6 +31,7 @@ interface ValhallaRouteProps {
 export function ValhallaRoute({
   route,
   routeCoordinates,
+  remainingCoordinates,
   isNavigating = false,
   originalStart,
   originalEnd,
@@ -99,21 +102,25 @@ export function ValhallaRoute({
 
   // 🔗 Create complete polyline coordinates that connect original points to snapped route
   const completePolylineCoordinates = React.useMemo(() => {
-    const coords = [...routeCoordinates];
+    // 🎯 Use remaining coordinates during navigation for dynamic progress, otherwise use full route
+    const baseCoords = isNavigating && remainingCoordinates && remainingCoordinates.length > 0 ? remainingCoordinates : routeCoordinates;
+
+    const coords = [...baseCoords];
 
     // 🎯 If we have original coordinates, create connection lines
-    if (originalStart && originalStart !== routeCoordinates[0]) {
+    // Only add original start when not navigating (to avoid connecting to old start position)
+    if (originalStart && originalStart !== routeCoordinates[0] && !isNavigating) {
       // Add original start at the beginning to connect to first route point
       coords.unshift(originalStart);
     }
 
-    if (originalEnd && originalEnd !== routeCoordinates[routeCoordinates.length - 1]) {
+    if (originalEnd && originalEnd !== coords[coords.length - 1]) {
       // Add original end at the end to connect from last route point
       coords.push(originalEnd);
     }
 
     return coords;
-  }, [routeCoordinates, originalStart, originalEnd]);
+  }, [routeCoordinates, remainingCoordinates, isNavigating, originalStart, originalEnd]);
 
   return (
     <>

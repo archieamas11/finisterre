@@ -241,12 +241,6 @@ export function NavigationInstructions({
                     ))}
                   </div>
                 </ScrollArea>
-                {/* Mobile-only hide button for reachability */}
-                <div className="mt-2 flex justify-center sm:hidden">
-                  <Button type="button" variant="secondary" size="sm" onClick={() => setShowDetails(false)}>
-                    Hide details
-                  </Button>
-                </div>
               </div>
             </>
           )}

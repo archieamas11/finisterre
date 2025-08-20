@@ -24,6 +24,9 @@ export interface RouteState {
   // 📍 Store original coordinates (not snapped to roads)
   originalStart: [number, number] | null;
   originalEnd: [number, number] | null;
+  // 🎯 Progress tracking for dynamic polyline
+  remainingCoordinates: [number, number][];
+  progressIndex: number;
   error: string | null;
   isNavigating: boolean;
   rerouteCount: number;
@@ -70,6 +73,8 @@ export function useValhalla(options: UseValhallaOptions = {}) {
     routeCoordinates: [],
     originalStart: null,
     originalEnd: null,
+    remainingCoordinates: [],
+    progressIndex: 0,
     error: null,
     isNavigating: false,
     rerouteCount: 0,
@@ -139,6 +144,8 @@ export function useValhalla(options: UseValhallaOptions = {}) {
         isLoading: false,
         route: response,
         routeCoordinates: coordinates,
+        remainingCoordinates: coordinates, // 🎯 Initially show full route
+        progressIndex: 0,
         error: null,
       }));
 
@@ -194,6 +201,8 @@ export function useValhalla(options: UseValhallaOptions = {}) {
       routeCoordinates: [],
       originalStart: null,
       originalEnd: null,
+      remainingCoordinates: [],
+      progressIndex: 0,
       error: null,
       rerouteCount: 0,
     }));
@@ -250,6 +259,43 @@ export function useValhalla(options: UseValhallaOptions = {}) {
     [routeState.isNavigating, routeState.routeCoordinates, routeState.rerouteCount, calculateRoute],
   );
 
+  // 📍 Update route progress based on user location (for dynamic polyline)
+  const updateRouteProgress = useCallback(
+    (userLocation: UserLocation) => {
+      if (!routeState.routeCoordinates.length || !routeState.isNavigating) return;
+
+      const coordinates = routeState.routeCoordinates;
+      let closestIndex = routeState.progressIndex;
+      let closestDistance = Infinity;
+
+      // 🔍 Find the closest point on the route to the user's current location
+      // Start from current progress index to avoid going backwards
+      const startIndex = Math.max(0, routeState.progressIndex - 2);
+      for (let i = startIndex; i < coordinates.length; i++) {
+        const [routeLat, routeLon] = coordinates[i];
+        const distance = Math.sqrt(Math.pow(userLocation.latitude - routeLat, 2) + Math.pow(userLocation.longitude - routeLon, 2));
+
+        if (distance < closestDistance) {
+          closestDistance = distance;
+          closestIndex = i;
+        }
+      }
+
+      // 🎯 Only update if we've made significant progress forward
+      if (closestIndex > routeState.progressIndex || closestDistance < 0.0001) {
+        // ~10 meters threshold
+        const remainingCoordinates = coordinates.slice(closestIndex);
+
+        setRouteState((prev) => ({
+          ...prev,
+          progressIndex: closestIndex,
+          remainingCoordinates,
+        }));
+      }
+    },
+    [routeState.routeCoordinates, routeState.isNavigating, routeState.progressIndex],
+  );
+
   // 🧭 Update navigation progress based on user location
   const updateNavigationProgress = useCallback(
     (userLocation: UserLocation) => {
@@ -298,11 +344,12 @@ export function useValhalla(options: UseValhallaOptions = {}) {
   const handleLocationUpdate = useCallback(
     async (userLocation: UserLocation) => {
       if (routeState.isNavigating) {
+        updateRouteProgress(userLocation); // 🎯 Update route progress for dynamic polyline
         updateNavigationProgress(userLocation);
         await checkAndReroute(userLocation);
       }
     },
-    [routeState.isNavigating, updateNavigationProgress, checkAndReroute],
+    [routeState.isNavigating, updateRouteProgress, updateNavigationProgress, checkAndReroute],
   );
 
   return {

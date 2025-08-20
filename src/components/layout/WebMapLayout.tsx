@@ -46,6 +46,7 @@ export default function MapPage() {
   const {
     route,
     routeCoordinates,
+    remainingCoordinates,
     originalStart,
     originalEnd,
     navigation,
@@ -207,12 +208,13 @@ export default function MapPage() {
               <UserLocationMarker userLocation={currentLocation} centerOnFirst={shouldCenterOnUser} enableAnimation={true} showAccuracyCircle={true} />
             )}
 
-            {/* �🗺️ Valhalla route */}
+            {/* 🗺️ Valhalla route */}
             {route && routeCoordinates.length > 0 && (
               <ValhallaRoute
                 key={route.trip.summary.length} // Force re-render when route changes
                 route={route}
                 routeCoordinates={routeCoordinates}
+                remainingCoordinates={remainingCoordinates}
                 originalStart={originalStart || undefined}
                 originalEnd={originalEnd || undefined}
                 userLocation={currentLocation}
