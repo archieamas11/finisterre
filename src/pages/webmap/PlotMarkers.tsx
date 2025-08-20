@@ -1,11 +1,14 @@
 import L from "leaflet";
 import { memo, useState } from "react";
 import { Marker, Popup } from "react-leaflet";
+import "leaflet.markercluster/dist/MarkerCluster.css";
+import "leaflet.markercluster/dist/MarkerCluster.Default.css";
+
 import ColumbariumPopup from "@/pages/admin/map4admin/ColumbariumPopup";
 import PlotLocations from "@/pages/webmap/WebMapPopup";
 import type { ConvertedMarker } from "@/types/map.types";
 import { getCategoryBackgroundColor, getStatusColor } from "@/types/map.types";
-import { Drawer, DrawerContent, DrawerTitle, DrawerDescription } from "@/components/ui/drawer";
+import { Drawer, DrawerContent, DrawerDescription, DrawerTitle } from "@/components/ui/drawer";
 
 export interface PlotMarkersProps {
   markers: ConvertedMarker[];
@@ -13,7 +16,7 @@ export interface PlotMarkersProps {
   onDirectionClick: (to: [number, number]) => void;
 }
 
-// Icon Caching
+// Icon Caching to avoid re-creating icons on every render
 const iconCache: Record<string, L.DivIcon> = {};
 const getIcon = (color: string) => {
   if (!iconCache[color]) {
@@ -27,15 +30,16 @@ const getIcon = (color: string) => {
 };
 
 function PlotMarkers({ markers, isDirectionLoading, onDirectionClick }: PlotMarkersProps) {
-  const [openDrawerMarker, setOpenDrawerMarker] = useState<ConvertedMarker | null>(null);
+  // Drawer state for small screens (one open at a time by plot id)
+  const [openDrawerPlotId, setOpenDrawerPlotId] = useState<string | number | null>(null);
 
   return (
     <>
-      {/* Render all markers */}
       {markers.map((marker) => {
         const statusColor = getStatusColor(marker.plotStatus);
         const circleIcon = getIcon(statusColor);
 
+        // Memoize the callback to avoid creating a new function on each render
         const onDir = () => onDirectionClick(marker.position as [number, number]);
 
         return (
@@ -45,43 +49,48 @@ function PlotMarkers({ markers, isDirectionLoading, onDirectionClick }: PlotMark
             icon={circleIcon}
             eventHandlers={{
               click: () => {
-                if (marker.rows && marker.columns) {
-                  // Open drawer instead of popup on mobile
-                  setOpenDrawerMarker(marker);
-                }
+                // Open Drawer for Columbarium markers (those with rows/columns)
+                if (marker.rows && marker.columns) setOpenDrawerPlotId(marker.plot_id);
               },
             }}
           >
-            {/* Only show popup for non-Columbarium plots OR on desktop */}
-            {!marker.rows || !marker.columns ? (
+            {marker.rows && marker.columns ? (
+              // Memorial Chambers Popup
+              <Popup className="leaflet-theme-popup hidden md:block" minWidth={450} closeButton={false}>
+                <div className="w-full py-2">
+                  <ColumbariumPopup onDirectionClick={onDir} isDirectionLoading={isDirectionLoading} marker={marker} />
+                </div>
+              </Popup>
+            ) : (
+              // Serenity Lawn Popup
               <Popup className="leaflet-theme-popup" minWidth={250} closeButton={false}>
                 <PlotLocations backgroundColor={getCategoryBackgroundColor(marker.category)} onDirectionClick={onDir} isDirectionLoading={isDirectionLoading} marker={marker} />
               </Popup>
+            )}
+
+            {/* Small screens Drawer for Columbarium (md:hidden keeps it mobile-only) */}
+            {marker.rows && marker.columns ? (
+              <Drawer open={openDrawerPlotId === marker.plot_id} onOpenChange={(open) => setOpenDrawerPlotId(open ? marker.plot_id : null)}>
+                <DrawerContent className="z-9999 max-h-[85vh] overflow-hidden rounded-t-xl md:hidden" aria-describedby={`drawer-description-${marker.plot_id}`}>
+                  <DrawerTitle>
+                    <span className="sr-only" id={`drawer-title-${marker.plot_id}`}>
+                      Columbarium plot details
+                    </span>
+                  </DrawerTitle>
+                  <DrawerDescription>
+                    <span id={`drawer-description-${marker.plot_id}`} className="sr-only">
+                      Columbarium plot details and actions.
+                    </span>
+                  </DrawerDescription>
+                  <div className="max-h-[85vh] touch-pan-y overflow-y-auto overscroll-contain px-2 pt-2 pb-4">
+                    <ColumbariumPopup onDirectionClick={onDir} isDirectionLoading={isDirectionLoading} marker={marker} />
+                  </div>
+                </DrawerContent>
+              </Drawer>
             ) : null}
           </Marker>
         );
       })}
-
-      {openDrawerMarker && (
-        <Drawer
-          open={true}
-          onOpenChange={(open) => {
-            if (!open) setOpenDrawerMarker(null);
-          }}
-        >
-          <DrawerContent className="z-999 max-h-[85vh] overflow-hidden rounded-t-xl md:hidden">
-            <DrawerTitle className="sr-only">Columbarium Plot Details</DrawerTitle>
-            <DrawerDescription className="sr-only">Details and actions for columbarium plot {openDrawerMarker.plot_id}.</DrawerDescription>
-            <div className="max-h-[85vh] touch-pan-y overflow-y-auto overscroll-contain px-2 pt-2 pb-4">
-              <ColumbariumPopup
-                onDirectionClick={() => onDirectionClick(openDrawerMarker.position as [number, number])}
-                isDirectionLoading={isDirectionLoading}
-                marker={openDrawerMarker}
-              />
-            </div>
-          </DrawerContent>
-        </Drawer>
-      )}
     </>
   );
 }
