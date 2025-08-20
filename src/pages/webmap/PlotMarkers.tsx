@@ -1,9 +1,6 @@
 import L from "leaflet";
 import { memo, useState } from "react";
 import { Marker, Popup } from "react-leaflet";
-import "leaflet.markercluster/dist/MarkerCluster.css";
-import "leaflet.markercluster/dist/MarkerCluster.Default.css";
-
 import ColumbariumPopup from "@/pages/admin/map4admin/ColumbariumPopup";
 import PlotLocations from "@/pages/webmap/WebMapPopup";
 import type { ConvertedMarker } from "@/types/map.types";

@@ -15,6 +15,8 @@ import { ValhallaRoute } from "@/components/map/ValhallaRoute";
 import { UserLocationMarker } from "@/components/map/UserLocationMarker";
 import { NavigationInstructions } from "@/components/map/NavigationInstructions";
 import MarkerClusterGroup from "react-leaflet-markercluster";
+import "leaflet.markercluster/dist/MarkerCluster.css";
+import "leaflet.markercluster/dist/MarkerCluster.Default.css";
 
 // Lazy load all marker components
 const PlotMarkers = lazy(() => import("@/pages/webmap/PlotMarkers"));
