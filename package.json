@@ -46,6 +46,7 @@
     "@tanstack/react-table": "^8.21.3",
     "@types/leaflet.markercluster": "^1.5.5",
     "@types/react-leaflet-markercluster": "^4.2.1",
+    "@vercel/speed-insights": "^1.2.0",
     "axios": "^1.11.0",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",

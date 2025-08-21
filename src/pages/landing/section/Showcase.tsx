@@ -1,6 +1,6 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { motion } from "framer-motion";
-import { MapPin, ChevronLeft, ChevronRight, Maximize2, Clock, Trees, Mountain } from "lucide-react";
+import { ChevronLeft, ChevronRight, Maximize2, Car, Plug, CloudRain, ShieldCheck, Wrench } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
@@ -59,26 +59,11 @@ const galleryImages = [
 ];
 
 const locationFeatures = [
-  {
-    icon: MapPin,
-    title: "Prime Location",
-    description: "Situated on 150 acres of pristine countryside, just 15 minutes from downtown",
-  },
-  {
-    icon: Trees,
-    title: "Natural Setting",
-    description: "Surrounded by mature oak trees and native wildlife preserves",
-  },
-  {
-    icon: Mountain,
-    title: "Scenic Views",
-    description: "Overlooking the Blue Ridge Mountains with year-round natural beauty",
-  },
-  {
-    icon: Clock,
-    title: "Historic Heritage",
-    description: "Established in 1847, featuring monuments of significant historical importance",
-  },
+  { icon: Car, title: "Ample Parking Facilities", description: "Generous, well-lit parking areas for visitors and service vehicles" },
+  { icon: Plug, title: "Underground Utilities", description: "Concealed utility lines for reliable service and unobstructed landscaping" },
+  { icon: CloudRain, title: "Drainage System & Network", description: "Engineered drainage to protect grounds and manage stormwater effectively" },
+  { icon: ShieldCheck, title: "24-hour Security", description: "Continuous monitoring and patrols to ensure visitor safety and asset protection" },
+  { icon: Wrench, title: "Perpetual Maintenance", description: "Ongoing groundskeeping and infrastructure upkeep for lasting beauty" },
 ];
 
 export default function CemeteryShowcase() {
@@ -87,6 +72,7 @@ export default function CemeteryShowcase() {
   const [activeFilter, setActiveFilter] = useState("all");
   const [isExpanded, setIsExpanded] = useState(false);
   const [leafletMap, setLeafletMap] = useState<LeafletMap | null>(null);
+  const mapContainerRef = useRef<HTMLDivElement | null>(null);
 
   const categories = [
     { id: "all", label: "All Views" },
@@ -138,6 +124,21 @@ export default function CemeteryShowcase() {
     }, 0);
     return () => clearTimeout(t);
   }, [leafletMap, isExpanded]);
+
+  // Resize observer to invalidate leaflet size when the container size changes
+  useEffect(() => {
+    if (!mapContainerRef.current || !leafletMap || typeof ResizeObserver === "undefined") return;
+    const el = mapContainerRef.current;
+    const ro = new ResizeObserver(() => {
+      try {
+        leafletMap.invalidateSize();
+      } catch (e) {
+        // ignore
+      }
+    });
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, [mapContainerRef, leafletMap]);
 
   // small internal component to access the map instance from within MapContainer
   function MapInitializer({ onMap }: { onMap: (m: LeafletMap) => void }) {
@@ -256,8 +257,8 @@ export default function CemeteryShowcase() {
                     </div>
                   </div>
                   <div className="ml-4">
-                    <dt className="text-foreground text-lg font-medium">{feature.title}</dt>
-                    <dd className="text-muted-foreground mt-1 text-base">{feature.description}</dd>
+                    <dt className="text-foreground text-md font-medium">{feature.title}</dt>
+                    <dd className="text-muted-foreground mt-1 text-sm">{feature.description}</dd>
                   </div>
                 </div>
               ))}
@@ -265,9 +266,8 @@ export default function CemeteryShowcase() {
           </div>
 
           {/* Display cemetery map */}
-
-          <div className="h-full w-full rounded-lg border p-2">
-            <div className="relative z-1 h-full w-full">
+          <div className="w-full rounded-lg border p-2">
+            <div ref={mapContainerRef} className="relative z-10 h-[320px] w-full sm:h-[420px] md:h-[480px] lg:h-[480px]">
               <MapContainer
                 center={[10.249306880563585, 123.797848311330114]}
                 maxZoom={25}
@@ -286,7 +286,7 @@ export default function CemeteryShowcase() {
                 </Marker>
               </MapContainer>
               {/* Floating location card */}
-              <div className="pointer-events-none absolute bottom-2 left-1 z-999 w-full max-w-xs sm:max-w-sm">
+              <div className="pointer-events-none absolute bottom-2 left-1 z-400 w-full max-w-xs sm:max-w-sm">
                 <div className="bg-card pointer-events-auto mx-2 rounded-lg p-4 shadow-lg backdrop-blur-sm">
                   <h4 className="text-foreground text-lg font-semibold">Finisterre Gardenz</h4>
                   <p className="text-muted-foreground mt-1 text-sm">6QXX+C4 Minglanilla, Cebu</p>

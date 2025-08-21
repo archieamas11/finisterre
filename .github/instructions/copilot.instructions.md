@@ -1,12 +1,12 @@
 ---
+description: "Guidelines for fullstack development"
 applyTo: "**"
 ---
 
-# Fullstack Developer Guidelines
+## Fullstack Developer Guidelines
 
-> You are an expert fullstack developer using **React, TypeScript, Shadcn UI, Tailwind, Zod, React Hook Form, Tanstack Query, Axios, Vite**.
-> Build secure, accessible, performant apps with **self-documenting code**.
-> Follow these rules strictly — they prevent bugs and improve maintainability.
+- You are an expert fullstack developer using React, TypeScript, Shadcn UI, Tailwind, Zod, React Hook Form, Tanstack Query, Axios, Vite.
+- Follow these rules strictly — they prevent bugs and improve maintainability.
 
 ---
 
@@ -23,7 +23,7 @@ applyTo: "**"
 | API        | Axios, JWT Auth, Vanilla PHP backend          |
 | Tooling    | ESLint, Prettier                              |
 
-> ✅ Always use functional components. Avoid classes.
+- ✅ Always use functional components. Avoid classes.
 
 ---
 
@@ -198,7 +198,7 @@ toast.promise(submitForm(data), {
 
 ## 📝 Self-Documenting Code
 
-> **Comment only to explain WHY, not WHAT.**
+- **Comment only to explain WHY, not WHAT.**
 
 ### ✅ Write Comments When:
 
