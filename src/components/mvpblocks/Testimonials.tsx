@@ -44,7 +44,7 @@ export function TestimonialCard({ description, name, img, role, className, ...pr
 
 const testimonials = [
   {
-    name: "Margaret Wilson",
+    name: "Maria Santos",
     role: "Family Member for 3 Generations",
     img: "https://randomuser.me/api/portraits/women/65.jpg",
     description: (
@@ -55,7 +55,7 @@ const testimonials = [
     ),
   },
   {
-    name: "Robert Chen",
+    name: "Juan Dela Cruz",
     role: "Funeral Director",
     img: "https://randomuser.me/api/portraits/men/41.jpg",
     description: (
@@ -66,7 +66,7 @@ const testimonials = [
     ),
   },
   {
-    name: "Elizabeth Thompson",
+    name: "Luz Navarro",
     role: "Community Historian",
     img: "https://randomuser.me/api/portraits/women/72.jpg",
     description: (
@@ -77,7 +77,7 @@ const testimonials = [
     ),
   },
   {
-    name: "James Mitchell",
+    name: "Jose Rizal",
     role: "Veterans Association President",
     img: "https://randomuser.me/api/portraits/men/58.jpg",
     description: (
@@ -88,7 +88,7 @@ const testimonials = [
     ),
   },
   {
-    name: "Susan Garcia",
+    name: "Carmen Reyes",
     role: "Garden Club Member",
     img: "https://randomuser.me/api/portraits/women/36.jpg",
     description: (
@@ -99,7 +99,7 @@ const testimonials = [
     ),
   },
   {
-    name: "David Peterson",
+    name: "Antonio Luna",
     role: "Estate Planning Attorney",
     img: "https://randomuser.me/api/portraits/men/63.jpg",
     description: (
@@ -114,7 +114,7 @@ const testimonials = [
 export default function Testimonials() {
   return (
     <section className="bg-background relative overflow-hidden py-24 sm:py-32">
-      <div className="mx-auto max-w-7xl px-6 lg:px-8">
+      <div className="mx-auto w-full px-6 sm:w-[85%] md:w-[80%] lg:w-[75%] lg:px-8 xl:w-[80%]">
         <div className="mx-auto max-w-3xl text-center">
           <h2 className="text-foreground text-4xl font-bold tracking-tight sm:text-5xl">What Families Are Saying</h2>
           <p className="text-muted-foreground mt-6 text-lg leading-8">Don't just take our word for it. Here's what families in our community are saying about our memorial park.</p>
@@ -122,14 +122,16 @@ export default function Testimonials() {
         <div className="relative mt-16 [mask-image:linear-gradient(to_bottom,transparent,black_10%,black_90%,transparent)]">
           <Marquee pauseOnHover className="[--duration:60s]">
             {testimonials.map((testimonial) => (
-              <TestimonialCard key={testimonial.name} {...testimonial} className="w-96" />
+              <TestimonialCard key={testimonial.name} {...testimonial} className="w-80" />
             ))}
           </Marquee>
           <Marquee reverse pauseOnHover className="[--duration:60s]">
             {testimonials.map((testimonial) => (
-              <TestimonialCard key={testimonial.name} {...testimonial} className="w-96" />
+              <TestimonialCard key={testimonial.name} {...testimonial} className="w-80" />
             ))}
           </Marquee>
+          <div className="from-background via-background/80 pointer-events-none absolute inset-y-0 left-0 w-1/9 bg-gradient-to-r to-transparent"></div>
+          <div className="from-background via-background/80 pointer-events-none absolute inset-y-0 right-0 w-1/9 bg-gradient-to-l to-transparent"></div>
         </div>
       </div>
     </section>

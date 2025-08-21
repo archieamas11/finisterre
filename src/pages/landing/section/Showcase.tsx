@@ -2,59 +2,56 @@ import { useEffect, useMemo, useState } from "react";
 import { motion } from "framer-motion";
 import { MapPin, ChevronLeft, ChevronRight, Maximize2, Clock, Trees, Mountain } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { MapContainer, TileLayer, Marker, Popup, useMap } from "react-leaflet";
 import type { Map as LeafletMap } from "leaflet";
-import "leaflet/dist/leaflet.css";
-// Removed unused bounds; using center + zoom instead to ensure the map fills its container.
 const galleryImages = [
   {
     id: 1,
-    src: "https://images.unsplash.com/photo-1561816544-21ec9b39454b?q=80&w=2070&auto=format&fit=crop",
+    src: "https://picsum.photos/id/1025/2070/1380",
     alt: "Panoramic view of peaceful cemetery grounds with rolling hills",
     caption: "Panoramic view of our 150-acre grounds nestled in the rolling countryside",
     category: "panoramic",
   },
   {
     id: 2,
-    src: "https://images.unsplash.com/photo-1585224252629-729146a38f49?q=80&w=1932&auto=format&fit=crop",
+    src: "https://picsum.photos/id/1025/2070/1380",
     alt: "Spring blossoms throughout the cemetery pathways",
     caption: "Spring transformation with cherry blossoms lining memorial pathways",
     category: "seasonal",
   },
   {
     id: 3,
-    src: "https://images.unsplash.com/photo-1549903349-41402da3815c?q=80&w=2070&auto=format&fit=crop",
+    src: "https://picsum.photos/id/1025/2070/1380",
     alt: "Aerial view showing the full expanse of the cemetery property",
     caption: "Aerial perspective showcasing the thoughtful layout and natural integration",
     category: "aerial",
   },
   {
     id: 4,
-    src: "https://images.unsplash.com/photo-1600675494932-8527a7a1855a?q=80&w=1974&auto=format&fit=crop",
+    src: "https://picsum.photos/id/1025/2070/1380",
     alt: "Historic monument with intricate architectural details",
     caption: "Historic memorial featuring 19th-century craftsmanship and artistry",
     category: "architecture",
   },
   {
     id: 5,
-    src: "https://images.unsplash.com/photo-1506372023323-265a55b22235?q=80&w=2070&auto=format&fit=crop",
+    src: "https://picsum.photos/id/1025/2070/1380",
     alt: "Golden sunset casting peaceful light across the grounds",
     caption: "Evening tranquility as golden hour illuminates the sacred grounds",
     category: "sunset",
   },
   {
     id: 6,
-    src: "https://images.unsplash.com/photo-1522202845147-df37851b20e5?q=80&w=2070&auto=format&fit=crop",
+    src: "https://picsum.photos/id/1025/2070/1380",
     alt: "Carefully maintained memorial gardens with seasonal flowers",
     caption: "Memorial gardens featuring native plants and seasonal displays",
     category: "gardens",
   },
   {
     id: 7,
-    src: "https://images.unsplash.com/photo-1590339692245-509c96544993?q=80&w=1974&auto=format&fit=crop",
+    src: "https://picsum.photos/id/1025/2070/1380",
     alt: "A serene lake reflecting the sky within the memorial park",
     caption: "A serene lake reflecting the sky, offering a place for quiet contemplation",
     category: "gardens",
@@ -347,8 +344,12 @@ export default function CemeteryShowcase() {
                   <ChevronRight className="h-6 w-6" />
                 </Button>
               </div>
-              <div className="absolute bottom-4 left-1/2 -translate-x-1/2 rounded-full bg-black/50 px-4 py-2 text-center text-white/90 backdrop-blur-sm">
-                <p className="text-sm font-medium">{visibleImages[selectedImage]?.caption}</p>
+              {/* Caption with gradient backdrop */}
+              <div className="absolute bottom-0 w-full">
+                <div className="pointer-events-none absolute inset-0 h-full rounded-b-2xl bg-gradient-to-t from-black via-black/70 to-transparent"></div>
+                <div className="flex items-center justify-center p-10 text-center">
+                  <p className="w-full text-sm font-medium text-white drop-shadow-sm">{visibleImages[selectedImage]?.caption}</p>
+                </div>
               </div>
             </div>
           )}
