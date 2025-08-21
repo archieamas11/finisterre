@@ -149,7 +149,6 @@ function SimplePopup({ title, description }: { title: string; description: strin
       transition={{ duration: 0.25, ease: "easeOut" }}
       className="mt-5 mb-1 w-64 rounded-xl shadow-lg"
     >
-      {/* 📝 Enhanced card: gradient, larger title, multiline description and subtle footer */}
       <div className="relative overflow-hidden rounded-xl bg-gradient-to-t from-black/70 to-transparent p-0 text-gray-900">
         <div className="bg-white/90 p-4 backdrop-blur-sm">
           <h3 className="mb-2 line-clamp-2 text-lg font-semibold text-gray-900">{title}</h3>

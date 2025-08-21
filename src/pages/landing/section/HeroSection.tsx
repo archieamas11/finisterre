@@ -43,7 +43,7 @@ export default function HeroSection() {
         {/* CTA Section */}
         <div className="flex flex-col items-center justify-center gap-4 sm:flex-row">
           {/* Primary CTA */}
-          <RainbowButton size={"lg"} className="rounded-full font-semibold">
+          <RainbowButton size={"lg"} className="rounded-full font-semibold" variant={"outline"}>
             <Link className="flex items-center gap-3" aria-label="Explore Map" to="/map">
               <MapPin />
               <hr className="h-4 w-px shrink-0 bg-neutral-400" />

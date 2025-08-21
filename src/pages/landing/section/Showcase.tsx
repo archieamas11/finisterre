@@ -296,11 +296,7 @@ export default function CemeteryShowcase() {
                       onClick={() => {
                         if (leafletMap) {
                           leafletMap.flyTo([10.249306880563585, 123.797848311330114], 18, { duration: 1.0 });
-                          try {
-                            leafletMap.invalidateSize();
-                          } catch (e) {
-                            // ignore
-                          }
+                          leafletMap.invalidateSize();
                         }
                       }}
                     >

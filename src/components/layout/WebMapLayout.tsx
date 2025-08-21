@@ -16,8 +16,8 @@ import { UserLocationMarker } from "@/components/map/UserLocationMarker";
 import { NavigationInstructions } from "@/components/map/NavigationInstructions";
 import MarkerClusterGroup from "react-leaflet-markercluster";
 import "leaflet.markercluster/dist/MarkerCluster.css";
+import { toast } from "sonner";
 
-// Lazy load all marker components
 const PlotMarkers = lazy(() => import("@/pages/webmap/PlotMarkers"));
 const ComfortRoomMarker = lazy(() => import("@/pages/webmap/ComfortRoomMarkers"));
 const ParkingMarkers = lazy(() => import("@/pages/webmap/ParkingMarkers"));
@@ -26,7 +26,6 @@ const MainEntranceMarkers = lazy(() => import("@/pages/webmap/MainEntranceMarker
 const ChapelMarkers = lazy(() => import("@/pages/webmap/ChapelMarkers"));
 const PlaygroundMarkers = lazy(() => import("@/pages/webmap/PlaygroundMarkers"));
 
-// 1. Set default icon for all markers once outside the component render cycle.
 const DefaultIcon = L.icon({
   iconUrl,
   iconRetinaUrl,
@@ -37,7 +36,6 @@ const DefaultIcon = L.icon({
 });
 L.Marker.prototype.options.icon = DefaultIcon;
 
-// 2. Memoize static marker components to prevent re-renders.
 const MemoizedComfortRoomMarker = memo(ComfortRoomMarker);
 const MemoizedParkingMarkers = memo(ParkingMarkers);
 const MemoizedCenterSerenityMarkers = memo(CenterSerenityMarkers);
@@ -50,7 +48,6 @@ export const LocateContext = createContext<{ requestLocate: () => void; clearRou
 
 export default function MapPage() {
   const { isLoading, data: plotsData } = usePlots();
-  // Memoize the markers array to prevent re-calculation on every render.
   const markers = useMemo(() => plotsData?.map(convertPlotToMarker) || [], [plotsData]);
 
   const {
@@ -131,21 +128,41 @@ export default function MapPage() {
 
   const handleDirectionClick = useCallback(
     async (to: [number, number]) => {
+      const [toLatitude, toLongitude] = to;
+      if (!toLatitude || !toLongitude) {
+        console.warn("⚠️ Invalid destination coordinates:", to);
+        setIsDirectionLoading(false);
+        return;
+      }
       setIsDirectionLoading(true);
       setIsNavigationInstructionsOpen(false);
+
       try {
+        // Get user location: use current if available, otherwise fetch
         let userLocation = currentLocation;
         if (!userLocation) {
           userLocation = await getCurrentLocation();
         }
-        if (userLocation) {
-          await startNavigation({ latitude: userLocation.latitude, longitude: userLocation.longitude }, { latitude: to[0], longitude: to[1] });
-          requestLocate();
-          setIsNavigationInstructionsOpen(true);
+
+        if (!userLocation || !userLocation.latitude || !userLocation.longitude) {
+          throw new Error("Could not determine current location");
         }
+
+        // Start navigation with proper typed coordinates
+        await startNavigation({ latitude: userLocation.latitude, longitude: userLocation.longitude }, { latitude: toLatitude, longitude: toLongitude });
+
+        // Trigger map recentering or location update
+        requestLocate();
+
+        // Open navigation instructions UI
+        setIsNavigationInstructionsOpen(true);
       } catch (error) {
         console.error("🚫 Failed to start navigation:", error);
-        if (!isTracking) startTracking();
+        // Fallback: resume tracking if not already doing so
+        if (!isTracking) {
+          startTracking();
+        }
+        toast.error("Failed to start navigation. Using fallback tracking.");
       } finally {
         setIsDirectionLoading(false);
       }
@@ -225,9 +242,7 @@ export default function MapPage() {
             {(() => {
               const markersByGroup: Record<string, ConvertedMarker[]> = {};
               markers.forEach((marker: ConvertedMarker) => {
-                // Use block if exists and non-empty, otherwise use category
                 const groupKey = marker.block && String(marker.block).trim() !== "" ? `block:${marker.block}` : `category:${marker.category || "Uncategorized"}`;
-
                 if (!markersByGroup[groupKey]) markersByGroup[groupKey] = [];
                 markersByGroup[groupKey].push(marker);
               });
