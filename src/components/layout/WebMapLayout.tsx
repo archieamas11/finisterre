@@ -196,13 +196,7 @@ export default function MapPage() {
             <UserLocationMarker userLocation={currentLocation} centerOnFirst={shouldCenterOnUser} enableAnimation={true} showAccuracyCircle={true} />
           )}
 
-          <Suspense
-            fallback={
-              <div className="flex h-full w-full items-center justify-center">
-                <Spinner />
-              </div>
-            }
-          >
+          <Suspense fallback={null}>
             {route && routeCoordinates.length > 0 && (
               <ValhallaRoute
                 key={route.trip.summary.length}

@@ -1,23 +1,25 @@
-/* Marker pop-in animations shared by all Leaflet custom markers */
 @keyframes marker-pop-in {
   0% {
     opacity: 0;
-    transform: scale(0);
+    transform: scale(0.8);
   }
 
-  70% {
+  60% {
     opacity: 1;
-    transform: scale(1.1);
+    transform: scale(1.15);
+  }
+
+  80% {
+    transform: scale(0.95);
   }
 
   100% {
-    opacity: 1;
     transform: scale(1);
   }
 }
 
 .marker-pop-in {
-  animation: marker-pop-in 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+  animation: marker-pop-in 0.5s cubic-bezier(0.25, 1, 0.5, 1) forwards;
   transform-origin: center center;
 }
 
@@ -175,26 +177,6 @@
   body {
     @apply bg-background text-foreground;
   }
-}
-
-/* Dash flowing animation */
-@keyframes dashFlow {
-  0% {
-    stroke-dashoffset: 0;
-  }
-
-  100% {
-    stroke-dashoffset: -30;
-  }
-}
-
-.animate-dash-flow {
-  animation: dashFlow 1.5s linear infinite;
-}
-
-/* Combined glow and pulse */
-.animate-glow-pulse {
-  animation: glowPulse 2s ease-in-out infinite;
 }
 
 /* global.css or tailwind.css */

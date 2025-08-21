@@ -11,7 +11,6 @@ import { cn } from "@/lib/utils";
 import Spinner from "./spinner";
 import React, { cloneElement, isValidElement } from "react";
 
-// --- TYPE DEFINITIONS ---
 interface MarkerStyle {
   backgroundColor?: string;
   borderRadius?: string;
@@ -34,10 +33,8 @@ export interface CustomMarkerData {
   popupImage?: string;
 }
 
-// Export alias for backward compatibility
 export type FinisterreMarkerData = CustomMarkerData;
 
-// --- MARKER ICON CREATION ---
 function createMarkerIcon(marker: CustomMarkerData["marker"]) {
   const baseWrapperStyle: React.CSSProperties = {
     display: "inline-block",
@@ -46,13 +43,13 @@ function createMarkerIcon(marker: CustomMarkerData["marker"]) {
     width: "32px",
     height: "32px",
     boxSizing: "border-box",
+    borderRadius: "6px",
+    overflow: "hidden",
   };
 
   if (marker.type === "image" && typeof marker.source === "string") {
     const imageIconStyle: React.CSSProperties = {
       ...baseWrapperStyle,
-      borderRadius: "6px",
-      overflow: "hidden",
     };
     return L.divIcon({
       iconSize: [32, 32],
@@ -78,7 +75,6 @@ function createMarkerIcon(marker: CustomMarkerData["marker"]) {
       justifyContent: "center",
     };
 
-    // Properly clone the element with correct typing
     const clonedIcon = cloneElement(marker.source as React.ReactElement<any>, {
       size: 16,
       color: "white",
@@ -98,10 +94,9 @@ function createMarkerIcon(marker: CustomMarkerData["marker"]) {
     });
   }
 
-  return new L.Icon.Default(); // Fallback
+  return new L.Icon.Default();
 }
 
-// --- POPUP COMPONENTS ---
 function ImagePopup({ title, description, imageSrc }: { title: string; description: string; imageSrc: string }) {
   return (
     <motion.div
@@ -152,25 +147,23 @@ function SimplePopup({ title, description }: { title: string; description: strin
       animate={{ opacity: 1, y: 0, scale: 1 }}
       exit={{ opacity: 0, y: 4, scale: 0.98 }}
       transition={{ duration: 0.25, ease: "easeOut" }}
-      className="bg-primary mt-5 w-64 rounded-lg"
+      className="bg-primary mt-5 mb-2 w-64 rounded-xl"
     >
       {/* 📝 Use larger, more prominent title and multiline description for clarity */}
       <div className="flex flex-col p-4">
-        <h3 className="mb-1 line-clamp-2 text-lg font-bold text-gray-900">{title}</h3>
+        <h3 className="mb-2 line-clamp-2 text-lg font-bold text-gray-900">{title}</h3>
         <p className="text-sm leading-relaxed whitespace-pre-line text-gray-700">{description}</p>
       </div>
     </motion.div>
   );
 }
 
-// --- MAIN REUSABLE COMPONENT ---
 interface CustomMarkersProps {
   items: CustomMarkerData[];
   onDirectionClick?: (dest: [number, number]) => void;
   isDirectionLoading?: boolean;
 }
 
-// Export alias for backward compatibility
 function FinisterreMarkers({ items, onDirectionClick, isDirectionLoading = false }: CustomMarkersProps) {
   return (
     <>
@@ -206,10 +199,7 @@ function FinisterreMarkers({ items, onDirectionClick, isDirectionLoading = false
   );
 }
 
-// Export with the original name
 export default function CustomMarkers({ items, onDirectionClick, isDirectionLoading = false }: CustomMarkersProps) {
   return <FinisterreMarkers items={items} onDirectionClick={onDirectionClick} isDirectionLoading={isDirectionLoading} />;
 }
-
-// Export alias for backward compatibility
 export { FinisterreMarkers };
