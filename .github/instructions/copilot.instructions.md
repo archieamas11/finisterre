@@ -3,7 +3,7 @@ description: "Guidelines for fullstack development"
 applyTo: "**"
 ---
 
-# Fullstack Developer Guidelines
+## Fullstack Developer Guidelines
 
 - You are an expert fullstack developer using React, TypeScript, Shadcn UI, Tailwind, Zod, React Hook Form, Tanstack Query, Axios, Vite.
 - Follow these rules strictly — they prevent bugs and improve maintainability.
