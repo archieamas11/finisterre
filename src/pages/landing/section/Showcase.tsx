@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { motion } from "framer-motion";
 import { MapPin, ChevronLeft, ChevronRight, Maximize2, Clock, Trees, Mountain } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -87,6 +87,7 @@ export default function CemeteryShowcase() {
   const [activeFilter, setActiveFilter] = useState("all");
   const [isExpanded, setIsExpanded] = useState(false);
   const [leafletMap, setLeafletMap] = useState<LeafletMap | null>(null);
+  const mapContainerRef = useRef<HTMLDivElement | null>(null);
 
   const categories = [
     { id: "all", label: "All Views" },
@@ -138,6 +139,21 @@ export default function CemeteryShowcase() {
     }, 0);
     return () => clearTimeout(t);
   }, [leafletMap, isExpanded]);
+
+  // Resize observer to invalidate leaflet size when the container size changes
+  useEffect(() => {
+    if (!mapContainerRef.current || !leafletMap || typeof ResizeObserver === "undefined") return;
+    const el = mapContainerRef.current;
+    const ro = new ResizeObserver(() => {
+      try {
+        leafletMap.invalidateSize();
+      } catch (e) {
+        // ignore
+      }
+    });
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, [mapContainerRef, leafletMap]);
 
   // small internal component to access the map instance from within MapContainer
   function MapInitializer({ onMap }: { onMap: (m: LeafletMap) => void }) {
@@ -265,9 +281,8 @@ export default function CemeteryShowcase() {
           </div>
 
           {/* Display cemetery map */}
-
-          <div className="h-full w-full rounded-lg border p-2">
-            <div className="relative z-1 h-full w-full">
+          <div className="w-full rounded-lg border p-2">
+            <div ref={mapContainerRef} className="relative z-10 h-[320px] w-full sm:h-[420px] md:h-[480px] lg:h-[460px]">
               <MapContainer
                 center={[10.249306880563585, 123.797848311330114]}
                 maxZoom={25}
@@ -286,7 +301,7 @@ export default function CemeteryShowcase() {
                 </Marker>
               </MapContainer>
               {/* Floating location card */}
-              <div className="pointer-events-none absolute bottom-2 left-1 z-999 w-full max-w-xs sm:max-w-sm">
+              <div className="pointer-events-none absolute bottom-2 left-1 z-400 w-full max-w-xs sm:max-w-sm">
                 <div className="bg-card pointer-events-auto mx-2 rounded-lg p-4 shadow-lg backdrop-blur-sm">
                   <h4 className="text-foreground text-lg font-semibold">Finisterre Gardenz</h4>
                   <p className="text-muted-foreground mt-1 text-sm">6QXX+C4 Minglanilla, Cebu</p>
