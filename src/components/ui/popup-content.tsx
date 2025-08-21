@@ -147,7 +147,7 @@ function SimplePopup({ title, description }: { title: string; description: strin
       animate={{ opacity: 1, y: 0, scale: 1 }}
       exit={{ opacity: 0, y: 4, scale: 0.98 }}
       transition={{ duration: 0.25, ease: "easeOut" }}
-      className="bg-primary mt-5 mb-2 w-64 rounded-xl"
+      className="bg-primary mt-5 mb-1.5 w-64 rounded-xl"
     >
       {/* 📝 Use larger, more prominent title and multiline description for clarity */}
       <div className="flex flex-col p-4">
