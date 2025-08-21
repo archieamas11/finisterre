@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { motion } from "framer-motion";
-import { ChevronLeft, ChevronRight, Maximize2, ArrowLeftRightIcon, Car, Ruler, Plug, CloudRain, ShieldCheck, Wrench } from "lucide-react";
+import { ChevronLeft, ChevronRight, Maximize2, Car, Plug, CloudRain, ShieldCheck, Wrench } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
