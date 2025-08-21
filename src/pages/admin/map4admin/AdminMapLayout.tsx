@@ -254,9 +254,9 @@ export default function AdminMapLayout() {
               <GeoJSON
                 data={guide4Data}
                 style={() => ({
-                  color: "#00E5FF",
-                  weight: 3,
-                  opacity: 0.9,
+                  color: "#FFDE21",
+                  weight: 1,
+                  opacity: 1,
                 })}
                 onEachFeature={(feature, layer) => {
                   const id = (feature.properties as { id?: string | number | null } | undefined)?.id ?? "Guide Path";
