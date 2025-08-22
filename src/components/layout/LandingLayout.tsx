@@ -51,7 +51,13 @@ export default function LandingLayout() {
         </div>
       </header>
       <main className="flex-1">
-        <Suspense fallback={<Spinner />}>
+        <Suspense
+          fallback={
+            <div className="flex h-screen w-full items-center justify-center">
+              <Spinner />
+            </div>
+          }
+        >
           <HeroSection />
           <FeatureSection />
           <Showcase />

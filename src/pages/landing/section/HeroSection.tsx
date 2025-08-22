@@ -7,9 +7,17 @@ import { AnimatedGradientText } from "@/components/magicui/animated-gradient-tex
 export default function HeroSection() {
   return (
     <section className="relative flex min-h-screen items-center justify-center overflow-hidden">
-      {/* Image Background */}
       <div className="absolute inset-0 z-0">
-        <img className="min-h-full min-w-full object-cover" loading="lazy" src="https://finisterre.ph/wp-content/uploads/2022/10/END-3-scaled.jpeg" alt="Background" />
+        <img
+          className="min-h-full min-w-full object-cover"
+          src="https://res.cloudinary.com/djrkvgfvo/image/upload/v1755852053/END-3-scaled_1_zzrrv1.jpg"
+          alt="Background"
+          width={1920}
+          height={1280}
+          loading="eager"
+          fetchPriority="high"
+          decoding="async"
+        />
         <div className="absolute inset-0 bg-gradient-to-br from-black/70 via-black/50 to-transparent" />
         <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-black/20" />
       </div>
