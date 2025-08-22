@@ -10,7 +10,7 @@ export default function HeroSection() {
       <div className="absolute inset-0 z-0">
         <img
           className="min-h-full min-w-full object-cover"
-          src="public/hero-bg.webp"
+          src="/hero-bg.webp"
           alt="Background"
           width={1920}
           height={1280}
