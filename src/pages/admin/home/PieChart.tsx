@@ -61,7 +61,7 @@ function PrintButton({ onClick }: { onClick: () => void }) {
   return (
     <Button
       type='button'
-      variant='secondary'
+      variant='outline'
       onClick={onClick}
       aria-label='Print chart'
       size='icon'

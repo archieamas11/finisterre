@@ -40,14 +40,6 @@ export const adminUsersColumns: ColumnDef<UserRecord>[] = [
     meta: { label: 'Username' }
   },
   {
-    accessorKey: 'customer_id',
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title='Customer ID' />
-    ),
-    cell: ({ row }) => <span>{row.original.customer_id ?? '-'}</span>,
-    meta: { label: 'Customer' }
-  },
-  {
     accessorKey: 'isAdmin',
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title='Role' />
