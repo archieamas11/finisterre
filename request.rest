@@ -1,3 +1,7 @@
-POST https://finisterre.x10.bz/customers/get_customer.php
+POST https://finisterre.x10.bz/auth/login.php
 Content-Type: application/json
-Authorization: Bearer sample-token-123
+
+{
+    "username": "admin",
+    "password": "admin"
+}
