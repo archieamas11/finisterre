@@ -2,7 +2,7 @@ import type { ColumnDef } from "@tanstack/react-table";
 import { DataTableColumnHeader } from "@/components/data-table/data-table-column-header";
 import type { ActivityLog } from "@/api/logs.api";
 import { Badge } from "@/components/ui/badge";
-import { BadgeCheckIcon, PencilIcon, TrashIcon, ArchiveIcon, LogInIcon, PlusIcon, UserIcon } from "lucide-react";
+import { BadgeCheckIcon, PencilIcon, TrashIcon, ArchiveIcon, LogInIcon, PlusIcon } from "lucide-react";
 import { AiOutlineUser } from "react-icons/ai";
 import { ucwords } from "@/lib/format";
 const actionConfig = {
