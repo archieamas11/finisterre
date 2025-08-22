@@ -5,6 +5,7 @@ import { DataTableSkeleton } from "@/components/data-table/data-table-skeleton";
 import { ErrorMessage } from "@/components/ErrorMessage";
 import { useGetLogs } from "@/hooks/logs-hooks/useGetLogs";
 import LogsTable from "./LogsTable";
+import { ChartPieInteractive } from "./PieChart";
 
 export default function UserDashboard() {
   const { data, isPending, isError } = useGetLogs({ limit: 25 });
@@ -16,6 +17,9 @@ export default function UserDashboard() {
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
         <ChartAreaInteractive />
         <ChartAreaStackedExpand />
+      </div>
+      <div className="mt-4">
+        <ChartPieInteractive />
       </div>
       {/* Recent Activity */}
       <section aria-labelledby="recent-activity-title" className="bg-background mt-5 rounded-lg border p-4 shadow-sm" role="region">

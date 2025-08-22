@@ -12,16 +12,16 @@ applyTo: "**"
 
 ## 🛠️ Tech Stack
 
-| Layer      | Tech                                             |
-| ---------- | ------------------------------------------------ |
-| Frontend   | React, TypeScript, Vite                          |
-| UI         | Shadcn UI, Radix, Tailwind v4 CSS, Lucide React  |
-| Validation | Zod + `@hookform/resolvers/zod`                  |
-| Forms      | React Hook Form                                  |
-| State      | Tanstack Query (server), minimal client state    |
-| Routing    | React Router                                     |
-| API        | Axios, JWT Auth, Vanilla PHP backend             |
-| Tooling    | ESLint, Prettier                                 |
+| Layer      | Tech                                            |
+| ---------- | ----------------------------------------------- |
+| Frontend   | React, TypeScript, Vite                         |
+| UI         | Shadcn UI, Radix, Tailwind v4 CSS, Lucide React |
+| Validation | Zod + `@hookform/resolvers/zod`                 |
+| Forms      | React Hook Form                                 |
+| State      | Tanstack Query (server), minimal client state   |
+| Routing    | React Router                                    |
+| API        | Axios, JWT Auth, Vanilla PHP backend            |
+| Tooling    | ESLint, Prettier                                |
 
 - ✅ Always use functional components. Avoid classes.
 
@@ -59,6 +59,7 @@ applyTo: "**"
 - Ensure UI is responsive and accessible.
 - Follow Shadcn UI component guidelines and best practices.
 - Use Tailwind CSS utility classes for styling.
+- Never use SVG icons directly; always use the provided icon components.
 
 ### Always Use `cn()` for Classes
 

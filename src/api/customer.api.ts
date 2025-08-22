@@ -54,7 +54,6 @@ export async function editCustomer(data: Customer) {
   }
 }
 
-// API function (createCustomer)
 export async function createCustomer(data: Customer) {
   try {
     const res = await api.post("customers/create_customer.php", data);

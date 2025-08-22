@@ -9,7 +9,7 @@ export interface ActivityLog {
   action: LogAction;
   target: string;
   details: string | null;
-  created_at: string; // ISO or timestamp string from backend
+  created_at: string;
 }
 
 export interface GetLogsParams {
