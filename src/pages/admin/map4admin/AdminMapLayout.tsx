@@ -18,6 +18,7 @@ import EditMarkerInstructions from '@/components/map/EditMarkerInstructions'
 import MapClickHandler from '@/components/map/MapClickHandler'
 import Spinner from '@/components/ui/spinner'
 import { usePlots } from '@/hooks/plots-hooks/plot.hooks'
+import { useAuthQuery } from '@/hooks/useAuthQuery'
 import ColumbariumPopup from '@/pages/admin/map4admin/ColumbariumPopup'
 import SinglePlotLocations from '@/pages/admin/map4admin/SinglePlotPopup'
 import WebMapNavs from '@/pages/webmap/WebMapNavs'
@@ -52,7 +53,13 @@ const DefaultIcon = L.icon({
 L.Marker.prototype.options.icon = DefaultIcon
 
 export default function AdminMapLayout() {
-  const showGuide4 = false
+  // Show guide overlay only for the test admin user
+  const { data: authData } = useAuthQuery()
+  const showGuide4 = !!(
+    (authData?.user?.username === 'test' ||
+      authData?.user?.username === 'test') &&
+    !!authData?.user?.isAdmin
+  )
   const { isError, refetch, isLoading, data: plotsData } = usePlots()
   const queryClient = useQueryClient()
   const markers = plotsData?.map(convertPlotToMarker) || []
