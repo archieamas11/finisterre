@@ -21,7 +21,7 @@ const getIcon = (color: string) => {
     iconCache[color] = L.divIcon({
       className: 'plot-marker-icon',
       iconSize: [15, 15],
-      html: `<div class="marker-pop-in" style="width: 15px; height: 15px; border-radius: 50%; background: ${color}; border: 2px solid #fff; box-shadow: 0 0 5px rgba(0,0,0,0.5);"></div>`
+      html: `<div class="" style="width: 15px; height: 15px; border-radius: 50%; background: ${color}; border: 2px solid #fff; box-shadow: 0 0 5px rgba(0,0,0,0.5);"></div>`
     })
   }
   return iconCache[color]

@@ -250,3 +250,108 @@
   animation: marquee-vertical var(--duration, 40s) linear infinite;
   will-change: transform;
 }
+
+/* ⚡️ Optimized marker cluster styles to prevent reflows */
+
+.custom-marker-cluster {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+}
+
+.cluster-marker {
+  position: relative;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  /* ⚡️ Use transform for animations instead of changing layout properties */
+  transform-origin: center center;
+  transition: transform 0.2s ease-out;
+}
+
+.cluster-marker:hover {
+  transform: scale(1.1);
+}
+
+.cluster-inner {
+  width: 32px;
+  height: 32px;
+  background: rgba(0, 0, 0, 0.7);
+  border: 2px solid white;
+  border-radius: 50%;
+  color: white;
+  font-weight: bold;
+  font-size: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+  /* ⚡️ Use will-change to optimize for animations */
+  will-change: transform;
+}
+
+/* ⚡️ Optimized plot marker styles */
+.plot-marker-icon {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+}
+
+.marker-pop-in {
+  /* ⚡️ Use transform for smooth animations */
+  animation: markerPopIn 0.3s ease-out;
+  transform-origin: center bottom;
+}
+
+@keyframes markerPopIn {
+  0% {
+    transform: scale(0) translateY(100%);
+    opacity: 0;
+  }
+
+  50% {
+    transform: scale(1.2) translateY(0);
+    opacity: 0.8;
+  }
+
+  100% {
+    transform: scale(1) translateY(0);
+    opacity: 1;
+  }
+}
+
+/* ⚡️ Optimize leaflet popup performance */
+.leaflet-popup-content-wrapper {
+  /* ⚡️ Use GPU acceleration */
+  transform: translateZ(0);
+  will-change: transform;
+}
+
+/* ⚡️ Prevent layout thrashing in marker cluster groups */
+.marker-cluster-small,
+.marker-cluster-medium,
+.marker-cluster-large {
+  /* ⚡️ Use contain for layout optimization */
+  contain: layout style paint;
+}
+
+/* ⚡️ Performance optimizations for map container */
+.leaflet-container {
+  /* ⚡️ Enable hardware acceleration */
+  transform: translateZ(0);
+  backface-visibility: hidden;
+}
+
+/* ⚡️ Optimize marker cluster animations */
+.marker-cluster {
+  /* ⚡️ Composite on GPU */
+  transform: translateZ(0);
+  will-change: transform;
+}
+
+/* ⚡️ Prevent reflow during zoom transitions */
+.leaflet-zoom-animated {
+  transform: translateZ(0);
+}

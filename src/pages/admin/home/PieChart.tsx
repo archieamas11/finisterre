@@ -142,7 +142,6 @@ export function ChartPieInteractive() {
         newWindow.document.write(html)
         newWindow.document.close()
       } catch (err) {
-         
         console.error(err)
       }
     }
