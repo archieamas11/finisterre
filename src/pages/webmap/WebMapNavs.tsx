@@ -1,5 +1,5 @@
 import { RefreshCw, Search, Filter, Locate, Layers, Home } from 'lucide-react'
-import { useContext, useEffect } from 'react'
+import { useContext, useEffect, useCallback } from 'react'
 import { RiMapPinAddLine } from 'react-icons/ri'
 import { RiLoginBoxLine } from 'react-icons/ri'
 import { RiListSettingsFill } from 'react-icons/ri'
