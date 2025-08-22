@@ -1,21 +1,21 @@
-import { useQuery } from "@tanstack/react-query";
+import { useQuery } from '@tanstack/react-query'
 
-import { getLotOwnerById, getLotOwner } from "@/api/lotOwner.api";
+import { getLotOwnerById, getLotOwner } from '@/api/lotOwner.api'
 
 export function useGetLotOwner() {
   return useQuery({
-    queryKey: ["lotOwners"],
+    queryKey: ['lotOwners'],
     queryFn: async () => {
-      const r = await getLotOwner();
-      return r.lotOwners ?? [];
-    },
-  });
+      const r = await getLotOwner()
+      return r.lotOwners ?? []
+    }
+  })
 }
 
 export function useGetLotOwnerId(id: string) {
   return useQuery({
     enabled: !!id,
-    queryKey: ["lotOwner", id],
-    queryFn: () => getLotOwnerById(id),
-  });
+    queryKey: ['lotOwner', id],
+    queryFn: () => getLotOwnerById(id)
+  })
 }

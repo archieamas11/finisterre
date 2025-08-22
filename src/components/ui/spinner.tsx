@@ -1,11 +1,15 @@
-import { LoaderIcon } from "lucide-react";
+import { LoaderIcon } from 'lucide-react'
 
 interface SpinnerProps {
-  className?: string;
+  className?: string
 }
 
 export function Spinner({ className }: SpinnerProps) {
-  return <LoaderIcon className={className ? `animate-spin ${className}` : "animate-spin"} />;
+  return (
+    <LoaderIcon
+      className={className ? `animate-spin ${className}` : 'animate-spin'}
+    />
+  )
 }
 
-export default Spinner;
+export default Spinner

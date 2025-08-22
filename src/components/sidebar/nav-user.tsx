@@ -1,9 +1,8 @@
-"use client";
+'use client'
 
-import { ChevronsUpDown, BadgeCheck, LogOut, Bell } from "lucide-react";
+import { ChevronsUpDown, BadgeCheck, LogOut, Bell } from 'lucide-react'
 
-import { AvatarFallback, AvatarImage, Avatar } from "@/components/ui/avatar";
-import { SidebarMenuButton, SidebarMenuItem, SidebarMenu, useSidebar } from "@/components/ui/sidebar";
+import { AvatarFallback, AvatarImage, Avatar } from '@/components/ui/avatar'
 import {
   DropdownMenuSeparator,
   DropdownMenuContent,
@@ -11,48 +10,62 @@ import {
   DropdownMenuGroup,
   DropdownMenuLabel,
   DropdownMenuItem,
-  DropdownMenu,
-} from "@/components/ui/dropdown-menu";
-import { useLogout } from "@/hooks/useLogout";
+  DropdownMenu
+} from '@/components/ui/dropdown-menu'
+import {
+  SidebarMenuButton,
+  SidebarMenuItem,
+  SidebarMenu,
+  useSidebar
+} from '@/components/ui/sidebar'
+import { useLogout } from '@/hooks/useLogout'
 export function NavUser({
-  user,
+  user
 }: {
   user: {
-    avatar: string;
-    email: string;
-    name: string;
-  };
+    avatar: string
+    email: string
+    name: string
+  }
 }) {
-  const { isMobile } = useSidebar();
-  const { performLogout, isPending } = useLogout("/");
+  const { isMobile } = useSidebar()
+  const { performLogout, isPending } = useLogout('/')
 
   return (
     <SidebarMenu>
       <SidebarMenuItem>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <SidebarMenuButton className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground" size="lg">
-              <Avatar className="h-8 w-8 rounded-lg">
+            <SidebarMenuButton
+              className='data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground'
+              size='lg'
+            >
+              <Avatar className='h-8 w-8 rounded-lg'>
                 <AvatarImage src={user.avatar} alt={user.name} />
-                <AvatarFallback className="rounded-lg">AA</AvatarFallback>
+                <AvatarFallback className='rounded-lg'>AA</AvatarFallback>
               </Avatar>
-              <div className="grid flex-1 text-left text-sm leading-tight">
-                <span className="truncate font-medium">{user.name}</span>
-                <span className="truncate text-xs">{user.email}</span>
+              <div className='grid flex-1 text-left text-sm leading-tight'>
+                <span className='truncate font-medium'>{user.name}</span>
+                <span className='truncate text-xs'>{user.email}</span>
               </div>
-              <ChevronsUpDown className="ml-auto size-4" />
+              <ChevronsUpDown className='ml-auto size-4' />
             </SidebarMenuButton>
           </DropdownMenuTrigger>
-          <DropdownMenuContent className="w-(--radix-dropdown-menu-trigger-width) min-w-56 rounded-lg" side={isMobile ? "bottom" : "right"} sideOffset={4} align="end">
-            <DropdownMenuLabel className="p-0 font-normal">
-              <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
-                <Avatar className="h-8 w-8 rounded-lg">
+          <DropdownMenuContent
+            className='w-(--radix-dropdown-menu-trigger-width) min-w-56 rounded-lg'
+            side={isMobile ? 'bottom' : 'right'}
+            sideOffset={4}
+            align='end'
+          >
+            <DropdownMenuLabel className='p-0 font-normal'>
+              <div className='flex items-center gap-2 px-1 py-1.5 text-left text-sm'>
+                <Avatar className='h-8 w-8 rounded-lg'>
                   <AvatarImage src={user.avatar} alt={user.name} />
-                  <AvatarFallback className="rounded-lg">CN</AvatarFallback>
+                  <AvatarFallback className='rounded-lg'>CN</AvatarFallback>
                 </Avatar>
-                <div className="grid flex-1 text-left text-sm leading-tight">
-                  <span className="truncate font-medium">{user.name}</span>
-                  <span className="truncate text-xs">{user.email}</span>
+                <div className='grid flex-1 text-left text-sm leading-tight'>
+                  <span className='truncate font-medium'>{user.name}</span>
+                  <span className='truncate text-xs'>{user.email}</span>
                 </div>
               </div>
             </DropdownMenuLabel>
@@ -68,7 +81,10 @@ export function NavUser({
               </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
-            <DropdownMenuItem onClick={() => performLogout()} disabled={isPending}>
+            <DropdownMenuItem
+              onClick={() => performLogout()}
+              disabled={isPending}
+            >
               <LogOut />
               Log out
             </DropdownMenuItem>
@@ -76,5 +92,5 @@ export function NavUser({
         </DropdownMenu>
       </SidebarMenuItem>
     </SidebarMenu>
-  );
+  )
 }

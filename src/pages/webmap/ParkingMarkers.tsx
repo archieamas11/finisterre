@@ -1,40 +1,55 @@
-import { FinisterreMarkers, type FinisterreMarkerData } from "@/components/ui/popup-content";
-import { MdLocalParking } from "react-icons/md";
+import { MdLocalParking } from 'react-icons/md'
+
+import {
+  FinisterreMarkers,
+  type FinisterreMarkerData
+} from '@/components/ui/popup-content'
 
 interface Props {
-  onDirectionClick?: (dest: [number, number]) => void;
-  isDirectionLoading?: boolean;
+  onDirectionClick?: (dest: [number, number]) => void
+  isDirectionLoading?: boolean
 }
 
 const parkingMarkersData: FinisterreMarkerData[] = [
   {
-    id: "parking-1",
+    id: 'parking-1',
     lat: 10.248467771138005,
     lng: 123.797668761148387,
-    title: "🚗 Main Parking Area",
-    description: "Primary parking zone for Finisterre guests. Closest to the main entrance and reception.",
+    title: '🚗 Main Parking Area',
+    description:
+      'Primary parking zone for Finisterre guests. Closest to the main entrance and reception.',
     marker: {
-      type: "icon",
+      type: 'icon',
       source: <MdLocalParking />,
-      style: { backgroundColor: "#2563EB" },
+      style: { backgroundColor: '#2563EB' }
     },
-    popupType: "simple",
+    popupType: 'simple'
   },
   {
-    id: "parking-2",
+    id: 'parking-2',
     lat: 10.248150553375426,
     lng: 123.797848903904878,
-    title: "🚗 Overflow Parking",
-    description: "Additional parking space for busy days. Located near the secondary entrance.",
+    title: '🚗 Overflow Parking',
+    description:
+      'Additional parking space for busy days. Located near the secondary entrance.',
     marker: {
-      type: "icon",
+      type: 'icon',
       source: <MdLocalParking />,
-      style: { backgroundColor: "#2563EB" },
+      style: { backgroundColor: '#2563EB' }
     },
-    popupType: "simple",
-  },
-];
+    popupType: 'simple'
+  }
+]
 
-export default function ParkingMarkers({ onDirectionClick, isDirectionLoading = false }: Props) {
-  return <FinisterreMarkers items={parkingMarkersData} onDirectionClick={onDirectionClick} isDirectionLoading={isDirectionLoading} />;
+export default function ParkingMarkers({
+  onDirectionClick,
+  isDirectionLoading = false
+}: Props) {
+  return (
+    <FinisterreMarkers
+      items={parkingMarkersData}
+      onDirectionClick={onDirectionClick}
+      isDirectionLoading={isDirectionLoading}
+    />
+  )
 }

@@ -1,31 +1,31 @@
-import z from "zod";
+import z from 'zod'
 
 export const MarkerTypeSchema = z.object({
-  markerType: z.enum(["Serenity Lawn", "Columbarium", "Memorial Chambers"], {
-    message: "Please select a marker type",
-  }),
-});
+  markerType: z.enum(['Serenity Lawn', 'Columbarium', 'Memorial Chambers'], {
+    message: 'Please select a marker type'
+  })
+})
 
 export const SerenityLawnSchema = z.object({
-  category: z.enum(["Bronze", "Silver", "Platinum", "Diamond"], {
-    message: "Category is required",
+  category: z.enum(['Bronze', 'Silver', 'Platinum', 'Diamond'], {
+    message: 'Category is required'
   }),
-  block: z.enum(["A", "B", "C", "D"], {
-    message: "Block is required",
-  }),
-});
+  block: z.enum(['A', 'B', 'C', 'D'], {
+    message: 'Block is required'
+  })
+})
 
 export const MemorialChambersSchema = z.object({
-  rows: z.string().min(1, "Rows is required"),
-  columns: z.string().min(1, "Columns is required"),
-});
+  rows: z.string().min(1, 'Rows is required'),
+  columns: z.string().min(1, 'Columns is required')
+})
 
 export const ColumbariumSchema = z.object({
-  rows: z.string().min(1, "Rows is required"),
-  columns: z.string().min(1, "Columns is required"),
-});
+  rows: z.string().min(1, 'Rows is required'),
+  columns: z.string().min(1, 'Columns is required')
+})
 
-export type MarkerTypeFormData = z.infer<typeof MarkerTypeSchema>;
-export type SerenityLawnFormData = z.infer<typeof SerenityLawnSchema>;
-export type MemorialChambersFormData = z.infer<typeof MemorialChambersSchema>;
-export type ColumbariumFormData = z.infer<typeof ColumbariumSchema>;
+export type MarkerTypeFormData = z.infer<typeof MarkerTypeSchema>
+export type SerenityLawnFormData = z.infer<typeof SerenityLawnSchema>
+export type MemorialChambersFormData = z.infer<typeof MemorialChambersSchema>
+export type ColumbariumFormData = z.infer<typeof ColumbariumSchema>

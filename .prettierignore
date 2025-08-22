@@ -1,6 +1,9 @@
 # Ignore artifacts:
 build
+dist
 coverage
 node_modules
-# src/components/ui
-
+pnpm-lock.yaml
+.dockerignore
+.github
+.gitignore

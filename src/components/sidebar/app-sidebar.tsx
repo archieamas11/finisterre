@@ -1,10 +1,8 @@
+import { MapPin } from 'lucide-react'
 // src/components/sidebar/app-sidebar.tsx
-import * as React from "react";
-import { MapPin } from "lucide-react";
+import * as React from 'react'
 
-import { rootUser } from "@/data/users";
-import { NavMain } from "@/components/sidebar/nav-main";
-import { type NavGroup } from "@/navigation/sidebar/sidebar-items";
+import { NavMain } from '@/components/sidebar/nav-main'
 import {
   SidebarGroupLabel,
   SidebarMenuButton,
@@ -15,25 +13,30 @@ import {
   SidebarGroup,
   SidebarMenu,
   SidebarRail,
-  Sidebar,
-} from "@/components/ui/sidebar";
+  Sidebar
+} from '@/components/ui/sidebar'
+import { rootUser } from '@/data/users'
+import { type NavGroup } from '@/navigation/sidebar/sidebar-items'
 
-import { NavUser } from "./nav-user";
+import { NavUser } from './nav-user'
 
-export function AppSidebar({ items, ...props }: React.ComponentProps<typeof Sidebar> & { items: NavGroup[] }) {
+export function AppSidebar({
+  items,
+  ...props
+}: React.ComponentProps<typeof Sidebar> & { items: NavGroup[] }) {
   return (
-    <Sidebar collapsible="icon" {...props}>
-      <SidebarHeader className="border-b">
+    <Sidebar collapsible='icon' {...props}>
+      <SidebarHeader className='border-b'>
         <SidebarMenu>
           <SidebarMenuItem>
-            <SidebarMenuButton size="lg" asChild>
-              <div className="flex items-center gap-2">
-                <div className="bg-sidebar-primary text-sidebar-primary-foreground mr-2 flex aspect-square size-8 items-center justify-center rounded-lg">
+            <SidebarMenuButton size='lg' asChild>
+              <div className='flex items-center gap-2'>
+                <div className='bg-sidebar-primary text-sidebar-primary-foreground mr-2 flex aspect-square size-8 items-center justify-center rounded-lg'>
                   <MapPin />
                 </div>
-                <div className="grid flex-1 text-left text-sm leading-tight">
-                  <span className="truncate font-semibold">Finisterre</span>
-                  <span className="truncate text-xs">Dashboard</span>
+                <div className='grid flex-1 text-left text-sm leading-tight'>
+                  <span className='truncate font-semibold'>Finisterre</span>
+                  <span className='truncate text-xs'>Dashboard</span>
                 </div>
               </div>
             </SidebarMenuButton>
@@ -43,7 +46,9 @@ export function AppSidebar({ items, ...props }: React.ComponentProps<typeof Side
       <SidebarContent>
         {items.map((group) => (
           <SidebarGroup key={group.id}>
-            {group.label && <SidebarGroupLabel>{group.label}</SidebarGroupLabel>}
+            {group.label && (
+              <SidebarGroupLabel>{group.label}</SidebarGroupLabel>
+            )}
             <NavMain items={group.items} />
           </SidebarGroup>
         ))}
@@ -53,5 +58,5 @@ export function AppSidebar({ items, ...props }: React.ComponentProps<typeof Side
         <NavUser user={rootUser} />
       </SidebarFooter>
     </Sidebar>
-  );
+  )
 }

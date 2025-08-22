@@ -23,8 +23,8 @@
   transform-origin: center center;
 }
 
-@import "tailwindcss";
-@import "tw-animate-css";
+@import 'tailwindcss';
+@import 'tw-animate-css';
 
 @custom-variant dark (&:is(.dark *));
 
@@ -109,8 +109,8 @@
   --destructive: oklch(0.577 0.245 27.325);
   --border: oklch(0.922 0 0);
   --input: oklch(0.922 0 0);
-  --ring: oklch(0.4428 0.0405 259.3330);
-  --chart-1: oklch(0.4428 0.0405 259.3330);
+  --ring: oklch(0.4428 0.0405 259.333);
+  --chart-1: oklch(0.4428 0.0405 259.333);
   --chart-2: oklch(0.9052 0.1657 98.1108);
   --chart-3: oklch(0.7155 0 0);
   --chart-4: oklch(0.4386 0 0);
@@ -148,8 +148,8 @@
   --destructive: oklch(0.704 0.191 22.216);
   --border: oklch(1 0 0 / 10%);
   --input: oklch(1 0 0 / 15%);
-  --ring: oklch(0.4428 0.0405 259.3330);
-  --chart-1: oklch(0.4428 0.0405 259.3330);
+  --ring: oklch(0.4428 0.0405 259.333);
+  --chart-1: oklch(0.4428 0.0405 259.333);
   --chart-2: oklch(0.9052 0.1657 98.1108);
   --chart-3: oklch(0.7155 0 0);
   --chart-4: oklch(0.4386 0 0);
@@ -194,7 +194,12 @@
 }
 
 .bg-gradient-u {
-  background: radial-gradient(ellipse at bottom, theme("colors.background") 0%, theme("colors.background / 0.6") 50%, transparent 75%);
+  background: radial-gradient(
+    ellipse at bottom,
+    theme('colors.background') 0%,
+    theme('colors.background / 0.6') 50%,
+    transparent 75%
+  );
 }
 
 /* 🎯 Add marker mode styling */

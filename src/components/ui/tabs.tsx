@@ -1,7 +1,7 @@
-import * as React from "react";
-import * as TabsPrimitive from "@radix-ui/react-tabs";
+import * as TabsPrimitive from '@radix-ui/react-tabs'
+import * as React from 'react'
 
-import { cn } from "@/lib/utils";
+import { cn } from '@/lib/utils'
 
 function TabsTrigger({
   className,
@@ -11,12 +11,12 @@ function TabsTrigger({
     <TabsPrimitive.Trigger
       className={cn(
         "data-[state=active]:bg-accent dark:data-[state=active]:text-accent-foreground focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:outline-ring dark:data-[state=active]:border-input dark:data-[state=active]:bg-accent text-foreground dark:text-muted-foreground inline-flex h-[calc(100%-1px)] flex-1 items-center justify-center gap-1.5 rounded-md border border-transparent px-2 py-1 text-sm font-medium whitespace-nowrap transition-[color,box-shadow] focus-visible:ring-[3px] focus-visible:outline-1 disabled:pointer-events-none disabled:opacity-50 data-[state=active]:shadow-sm [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
-        className,
+        className
       )}
-      data-slot="tabs-trigger"
+      data-slot='tabs-trigger'
       {...props}
     />
-  );
+  )
 }
 
 function TabsList({
@@ -26,13 +26,13 @@ function TabsList({
   return (
     <TabsPrimitive.List
       className={cn(
-        "bg-muted text-muted-foreground inline-flex h-9 w-fit items-center justify-center rounded-lg p-[3px]",
-        className,
+        'bg-muted text-muted-foreground inline-flex h-9 w-fit items-center justify-center rounded-lg p-[3px]',
+        className
       )}
-      data-slot="tabs-list"
+      data-slot='tabs-list'
       {...props}
     />
-  );
+  )
 }
 
 function TabsContent({
@@ -41,11 +41,11 @@ function TabsContent({
 }: React.ComponentProps<typeof TabsPrimitive.Content>) {
   return (
     <TabsPrimitive.Content
-      className={cn("flex-1 outline-none", className)}
-      data-slot="tabs-content"
+      className={cn('flex-1 outline-none', className)}
+      data-slot='tabs-content'
       {...props}
     />
-  );
+  )
 }
 
 function Tabs({
@@ -54,11 +54,11 @@ function Tabs({
 }: React.ComponentProps<typeof TabsPrimitive.Root>) {
   return (
     <TabsPrimitive.Root
-      className={cn("flex flex-col gap-2", className)}
-      data-slot="tabs"
+      className={cn('flex flex-col gap-2', className)}
+      data-slot='tabs'
       {...props}
     />
-  );
+  )
 }
 
-export { Tabs, TabsList, TabsTrigger, TabsContent };
+export { Tabs, TabsList, TabsTrigger, TabsContent }

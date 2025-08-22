@@ -1,242 +1,241 @@
-import { AiOutlineUser } from "react-icons/ai";
-import ViewCustomerDialog from "@/pages/admin/interment/customer/ViewCustomer";
-import { type Customer } from "@/api/customer.api";
-import { DataTableColumnHeader } from "@/components/data-table/data-table-column-header";
-import EditCustomerDialog from "@/pages/admin/interment/customer/UpdateCustomer";
-import type { ColumnDef } from "@tanstack/react-table";
-import { Badge } from "@/components/ui/badge";
-import React from "react";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
-import { Archive, Mail, MapPinHouse, MoreHorizontal, Phone } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import type { ColumnDef } from '@tanstack/react-table'
 
-const IndeterminateCheckbox = React.forwardRef<HTMLInputElement, React.InputHTMLAttributes<HTMLInputElement> & { indeterminate?: boolean }>(({ indeterminate, ...props }, ref) => {
-  const localRef = React.useRef<HTMLInputElement>(null);
-  const resolvedRef = (ref as React.RefObject<HTMLInputElement>) ?? localRef;
+import { Mail, MapPinHouse, Phone } from 'lucide-react'
+import React from 'react'
+import { AiOutlineUser } from 'react-icons/ai'
+
+import { type Customer } from '@/api/customer.api'
+import { DataTableColumnHeader } from '@/components/data-table/data-table-column-header'
+import { Badge } from '@/components/ui/badge'
+import CustomerActionsCell from '@/pages/admin/interment/columns/CustomerActionsCell'
+
+const IndeterminateCheckbox = React.forwardRef<
+  HTMLInputElement,
+  React.InputHTMLAttributes<HTMLInputElement> & { indeterminate?: boolean }
+>(({ indeterminate, ...props }, ref) => {
+  const localRef = React.useRef<HTMLInputElement>(null)
+  const resolvedRef = (ref as React.RefObject<HTMLInputElement>) ?? localRef
 
   React.useEffect(() => {
     if (resolvedRef.current) {
-      resolvedRef.current.indeterminate = Boolean(indeterminate) && !props.checked;
+      resolvedRef.current.indeterminate =
+        Boolean(indeterminate) && !props.checked
     }
-  }, [indeterminate, props.checked, resolvedRef]);
+  }, [indeterminate, props.checked, resolvedRef])
 
-  return <input ref={resolvedRef} type="checkbox" {...props} />;
-});
-IndeterminateCheckbox.displayName = "IndeterminateCheckbox";
+  return <input ref={resolvedRef} type='checkbox' {...props} />
+})
+IndeterminateCheckbox.displayName = 'IndeterminateCheckbox'
 
 export const customerColumns: ColumnDef<Customer>[] = [
   {
-    id: "select",
+    id: 'select',
     header: ({ table: tbl }) => (
       <IndeterminateCheckbox
-        aria-label="Select all rows"
+        aria-label='Select all rows'
         checked={tbl.getIsAllPageRowsSelected()}
         indeterminate={tbl.getIsSomePageRowsSelected()}
         onChange={tbl.getToggleAllPageRowsSelectedHandler()}
       />
     ),
     cell: ({ row }) => (
-      <IndeterminateCheckbox aria-label={`Select row ${row.index + 1}`} checked={row.getIsSelected()} disabled={!row.getCanSelect?.()} onChange={row.getToggleSelectedHandler()} />
+      <IndeterminateCheckbox
+        aria-label={`Select row ${row.index + 1}`}
+        checked={row.getIsSelected()}
+        disabled={!row.getCanSelect?.()}
+        onChange={row.getToggleSelectedHandler()}
+      />
     ),
-    size: 40,
+    size: 40
   },
   {
     size: 40,
-    accessorKey: "customer_id",
-    header: ({ column }) => <DataTableColumnHeader column={column} title="ID" />,
-    meta: { label: "ID" },
+    accessorKey: 'customer_id',
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title='ID' />
+    ),
+    meta: { label: 'ID' }
   },
   {
-    id: "full_name",
-    header: ({ column }) => <DataTableColumnHeader column={column} title="Full Name" />,
-    accessorFn: (row) => [row.first_name, row.middle_name, row.last_name].filter(Boolean).join(" "),
+    id: 'full_name',
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title='Full Name' />
+    ),
+    accessorFn: (row) =>
+      [row.first_name, row.middle_name, row.last_name]
+        .filter(Boolean)
+        .join(' '),
     cell: ({ row }) => {
-      const fullName = String(row.getValue("full_name"));
+      const fullName = String(row.getValue('full_name'))
       return (
-        <div className="flex items-center gap-2">
-          <div className="bg-muted flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-sm font-medium" aria-hidden="true">
+        <div className='flex items-center gap-2'>
+          <div
+            className='bg-muted flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-sm font-medium'
+            aria-hidden='true'
+          >
             <AiOutlineUser size={14} />
           </div>
-          <span title={fullName} className="max-w-[14rem] truncate">
+          <span title={fullName} className='max-w-[14rem] truncate'>
             {fullName}
           </span>
         </div>
-      );
+      )
     },
-    meta: { label: "Full Name" },
+    meta: { label: 'Full Name' }
   },
   {
-    header: ({ column }) => <DataTableColumnHeader column={column} title="Address" />,
-    accessorKey: "address",
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title='Address' />
+    ),
+    accessorKey: 'address',
     cell: ({ row }) => {
       return (
-        <div className="flex items-center gap-2">
-          <div className="bg-muted flex h-6 w-6 items-center justify-center rounded-full text-sm font-medium">
+        <div className='flex items-center gap-2'>
+          <div className='bg-muted flex h-6 w-6 items-center justify-center rounded-full text-sm font-medium'>
             <MapPinHouse size={14} />
           </div>
           <span>{row.original.address}</span>
         </div>
-      );
+      )
     },
-    meta: { label: "Address" },
+    meta: { label: 'Address' }
   },
   {
-    accessorKey: "contact_number",
-    header: ({ column }) => <DataTableColumnHeader column={column} title="Phone" />,
+    accessorKey: 'contact_number',
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title='Phone' />
+    ),
     cell: ({ row }) => {
       return (
-        <div className="flex items-center gap-2">
-          <div className="bg-muted flex h-6 w-6 items-center justify-center rounded-full text-sm font-medium">
+        <div className='flex items-center gap-2'>
+          <div className='bg-muted flex h-6 w-6 items-center justify-center rounded-full text-sm font-medium'>
             <Phone size={14} />
           </div>
           <span>{row.original.contact_number}</span>
         </div>
-      );
+      )
     },
-    meta: { label: "Phone Number" },
+    meta: { label: 'Phone Number' }
   },
   {
-    accessorKey: "email",
-    header: ({ column }) => <DataTableColumnHeader column={column} title="Email" />,
+    accessorKey: 'email',
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title='Email' />
+    ),
     enableSorting: true,
     cell: ({ row }) => {
       return (
-        <div className="flex items-center gap-2">
-          <div className="bg-muted flex h-6 w-6 items-center justify-center rounded-full text-sm font-medium">
+        <div className='flex items-center gap-2'>
+          <div className='bg-muted flex h-6 w-6 items-center justify-center rounded-full text-sm font-medium'>
             <Mail size={14} />
           </div>
           <span>{row.original.email}</span>
         </div>
-      );
+      )
     },
-    meta: { label: "Email" },
+    meta: { label: 'Email' }
   },
   {
-    id: "lot_count",
+    id: 'lot_count',
     header: ({ column }) => (
-      <div className="flex justify-center">
-        <DataTableColumnHeader column={column} title="Lot Owned" />
+      <div className='flex justify-center'>
+        <DataTableColumnHeader column={column} title='Lot Owned' />
       </div>
     ),
     enableSorting: true,
     enableColumnFilter: true,
-    accessorFn: (row) => (Array.isArray(row.lot_info) ? row.lot_info.length : 0),
+    accessorFn: (row) =>
+      Array.isArray(row.lot_info) ? row.lot_info.length : 0,
     cell: ({ row }) => {
-      const count = Array.isArray(row.original.lot_info) ? row.original.lot_info.length : 0;
+      const count = Array.isArray(row.original.lot_info)
+        ? row.original.lot_info.length
+        : 0
       return (
-        <div className="flex justify-center">
-          <Badge variant={count > 0 ? "secondary" : "outline"}>{count}</Badge>
+        <div className='flex justify-center'>
+          <Badge variant={count > 0 ? 'secondary' : 'outline'}>{count}</Badge>
         </div>
-      );
+      )
     },
     filterFn: (row, _id, value) => {
-      const selected = Array.isArray(value) ? value : [];
-      if (selected.length === 0) return true;
-      const count = Array.isArray((row.original as Customer).lot_info) ? (row.original as Customer).lot_info!.length : 0;
-      const hasLot = count > 0;
-      return selected.some((v: string) => (v === "yes" ? hasLot : !hasLot));
+      const selected = Array.isArray(value) ? value : []
+      if (selected.length === 0) return true
+      const count = Array.isArray((row.original as Customer).lot_info)
+        ? (row.original as Customer).lot_info!.length
+        : 0
+      const hasLot = count > 0
+      return selected.some((v: string) => (v === 'yes' ? hasLot : !hasLot))
     },
     meta: {
-      label: "Lot Owned",
-      variant: "select",
+      label: 'Lot Owned',
+      variant: 'select',
       options: [
-        { label: "Has Lot", value: "yes" },
-        { label: "No Lot", value: "no" },
-      ],
-    },
+        { label: 'Has Lot', value: 'yes' },
+        { label: 'No Lot', value: 'no' }
+      ]
+    }
   },
   {
-    id: "deceased_count",
+    id: 'deceased_count',
     header: ({ column }) => (
-      <div className="flex justify-center">
-        <DataTableColumnHeader column={column} title="Deceased" />
+      <div className='flex justify-center'>
+        <DataTableColumnHeader column={column} title='Deceased' />
       </div>
     ),
     enableSorting: true,
     enableColumnFilter: true,
     accessorFn: (row) => {
-      if (!Array.isArray(row.lot_info)) return 0;
+      if (!Array.isArray(row.lot_info)) return 0
       return row.lot_info.reduce((total, lot) => {
-        return total + (Array.isArray(lot.deceased_info) ? lot.deceased_info.length : 0);
-      }, 0);
+        return (
+          total +
+          (Array.isArray(lot.deceased_info) ? lot.deceased_info.length : 0)
+        )
+      }, 0)
     },
     cell: ({ row }) => {
       const count = Array.isArray(row.original.lot_info)
         ? row.original.lot_info.reduce((total, lot) => {
-            return total + (Array.isArray(lot.deceased_info) ? lot.deceased_info.length : 0);
+            return (
+              total +
+              (Array.isArray(lot.deceased_info) ? lot.deceased_info.length : 0)
+            )
           }, 0)
-        : 0;
+        : 0
       return (
-        <div className="flex justify-center">
-          <Badge variant={count > 0 ? "secondary" : "outline"}>{count}</Badge>
+        <div className='flex justify-center'>
+          <Badge variant={count > 0 ? 'secondary' : 'outline'}>{count}</Badge>
         </div>
-      );
+      )
     },
     filterFn: (row, _id, value) => {
-      const selected = Array.isArray(value) ? value : [];
-      if (selected.length === 0) return true;
+      const selected = Array.isArray(value) ? value : []
+      if (selected.length === 0) return true
       const count = Array.isArray((row.original as Customer).lot_info)
         ? (row.original as Customer).lot_info!.reduce((total, lot) => {
-            return total + (Array.isArray(lot.deceased_info) ? lot.deceased_info.length : 0);
+            return (
+              total +
+              (Array.isArray(lot.deceased_info) ? lot.deceased_info.length : 0)
+            )
           }, 0)
-        : 0;
-      const hasDeceased = count > 0;
-      return selected.some((v: string) => (v === "yes" ? hasDeceased : !hasDeceased));
+        : 0
+      const hasDeceased = count > 0
+      return selected.some((v: string) =>
+        v === 'yes' ? hasDeceased : !hasDeceased
+      )
     },
     meta: {
-      label: "Deceased",
-      variant: "select",
+      label: 'Deceased',
+      variant: 'select',
       options: [
-        { label: "Has Deceased", value: "yes" },
-        { label: "No Deceased", value: "no" },
-      ],
-    },
+        { label: 'Has Deceased', value: 'yes' },
+        { label: 'No Deceased', value: 'no' }
+      ]
+    }
   },
   {
-    id: "actions",
+    id: 'actions',
     size: 40,
     enableHiding: false,
-    cell: ({ row }) => {
-      const [open, setOpen] = React.useState(false);
-      const [viewOpen, setViewOpen] = React.useState(false);
-      if (!row?.original) return null;
-      return (
-        <>
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button className="h-8 w-8 p-0" variant="ghost">
-                <span className="sr-only">Open menu</span>
-                <MoreHorizontal />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent className="z-50" align="end">
-              <DropdownMenuLabel>Actions</DropdownMenuLabel>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem
-                onClick={() => {
-                  setOpen(true);
-                }}
-              >
-                Edit Customer
-              </DropdownMenuItem>
-              <DropdownMenuItem
-                onClick={() => {
-                  setViewOpen(true);
-                }}
-              >
-                View Customer
-              </DropdownMenuItem>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem onClick={() => navigator.clipboard.writeText(String(row.original.customer_id))} className="text-red-600 hover:bg-red-100">
-                <Archive className="mr-2 h-4 w-4 text-red-600" />
-                Archive
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-          <EditCustomerDialog customer={row.original} onOpenChange={setOpen} open={open} />
-          <ViewCustomerDialog onOpenChange={setViewOpen} customer={row.original} open={viewOpen} />
-        </>
-      );
-    },
-  },
-];
+    cell: ({ row }) => <CustomerActionsCell row={row} />
+  }
+]
