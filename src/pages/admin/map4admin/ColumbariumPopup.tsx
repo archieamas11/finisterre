@@ -12,7 +12,7 @@ import type { nicheData } from "@/types/niche.types";
 import type { ConvertedMarker } from "@/types/map.types";
 
 import { cn } from "@/lib/utils";
-import { isAdmin } from "@/utils/auth.utils.temp";
+import { isAdmin } from "@/utils/auth.utils";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { useCreateLotOwner } from "@/hooks/lot-owner-hooks/useCreateLotOwner";

@@ -2,7 +2,36 @@ import type { ColumnDef } from "@tanstack/react-table";
 import { DataTableColumnHeader } from "@/components/data-table/data-table-column-header";
 import type { ActivityLog } from "@/api/logs.api";
 import { Badge } from "@/components/ui/badge";
-
+import { BadgeCheckIcon, PencilIcon, TrashIcon, ArchiveIcon, LogInIcon, PlusIcon, UserIcon } from "lucide-react";
+import { AiOutlineUser } from "react-icons/ai";
+import { ucwords } from "@/lib/format";
+const actionConfig = {
+  add: {
+    icon: PlusIcon,
+    variant: "outline" as const,
+    className: "border-blue-500 text-blue-500",
+  },
+  update: {
+    icon: PencilIcon,
+    variant: "outline" as const,
+    className: "text-green-700 border-green-600",
+  },
+  delete: {
+    icon: TrashIcon,
+    variant: "destructive" as const,
+    className: "text-red-600",
+  },
+  archive: {
+    icon: ArchiveIcon,
+    variant: "destructive" as const,
+    className: "text-yellow-600",
+  },
+  login: {
+    icon: LogInIcon,
+    variant: "outline" as const,
+    className: "",
+  },
+};
 export const logsColumns: ColumnDef<ActivityLog>[] = [
   {
     accessorKey: "log_id",
@@ -15,8 +44,11 @@ export const logsColumns: ColumnDef<ActivityLog>[] = [
     header: ({ column }) => <DataTableColumnHeader column={column} title="User" />,
     accessorFn: (row) => row.username ?? String(row.user_id),
     cell: ({ row }) => (
-      <span className="truncate" title={row.original.username ?? String(row.original.user_id)}>
-        {row.original.username ?? row.original.user_id}
+      <span className="flex items-center gap-2 truncate" title={row.original.username ?? String(row.original.user_id)}>
+        <div className="bg-muted flex h-5 w-5 shrink-0 items-center justify-center rounded-full text-sm font-medium" aria-hidden="true">
+          <AiOutlineUser size={12} />
+        </div>{" "}
+        {ucwords(row.original.username ?? "")}
       </span>
     ),
     meta: { label: "User" },
@@ -24,11 +56,29 @@ export const logsColumns: ColumnDef<ActivityLog>[] = [
   {
     accessorKey: "action",
     header: ({ column }) => <DataTableColumnHeader column={column} title="Action" />,
-    cell: ({ row }) => (
-      <Badge variant="secondary" className="uppercase">
-        {row.original.action}
-      </Badge>
-    ),
+    cell: ({ row }) => {
+      const action = row.original.action?.toLowerCase();
+      if (action && action in actionConfig) {
+        const config = actionConfig[action as keyof typeof actionConfig];
+        const Icon = config.icon;
+
+        return (
+          <Badge variant={config.variant} className={config.className}>
+            <Icon className="mr-1 h-3 w-3" />
+            {row.original.action}
+          </Badge>
+        );
+      }
+      const config = { icon: BadgeCheckIcon, variant: "outline" as const };
+      const Icon = config.icon;
+
+      return (
+        <Badge variant={config.variant}>
+          <Icon />
+          {row.original.action}
+        </Badge>
+      );
+    },
     meta: {
       label: "Action",
       variant: "select",
@@ -36,6 +86,7 @@ export const logsColumns: ColumnDef<ActivityLog>[] = [
         { label: "Add", value: "add" },
         { label: "Update", value: "update" },
         { label: "Delete", value: "delete" },
+        { label: "Archive", value: "archive" },
         { label: "Login", value: "login" },
       ],
     },
