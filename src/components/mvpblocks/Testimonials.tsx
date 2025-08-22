@@ -113,7 +113,7 @@ const testimonials = [
 
 export default function Testimonials() {
   return (
-    <section className="bg-background relative overflow-hidden py-24 sm:py-32">
+    <section className="relative overflow-hidden py-24 sm:py-32">
       <div className="mx-auto w-full px-6 sm:w-[85%] md:w-[80%] lg:w-[75%] lg:px-8 xl:w-[80%]">
         <div className="mx-auto max-w-3xl text-center">
           <h2 className="text-foreground text-4xl font-bold tracking-tight sm:text-5xl">What Families Are Saying</h2>

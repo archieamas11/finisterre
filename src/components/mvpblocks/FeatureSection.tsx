@@ -53,22 +53,22 @@ const FeatureCard = ({ feature }: { feature: Feature }) => {
   const Icon = feature.icon;
 
   return (
-    <Card className="group relative flex transform-gpu flex-col overflow-hidden border-border/50 bg-card/50 transition-all duration-300 hover:border-primary/30 hover:shadow-2xl hover:shadow-primary/10 hover:-translate-y-2">
+    <Card className="group border-border/50 bg-card/50 hover:border-primary/30 hover:shadow-primary/10 relative flex transform-gpu flex-col overflow-hidden transition-all duration-300 hover:-translate-y-2 hover:shadow-2xl">
       <CardHeader className="relative z-10 pb-4">
         <div className={cn("mb-4 flex h-12 w-12 items-center justify-center rounded-lg bg-gradient-to-br text-white shadow-md", feature.color)}>
           <Icon className="h-6 w-6" />
         </div>
-        <CardTitle className="text-xl font-bold text-foreground">{feature.title}</CardTitle>
+        <CardTitle className="text-foreground text-xl font-bold">{feature.title}</CardTitle>
       </CardHeader>
 
       <CardContent className="relative z-10 flex flex-grow flex-col">
-        <CardDescription className="mb-6 flex-grow text-muted-foreground">{feature.description}</CardDescription>
+        <CardDescription className="text-muted-foreground mb-6 flex-grow">{feature.description}</CardDescription>
 
-        <a href="#" className="inline-flex items-center font-medium text-primary transition-all duration-300 group-hover:text-primary/80">
+        <a href="#" className="text-primary group-hover:text-primary/80 inline-flex items-center font-medium transition-all duration-300">
           Learn more <ArrowRight className="ml-2 h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
         </a>
       </CardContent>
-      <div className={cn("absolute -bottom-1/4 -right-1/4 z-0 h-1/2 w-1/2 rounded-full opacity-10 transition-all duration-500 group-hover:scale-[2.5]", feature.color)} />
+      <div className={cn("absolute -right-1/4 -bottom-1/4 z-0 h-1/2 w-1/2 rounded-full opacity-10 transition-all duration-500 group-hover:scale-[2.5]", feature.color)} />
     </Card>
   );
 };
@@ -78,11 +78,11 @@ const FeatureSection = () => {
     <section className="bg-background py-24 sm:py-32">
       <div className="mx-auto max-w-7xl px-6 lg:px-8">
         <div className="mx-auto max-w-3xl text-center">
-          <Badge variant="outline" className="mb-4 rounded-full border-border bg-card px-4 py-1.5 text-sm font-medium text-primary">
+          <Badge variant="outline" className="border-border bg-card text-primary mb-4 rounded-full px-4 py-1.5 text-sm font-medium">
             Our Promise
           </Badge>
-          <h2 className="text-4xl font-bold tracking-tight text-foreground sm:text-5xl">Why Choose Finisterre</h2>
-          <p className="mt-6 max-w-2xl mx-auto text-lg leading-8 text-muted-foreground">
+          <h2 className="text-foreground text-4xl font-bold tracking-tight sm:text-5xl">Why Choose Finisterre</h2>
+          <p className="text-muted-foreground mx-auto mt-6 max-w-2xl text-lg leading-8">
             A sacred place inspired by El Camino de Santiago, providing peace, dignity, and beauty for generations to come.
           </p>
         </div>

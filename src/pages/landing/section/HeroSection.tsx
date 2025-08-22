@@ -7,13 +7,9 @@ import { AnimatedGradientText } from "@/components/magicui/animated-gradient-tex
 export default function HeroSection() {
   return (
     <section className="relative flex min-h-screen items-center justify-center overflow-hidden">
-      {/* Video Background */}
+      {/* Image Background */}
       <div className="absolute inset-0 z-0">
-        <video className="min-h-full min-w-full object-cover" playsInline autoPlay muted loop preload="auto">
-          <source src="https://finisterre.ph/wp-content/uploads/2023/09/Finisterre-Masterplan-Actual-Development.mp4" type="video/mp4" />
-          Your browser does not support the video tag.
-        </video>
-        {/* Modern gradient overlays */}
+        <img className="min-h-full min-w-full object-cover" loading="lazy" src="https://finisterre.ph/wp-content/uploads/2022/10/END-3-scaled.jpeg" alt="Background" />
         <div className="absolute inset-0 bg-gradient-to-br from-black/70 via-black/50 to-transparent" />
         <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-black/20" />
       </div>

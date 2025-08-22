@@ -4,7 +4,6 @@ import { toast } from "sonner";
 import { useForm } from "react-hook-form";
 import { useNavigate, Link } from "react-router-dom";
 import { zodResolver } from "@hookform/resolvers/zod";
-
 import { loginUser } from "@/api/auth.api";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -12,7 +11,8 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { FormControl, FormMessage, FormField, FormLabel, FormItem, Form } from "@/components/ui/form";
 import { useAuthQuery } from "@/hooks/useAuthQuery";
 import { Card } from "@/components/ui/card";
-import { MapPin } from "lucide-react";
+import { MapPin, Eye, EyeOff, Loader2 } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 const FormSchema = z.object({
   remember: z.boolean().optional(),
@@ -23,6 +23,8 @@ const FormSchema = z.object({
 export default function LoginPage() {
   const navigate = useNavigate();
   const { data, isSuccess, setAuthFromToken } = useAuthQuery();
+  const [showPassword, setShowPassword] = React.useState(false);
+  const [isLoading, setIsLoading] = React.useState(false);
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
@@ -42,6 +44,7 @@ export default function LoginPage() {
   }, [data, isSuccess, navigate]);
 
   const onSubmit = async (formData: z.infer<typeof FormSchema>) => {
+    setIsLoading(true);
     const loginPromise = async () => {
       const res = await loginUser(formData.username, formData.password);
 
@@ -85,13 +88,14 @@ export default function LoginPage() {
       error: (err) =>
         err.message === "User not found" || err.message === "Invalid password" ? "Please check your credentials and try again" : "Something went wrong. Please try again later.",
     });
+    setIsLoading(false);
   };
 
   return (
-    <div className="flex min-h-screen items-center justify-center">
-      <Card className="mx-auto w-full max-w-sm p-8">
+    <main className="bg-background flex min-h-screen items-center justify-center" aria-label="Login page">
+      <Card className="mx-auto w-full max-w-sm p-8 shadow-lg">
         <div className="mb-8 flex flex-col items-center">
-          <Link className="mb-4" to="/">
+          <Link className="mb-4" to="/" aria-label="Back to home">
             <div className="border-primary bg-accent rounded-lg border p-2">
               <MapPin size={30} />
             </div>
@@ -101,59 +105,88 @@ export default function LoginPage() {
         </div>
 
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4" aria-label="Login form" autoComplete="on">
             <FormField
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Property ID</FormLabel>
-                  <FormControl>
-                    <Input placeholder="your property ID" autoComplete="username" id="username" type="text" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
               control={form.control}
               name="username"
-            />
-            <FormField
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Password</FormLabel>
+                  <FormLabel htmlFor="username">Property ID</FormLabel>
                   <FormControl>
-                    <Input autoComplete="current-password" placeholder="Password" type="password" id="password" {...field} />
+                    <Input placeholder="your property ID" autoComplete="username" id="username" type="text" {...field} aria-required="true" aria-label="Property ID" />
                   </FormControl>
-                  <FormMessage /> {/* This will show validation errors */}
+                  <FormMessage aria-live="polite" />
                 </FormItem>
               )}
-              control={form.control}
-              name="password"
             />
             <FormField
+              control={form.control}
+              name="password"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel htmlFor="password">Password</FormLabel>
+                  <FormControl>
+                    <div className="relative">
+                      <Input
+                        autoComplete="current-password"
+                        placeholder="Password"
+                        type={showPassword ? "text" : "password"}
+                        id="password"
+                        {...field}
+                        aria-required="true"
+                        aria-label="Password"
+                      />
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => setShowPassword((v) => !v)}
+                        className="absolute top-2 right-2 size-6"
+                        aria-label={showPassword ? "Hide password" : "Show password"}
+                        tabIndex={0}
+                      >
+                        {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                      </Button>
+                    </div>
+                  </FormControl>
+                  <FormMessage aria-live="polite" />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="remember"
               render={({ field }) => (
                 <FormItem className="flex flex-row items-center justify-between">
                   <FormLabel className="flex cursor-pointer items-center gap-2" htmlFor="login-remember">
-                    <Checkbox onCheckedChange={field.onChange} checked={field.value} id="login-remember" className="size-4" />
+                    <Checkbox onCheckedChange={field.onChange} checked={field.value} id="login-remember" className="size-4" aria-label="Remember me" />
                     Remember me
                   </FormLabel>
-                  <Link className="text-muted-foreground mt-1 block text-xs hover:underline" to="/forgot-password">
+                  <Link className="text-muted-foreground mt-1 block text-xs hover:underline" to="/forgot-password" aria-label="Forgot your password?">
                     Forgot your password?
                   </Link>
                 </FormItem>
               )}
-              control={form.control}
-              name="remember"
             />
             <div className="space-y-2">
-              <Button className="mt-2 w-full" variant={"default"}>
+              <Button
+                className={cn("mt-2 flex w-full items-center justify-center gap-2", { "pointer-events-none opacity-70": isLoading })}
+                variant="default"
+                type="submit"
+                disabled={isLoading}
+                aria-busy={isLoading}
+                aria-label="Login"
+              >
+                {isLoading && <Loader2 className="animate-spin" size={18} />}
                 Login
               </Button>
-              <Button onClick={() => navigate(-1)} className="w-full" variant="outline">
+              <Button onClick={() => navigate(-1)} className="w-full" variant="outline" type="button" aria-label="Back">
                 Back
               </Button>
             </div>
           </form>
         </Form>
       </Card>
-    </div>
+    </main>
   );
 }

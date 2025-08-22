@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { NavigationMenuSection } from "@/pages/landing/section/NavigationMenu";
 import { ThemeToggleButton } from "@/components/ui/theme-toggle-button";
 import { cn } from "@/lib/utils";
+import Spinner from "@/components/ui/spinner";
 
 const HeroSection = lazy(() => import("@/pages/landing/section/HeroSection"));
 const FAQs = lazy(() => import("@/pages/landing/section/FAQs"));
@@ -50,17 +51,15 @@ export default function LandingLayout() {
         </div>
       </header>
       <main className="flex-1">
-        <Suspense fallback={<div className="bg-background h-screen w-full" />}>
+        <Suspense fallback={<Spinner />}>
           <HeroSection />
           <FeatureSection />
           <Showcase />
           <Testimonials />
           <FAQs />
+          <Footer />
         </Suspense>
       </main>
-      <Suspense fallback={null}>
-        <Footer />
-      </Suspense>
     </div>
   );
 }

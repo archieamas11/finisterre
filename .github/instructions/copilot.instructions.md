@@ -12,16 +12,16 @@ applyTo: "**"
 
 ## 🛠️ Tech Stack
 
-| Layer      | Tech                                          |
-| ---------- | --------------------------------------------- |
-| Frontend   | React, TypeScript, Vite                       |
-| UI         | Shadcn UI, Radix, Tailwind CSS, Lucide React  |
-| Validation | Zod + `@hookform/resolvers/zod`               |
-| Forms      | React Hook Form                               |
-| State      | Tanstack Query (server), minimal client state |
-| Routing    | React Router                                  |
-| API        | Axios, JWT Auth, Vanilla PHP backend          |
-| Tooling    | ESLint, Prettier                              |
+| Layer      | Tech                                             |
+| ---------- | ------------------------------------------------ |
+| Frontend   | React, TypeScript, Vite                          |
+| UI         | Shadcn UI, Radix, Tailwind v4 CSS, Lucide React  |
+| Validation | Zod + `@hookform/resolvers/zod`                  |
+| Forms      | React Hook Form                                  |
+| State      | Tanstack Query (server), minimal client state    |
+| Routing    | React Router                                     |
+| API        | Axios, JWT Auth, Vanilla PHP backend             |
+| Tooling    | ESLint, Prettier                                 |
 
 - ✅ Always use functional components. Avoid classes.
 
@@ -52,16 +52,13 @@ applyTo: "**"
 - Variables: `camelCase`, use **auxiliary verbs**: `isLoading`, `hasError`, `isDisabled`
 - Event handlers: `onSubmit`, `onSelect` — **not** `handleSubmit`
 
-### Logging
-
-```ts
-console.log({ user }); // ✅ Good
-// console.log(user); // ❌ Avoid
-```
-
 ---
 
 ## 🎨 Styling & Tailwind
+
+- Ensure UI is responsive and accessible.
+- Follow Shadcn UI component guidelines and best practices.
+- Use Tailwind CSS utility classes for styling.
 
 ### Always Use `cn()` for Classes
 
@@ -259,13 +256,6 @@ await rateLimiter.wait();
 - Use `new` for builtins (except `String`, `Number`, `Boolean`).
 
 ---
-
-## 🧪 Testing (Jest/Vitest)
-
-- No focused tests (`it.only`, `describe.only`)
-- No disabled tests (`it.skip`)
-- Assertion (`expect`) must be inside `it()` or `test()`
-- Don't use callbacks in async tests
 
 ---
 
