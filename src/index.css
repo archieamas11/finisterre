@@ -131,11 +131,11 @@
 }
 
 .dark {
-  --background: oklch(0.145 0 0);
+  --background: oklch(18.583% 0.01131 260.674);
   --foreground: oklch(0.985 0 0);
-  --card: oklch(0.205 0 0);
+  --card: oklch(22.6% 0.01678 264.177);
   --card-foreground: oklch(0.985 0 0);
-  --popover: oklch(0.205 0 0);
+  --popover: oklch(22.6% 0.01678 264.177);
   --popover-foreground: oklch(0.985 0 0);
   --primary: oklch(0.922 0 0);
   --primary-foreground: oklch(0.205 0 0);
@@ -154,10 +154,10 @@
   --chart-3: oklch(0.7155 0 0);
   --chart-4: oklch(0.4386 0 0);
   --chart-5: oklch(0.9612 0 0);
-  --sidebar: oklch(0.205 0 0);
+  --sidebar: oklch(22.6% 0.01678 264.177);
   --sidebar-foreground: oklch(0.985 0 0);
-  --sidebar-primary: oklch(0.488 0.243 264.376);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
+  --sidebar-primary: oklch(0.9052 0.1657 98.1108);
+  --sidebar-primary-foreground: oklch(0.21 0.034 264.665);
   --sidebar-accent: oklch(0.269 0 0);
   --sidebar-accent-foreground: oklch(0.985 0 0);
   --sidebar-border: oklch(1 0 0 / 10%);
@@ -191,15 +191,6 @@
 
 .leaflet-container a.leaflet-popup-close-button {
   display: none;
-}
-
-.bg-gradient-u {
-  background: radial-gradient(
-    ellipse at bottom,
-    theme('colors.background') 0%,
-    theme('colors.background / 0.6') 50%,
-    transparent 75%
-  );
 }
 
 /* 🎯 Add marker mode styling */
