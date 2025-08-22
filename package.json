@@ -1,5 +1,6 @@
 {
   "name": "finisterre_gardenz",
+  "prettier": "prettier-config-standard",
   "private": true,
   "version": "0.0.0",
   "type": "module",
