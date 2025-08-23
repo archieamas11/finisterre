@@ -195,8 +195,7 @@ export function ValhallaRoute({
 
   return (
     <>
-      <Pane name="route-pane" style={{ zIndex: 2000 }}>
-        {/* 🗺️ Background full route (faint) for context when animating */}
+      <Pane name='route-pane' style={{ zIndex: 600 }}>
         {isNavigating && (
           <Polyline
             positions={completePolylineCoordinates}
@@ -230,14 +229,17 @@ export function ValhallaRoute({
           enableAnimation
         />
       )}
-      {showMarkers && endPoint && (
-        <Marker
-          position={endPoint}
-          icon={endIcon}
-          zIndexOffset={1000}
-          interactive={false}
-        ></Marker>
-      )}
+
+      <Pane name='end-icon' style={{ zIndex: 1000 }}>
+        {showMarkers && endPoint && (
+          <Marker
+            position={endPoint}
+            icon={endIcon}
+            zIndexOffset={1000}
+            interactive={false}
+          ></Marker>
+        )}
+      </Pane>
     </>
   )
 }
