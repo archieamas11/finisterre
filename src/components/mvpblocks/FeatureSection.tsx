@@ -74,7 +74,7 @@ const FeatureCard = ({ feature }: { feature: Feature }) => {
   const Icon = feature.icon
 
   return (
-    <Card className='group border-border/50 bg-card/50 hover:border-primary/30 hover:shadow-primary/10 relative flex transform-gpu flex-col overflow-hidden transition-all duration-300 hover:-translate-y-2 hover:shadow-2xl'>
+    <Card className='group border-white/50 bg-white/50 relative flex transform-gpu flex-col overflow-hidden transition-all duration-300 hover:-translate-y-2 hover:shadow-2xl'>
       <CardHeader className='relative z-10 pb-4'>
         <div
           className={cn(
@@ -84,22 +84,22 @@ const FeatureCard = ({ feature }: { feature: Feature }) => {
         >
           <Icon className='h-6 w-6' />
         </div>
-        <CardTitle className='text-foreground text-xl font-bold'>
+        <CardTitle className='text-black text-xl font-bold'>
           {feature.title}
         </CardTitle>
       </CardHeader>
 
       <CardContent className='relative z-10 flex flex-grow flex-col'>
-        <CardDescription className='text-muted-foreground mb-6 flex-grow'>
+        <CardDescription className='text-gray-600 mb-6 flex-grow'>
           {feature.description}
         </CardDescription>
 
         <a
           href='#'
-          className='text-primary group-hover:text-primary/80 inline-flex items-center font-medium transition-all duration-300'
+          className='text-gray-500 inline-flex items-center font-medium transition-all duration-300'
         >
           Learn more{' '}
-          <ArrowRight className='ml-2 h-4 w-4 transition-transform duration-300 group-hover:translate-x-1' />
+          <ArrowRight className='text-gray-500 ml-2 h-4 w-4 transition-transform duration-300 group-hover:translate-x-1' />
         </a>
       </CardContent>
       <div
@@ -114,19 +114,19 @@ const FeatureCard = ({ feature }: { feature: Feature }) => {
 
 const FeatureSection = () => {
   return (
-    <section className='bg-background py-24 sm:py-32'>
+    <section className='py-24 sm:py-32'>
       <div className='mx-auto max-w-7xl px-6 lg:px-8'>
         <div className='mx-auto max-w-3xl text-center'>
           <Badge
             variant='outline'
-            className='border-border bg-card text-primary mb-4 rounded-full px-4 py-1.5 text-sm font-medium'
+            className='border-black text-black mb-4 rounded-full px-4 py-1.5 text-sm font-medium'
           >
             Our Promise
           </Badge>
-          <h2 className='text-foreground text-4xl font-bold tracking-tight sm:text-5xl'>
+          <h2 className='text-black text-4xl font-bold tracking-tight sm:text-5xl'>
             Why Choose Finisterre
           </h2>
-          <p className='text-muted-foreground mx-auto mt-6 max-w-2xl text-lg leading-8'>
+          <p className='text-black mx-auto mt-6 max-w-2xl text-lg leading-8'>
             A sacred place inspired by El Camino de Santiago, providing peace,
             dignity, and beauty for generations to come.
           </p>

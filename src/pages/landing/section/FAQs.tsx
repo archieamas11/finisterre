@@ -57,18 +57,18 @@ const faqItems: FAQItem[] = [
 
 export default function FAQs() {
   return (
-    <section className='bg-background py-24 sm:py-32'>
+    <section className='py-24 sm:py-32'>
       <div className='mx-auto max-w-7xl px-6 lg:px-8'>
         <div className='grid grid-cols-1 gap-x-8 gap-y-16 lg:grid-cols-3'>
           <div className='lg:col-span-1'>
-            <h2 className='text-foreground text-3xl font-bold tracking-tight sm:text-4xl'>
+            <h2 className='text-black text-3xl font-bold tracking-tight sm:text-4xl'>
               Frequently Asked Questions
             </h2>
-            <p className='text-muted-foreground mt-4 text-lg leading-7'>
+            <p className='text-gray-600 mt-4 text-lg leading-7'>
               Can’t find the answer you’re looking for? Reach out to our{' '}
               <Link
                 to='#contact'
-                className='text-primary hover:text-primary/80 font-semibold'
+                className='text-gray-900 hover:text-primary/80 font-semibold'
               >
                 customer support
               </Link>{' '}
@@ -81,15 +81,15 @@ export default function FAQs() {
                 <AccordionItem
                   key={item.id}
                   value={item.id}
-                  className='border-border/70 bg-card/50 rounded-lg border shadow-sm'
+                  className='border-border/70 bg-white/60 rounded-lg border shadow-sm'
                 >
                   <AccordionTrigger className='flex w-full items-center justify-between p-6 font-medium hover:no-underline'>
-                    <span className='text-left text-lg'>{item.question}</span>
+                    <span className='text-left text-lg text-gray-700'>
+                      {item.question}
+                    </span>
                   </AccordionTrigger>
                   <AccordionContent className='px-6 pb-6'>
-                    <p className='text-muted-foreground text-base'>
-                      {item.answer}
-                    </p>
+                    <p className='text-gray-500 text-base'>{item.answer}</p>
                   </AccordionContent>
                 </AccordionItem>
               ))}

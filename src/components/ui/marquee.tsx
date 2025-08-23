@@ -46,10 +46,19 @@ export function Marquee({
   const directionClass = vertical
     ? 'flex-col animate-marquee-vertical'
     : 'flex-row animate-marquee'
+  // We still keep the tailwind group-hover utility as a progressive enhancement,
+  // but it doesn't always work reliably across some browsers when using pointer
+  // devices. We'll also control play state via JS handlers below.
   const hoverClass = pauseOnHover
     ? 'group-hover:[animation-play-state:paused]'
     : ''
   const reverseClass = reverse ? '[animation-direction:reverse]' : ''
+
+  const [isPaused, setIsPaused] = React.useState(false)
+
+  const onPointerEnter = pauseOnHover ? () => setIsPaused(true) : undefined
+
+  const onPointerLeave = pauseOnHover ? () => setIsPaused(false) : undefined
 
   // Clone the content twice for a seamless, continuous loop
   const content = Array.from({ length: repeat }).map((_, idx) => (
@@ -59,6 +68,8 @@ export function Marquee({
   return (
     <div
       {...props}
+      onPointerEnter={onPointerEnter}
+      onPointerLeave={onPointerLeave}
       className={cn(
         'group relative flex overflow-hidden p-2 [--duration:40s] [--gap:1rem]',
         vertical ? 'flex-col' : 'flex-row',
@@ -66,6 +77,7 @@ export function Marquee({
       )}
     >
       <div
+        style={isPaused ? { animationPlayState: 'paused' as const } : undefined}
         className={cn(
           'flex shrink-0 [gap:var(--gap)]',
           directionClass,
@@ -77,6 +89,7 @@ export function Marquee({
       </div>
       <div
         aria-hidden='true'
+        style={isPaused ? { animationPlayState: 'paused' as const } : undefined}
         className={cn(
           'flex shrink-0 [gap:var(--gap)]',
           directionClass,

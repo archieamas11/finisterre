@@ -14,7 +14,7 @@ export function Highlight({
   return (
     <span
       className={cn(
-        'bg-primary/10 text-primary rounded-md px-1.5 py-0.5 font-semibold',
+        'bg-black/30 text-black/80 rounded-md px-1.5 py-0.5 font-semibold',
         className
       )}
     >
@@ -43,7 +43,7 @@ export function TestimonialCard({
   return (
     <figure
       className={cn(
-        'bg-card/50 relative h-full w-full transform-gpu cursor-pointer break-inside-avoid-page overflow-hidden rounded-xl border p-6 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-lg',
+        'bg-white text-black relative h-full w-full transform-gpu cursor-pointer break-inside-avoid-page overflow-hidden rounded-xl border p-6 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-lg',
         className
       )}
       {...props}
@@ -54,16 +54,16 @@ export function TestimonialCard({
           height={48}
           src={img || ''}
           alt={name}
-          className='ring-primary/20 size-12 rounded-full object-cover ring-1'
+          className='ring-black size-12 rounded-full object-cover ring-1'
         />
         <div className='flex flex-col'>
-          <figcaption className='text-foreground text-sm font-medium'>
+          <figcaption className='text-black text-sm font-medium'>
             {name}
           </figcaption>
-          <p className='text-muted-foreground text-xs'>{role}</p>
+          <p className='text-gray-600 text-xs'>{role}</p>
         </div>
       </div>
-      <blockquote className='text-muted-foreground mt-4 text-base'>
+      <blockquote className='text-gray-800 mt-4 text-base'>
         {description}
       </blockquote>
       <div className='mt-4 flex items-center gap-1'>
@@ -158,13 +158,13 @@ const testimonials = [
 
 export default function Testimonials() {
   return (
-    <section className='relative overflow-hidden py-24 sm:py-32'>
-      <div className='mx-auto w-full px-6 sm:w-[85%] md:w-[80%] lg:w-[75%] lg:px-8 xl:w-[80%]'>
+    <section className='relative overflow-hidden sm:py-32'>
+      <div className='mx-auto w-full sm:w-[85%] md:w-[80%] lg:w-[75%] xl:w-full'>
         <div className='mx-auto max-w-3xl text-center'>
-          <h2 className='text-foreground text-4xl font-bold tracking-tight sm:text-5xl'>
+          <h2 className='text-black text-4xl font-bold tracking-tight sm:text-5xl'>
             What Families Are Saying
           </h2>
-          <p className='text-muted-foreground mt-6 text-lg leading-8'>
+          <p className='text-gray-700 mt-6 text-lg leading-8'>
             Don't just take our word for it. Here's what families in our
             community are saying about our memorial park.
           </p>
@@ -175,7 +175,7 @@ export default function Testimonials() {
               <TestimonialCard
                 key={testimonial.name}
                 {...testimonial}
-                className='w-80'
+                className='w-80 bg-white/70'
               />
             ))}
           </Marquee>
@@ -184,12 +184,27 @@ export default function Testimonials() {
               <TestimonialCard
                 key={testimonial.name}
                 {...testimonial}
-                className='w-80'
+                className='w-80 bg-white/70'
               />
             ))}
           </Marquee>
-          <div className='from-background via-background/80 pointer-events-none absolute inset-y-0 left-0 w-1/9 bg-gradient-to-r to-transparent'></div>
-          <div className='from-background via-background/80 pointer-events-none absolute inset-y-0 right-0 w-1/9 bg-gradient-to-l to-transparent'></div>
+          {/* Softer, wider gradient overlays that blend with the page background */}
+          <div
+            aria-hidden='true'
+            className='pointer-events-none absolute inset-y-0 left-0 w-1/4 transform-gpu'
+            style={{
+              background:
+                'linear-gradient(90deg, rgba(247,234,255,0.95) 0%, rgba(247,234,255,0.65) 25%, rgba(247,234,255,0.0) 60%)'
+            }}
+          />
+          <div
+            aria-hidden='true'
+            className='pointer-events-none absolute inset-y-0 right-0 w-1/4 transform-gpu'
+            style={{
+              background:
+                'linear-gradient(270deg, rgba(253,226,234,0.95) 0%, rgba(253,226,234,0.65) 25%, rgba(253,226,234,0.0) 60%)'
+            }}
+          />
         </div>
       </div>
     </section>

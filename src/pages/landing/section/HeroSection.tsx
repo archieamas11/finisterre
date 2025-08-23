@@ -57,11 +57,7 @@ export default function HeroSection() {
         {/* CTA Section */}
         <div className='flex flex-col items-center justify-center gap-4 sm:flex-row'>
           {/* Primary CTA */}
-          <RainbowButton
-            size={'lg'}
-            className='rounded-full font-semibold'
-            variant={'outline'}
-          >
+          <RainbowButton size={'lg'} className='rounded-full font-semibold'>
             <Link
               className='flex items-center gap-3'
               aria-label='Explore Map'
@@ -90,7 +86,8 @@ export default function HeroSection() {
       </div>
 
       {/* Bottom fade to smoothly transition to next section */}
-      <div className='from-background absolute right-0 bottom-0 left-0 z-[5] h-32 bg-gradient-to-t to-transparent'></div>
+      {/* <div className='from-background absolute right-0 bottom-0 left-0 z-[5] h-32 bg-gradient-to-t to-transparent'></div> */}
+      <div className='relative mt-16 [mask-image:linear-gradient(to_bottom,transparent,black_10%,black_90%,transparent)]'></div>
     </section>
   )
 }

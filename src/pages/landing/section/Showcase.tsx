@@ -16,7 +16,7 @@ import { MapContainer, TileLayer, Marker, Popup, useMap } from 'react-leaflet'
 
 import { Button } from '@/components/ui/button'
 import { Dialog, DialogContent } from '@/components/ui/dialog'
-import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group'
+import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs'
 const galleryImages = [
   {
     id: 1,
@@ -212,18 +212,18 @@ export default function CemeteryShowcase() {
   return (
     <section
       id='showcase-section'
-      className='bg-background w-full py-24 sm:py-32'
+      className='w-full py-24 sm:py-32'
       aria-labelledby='showcase-heading'
     >
       <div className='mx-auto max-w-7xl px-6 lg:px-8'>
         <div className='mx-auto max-w-3xl text-center'>
           <h2
             id='showcase-heading'
-            className='text-foreground text-4xl font-bold tracking-tight sm:text-5xl'
+            className='text-black text-4xl font-bold tracking-tight sm:text-5xl'
           >
             A Sacred Place of Natural Beauty
           </h2>
-          <p className='text-muted-foreground mt-6 text-lg leading-8'>
+          <p className='text-gray-600 mt-6 text-lg leading-8'>
             Discover the serene landscape and thoughtful design that makes our
             cemetery a peaceful sanctuary for remembrance and reflection.
           </p>
@@ -231,28 +231,32 @@ export default function CemeteryShowcase() {
 
         <div className='mt-16'>
           <div className='mb-8 flex flex-col items-center justify-between gap-4 sm:flex-row'>
-            <h3 className='text-foreground text-2xl font-semibold'>Gallery</h3>
+            <h3 className='text-black text-2xl font-semibold'>Gallery</h3>
             <div className='no-scrollbar w-full overflow-x-auto sm:w-auto'>
-              <ToggleGroup
-                type='single'
-                value={activeFilter}
+              <Tabs
+                defaultValue={activeFilter}
                 onValueChange={(val) => {
                   if (val) setActiveFilter(val)
                 }}
-                className='justify-center sm:justify-end'
+                className='w-full'
                 aria-label='Gallery category filter'
               >
-                {categories.map((category) => (
-                  <ToggleGroupItem
-                    key={category.id}
-                    value={category.id}
-                    aria-label={`Filter by ${category.label}`}
-                    className='whitespace-nowrap'
-                  >
-                    {category.label}
-                  </ToggleGroupItem>
-                ))}
-              </ToggleGroup>
+                <TabsList className='flex flex-nowrap justify-center sm:justify-end bg-gray-100 rounded-md text-gray-50'>
+                  {categories.map((category) => (
+                    <TabsTrigger
+                      key={category.id}
+                      value={category.id}
+                      className={
+                        'whitespace-nowrap rounded-md px-3 py-1 text-sm font-medium ' +
+                        'text-gray-500 ' +
+                        'data-[state=active]:bg-gradient-to-r data-[state=active]:from-gray-700/80 data-[state=active]:to-gray-800/60 data-[state=active]:text-white data-[state=active]:dark:text-foreground data-[state=active]:shadow '
+                      }
+                    >
+                      {category.label}
+                    </TabsTrigger>
+                  ))}
+                </TabsList>
+              </Tabs>
             </div>
           </div>
 
@@ -298,8 +302,9 @@ export default function CemeteryShowcase() {
           {filteredImages.length > 6 && (
             <div className='mt-8 text-center'>
               <Button
-                variant='outline'
+                variant='neon'
                 onClick={() => setIsExpanded(!isExpanded)}
+                className=' w-full'
               >
                 {isExpanded ? 'Show Less' : 'Show More'}
               </Button>
@@ -309,22 +314,25 @@ export default function CemeteryShowcase() {
 
         <div className='mt-24 grid grid-cols-1 gap-16 lg:grid-cols-2 lg:gap-x-8'>
           <div className='lg:max-w-lg'>
-            <h3 className='text-foreground text-3xl font-bold tracking-tight sm:text-4xl'>
+            <h3 className='text-black text-3xl font-bold tracking-tight sm:text-4xl'>
               Location Highlights
             </h3>
             <dl className='mt-10 space-y-8'>
               {locationFeatures.map((feature) => (
                 <div key={feature.title} className='flex items-start'>
                   <div className='flex-shrink-0'>
-                    <div className='bg-primary/10 text-primary flex h-12 w-12 items-center justify-center rounded-lg'>
-                      <feature.icon className='h-6 w-6' aria-hidden='true' />
+                    <div className='bg-black/10 text-primary flex h-12 w-12 items-center justify-center rounded-lg'>
+                      <feature.icon
+                        className='h-6 w-6 text-black'
+                        aria-hidden='true'
+                      />
                     </div>
                   </div>
                   <div className='ml-4'>
-                    <dt className='text-foreground text-md font-medium'>
+                    <dt className='text-black text-md font-medium'>
                       {feature.title}
                     </dt>
-                    <dd className='text-muted-foreground mt-1 text-sm'>
+                    <dd className='text-gray-600 mt-1 text-sm'>
                       {feature.description}
                     </dd>
                   </div>
@@ -361,17 +369,17 @@ export default function CemeteryShowcase() {
                 </Marker>
               </MapContainer>
               {/* Floating location card */}
-              <div className='pointer-events-none absolute bottom-2 left-1 z-400 w-full max-w-xs sm:max-w-sm'>
-                <div className='bg-card pointer-events-auto mx-2 rounded-lg p-4 shadow-lg backdrop-blur-sm'>
-                  <h4 className='text-foreground text-lg font-semibold'>
+              <div className='pointer-events-none absolute bottom-2 left-1 z-400'>
+                <div className='bg-white/80 pointer-events-auto ml-1 inline-block rounded-lg p-4 shadow-lg backdrop-blur-sm max-w-xs'>
+                  <h4 className='text-black text-lg font-semibold'>
                     Finisterre Gardenz
                   </h4>
-                  <p className='text-muted-foreground mt-1 text-sm'>
+                  <p className='text-gray-700 mt-1 text-sm'>
                     6QXX+C4 Minglanilla, Cebu
                   </p>
                   <div className='mt-3 flex items-center gap-2'>
                     <Button
-                      variant='default'
+                      variant='neon'
                       onClick={() => {
                         if (leafletMap) {
                           leafletMap.flyTo(
@@ -386,8 +394,9 @@ export default function CemeteryShowcase() {
                       Explore Map
                     </Button>
                     <Button
-                      variant='ghost'
+                      variant='default'
                       onClick={() => setIsExpanded((s) => !s)}
+                      className='border border-gray-300 bg-white text-black hover:bg-gray-100'
                     >
                       View Gallery
                     </Button>

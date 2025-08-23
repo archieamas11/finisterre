@@ -110,7 +110,7 @@ const MobileMenuItem = ({
   title: string
   href: string
 }) => {
-  const [isOpen, setIsOpen] = React.useState(false) // Moved outside the conditional block
+  const [isOpen, setIsOpen] = React.useState(false)
 
   if (children) {
     return (
@@ -177,6 +177,14 @@ const MobileSubMenuItem = ({
 
 export function NavigationMenuSection() {
   const [isOpen, setIsOpen] = React.useState(false)
+  const [scrolled, setScrolled] = useState<boolean>(false)
+
+  useEffect(() => {
+    const handleScroll = () => setScrolled(window.scrollY > 10)
+    window.addEventListener('scroll', handleScroll, { passive: true })
+    handleScroll()
+    return () => window.removeEventListener('scroll', handleScroll)
+  }, [])
 
   const handleMobileMenuClose = () => {
     setIsOpen(false)
@@ -189,14 +197,22 @@ export function NavigationMenuSection() {
         <NavigationMenuList>
           <NavigationMenuItem>
             <NavigationMenuLink
-              className={cn(navigationMenuTriggerStyle(), 'bg-transparent')}
+              className={cn(navigationMenuTriggerStyle(), 'bg-transparent ', {
+                'text-black': scrolled,
+                'text-white': !scrolled
+              })}
               asChild
             >
               <Link to='/'>Home</Link>
             </NavigationMenuLink>
           </NavigationMenuItem>
           <NavigationMenuItem>
-            <NavigationMenuTrigger className='bg-transparent'>
+            <NavigationMenuTrigger
+              className={cn(navigationMenuTriggerStyle(), 'bg-transparent ', {
+                'text-black': scrolled,
+                'text-white': !scrolled
+              })}
+            >
               Products
             </NavigationMenuTrigger>
             <NavigationMenuContent className='p-4'>
@@ -239,7 +255,12 @@ export function NavigationMenuSection() {
             </NavigationMenuContent>
           </NavigationMenuItem>
           <NavigationMenuItem>
-            <NavigationMenuTrigger className='bg-transparent'>
+            <NavigationMenuTrigger
+              className={cn(navigationMenuTriggerStyle(), 'bg-transparent ', {
+                'text-black': scrolled,
+                'text-white': !scrolled
+              })}
+            >
               Services
             </NavigationMenuTrigger>
             <NavigationMenuContent className='px-4 py-6'>
@@ -264,7 +285,10 @@ export function NavigationMenuSection() {
           </NavigationMenuItem>
           <NavigationMenuItem>
             <NavigationMenuLink
-              className={cn(navigationMenuTriggerStyle(), 'bg-transparent')}
+              className={cn(navigationMenuTriggerStyle(), 'bg-transparent ', {
+                'text-black': scrolled,
+                'text-white': !scrolled
+              })}
               asChild
             >
               <Link to='/about'>About</Link>
@@ -272,7 +296,10 @@ export function NavigationMenuSection() {
           </NavigationMenuItem>
           <NavigationMenuItem>
             <NavigationMenuLink
-              className={cn(navigationMenuTriggerStyle(), 'bg-transparent')}
+              className={cn(navigationMenuTriggerStyle(), 'bg-transparent ', {
+                'text-black': scrolled,
+                'text-white': !scrolled
+              })}
               asChild
             >
               <Link to='#contact'>Contact</Link>
@@ -292,7 +319,7 @@ export function NavigationMenuSection() {
                 size='icon'
                 type='button'
               >
-                <MenuIcon className='h-6 w-6' />
+                <MenuIcon className='h-6 w-6 text-black' />
                 <span className='sr-only'>Toggle menu</span>
               </Button>
             </SheetTrigger>
