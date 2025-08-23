@@ -10,7 +10,7 @@ export default function HeroSection() {
     <section className='relative flex min-h-screen items-center justify-center overflow-hidden'>
       <div className='absolute inset-0 z-0'>
         <img
-          className='min-h-full min-w-full object-cover'
+          className='h-full w-full object-cover'
           src='/hero-bg.webp'
           alt='Background'
           width={1920}
@@ -21,8 +21,21 @@ export default function HeroSection() {
         />
         <div className='absolute inset-0 bg-gradient-to-br from-black/70 via-black/50 to-transparent' />
         <div className='absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-black/20' />
+        <div
+          aria-hidden='true'
+          className='pointer-events-none absolute left-0 right-0 top-0 h-40'
+          style={{
+            background:
+              'linear-gradient(to top, rgba(0,0,0,0) 0%, rgba(0,0,0,0.35) 50%, rgba(0,0,0,0.85) 100%)'
+          }}
+        />
       </div>
-
+      {/* Scroll indicator */}
+      <div className='absolute bottom-10 left-1/2 z-20 flex -translate-x-1/2 transform animate-bounce'>
+        <div className='flex h-12 w-12 items-center justify-center rounded-full border-2 border-white/50'>
+          <ArrowRight className='h-5 w-5 rotate-90 text-white' />
+        </div>
+      </div>
       {/* Main Content Container */}
       <div className='relative z-10 mx-auto w-full max-w-7xl px-6 text-center sm:px-8'>
         {/* Premium badge */}
@@ -32,7 +45,6 @@ export default function HeroSection() {
             Awaits
           </div>
         </div>
-
         {/* Main heading with modern typography */}
         <div className='mb-10 space-y-4'>
           <h1 className='text-4xl leading-tight font-bold text-white sm:text-6xl lg:text-7xl'>
@@ -43,7 +55,6 @@ export default function HeroSection() {
               Memorial Park
             </span>
           </h1>
-
           <p className='mx-auto max-w-3xl text-lg leading-relaxed font-light text-white/80 sm:text-xl'>
             Inspired by Spain's{' '}
             <span className='font-semibold text-blue-200'>
@@ -53,7 +64,6 @@ export default function HeroSection() {
             the fullest.
           </p>
         </div>
-
         {/* CTA Section */}
         <div className='flex flex-col items-center justify-center gap-4 sm:flex-row'>
           {/* Primary CTA */}
@@ -69,7 +79,6 @@ export default function HeroSection() {
               <ArrowRight className='h-4 w-4 transition-transform duration-300 group-hover:translate-x-1' />
             </Link>
           </RainbowButton>
-
           {/* Secondary CTA */}
           <Button
             className='group rounded-full border-white/30 bg-white/10 px-6 py-3 font-medium text-white backdrop-blur-md transition-all duration-300 hover:scale-105 hover:border-white/50 hover:bg-white/20'
@@ -84,10 +93,6 @@ export default function HeroSection() {
           </Button>
         </div>
       </div>
-
-      {/* Bottom fade to smoothly transition to next section */}
-      {/* <div className='from-background absolute right-0 bottom-0 left-0 z-[5] h-32 bg-gradient-to-t to-transparent'></div> */}
-      <div className='relative mt-16 [mask-image:linear-gradient(to_bottom,transparent,black_10%,black_90%,transparent)]'></div>
     </section>
   )
 }
