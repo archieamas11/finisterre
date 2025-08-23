@@ -8,7 +8,7 @@ import { Button } from '@/components/ui/button'
 export default function HeroSection() {
   return (
     <section className='relative flex min-h-screen items-center justify-center overflow-hidden'>
-      <div className='absolute inset-0 z-0'>
+      <div className='absolute inset-0 z-0  [mask-image:linear-gradient(to_bottom,transparent,black_0%,black_30%,transparent)]'>
         <img
           className='h-full w-full object-cover'
           src='/hero-bg.webp'
@@ -20,24 +20,9 @@ export default function HeroSection() {
           decoding='async'
         />
         <div className='absolute inset-0 bg-gradient-to-br from-black/70 via-black/50 to-transparent' />
-        <div className='absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-black/20' />
-        <div
-          aria-hidden='true'
-          className='pointer-events-none absolute left-0 right-0 top-0 h-40'
-          style={{
-            background:
-              'linear-gradient(to top, rgba(0,0,0,0) 0%, rgba(0,0,0,0.35) 50%, rgba(0,0,0,0.85) 100%)'
-          }}
-        />
-      </div>
-      {/* Scroll indicator */}
-      <div className='absolute bottom-10 left-1/2 z-20 flex -translate-x-1/2 transform animate-bounce'>
-        <div className='flex h-12 w-12 items-center justify-center rounded-full border-2 border-white/50'>
-          <ArrowRight className='h-5 w-5 rotate-90 text-white' />
-        </div>
       </div>
       {/* Main Content Container */}
-      <div className='relative z-10 mx-auto w-full max-w-7xl px-6 text-center sm:px-8'>
+      <div className='relative z-10 mx-auto w-full max-w-7xl px-6 text-center sm:px-8 lg:mb-10'>
         {/* Premium badge */}
         <div className='animate-fade-in-up mb-6 flex justify-center'>
           <div className='inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-4 py-2 text-sm font-medium text-white/90 backdrop-blur-md'>

@@ -188,7 +188,6 @@ export default function Testimonials() {
               />
             ))}
           </Marquee>
-          {/* Softer, wider gradient overlays that blend with the page background */}
           <div
             aria-hidden='true'
             className='pointer-events-none absolute inset-y-0 left-0 w-1/4 transform-gpu'
