@@ -1,6 +1,6 @@
 import L from 'leaflet'
 import React from 'react'
-import { Polyline, Marker, useMap } from 'react-leaflet'
+import { Polyline, Marker, useMap, Pane } from 'react-leaflet'
 
 import { type ValhallaRouteResponse } from '@/api/valhalla.api'
 import { UserLocationMarker } from '@/components/map/UserLocationMarker'
@@ -195,30 +195,32 @@ export function ValhallaRoute({
 
   return (
     <>
-      {/* 🗺️ Background full route (faint) for context when animating */}
-      {isNavigating && (
+      <Pane name="route-pane" style={{ zIndex: 2000 }}>
+        {/* 🗺️ Background full route (faint) for context when animating */}
+        {isNavigating && (
+          <Polyline
+            positions={completePolylineCoordinates}
+            pathOptions={{
+              color: '#FFFF',
+              opacity: 0.2,
+              lineCap: 'round',
+              lineJoin: 'round'
+            }}
+          />
+        )}
+
+        {/* 🗺️ Animated visible polyline (snake) */}
         <Polyline
-          positions={completePolylineCoordinates}
+          positions={completePolylineCoordinates.slice(0, visibleIndex || 1)}
           pathOptions={{
-            color: '#FFFF',
-            opacity: 0.2,
+            color: polylineColor,
+            weight: routeWeight,
+            opacity: polylineOpacity,
             lineCap: 'round',
             lineJoin: 'round'
           }}
         />
-      )}
-
-      {/* 🗺️ Animated visible polyline (snake) */}
-      <Polyline
-        positions={completePolylineCoordinates.slice(0, visibleIndex || 1)}
-        pathOptions={{
-          color: polylineColor,
-          weight: routeWeight,
-          opacity: polylineOpacity,
-          lineCap: 'round',
-          lineJoin: 'round'
-        }}
-      />
+      </Pane>
       {/* 🎯 Start (user location) and end markers */}
       {showMarkers && userLocation && (
         <UserLocationMarker
