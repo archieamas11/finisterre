@@ -263,6 +263,12 @@ function FinisterreMarkers({
               onClick={(e) => {
                 e.stopPropagation()
                 onDirectionClick?.([itemData.lat, itemData.lng])
+                try {
+                  const popups = document.querySelectorAll('.leaflet-popup')
+                  popups.forEach((p) => p.parentElement?.removeChild(p))
+                } catch {
+                  // ignore DOM errors
+                }
               }}
               disabled={isDirectionLoading}
               aria-busy={isDirectionLoading}

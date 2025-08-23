@@ -10,6 +10,7 @@ import {
   DrawerDescription,
   DrawerTitle
 } from '@/components/ui/drawer'
+import { useIsMobile } from '@/hooks/use-mobile'
 import ColumbariumPopup from '@/pages/admin/map4admin/ColumbariumPopup'
 import PlotLocations from '@/pages/webmap/WebMapPopup'
 import { getCategoryBackgroundColor, getStatusColor } from '@/types/map.types'
@@ -39,12 +40,16 @@ const PlotMarkers: React.FC<PlotMarkersProps> = memo(
     const [openDrawerPlotId, setOpenDrawerPlotId] = useState<
       string | number | null
     >(null)
-
-    const handleMarkerClick = useCallback((plotId: string | number) => {
-      requestAnimationFrame(() => {
-        setOpenDrawerPlotId(plotId)
-      })
-    }, [])
+    const isSmallScreen = useIsMobile()
+    const handleMarkerClick = useCallback(
+      (plotId: string | number) => {
+        if (!isSmallScreen) return
+        requestAnimationFrame(() => {
+          setOpenDrawerPlotId(plotId)
+        })
+      },
+      [isSmallScreen]
+    )
 
     const handleDrawerOpenChange = useCallback(
       (open: boolean, plotId: string | number) => {
@@ -61,8 +66,22 @@ const PlotMarkers: React.FC<PlotMarkersProps> = memo(
           const statusColor = getStatusColor(marker.plotStatus)
           const circleIcon = getIcon(statusColor)
 
-          const onDir = () =>
+          const onDir = () => {
+            // If directions are currently loading, do not close the drawer/popup yet
+            if (isDirectionLoading) {
+              onDirectionClick(marker.position as [number, number])
+              return
+            }
+            // Close any open drawer
+            setOpenDrawerPlotId(null)
+            try {
+              const popups = document.querySelectorAll('.leaflet-popup')
+              popups.forEach((p) => p.parentElement?.removeChild(p))
+            } catch {
+              // ignore DOM errors
+            }
             onDirectionClick(marker.position as [number, number])
+          }
 
           return (
             <Marker
@@ -108,7 +127,7 @@ const PlotMarkers: React.FC<PlotMarkersProps> = memo(
                 </Popup>
               )}
 
-              {marker.rows && marker.columns ? (
+              {marker.rows && marker.columns && isSmallScreen ? (
                 <Drawer
                   open={openDrawerPlotId === marker.plot_id}
                   onOpenChange={(open) =>
