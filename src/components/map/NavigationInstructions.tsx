@@ -8,6 +8,7 @@ import {
   ChevronDown,
   ChevronUp
 } from 'lucide-react'
+import { AnimatePresence, motion } from 'framer-motion'
 import React from 'react'
 
 import { type ValhallaManeuver } from '@/api/valhalla.api'
@@ -130,224 +131,235 @@ export function NavigationInstructions({
   totalTime,
   rerouteCount = 0
 }: NavigationInstructionsProps) {
-  if (!isOpen) return null
   const { currentManeuver, nextManeuver, maneuverIndex } = navigationState
   const [showDetails, setShowDetails] = React.useState(false)
   const hasSummary =
     typeof totalDistance === 'number' || typeof totalTime === 'number'
 
   return (
-    <div
-      className={cn(
-        'fixed inset-x-3 bottom-3 z-[1000] mx-auto max-w-md',
-        // Desktop/tablet placement as floating panel on the top-left
-        'sm:inset-x-auto sm:top-8 sm:bottom-auto sm:left-8'
-      )}
-      role='region'
-      aria-label='Turn-by-turn navigation'
-    >
-      <Card
-        className={cn(
-          'rounded-xl border shadow-lg',
-          // Subtle translucency over the map
-          'bg-background/90 supports-[backdrop-filter]:bg-background/60 backdrop-blur'
-        )}
-      >
-        <CardHeader>
-          <div className='flex items-center justify-between'>
-            <CardTitle className='flex items-center gap-2 text-base sm:text-lg'>
-              <span className='bg-primary/10 text-primary inline-flex h-7 w-7 items-center justify-center rounded-md'>
-                <Navigation className='h-4 w-4' aria-hidden='true' />
-                <span className='sr-only'>Navigation</span>
-              </span>
-              <span className='font-semibold'>Navigation</span>
-              {isNavigating && (
-                <Badge variant='secondary' className='ml-2'>
-                  Active
-                </Badge>
-              )}
-            </CardTitle>
-            <div className='flex items-center gap-1'>
-              {/* Mobile details toggle */}
-              <Button
-                type='button'
-                variant='ghost'
-                size='icon'
-                className='sm:hidden'
-                onClick={() => setShowDetails((v) => !v)}
-                aria-expanded={showDetails}
-                aria-controls='nav-details'
-              >
-                {showDetails ? (
-                  <ChevronDown className='h-4 w-4' aria-hidden='true' />
-                ) : (
-                  <ChevronUp className='h-4 w-4' aria-hidden='true' />
-                )}
-                <span className='sr-only'>Toggle details</span>
-              </Button>
-              <Button
-                type='button'
-                variant='ghost'
-                size='icon'
-                onClick={onClose}
-                aria-label='Close navigation'
-              >
-                <X className='h-4 w-4' aria-hidden='true' />
-              </Button>
-            </div>
-          </div>
-
-          {isRerouting && (
-            <div className='mt-2 flex items-center gap-2 text-sm text-orange-600'>
-              <AlertTriangle className='h-4 w-4' aria-hidden='true' />
-              Recalculating route...
-            </div>
+    <AnimatePresence>
+      {isOpen && (
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: 20 }}
+          transition={{ duration: 0.2 }}
+          className={cn(
+            'fixed inset-x-3 bottom-3 z-[1000] mx-auto max-w-md',
+            // Desktop/tablet placement as floating panel on the top-left
+            'sm:inset-x-auto sm:top-8 sm:bottom-auto sm:left-8'
           )}
-
-          {hasSummary && (
-            <div className='text-muted-foreground mt-2 flex items-center gap-4 text-xs sm:text-sm'>
-              {typeof totalDistance === 'number' && (
-                <div className='flex items-center gap-1'>
-                  <Route className='h-4 w-4' aria-hidden='true' />
-                  {formatDistance(totalDistance)}
-                </div>
-              )}
-              {typeof totalTime === 'number' && (
-                <div className='flex items-center gap-1'>
-                  <Clock className='h-4 w-4' aria-hidden='true' />
-                  {formatTime(totalTime)}
-                </div>
-              )}
-              {rerouteCount > 0 && (
-                <Badge variant='outline' className='text-[10px] sm:text-xs'>
-                  Rerouted {rerouteCount}x
-                </Badge>
-              )}
-            </div>
-          )}
-        </CardHeader>
-
-        <CardContent className='px-4 pt-0 sm:p-4'>
-          {/* Current maneuver */}
-          {currentManeuver && (
-            <div className='mb-3 sm:mb-4' aria-live='polite'>
-              <div
-                className={cn(
-                  'flex items-start gap-3 rounded-lg p-3',
-                  'border border-blue-200 bg-blue-50 dark:border-blue-900/40 dark:bg-blue-950/40'
-                )}
-              >
-                <div
-                  className={cn(
-                    'flex h-9 w-9 items-center justify-center rounded-full sm:h-8 sm:w-8',
-                    getManeuverColor(currentManeuver.type, true)
+          role='region'
+          aria-label='Turn-by-turn navigation'
+        >
+          <Card
+            className={cn(
+              'rounded-xl border shadow-lg',
+              // Subtle translucency over the map
+              'bg-background/90 supports-[backdrop-filter]:bg-background/60 backdrop-blur'
+            )}
+          >
+            <CardHeader>
+              <div className='flex items-center justify-between'>
+                <CardTitle className='flex items-center gap-2 text-base sm:text-lg'>
+                  <span className='bg-primary/10 text-primary inline-flex h-7 w-7 items-center justify-center rounded-md'>
+                    <Navigation className='h-4 w-4' aria-hidden='true' />
+                    <span className='sr-only'>Navigation</span>
+                  </span>
+                  <span className='font-semibold'>Navigation</span>
+                  {isNavigating && (
+                    <Badge variant='secondary' className='ml-2'>
+                      Active
+                    </Badge>
                   )}
-                >
-                  {getManeuverIcon(currentManeuver.type)}
-                </div>
-                <div className='min-w-0 flex-1'>
-                  <p className='text-sm leading-snug font-medium sm:leading-normal'>
-                    {currentManeuver.instruction}
-                  </p>
-                  {currentManeuver.street_names &&
-                    currentManeuver.street_names.length > 0 && (
-                      <p className='text-muted-foreground mt-1 line-clamp-1 text-[11px] sm:text-xs'>
-                        {currentManeuver.street_names.join(', ')}
-                      </p>
+                </CardTitle>
+                <div className='flex items-center gap-1'>
+                  {/* Mobile details toggle */}
+                  <Button
+                    type='button'
+                    variant='ghost'
+                    size='icon'
+                    className='sm:hidden'
+                    onClick={() => setShowDetails((v) => !v)}
+                    aria-expanded={showDetails}
+                    aria-controls='nav-details'
+                  >
+                    {showDetails ? (
+                      <ChevronDown className='h-4 w-4' aria-hidden='true' />
+                    ) : (
+                      <ChevronUp className='h-4 w-4' aria-hidden='true' />
                     )}
-                  <div className='text-muted-foreground mt-2 flex items-center gap-3 text-[11px] sm:text-xs'>
-                    <span>{formatDistance(currentManeuver.length)}</span>
-                    <span>•</span>
-                    <span>{formatTime(currentManeuver.time)}</span>
-                  </div>
+                    <span className='sr-only'>Toggle details</span>
+                  </Button>
+                  <Button
+                    type='button'
+                    variant='ghost'
+                    size='icon'
+                    onClick={onClose}
+                    aria-label='Close navigation'
+                  >
+                    <X className='h-4 w-4' aria-hidden='true' />
+                  </Button>
                 </div>
               </div>
 
-              {nextManeuver && (
-                <div className='text-muted-foreground mt-4 flex items-center gap-2 text-xs sm:text-sm'>
-                  <span className='text-[10px] sm:text-xs'>Then</span>
+              {isRerouting && (
+                <div className='mt-2 flex items-center gap-2 text-sm text-orange-600'>
+                  <AlertTriangle className='h-4 w-4' aria-hidden='true' />
+                  Recalculating route...
+                </div>
+              )}
+
+              {hasSummary && (
+                <div className='text-muted-foreground mt-2 flex items-center gap-4 text-xs sm:text-sm'>
+                  {typeof totalDistance === 'number' && (
+                    <div className='flex items-center gap-1'>
+                      <Route className='h-4 w-4' aria-hidden='true' />
+                      {formatDistance(totalDistance)}
+                    </div>
+                  )}
+                  {typeof totalTime === 'number' && (
+                    <div className='flex items-center gap-1'>
+                      <Clock className='h-4 w-4' aria-hidden='true' />
+                      {formatTime(totalTime)}
+                    </div>
+                  )}
+                  {rerouteCount > 0 && (
+                    <Badge variant='outline' className='text-[10px] sm:text-xs'>
+                      Rerouted {rerouteCount}x
+                    </Badge>
+                  )}
+                </div>
+              )}
+            </CardHeader>
+
+            <CardContent className='px-4 pt-0 sm:p-4'>
+              {/* Current maneuver */}
+              {currentManeuver && (
+                <div className='mb-3 sm:mb-4' aria-live='polite'>
                   <div
                     className={cn(
-                      'flex h-6 w-6 items-center justify-center rounded',
-                      getManeuverColor(nextManeuver.type)
+                      'flex items-start gap-3 rounded-lg p-3',
+                      'border border-blue-200 bg-blue-50 dark:border-blue-900/40 dark:bg-blue-950/40'
                     )}
                   >
-                    {getManeuverIcon(nextManeuver.type)}
+                    <div
+                      className={cn(
+                        'flex h-9 w-9 items-center justify-center rounded-full sm:h-8 sm:w-8',
+                        getManeuverColor(currentManeuver.type, true)
+                      )}
+                    >
+                      {getManeuverIcon(currentManeuver.type)}
+                    </div>
+                    <div className='min-w-0 flex-1'>
+                      <p className='text-sm leading-snug font-medium sm:leading-normal'>
+                        {currentManeuver.instruction}
+                      </p>
+                      {currentManeuver.street_names &&
+                        currentManeuver.street_names.length > 0 && (
+                          <p className='text-muted-foreground mt-1 line-clamp-1 text-[11px] sm:text-xs'>
+                            {currentManeuver.street_names.join(', ')}
+                          </p>
+                        )}
+                      <div className='text-muted-foreground mt-2 flex items-center gap-3 text-[11px] sm:text-xs'>
+                        <span>{formatDistance(currentManeuver.length)}</span>
+                        <span>•</span>
+                        <span>{formatTime(currentManeuver.time)}</span>
+                      </div>
+                    </div>
                   </div>
-                  <span className='truncate'>{nextManeuver.instruction}</span>
-                </div>
-              )}
-            </div>
-          )}
-          {allManeuvers.length > 0 && (
-            <>
-              <div
-                id='nav-details'
-                className={cn(
-                  'mt-3',
-                  'hidden sm:block',
-                  showDetails && 'block'
-                )}
-              >
-                <Separator className='mt-2 mb-2' />
-                <h4 className='mb-3 text-sm font-medium'>All Directions</h4>
-                <ScrollArea className='h-40 sm:h-70'>
-                  <div className='space-y-2'>
-                    {allManeuvers.map((maneuver, index) => (
+
+                  {nextManeuver && (
+                    <div className='text-muted-foreground mt-4 flex items-center gap-2 text-xs sm:text-sm'>
+                      <span className='text-[10px] sm:text-xs'>Then</span>
                       <div
-                        key={index}
                         className={cn(
-                          'flex w-full items-start gap-3 rounded-md p-2 transition-colors',
-                          index === maneuverIndex
-                            ? 'bg-muted/60 border'
-                            : 'hover:bg-muted/50'
+                          'flex h-6 w-6 items-center justify-center rounded',
+                          getManeuverColor(nextManeuver.type)
                         )}
                       >
-                        <div
-                          className={cn(
-                            'flex h-6 w-6 items-center justify-center rounded',
-                            getManeuverColor(
-                              maneuver.type,
-                              index === maneuverIndex
-                            )
-                          )}
-                        >
-                          {getManeuverIcon(maneuver.type)}
-                        </div>
-                        <div className='min-w-0 flex-1'>
-                          <p
+                        {getManeuverIcon(nextManeuver.type)}
+                      </div>
+                      <span className='truncate'>
+                        {nextManeuver.instruction}
+                      </span>
+                    </div>
+                  )}
+                </div>
+              )}
+              {allManeuvers.length > 0 && (
+                <>
+                  <div
+                    id='nav-details'
+                    className={cn(
+                      'mt-3',
+                      'hidden sm:block',
+                      showDetails && 'block'
+                    )}
+                  >
+                    <Separator className='mt-2 mb-2' />
+                    <h4 className='mb-3 text-sm font-medium'>
+                      All Directions
+                    </h4>
+                    <ScrollArea className='h-40 sm:h-70'>
+                      <div className='space-y-2'>
+                        {allManeuvers.map((maneuver, index) => (
+                          <div
+                            key={index}
                             className={cn(
-                              'truncate text-sm',
-                              index === maneuverIndex ? 'font-medium' : ''
+                              'flex w-full items-start gap-3 rounded-md p-2 transition-colors',
+                              index === maneuverIndex
+                                ? 'bg-muted/60 border'
+                                : 'hover:bg-muted/50'
                             )}
                           >
-                            {maneuver.instruction}
-                          </p>
-                          <div className='text-muted-foreground flex items-center gap-2 text-xs'>
-                            <span>{formatDistance(maneuver.length)}</span>
-                            <span>•</span>
-                            <span>{formatTime(maneuver.time)}</span>
+                            <div
+                              className={cn(
+                                'flex h-6 w-6 items-center justify-center rounded',
+                                getManeuverColor(
+                                  maneuver.type,
+                                  index === maneuverIndex
+                                )
+                              )}
+                            >
+                              {getManeuverIcon(maneuver.type)}
+                            </div>
+                            <div className='min-w-0 flex-1'>
+                              <p
+                                className={cn(
+                                  'truncate text-sm',
+                                  index === maneuverIndex ? 'font-medium' : ''
+                                )}
+                              >
+                                {maneuver.instruction}
+                              </p>
+                              <div className='text-muted-foreground flex items-center gap-2 text-xs'>
+                                <span>{formatDistance(maneuver.length)}</span>
+                                <span>•</span>
+                                <span>{formatTime(maneuver.time)}</span>
+                              </div>
+                            </div>
                           </div>
-                        </div>
+                        ))}
                       </div>
-                    ))}
+                    </ScrollArea>
                   </div>
-                </ScrollArea>
-              </div>
-            </>
-          )}
+                </>
+              )}
 
-          {allManeuvers.length === 0 && !currentManeuver && (
-            <div className='text-muted-foreground py-8 text-center'>
-              <Navigation
-                className='mx-auto h-12 w-12 opacity-50'
-                aria-hidden='true'
-              />
-              <p className='mt-2'>No route instructions available</p>
-            </div>
-          )}
-        </CardContent>
-      </Card>
-    </div>
+              {allManeuvers.length === 0 && !currentManeuver && (
+                <div className='text-muted-foreground py-8 text-center'>
+                  <Navigation
+                    className='mx-auto h-12 w-12 opacity-50'
+                    aria-hidden='true'
+                  />
+                  <p className='mt-2'>No route instructions available</p>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        </motion.div>
+      )}
+    </AnimatePresence>
   )
 }
