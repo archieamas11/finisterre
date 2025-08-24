@@ -1,7 +1,6 @@
 import { Suspense } from 'react'
 import React from 'react'
 import { ErrorBoundary } from 'react-error-boundary'
-import { BrowserRouter, Navigate, Routes, Route } from 'react-router-dom'
 
 import { RequireAdmin, RequireAuth, RequireUser } from '@/authRoutes'
 import Spinner from '@/components/ui/spinner'
@@ -26,6 +25,8 @@ const AdminControlPanel = React.lazy(() => import('@/pages/admin/control/AdminCo
 const AdminIntermentDeceasedPage = React.lazy(() => import('@/pages/admin/interment/deceased-records/deceased'))
 const AdminIntermentLotOwnersPage = React.lazy(() => import('@/pages/admin/interment/lot-owners/lot-owners'))
 const AdminIntermentCustomerPage = React.lazy(() => import('./pages/admin/interment/customer/CustomersLayout'))
+import { BrowserRouter } from 'react-router-dom'
+
 import DashboardLayout from '@/components/layout/DashboardLayout'
 import LandingLayout from '@/components/layout/LandingLayout'
 // const MapPage = React.lazy(() => import("@/components/layout/WebMapLayout"));

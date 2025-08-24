@@ -1,6 +1,5 @@
 import { MapPin } from 'lucide-react'
-import { useEffect, useState, type FC } from 'react'
-import { Link } from 'react-router-dom'
+import { type FC } from 'react'
 
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'

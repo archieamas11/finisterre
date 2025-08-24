@@ -1,8 +1,4 @@
-// src/components/sidebar/nav-main.tsx
-'use client'
-
 import { ChevronRight } from 'lucide-react'
-import { useLocation, Link } from 'react-router-dom'
 
 import { CollapsibleContent, CollapsibleTrigger, Collapsible } from '@/components/ui/collapsible'
 import { DropdownMenuContent, DropdownMenuTrigger, DropdownMenuItem, DropdownMenu } from '@/components/ui/dropdown-menu'

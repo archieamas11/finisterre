@@ -1,5 +1,4 @@
 import { ArrowRight, Sparkles, MapPin, Heart } from 'lucide-react'
-import { Link } from 'react-router-dom'
 
 import { AnimatedGradientText } from '@/components/magicui/animated-gradient-text'
 import { RainbowButton } from '@/components/magicui/rainbow-button'

@@ -1,7 +1,4 @@
-'use client'
-
 import { type IconName } from 'lucide-react/dynamic'
-import { Link } from 'react-router-dom'
 
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion'
 

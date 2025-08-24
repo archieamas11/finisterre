@@ -1,7 +1,6 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import { MapPin } from 'lucide-react'
 import { useForm } from 'react-hook-form'
-import { useNavigate, Link } from 'react-router-dom'
 import { toast } from 'sonner'
 import { z } from 'zod'
 

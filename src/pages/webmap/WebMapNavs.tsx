@@ -3,7 +3,6 @@ import { useContext, useEffect, useCallback } from 'react'
 import { RiMapPinAddLine } from 'react-icons/ri'
 import { RiLoginBoxLine } from 'react-icons/ri'
 import { RiListSettingsFill } from 'react-icons/ri'
-import { Link, useLocation } from 'react-router-dom'
 
 import { LocateContext as WebMapLocateContext } from '@/components/layout/WebMapLayout'
 import { Button } from '@/components/ui/button'

@@ -14,7 +14,14 @@ export default defineConfig({
     ViteImageOptimizer(),
     removeConsole(),
     AutoImport({
-      imports: ['react', 'react-router-dom'],
+      imports: [
+        'react',
+        'react-router-dom',
+        'react-dom',
+        {
+          'react-use': ['useLocalStorage', 'useMedia'],
+        },
+      ],
       dts: 'src/auto-imports.d.ts',
     }),
   ],
