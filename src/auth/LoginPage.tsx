@@ -1,5 +1,5 @@
 import { zodResolver } from '@hookform/resolvers/zod'
-import { MapPin, Eye, EyeOff, Loader2 } from 'lucide-react'
+import { MapPin, Eye, EyeOff } from 'lucide-react'
 import React from 'react'
 import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
@@ -11,6 +11,7 @@ import { Card } from '@/components/ui/card'
 import { Checkbox } from '@/components/ui/checkbox'
 import { FormControl, FormMessage, FormField, FormLabel, FormItem, Form } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
+import Spinner from '@/components/ui/spinner'
 import { useAuthQuery } from '@/hooks/useAuthQuery'
 import { cn } from '@/lib/utils'
 
@@ -45,7 +46,7 @@ export default function LoginPage() {
 
   const onSubmit = async (formData: z.infer<typeof FormSchema>) => {
     setIsLoading(true)
-    const loginPromise = async () => {
+    try {
       const res = await loginUser(formData.username, formData.password)
 
       if (res.success) {
@@ -56,14 +57,14 @@ export default function LoginPage() {
         // Prime query cache from token to avoid race when redirecting
         setAuthFromToken()
 
-        // Navigate based on role
+        // Show success toast then navigate
+        toast.success(`Welcome back, ${formData.username}!`)
+
         if (res.isAdmin) {
           navigate('/admin')
         } else {
           navigate('/user')
         }
-
-        return `Welcome back, ${formData.username}!`
       } else {
         // Set backend error to form state
         form.setValue('password', '')
@@ -72,31 +73,49 @@ export default function LoginPage() {
             type: 'manual',
             message: 'Incorrect Property ID or Password',
           })
+          toast.error('Please check your credentials and try again')
         } else if (res.message === 'Invalid password') {
           form.setError('password', {
             type: 'manual',
             message: 'Incorrect Property ID or Password',
           })
+          toast.error('Please check your credentials and try again')
+        } else {
+          toast.error('Something went wrong. Please try again later.')
         }
-        throw new Error(res.message || 'Login failed')
       }
+    } catch {
+      // Network or unexpected errors
+      toast.error('Something went wrong. Please try again later.')
+    } finally {
+      setIsLoading(false)
     }
-
-    toast.promise(loginPromise(), {
-      loading: '🔐 Signing you in...',
-      success: (message) => message,
-      error: (err) =>
-        err.message === 'User not found' || err.message === 'Invalid password' ? 'Please check your credentials and try again' : 'Something went wrong. Please try again later.',
-    })
-    setIsLoading(false)
   }
 
   return (
     <main className="bg-background flex min-h-screen items-center justify-center" aria-label="Login page">
       <Card className="mx-auto w-full max-w-sm p-8 shadow-lg">
         <div className="mb-8 flex flex-col items-center">
-          <Link className="mb-4" to="/" aria-label="Back to home">
-            <div className="border-primary bg-accent rounded-lg border p-2">
+          <Link
+            className="mb-4"
+            to="/"
+            aria-label="Back to home"
+            onClick={(e) => {
+              // ensure touch taps trigger navigation reliably on mobile
+              e.preventDefault()
+              navigate('/')
+            }}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault()
+                navigate('/')
+              }
+            }}
+            role="link"
+            tabIndex={0}
+            style={{ touchAction: 'manipulation' }}
+          >
+            <div className="border-primary bg-accent relative z-20 rounded-lg border p-2">
               <MapPin size={30} />
             </div>
           </Link>
@@ -177,7 +196,7 @@ export default function LoginPage() {
                 aria-busy={isLoading}
                 aria-label="Login"
               >
-                {isLoading && <Loader2 className="animate-spin" size={18} />}
+                {isLoading && <Spinner />}
                 Login
               </Button>
               <Button onClick={() => navigate(-1)} className="w-full" variant="outline" type="button" aria-label="Back">

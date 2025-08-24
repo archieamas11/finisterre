@@ -24,7 +24,7 @@ export function NavUser({
   }
 }) {
   const { isMobile } = useSidebar()
-  const { performLogout, isPending } = useLogout('/')
+  const { performLogout, isPending } = useLogout()
 
   return (
     <SidebarMenu>

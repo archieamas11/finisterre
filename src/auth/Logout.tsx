@@ -1,31 +1,21 @@
-import React, { useEffect } from 'react'
-// toast removed: kept UX in hook implementation
-
 import Spinner from '@/components/ui/spinner'
 import { useLogout } from '@/hooks/useLogout'
 
-// The component version that automatically logs out when mounted
 const Logout: React.FC<{
-  redirectTo?: string
   showLoader?: boolean
   clearClientState?: () => void
-}> = ({ redirectTo = '/', showLoader = true, clearClientState }) => {
-  const [loading, setLoading] = React.useState(true)
-  const { performLogout } = useLogout(redirectTo)
+}> = ({ showLoader = true, clearClientState }) => {
+  const { performLogout, isPending } = useLogout()
 
   useEffect(() => {
-    const handleLogout = async () => {
-      try {
-        await performLogout(clearClientState)
-      } finally {
-        setLoading(false)
-      }
-    }
+    performLogout(clearClientState).catch((err) => {
+      console.error('Logout component error:', err)
+    })
+  }, [clearClientState, performLogout])
 
-    handleLogout()
-  }, [performLogout, clearClientState])
+  if (!showLoader) return null
 
-  if (!loading || !showLoader) return null
+  if (!isPending) return null
 
   return (
     <div className="flex h-screen w-full items-center justify-center" aria-live="polite" role="status">
