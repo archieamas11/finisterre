@@ -4,27 +4,27 @@
  * @returns String representation of years buried
  */
 export const calculateYearsBuried = (intermentDate: string): string => {
-  if (!intermentDate) return 'N/A'
+  if (!intermentDate) return "N/A";
 
   try {
-    const intermentYear = new Date(intermentDate).getFullYear()
-    const currentYear = new Date().getFullYear()
-    const yearsDiff = currentYear - intermentYear
+    const intermentYear = new Date(intermentDate).getFullYear();
+    const currentYear = new Date().getFullYear();
+    const yearsDiff = currentYear - intermentYear;
 
     if (yearsDiff < 0) {
-      return 'Less than a year'
+      return "Less than a year";
     } else if (yearsDiff === 0) {
-      return 'Less than a year'
+      return "Less than a year";
     } else if (yearsDiff === 1) {
-      return '1 year'
+      return "1 year";
     } else {
-      return `${yearsDiff} years`
+      return `${yearsDiff} years`;
     }
   } catch (error) {
-    console.error('Error calculating years buried:', error)
-    return 'N/A'
+    console.error("Error calculating years buried:", error);
+    return "N/A";
   }
-}
+};
 
 /**
  * Format date to readable string
@@ -32,16 +32,16 @@ export const calculateYearsBuried = (intermentDate: string): string => {
  * @returns Formatted date string
  */
 export const formatDate = (dateString: string): string => {
-  if (!dateString) return 'N/A'
+  if (!dateString) return "N/A";
 
   try {
-    return new Date(dateString).toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric'
-    })
+    return new Date(dateString).toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+    });
   } catch (error) {
-    console.error('Error formatting date:', error)
-    return dateString
+    console.error("Error formatting date:", error);
+    return dateString;
   }
-}
+};

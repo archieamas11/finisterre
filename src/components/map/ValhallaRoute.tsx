@@ -1,29 +1,29 @@
-import L from 'leaflet'
-import React from 'react'
-import { Polyline, Marker, useMap, Pane } from 'react-leaflet'
+import L from "leaflet";
+import React from "react";
+import { Polyline, Marker, useMap, Pane } from "react-leaflet";
 
-import { type ValhallaRouteResponse } from '@/api/valhalla.api'
-import { UserLocationMarker } from '@/components/map/UserLocationMarker'
-import { type UserLocation } from '@/hooks/useLocationTracking'
+import { type ValhallaRouteResponse } from "@/api/valhalla.api";
+import { UserLocationMarker } from "@/components/map/UserLocationMarker";
+import { type UserLocation } from "@/hooks/useLocationTracking";
 interface ValhallaRouteProps {
-  route: ValhallaRouteResponse | null
-  routeCoordinates: [number, number][]
+  route: ValhallaRouteResponse | null;
+  routeCoordinates: [number, number][];
   // 🎯 Dynamic coordinates showing remaining route during navigation
-  remainingCoordinates?: [number, number][]
-  isNavigating?: boolean
+  remainingCoordinates?: [number, number][];
+  isNavigating?: boolean;
   // 📍 Original coordinates (not snapped to roads)
-  originalStart?: [number, number]
-  originalEnd?: [number, number]
+  originalStart?: [number, number];
+  originalEnd?: [number, number];
   // 👤 User location to render as the start marker
-  userLocation?: UserLocation | null
+  userLocation?: UserLocation | null;
   // 🎨 Styling options
-  routeColor?: string
-  routeWeight?: number
-  routeOpacity?: number
+  routeColor?: string;
+  routeWeight?: number;
+  routeOpacity?: number;
   // 🎯 Show start/end markers
-  showMarkers?: boolean
+  showMarkers?: boolean;
   // 🔄 Auto-fit bounds to route
-  fitBounds?: boolean
+  fitBounds?: boolean;
 }
 
 /**
@@ -37,61 +37,58 @@ export function ValhallaRoute({
   originalStart,
   originalEnd,
   userLocation,
-  routeColor = '#3b82f6',
+  routeColor = "#3b82f6",
   routeWeight = 5,
   routeOpacity = 0.8,
   showMarkers = true,
-  fitBounds = true
+  fitBounds = true,
 }: ValhallaRouteProps) {
-  const map = useMap()
+  const map = useMap();
 
   // Animation state: number of points currently rendered (for snake animation)
-  const [visibleIndex, setVisibleIndex] = React.useState<number>(0)
-  const animationRef = React.useRef<number | null>(null)
-  const timeoutRef = React.useRef<number | null>(null)
+  const [visibleIndex, setVisibleIndex] = React.useState<number>(0);
+  const animationRef = React.useRef<number | null>(null);
+  const timeoutRef = React.useRef<number | null>(null);
 
   if (!route || routeCoordinates.length === 0) {
-    return null
+    return null;
   }
 
   // 🎯 Use original coordinates for markers if provided, otherwise fallback to route coordinates
   // Start point is represented by the UserLocationMarker when provided
-  const endPoint = originalEnd || routeCoordinates[routeCoordinates.length - 1]
+  const endPoint = originalEnd || routeCoordinates[routeCoordinates.length - 1];
 
   // 🗺️ For bounds fitting, include original coordinates if available
   const boundsCoordinates = React.useMemo(() => {
-    const coords = [...routeCoordinates]
+    const coords = [...routeCoordinates];
     if (originalStart && originalStart !== routeCoordinates[0]) {
-      coords.unshift(originalStart)
+      coords.unshift(originalStart);
     }
-    if (
-      originalEnd &&
-      originalEnd !== routeCoordinates[routeCoordinates.length - 1]
-    ) {
-      coords.push(originalEnd)
+    if (originalEnd && originalEnd !== routeCoordinates[routeCoordinates.length - 1]) {
+      coords.push(originalEnd);
     }
-    return coords
-  }, [routeCoordinates, originalStart, originalEnd, route])
+    return coords;
+  }, [routeCoordinates, originalStart, originalEnd, route]);
 
   // 🎯 Auto-fit map bounds to route (including original coordinates)
   React.useEffect(() => {
     if (fitBounds && boundsCoordinates.length > 0) {
       try {
-        const bounds = L.latLngBounds(boundsCoordinates)
-        map.fitBounds(bounds, { padding: [20, 20] })
+        const bounds = L.latLngBounds(boundsCoordinates);
+        map.fitBounds(bounds, { padding: [20, 20] });
       } catch {
         // 🤫 Silently ignore bounds errors to avoid noisy logs in UI
       }
     }
-  }, [boundsCoordinates, fitBounds, map])
+  }, [boundsCoordinates, fitBounds, map]);
 
   // 🎨 Dynamic styling based on navigation state
-  const polylineColor = isNavigating ? '#3b82f6' : routeColor
-  const polylineOpacity = isNavigating ? 0.9 : routeOpacity
+  const polylineColor = isNavigating ? "#3b82f6" : routeColor;
+  const polylineOpacity = isNavigating ? 0.9 : routeOpacity;
 
   // 🎯 End/Destination marker icon
   const endIcon = L.divIcon({
-    className: 'custom-destination-marker',
+    className: "custom-destination-marker",
     html: `
       <div role="img" aria-label="Destination" style="position:relative;display:inline-block;width:30px;height:50px;">
         <svg width="28" height="40" viewBox="0 0 24 34" xmlns="http://www.w3.org/2000/svg" focusable="false" aria-hidden="true">
@@ -106,104 +103,88 @@ export function ValhallaRoute({
         </svg>
       </div>
     `,
-    iconAnchor: [15, 30]
-  })
+    iconAnchor: [15, 30],
+  });
 
   // 🔗 Create complete polyline coordinates that connect original points to snapped route
   const completePolylineCoordinates = React.useMemo(() => {
     // 🎯 Use remaining coordinates during navigation for dynamic progress, otherwise use full route
-    const baseCoords =
-      isNavigating && remainingCoordinates && remainingCoordinates.length > 0
-        ? remainingCoordinates
-        : routeCoordinates
+    const baseCoords = isNavigating && remainingCoordinates && remainingCoordinates.length > 0 ? remainingCoordinates : routeCoordinates;
 
-    const coords = [...baseCoords]
+    const coords = [...baseCoords];
 
     // 🎯 If we have original coordinates, create connection lines
     // Only add original start when not navigating (to avoid connecting to old start position)
-    if (
-      originalStart &&
-      originalStart !== routeCoordinates[0] &&
-      !isNavigating
-    ) {
+    if (originalStart && originalStart !== routeCoordinates[0] && !isNavigating) {
       // Add original start at the beginning to connect to first route point
-      coords.unshift(originalStart)
+      coords.unshift(originalStart);
     }
 
     if (originalEnd && originalEnd !== coords[coords.length - 1]) {
       // Add original end at the end to connect from last route point
-      coords.push(originalEnd)
+      coords.push(originalEnd);
     }
 
-    return coords
-  }, [
-    routeCoordinates,
-    remainingCoordinates,
-    isNavigating,
-    originalStart,
-    originalEnd
-  ])
+    return coords;
+  }, [routeCoordinates, remainingCoordinates, isNavigating, originalStart, originalEnd]);
 
   // Build the array of coordinates to animate (lat,lng)
-  const animCoords = React.useMemo(
-    () => completePolylineCoordinates,
-    [completePolylineCoordinates]
-  )
+  const animCoords = React.useMemo(() => completePolylineCoordinates, [completePolylineCoordinates]);
 
   // Animation: progressively reveal the polyline and move a head marker
   React.useEffect(() => {
     // Reset when route changes or navigation toggles
-    setVisibleIndex(isNavigating ? 1 : animCoords.length)
+    setVisibleIndex(isNavigating ? 1 : animCoords.length);
 
     // If not navigating, no animation needed
     if (!isNavigating || animCoords.length === 0) {
-      return
+      return;
     }
 
-    let idx = 1
-    const speedPerPointMs = 30 // configurable speed (ms per point)
+    let idx = 1;
+    const speedPerPointMs = 30; // configurable speed (ms per point)
 
     function step() {
       if (idx >= animCoords.length) {
         // finish animation, place head at final point
-        setVisibleIndex(animCoords.length)
-        return
+        setVisibleIndex(animCoords.length);
+        return;
       }
 
-      setVisibleIndex(idx)
-      idx += 1
+      setVisibleIndex(idx);
+      idx += 1;
       // request animation frame for smoother movement between points
-      animationRef.current = window.setTimeout(step, speedPerPointMs)
+      animationRef.current = window.setTimeout(step, speedPerPointMs);
     }
 
     // small delay to let map settle before animating
     timeoutRef.current = window.setTimeout(() => {
-      step()
-    }, 120)
+      step();
+    }, 120);
 
     return () => {
       if (animationRef.current) {
-        clearTimeout(animationRef.current)
-        animationRef.current = null
+        clearTimeout(animationRef.current);
+        animationRef.current = null;
       }
       if (timeoutRef.current) {
-        clearTimeout(timeoutRef.current)
-        timeoutRef.current = null
+        clearTimeout(timeoutRef.current);
+        timeoutRef.current = null;
       }
-    }
-  }, [isNavigating, animCoords])
+    };
+  }, [isNavigating, animCoords]);
 
   return (
     <>
-      <Pane name='route-pane' style={{ zIndex: 600 }}>
+      <Pane name="route-pane" style={{ zIndex: 600 }}>
         {isNavigating && (
           <Polyline
             positions={completePolylineCoordinates}
             pathOptions={{
-              color: '#FFFF',
+              color: "#FFFF",
               opacity: 0.2,
-              lineCap: 'round',
-              lineJoin: 'round'
+              lineCap: "round",
+              lineJoin: "round",
             }}
           />
         )}
@@ -215,31 +196,17 @@ export function ValhallaRoute({
             color: polylineColor,
             weight: routeWeight,
             opacity: polylineOpacity,
-            lineCap: 'round',
-            lineJoin: 'round'
+            lineCap: "round",
+            lineJoin: "round",
           }}
         />
       </Pane>
       {/* 🎯 Start (user location) and end markers */}
-      {showMarkers && userLocation && (
-        <UserLocationMarker
-          userLocation={userLocation}
-          centerOnFirst={false}
-          showAccuracyCircle={isNavigating}
-          enableAnimation
-        />
-      )}
+      {showMarkers && userLocation && <UserLocationMarker userLocation={userLocation} centerOnFirst={false} showAccuracyCircle={isNavigating} enableAnimation />}
 
-      <Pane name='end-icon' style={{ zIndex: 1000 }}>
-        {showMarkers && endPoint && (
-          <Marker
-            position={endPoint}
-            icon={endIcon}
-            zIndexOffset={1000}
-            interactive={false}
-          ></Marker>
-        )}
+      <Pane name="end-icon" style={{ zIndex: 1000 }}>
+        {showMarkers && endPoint && <Marker position={endPoint} icon={endIcon} zIndexOffset={1000} interactive={false}></Marker>}
       </Pane>
     </>
-  )
+  );
 }

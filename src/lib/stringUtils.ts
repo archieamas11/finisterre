@@ -5,9 +5,6 @@
  * @returns The string with each word capitalized
  */
 export function capitalizeWords(str: string): string {
-  if (typeof str !== 'string') return ''
-  return str.replace(
-    /\b\w+/g,
-    (word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()
-  )
+  if (typeof str !== "string") return "";
+  return str.replace(/\b\w+/g, (word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase());
 }

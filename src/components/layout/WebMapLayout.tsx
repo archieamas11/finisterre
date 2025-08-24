@@ -3,16 +3,7 @@ import 'leaflet/dist/leaflet.css'
 import iconRetinaUrl from 'leaflet/dist/images/marker-icon-2x.png'
 import iconUrl from 'leaflet/dist/images/marker-icon.png'
 import shadowUrl from 'leaflet/dist/images/marker-shadow.png'
-import {
-  createContext,
-  useEffect,
-  useMemo,
-  useCallback,
-  memo,
-  useState,
-  Suspense,
-  lazy
-} from 'react'
+import { createContext, useEffect, useMemo, useCallback, memo, useState, Suspense, lazy } from 'react'
 import { MapContainer, TileLayer } from 'react-leaflet'
 import MarkerClusterGroup from 'react-leaflet-markercluster'
 import { toast } from 'sonner'
@@ -27,19 +18,15 @@ import { useValhalla } from '@/hooks/useValhalla'
 import WebMapNavs from '@/pages/webmap/WebMapNavs'
 import 'leaflet.markercluster/dist/MarkerCluster.css'
 
-import { convertPlotToMarker, type ConvertedMarker } from '@/types/map.types'
+import { convertPlotToMarker } from '@/types/map.types'
+import { ucwords } from '@/lib/format'
+import { groupMarkersByKey, getLabelFromGroupKey, createClusterIconFactory } from '@/lib/clusterUtils'
 
 const PlotMarkers = lazy(() => import('@/pages/webmap/PlotMarkers'))
-const ComfortRoomMarker = lazy(
-  () => import('@/pages/webmap/ComfortRoomMarkers')
-)
+const ComfortRoomMarker = lazy(() => import('@/pages/webmap/ComfortRoomMarkers'))
 const ParkingMarkers = lazy(() => import('@/pages/webmap/ParkingMarkers'))
-const CenterSerenityMarkers = lazy(
-  () => import('@/pages/webmap/CenterSerenityMarkers')
-)
-const MainEntranceMarkers = lazy(
-  () => import('@/pages/webmap/MainEntranceMarkers')
-)
+const CenterSerenityMarkers = lazy(() => import('@/pages/webmap/CenterSerenityMarkers'))
+const MainEntranceMarkers = lazy(() => import('@/pages/webmap/MainEntranceMarkers'))
 const ChapelMarkers = lazy(() => import('@/pages/webmap/ChapelMarkers'))
 const PlaygroundMarkers = lazy(() => import('@/pages/webmap/PlaygroundMarkers'))
 
@@ -49,7 +36,7 @@ const DefaultIcon = L.icon({
   shadowUrl,
   iconSize: [25, 41],
   iconAnchor: [12, 41],
-  popupAnchor: [1, -34]
+  popupAnchor: [1, -34],
 })
 L.Marker.prototype.options.icon = DefaultIcon
 
@@ -68,10 +55,7 @@ export const LocateContext = createContext<{
 
 export default function MapPage() {
   const { isLoading, data: plotsData } = usePlots()
-  const markers = useMemo(
-    () => plotsData?.map(convertPlotToMarker) || [],
-    [plotsData]
-  )
+  const markers = useMemo(() => plotsData?.map(convertPlotToMarker) || [], [plotsData])
 
   const {
     currentLocation,
@@ -79,10 +63,10 @@ export default function MapPage() {
     stopTracking,
     getCurrentLocation,
     isTracking,
-    error: locationError
+    error: locationError,
   } = useLocationTracking({
     enableHighAccuracy: true,
-    distanceFilter: 5
+    distanceFilter: 5,
   })
 
   const {
@@ -100,21 +84,20 @@ export default function MapPage() {
     totalDistance,
     totalTime,
     rerouteCount,
-    error: routingError
+    error: routingError,
   } = useValhalla({
     costingType: 'pedestrian',
     enableAutoReroute: true,
-    offRouteThreshold: 25
+    offRouteThreshold: 25,
   })
 
-  const [isNavigationInstructionsOpen, setIsNavigationInstructionsOpen] =
-    useState(false)
+  const [isNavigationInstructionsOpen, setIsNavigationInstructionsOpen] = useState(false)
   const [isDirectionLoading, setIsDirectionLoading] = useState(false)
   const [shouldCenterOnUser, setShouldCenterOnUser] = useState(false)
 
   const bounds: [[number, number], [number, number]] = [
     [10.247883800064669, 123.79691285546676],
-    [10.249302749341647, 123.7988598710129]
+    [10.249302749341647, 123.7988598710129],
   ]
 
   useEffect(() => {
@@ -168,11 +151,7 @@ export default function MapPage() {
           userLocation = await getCurrentLocation()
         }
 
-        if (
-          !userLocation ||
-          !userLocation.latitude ||
-          !userLocation.longitude
-        ) {
+        if (!userLocation || !userLocation.latitude || !userLocation.longitude) {
           throw new Error('Could not determine current location')
         }
 
@@ -180,9 +159,9 @@ export default function MapPage() {
         await startNavigation(
           {
             latitude: userLocation.latitude,
-            longitude: userLocation.longitude
+            longitude: userLocation.longitude,
           },
-          { latitude: toLatitude, longitude: toLongitude }
+          { latitude: toLatitude, longitude: toLongitude },
         )
 
         // Trigger map recentering or location update
@@ -201,25 +180,15 @@ export default function MapPage() {
         setIsDirectionLoading(false)
       }
     },
-    [
-      currentLocation,
-      getCurrentLocation,
-      isTracking,
-      startNavigation,
-      startTracking,
-      requestLocate
-    ]
+    [currentLocation, getCurrentLocation, isTracking, startNavigation, startTracking, requestLocate],
   )
 
   // Memoize the context value to prevent consumers from re-rendering unnecessarily.
-  const contextValue = useMemo(
-    () => ({ requestLocate, clearRoute }),
-    [requestLocate, clearRoute]
-  )
+  const contextValue = useMemo(() => ({ requestLocate, clearRoute }), [requestLocate, clearRoute])
 
   if (isLoading) {
     return (
-      <div className='flex h-screen w-full items-center justify-center'>
+      <div className="flex h-screen w-full items-center justify-center">
         <Spinner />
       </div>
     )
@@ -227,7 +196,7 @@ export default function MapPage() {
 
   return (
     <LocateContext.Provider value={contextValue}>
-      <div className='relative h-screen w-full'>
+      <div className="relative h-screen w-full">
         <WebMapNavs />
 
         <NavigationInstructions
@@ -243,36 +212,18 @@ export default function MapPage() {
         />
 
         {(locationError || routingError) && (
-          <div className='absolute top-4 right-4 z-[999] max-w-sm'>
-            <div className='rounded-md border border-red-200 bg-red-50 p-4'>
-              <p className='text-sm text-red-800'>
-                {locationError?.message || routingError || 'Unknown error'}
-              </p>
+          <div className="absolute top-4 right-4 z-[999] max-w-sm">
+            <div className="rounded-md border border-red-200 bg-red-50 p-4">
+              <p className="text-sm text-red-800">{locationError?.message || routingError || 'Unknown error'}</p>
             </div>
           </div>
         )}
 
-        <MapContainer
-          className='h-full w-full'
-          scrollWheelZoom={true}
-          zoomControl={false}
-          bounds={bounds}
-          maxZoom={25}
-          zoom={18}
-        >
-          <TileLayer
-            url='https://services.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}'
-            maxNativeZoom={18}
-            maxZoom={25}
-          />
+        <MapContainer className="h-full w-full" scrollWheelZoom={true} zoomControl={false} bounds={bounds} maxZoom={25} zoom={18}>
+          <TileLayer url="https://services.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}" maxNativeZoom={18} maxZoom={25} />
 
           {!(route && routeCoordinates.length > 0) && (
-            <UserLocationMarker
-              userLocation={currentLocation}
-              centerOnFirst={shouldCenterOnUser}
-              enableAnimation={true}
-              showAccuracyCircle={true}
-            />
+            <UserLocationMarker userLocation={currentLocation} centerOnFirst={shouldCenterOnUser} enableAnimation={true} showAccuracyCircle={true} />
           )}
 
           <Suspense fallback={null}>
@@ -292,113 +243,43 @@ export default function MapPage() {
             )}
 
             {!(route && routeCoordinates.length > 0) && (
-              <UserLocationMarker
-                userLocation={currentLocation}
-                centerOnFirst={shouldCenterOnUser}
-                enableAnimation={true}
-                showAccuracyCircle={true}
-              />
+              <UserLocationMarker userLocation={currentLocation} centerOnFirst={shouldCenterOnUser} enableAnimation={true} showAccuracyCircle={true} />
             )}
 
-            <MemoizedComfortRoomMarker
-              onDirectionClick={handleDirectionClick}
-              isDirectionLoading={isDirectionLoading}
-            />
-            <MemoizedParkingMarkers
-              onDirectionClick={handleDirectionClick}
-              isDirectionLoading={isDirectionLoading}
-            />
-            <MemoizedPlaygroundMarkers
-              onDirectionClick={handleDirectionClick}
-              isDirectionLoading={isDirectionLoading}
-            />
-            <MemoizedCenterSerenityMarkers
-              onDirectionClick={handleDirectionClick}
-              isDirectionLoading={isDirectionLoading}
-            />
-            <MemoizedMainEntranceMarkers
-              onDirectionClick={handleDirectionClick}
-              isDirectionLoading={isDirectionLoading}
-            />
-            <MemoizedChapelMarkers
-              onDirectionClick={handleDirectionClick}
-              isDirectionLoading={isDirectionLoading}
-            />
+            <MemoizedComfortRoomMarker onDirectionClick={handleDirectionClick} isDirectionLoading={isDirectionLoading} />
+            <MemoizedParkingMarkers onDirectionClick={handleDirectionClick} isDirectionLoading={isDirectionLoading} />
+            <MemoizedPlaygroundMarkers onDirectionClick={handleDirectionClick} isDirectionLoading={isDirectionLoading} />
+            <MemoizedCenterSerenityMarkers onDirectionClick={handleDirectionClick} isDirectionLoading={isDirectionLoading} />
+            <MemoizedMainEntranceMarkers onDirectionClick={handleDirectionClick} isDirectionLoading={isDirectionLoading} />
+            <MemoizedChapelMarkers onDirectionClick={handleDirectionClick} isDirectionLoading={isDirectionLoading} />
             {(() => {
-              const markersByGroup: Record<string, ConvertedMarker[]> = {}
-              markers.forEach((marker: ConvertedMarker) => {
-                const groupKey =
-                  marker.block && String(marker.block).trim() !== ''
-                    ? `block:${marker.block}`
-                    : `category:${marker.category || 'Uncategorized'}`
-                if (!markersByGroup[groupKey]) markersByGroup[groupKey] = []
-                markersByGroup[groupKey].push(marker)
-              })
-
-              const getLabel = (groupKey: string): string => {
-                if (groupKey.startsWith('block:')) {
-                  const block = groupKey.split('block:')[1]
-                  return `Block ${block}`
-                } else {
-                  const category = groupKey
-                    .split('category:')[1]
-                    .split(' ')
-                    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-                    .join(' ')
-                  return category
-                }
+              const markersByGroup = groupMarkersByKey(markers)
+              const labelLookup = (k: string) => {
+                const raw = getLabelFromGroupKey(k)
+                return k.startsWith('category:') ? ucwords(String(raw)) : String(raw)
               }
+              const createClusterIcon = createClusterIconFactory(labelLookup)
 
-              // Create cluster icon with formatted label
-              const createClusterIcon =
-                (groupKey: string) =>
-                (cluster: { getChildCount: () => number }) => {
-                  const count = cluster.getChildCount()
-                  const label = getLabel(groupKey)
-
-                  return L.divIcon({
-                    html: `
-                  <div class="relative flex flex-col items-center justify-center">
-                    <div
-                      class="border-2 border-white text-white bg-black/50 w-12 h-12 rounded-full flex items-center justify-center font-bold text-xs shadow-[0_4px_6px_-1px_rgba(0,0,0,0.1),0_2px_4px_-1px_rgba(0,0,0,0.06)]"
-                    >
-                      ${count}
-                    </div>
-                    <span class="shadow-md mt-1 text-xs font-bold text-gray-200">${label}</span>
-                  </div>
-                `,
-                    className: 'custom-marker-cluster',
-                    iconSize: [50, 60],
-                    iconAnchor: [25, 30]
-                  })
-                }
-
-              return Object.entries(markersByGroup).map(
-                ([groupKey, groupMarkers]) => (
-                  <MarkerClusterGroup
-                    key={`cluster-${groupKey}`}
-                    iconCreateFunction={createClusterIcon(groupKey)}
-                    chunkedLoading={true}
-                    maxClusterRadius={200}
-                    disableClusteringAtZoom={20}
-                    showCoverageOnHover={false}
-                    spiderfyOnMaxZoom={false}
-                    removeOutsideVisibleBounds={true}
-                    animate={false}
-                  >
-                    <MemoizedPlotMarkers
-                      markers={groupMarkers}
-                      isDirectionLoading={isDirectionLoading}
-                      onDirectionClick={handleDirectionClick}
-                      block={
-                        groupKey.startsWith('block:')
-                          ? groupKey.split('block:')[1]
-                          : ''
-                      }
-                    />
-                  </MarkerClusterGroup>
-                )
-              )
+              return Object.entries(markersByGroup).map(([groupKey, groupMarkers]) => (
+                <MarkerClusterGroup
+                  key={`cluster-${groupKey}`}
+                  iconCreateFunction={createClusterIcon(groupKey)}
+                  chunkedLoading={true}
+                  maxClusterRadius={200}
+                  disableClusteringAtZoom={20}
+                  showCoverageOnHover={false}
+                  spiderfyOnMaxZoom={false}
+                  removeOutsideVisibleBounds={true}
+                  animate={false}
+                >
+                  <MemoizedPlotMarkers
+                    markers={groupMarkers}
+                    isDirectionLoading={isDirectionLoading}
+                    onDirectionClick={handleDirectionClick}
+                    block={groupKey.startsWith('block:') ? groupKey.split('block:')[1] : ''}
+                  />
+                </MarkerClusterGroup>
+              ))
             })()}
           </Suspense>
         </MapContainer>

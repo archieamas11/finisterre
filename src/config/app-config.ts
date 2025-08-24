@@ -1,13 +1,13 @@
-import packageJson from '../../package.json'
+import packageJson from "../../package.json";
 
-const currentYear = new Date().getFullYear()
+const currentYear = new Date().getFullYear();
 
 export const APP_CONFIG = {
-  name: 'Finisterre Gardenz',
+  name: "Finisterre Gardenz",
   version: packageJson.version,
   copyright: `© ${currentYear}, Finisterre Gardenz.`,
   meta: {
-    description: 'Test',
-    title: 'Finisterre Gardenz Dashboard'
-  }
-}
+    description: "Test",
+    title: "Finisterre Gardenz Dashboard",
+  },
+};
