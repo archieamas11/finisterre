@@ -265,7 +265,7 @@ export default function AdminMapLayout() {
   }
 
   return (
-    <div className='h-full w-full rounded-lg border p-2'>
+    <div className='mt-4 h-full w-full rounded-lg border p-2'>
       <LocateContext.Provider
         value={{
           requestLocate,
