@@ -1,57 +1,56 @@
-import { z } from "zod";
-import { toast } from "sonner";
-import { MapPin } from "lucide-react";
-import { useForm } from "react-hook-form";
-import { useNavigate, Link } from "react-router-dom";
-import { zodResolver } from "@hookform/resolvers/zod";
+import { zodResolver } from '@hookform/resolvers/zod'
+import { MapPin } from 'lucide-react'
+import { useForm } from 'react-hook-form'
+import { toast } from 'sonner'
+import { z } from 'zod'
 
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { forgotPassword } from "@/api/auth.api";
-import { FormControl, FormMessage, FormField, FormLabel, FormItem, Form } from "@/components/ui/form";
-import { Card } from "@/components/ui/card";
+import { forgotPassword } from '@/api/auth.api'
+import { Button } from '@/components/ui/button'
+import { Card } from '@/components/ui/card'
+import { FormControl, FormMessage, FormField, FormLabel, FormItem, Form } from '@/components/ui/form'
+import { Input } from '@/components/ui/input'
 
 const FormSchema = z.object({
   username: z.string().min(3, {
-    message: "Property ID must be at least 3 characters.",
+    message: 'Property ID must be at least 3 characters.',
   }),
-});
+})
 
 export default function ForgotPassword() {
-  const navigate = useNavigate();
+  const navigate = useNavigate()
 
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
-      username: "",
+      username: '',
     },
-  });
+  })
 
   const onSubmit = async (data: z.infer<typeof FormSchema>) => {
     const verifyPromise = async () => {
-      console.log("Sending forgot password request:", data);
-      const res = await forgotPassword(data.username);
-      console.log("Forgot password response:", res);
+      console.log('Sending forgot password request:', data)
+      const res = await forgotPassword(data.username)
+      console.log('Forgot password response:', res)
 
       if (res.success) {
-        navigate("/reset-password", {
+        navigate('/reset-password', {
           state: { username: data.username },
-        });
-        return "Property ID verified successfully!";
+        })
+        return 'Property ID verified successfully!'
       } else {
-        throw new Error(res.message || "Failed to process request");
+        throw new Error(res.message || 'Failed to process request')
       }
-    };
+    }
 
     toast.promise(verifyPromise(), {
-      loading: "🔍 Verifying your Property ID...",
+      loading: '🔍 Verifying your Property ID...',
       success: (message) => message,
       error: (err) => ({
         message: err.message,
-        description: "Please check your Property ID and try again.",
+        description: 'Please check your Property ID and try again.',
       }),
-    });
-  };
+    })
+  }
 
   return (
     <div className="flex min-h-screen items-center justify-center">
@@ -93,5 +92,5 @@ export default function ForgotPassword() {
         </Form>
       </Card>
     </div>
-  );
+  )
 }

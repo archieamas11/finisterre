@@ -1,128 +1,79 @@
-import { z } from "zod";
-import React from "react";
-import { useForm } from "react-hook-form";
-import { ChevronsUpDown, Check } from "lucide-react";
-import { zodResolver } from "@hookform/resolvers/zod";
+import { zodResolver } from '@hookform/resolvers/zod'
+import React from 'react'
+import { useForm } from 'react-hook-form'
+import { z } from 'zod'
 
-import type { plots } from "@/types/map.types";
-import type { Customer } from "@/api/customer.api";
+import type { Customer } from '@/api/customer.api'
+import type { plots } from '@/types/map.types'
 
-import { cn } from "@/lib/utils";
-import { getPlots } from "@/api/plots.api";
-import { Button } from "@/components/ui/button";
-import { getCustomers } from "@/api/customer.api";
-import { PopoverTrigger, PopoverContent, Popover } from "@/components/ui/popover";
-import { FormControl, FormMessage, FormField, FormLabel, FormItem, Form } from "@/components/ui/form";
-import { SelectTrigger, SelectContent, SelectValue, SelectItem, Select } from "@/components/ui/select";
-import { DialogDescription, DialogContent, DialogHeader, DialogTitle, Dialog } from "@/components/ui/dialog";
-import { CommandInput, CommandEmpty, CommandGroup, CommandList, CommandItem, Command } from "@/components/ui/command";
+import { getCustomers } from '@/api/customer.api'
+import { getPlots } from '@/api/plots.api'
+import { Button } from '@/components/ui/button'
+import { DialogDescription, DialogContent, DialogHeader, DialogTitle, Dialog } from '@/components/ui/dialog'
+import { FormControl, FormMessage, FormField, FormLabel, FormItem, Form } from '@/components/ui/form'
+import { SelectTrigger, SelectContent, SelectValue, SelectItem, Select } from '@/components/ui/select'
+
+import CustomerSelect from './CustomerSelect'
 
 const LotSchema = z.object({
-  plot_id: z.string().min(1, "Plot ID is required"),
-  customer_id: z.string().min(1, "Customer is required"),
-});
+  plot_id: z.string().min(1, 'Plot ID is required'),
+  customer_id: z.string().min(1, 'Customer is required'),
+})
 export interface LotFormProps {
-  open: boolean;
-  mode: LotFormMode;
-  initialValues?: any;
-  isPending?: boolean;
-  onOpenChange: (open: boolean) => void;
-  onSubmit: (values: any) => Promise<void> | void;
+  open: boolean
+  mode: LotFormMode
+  initialValues?: z.infer<typeof LotSchema>
+  isPending?: boolean
+  onOpenChange: (open: boolean) => void
+  onSubmit: (values: z.infer<typeof LotSchema>) => Promise<void> | void
 }
 
-export type LotFormMode = "edit" | "add";
+export type LotFormMode = 'edit' | 'add'
 
 export default function LotForm({ mode, open, onSubmit, isPending, onOpenChange, initialValues }: LotFormProps) {
   /* ------------------ Form ------------------ */
   const form = useForm<z.infer<typeof LotSchema>>({
     resolver: zodResolver(LotSchema),
     defaultValues: initialValues || {
-      plot_id: "",
-      customer_id: "",
+      plot_id: '',
+      customer_id: '',
     },
-  });
+  })
 
   /* ------------------ Data ------------------ */
-  const [plots, setPlots] = React.useState<plots[]>([]);
-  const [customers, setCustomers] = React.useState<Customer[]>([]);
+  const [plots, setPlots] = React.useState<plots[]>([])
+  const [customers, setCustomers] = React.useState<Customer[]>([])
 
   React.useEffect(() => {
-    if (!open) return;
+    if (!open) return
     getPlots().then((res) => {
-      setPlots(Array.isArray(res) ? res : res?.plots || []);
-    });
+      setPlots(Array.isArray(res) ? res : res?.plots || [])
+    })
     getCustomers().then((res) => {
-      setCustomers(Array.isArray(res) ? res : res?.customers || []);
-    });
-  }, [open]);
+      setCustomers(Array.isArray(res) ? res : res?.customers || [])
+    })
+  }, [open])
 
   return (
     <Dialog onOpenChange={onOpenChange} open={open}>
       <DialogContent className="flex flex-col lg:max-w-[700px]">
         <DialogHeader>
-          <DialogTitle>{mode === "add" ? "Add New Lot Owner" : "Edit Lot Owner"}</DialogTitle>
-          <DialogDescription>{mode === "add" ? "Click save when you're done." : "Edit lot owner details and save."}</DialogDescription>
+          <DialogTitle>{mode === 'add' ? 'Add New Lot Owner' : 'Edit Lot Owner'}</DialogTitle>
+          <DialogDescription>{mode === 'add' ? "Click save when you're done." : 'Edit lot owner details and save.'}</DialogDescription>
         </DialogHeader>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
             <div className="grid grid-cols-2 gap-4">
               <FormField
-                render={({ field }) => {
-                  // Use local state for combobox open/value, not form state
-                  const [comboOpen, setComboOpen] = React.useState(false);
-                  const [comboValue, setComboValue] = React.useState<string>(String(field.value ?? ""));
-                  React.useEffect(() => {
-                    setComboValue(String(field.value ?? ""));
-                  }, [field.value]);
-                  const isEditMode = mode === "edit";
-
-                  const selectedCustomer = customers.find((c) => String(c.customer_id) === comboValue);
-
-                  return (
-                    <FormItem>
-                      <FormLabel>
-                        Customer<span className="text-red-500">*</span>
-                      </FormLabel>
-                      <Popover onOpenChange={isEditMode ? undefined : setComboOpen} open={comboOpen}>
-                        <PopoverTrigger asChild>
-                          <Button className="w-full justify-between" aria-expanded={comboOpen} disabled={isEditMode} variant="outline" role="combobox">
-                            {comboValue && selectedCustomer ? `${selectedCustomer.first_name} ${selectedCustomer.last_name} | ID: ${comboValue}` : "Select a customer"}
-                            <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-                          </Button>
-                        </PopoverTrigger>
-                        {/* Only render popover content if not edit mode */}
-                        {!isEditMode && (
-                          <PopoverContent className="w-full p-0 lg:w-80">
-                            <Command>
-                              <CommandInput placeholder="Search customer..." className="h-9" />
-                              <CommandList>
-                                <CommandEmpty>No customer found.</CommandEmpty>
-                                <CommandGroup>
-                                  {customers.map((c) => (
-                                    <CommandItem
-                                      onSelect={() => {
-                                        const id = String(c.customer_id);
-                                        field.onChange(id);
-                                        setComboValue(id);
-                                        setComboOpen(false);
-                                      }}
-                                      value={String(c.customer_id)}
-                                      key={String(c.customer_id)}
-                                    >
-                                      {c.first_name} {c.last_name} | ID: {String(c.customer_id)}
-                                      <Check className={cn("ml-auto", comboValue === String(c.customer_id) ? "opacity-100" : "opacity-0")} />
-                                    </CommandItem>
-                                  ))}
-                                </CommandGroup>
-                              </CommandList>
-                            </Command>
-                          </PopoverContent>
-                        )}
-                      </Popover>
-                      <FormMessage />
-                    </FormItem>
-                  );
-                }}
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>
+                      Customer<span className="text-red-500">*</span>
+                    </FormLabel>
+                    <CustomerSelect customers={customers} value={String(field.value ?? '')} onChange={(v) => field.onChange(v)} disabled={mode === 'edit'} />
+                    <FormMessage />
+                  </FormItem>
+                )}
                 control={form.control}
                 name="customer_id"
               />
@@ -136,7 +87,7 @@ export default function LotForm({ mode, open, onSubmit, isPending, onOpenChange,
                     <FormControl>
                       <Select
                         onValueChange={field.onChange}
-                        value={field.value ?? ""} // Always provide a string value
+                        value={field.value ?? ''} // Always provide a string value
                       >
                         <SelectTrigger className="w-full">
                           <SelectValue placeholder="Select plot ID" />
@@ -149,7 +100,7 @@ export default function LotForm({ mode, open, onSubmit, isPending, onOpenChange,
                             </SelectItem>
                           ) : (
                             plots
-                              .filter((plot) => plot.plot_id && plot.plot_id !== "")
+                              .filter((plot) => plot.plot_id && plot.plot_id !== '')
                               .map((plot) => (
                                 <SelectItem value={String(plot.plot_id)} key={plot.plot_id}>
                                   {String(plot.plot_id)}
@@ -168,12 +119,12 @@ export default function LotForm({ mode, open, onSubmit, isPending, onOpenChange,
             </div>
             <div className="flex justify-end pt-4">
               <Button disabled={isPending} type="submit">
-                {isPending ? (mode === "add" ? "Saving..." : "Updating...") : mode === "add" ? "Save" : "Update"}
+                {isPending ? (mode === 'add' ? 'Saving...' : 'Updating...') : mode === 'add' ? 'Save' : 'Update'}
               </Button>
             </div>
           </form>
         </Form>
       </DialogContent>
     </Dialog>
-  );
+  )
 }

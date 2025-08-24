@@ -1,30 +1,32 @@
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
-import { Button } from "@/components/ui/button";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { SerenityLawnSchema, type SerenityLawnFormData } from "@/schema/plot.scheme";
-import { useCreatePlotMutations } from "./useCreatePlotMutations";
+import { zodResolver } from '@hookform/resolvers/zod'
+import { useForm } from 'react-hook-form'
+
+import { Button } from '@/components/ui/button'
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import { SerenityLawnSchema, type SerenityLawnFormData } from '@/schema/plot.scheme'
+
+import { useCreatePlotMutations } from './useCreatePlotMutations'
 
 interface SerenityLawnStepProps {
-  coordinates: [number, number] | null;
-  onBack: () => void;
-  onCancel: () => void;
-  onDone: () => void;
+  coordinates: [number, number] | null
+  onBack: () => void
+  onCancel: () => void
+  onDone: () => void
 }
 
 export function SerenityLawnStep({ coordinates, onBack, onCancel, onDone }: SerenityLawnStepProps) {
   const form = useForm<SerenityLawnFormData>({
     resolver: zodResolver(SerenityLawnSchema),
     defaultValues: { category: undefined, block: undefined },
-  });
+  })
 
-  const { serenity, submitSerenity } = useCreatePlotMutations({ onDone });
+  const { serenity, submitSerenity } = useCreatePlotMutations({ onDone })
 
   function onSubmit(data: SerenityLawnFormData) {
-    if (!coordinates) return;
-    const coordinatesString = `${coordinates[1]}, ${coordinates[0]}`;
-    submitSerenity({ ...data, coordinates: coordinatesString });
+    if (!coordinates) return
+    const coordinatesString = `${coordinates[1]}, ${coordinates[0]}`
+    submitSerenity({ ...data, coordinates: coordinatesString })
   }
 
   return (
@@ -38,7 +40,7 @@ export function SerenityLawnStep({ coordinates, onBack, onCancel, onDone }: Sere
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Category</FormLabel>
-                  <Select onValueChange={field.onChange} value={field.value ?? ""}>
+                  <Select onValueChange={field.onChange} value={field.value ?? ''}>
                     <FormControl>
                       <SelectTrigger className="w-full">
                         <SelectValue placeholder="Select category" />
@@ -63,7 +65,7 @@ export function SerenityLawnStep({ coordinates, onBack, onCancel, onDone }: Sere
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Block</FormLabel>
-                  <Select onValueChange={field.onChange} value={field.value ?? ""}>
+                  <Select onValueChange={field.onChange} value={field.value ?? ''}>
                     <FormControl>
                       <SelectTrigger className="w-full">
                         <SelectValue placeholder="Select block" />
@@ -91,10 +93,10 @@ export function SerenityLawnStep({ coordinates, onBack, onCancel, onDone }: Sere
             Cancel
           </Button>
           <Button type="submit" disabled={serenity.isPending || !coordinates}>
-            {serenity.isPending ? "Saving..." : "Save Plot"}
+            {serenity.isPending ? 'Saving...' : 'Save Plot'}
           </Button>
         </div>
       </form>
     </Form>
-  );
+  )
 }

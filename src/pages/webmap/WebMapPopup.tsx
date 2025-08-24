@@ -1,20 +1,20 @@
-import { BiXCircle } from "react-icons/bi";
-import { FaDirections } from "react-icons/fa";
-import { BiCheckCircle } from "react-icons/bi";
-import { FaHourglassStart } from "react-icons/fa";
-import { MapPin, Award, Ruler, Info } from "lucide-react";
+import { motion } from 'framer-motion'
+import { MapPin, Award, Ruler, Info } from 'lucide-react'
+import { BiXCircle } from 'react-icons/bi'
+import { BiCheckCircle } from 'react-icons/bi'
+import { FaDirections } from 'react-icons/fa'
+import { FaHourglassStart } from 'react-icons/fa'
 
-import { Button } from "@/components/ui/button";
-import { type ConvertedMarker } from "@/types/map.types";
-import { CardDescription, CardTitle } from "@/components/ui/card";
-import { cn } from "@/lib/utils";
-import { motion } from "framer-motion";
-import { Spinner } from "@/components/ui/spinner";
+import { Button } from '@/components/ui/button'
+import { CardDescription, CardTitle } from '@/components/ui/card'
+import { Spinner } from '@/components/ui/spinner'
+import { cn } from '@/lib/utils'
+import { type ConvertedMarker } from '@/types/map.types'
 interface PlotLocationsProps {
-  marker: ConvertedMarker;
-  backgroundColor?: string;
-  onDirectionClick?: () => void;
-  isDirectionLoading?: boolean;
+  marker: ConvertedMarker
+  backgroundColor?: string
+  onDirectionClick?: () => void
+  isDirectionLoading?: boolean
 }
 
 export default function PlotLocations({ marker, backgroundColor, onDirectionClick, isDirectionLoading = false }: PlotLocationsProps) {
@@ -51,17 +51,17 @@ export default function PlotLocations({ marker, backgroundColor, onDirectionClic
         </div>
         <span
           className={cn(
-            "flex items-center gap-1 rounded-full px-1.5 py-0.5 text-xs font-semibold",
-            marker.plotStatus === "reserved" && "bg-yellow-100 text-yellow-800",
-            marker.plotStatus === "occupied" && "bg-red-100 text-red-800",
-            marker.plotStatus !== "reserved" && marker.plotStatus !== "occupied" && "bg-green-100 text-green-800",
+            'flex items-center gap-1 rounded-full px-1.5 py-0.5 text-xs font-semibold',
+            marker.plotStatus === 'reserved' && 'bg-yellow-100 text-yellow-800',
+            marker.plotStatus === 'occupied' && 'bg-red-100 text-red-800',
+            marker.plotStatus !== 'reserved' && marker.plotStatus !== 'occupied' && 'bg-green-100 text-green-800',
           )}
         >
           {/* 🟢 Show only the relevant icon for each plotStatus */}
-          {marker.plotStatus === "reserved" && <FaHourglassStart size={10} />}
-          {marker.plotStatus === "occupied" && <BiXCircle size={14} />}
-          {marker.plotStatus === "available" && <BiCheckCircle size={14} />}
-          {!["reserved", "occupied", "available"].includes(marker.plotStatus)}
+          {marker.plotStatus === 'reserved' && <FaHourglassStart size={10} />}
+          {marker.plotStatus === 'occupied' && <BiXCircle size={14} />}
+          {marker.plotStatus === 'available' && <BiCheckCircle size={14} />}
+          {!['reserved', 'occupied', 'available'].includes(marker.plotStatus)}
           <span className="text-xs capitalize">{marker.plotStatus}</span>
         </span>
       </div>
@@ -86,10 +86,10 @@ export default function PlotLocations({ marker, backgroundColor, onDirectionClic
           </div>
           <span
             className={cn(
-              "flex items-center justify-center rounded-full py-1 text-xs font-semibold",
-              marker.category === "bronze" && "bg-amber-200 text-amber-900 dark:bg-amber-900 dark:text-amber-200",
-              marker.category === "silver" && "bg-gray-200 text-gray-800 dark:bg-gray-700 dark:text-gray-200",
-              marker.category !== "bronze" && marker.category !== "silver" && "bg-yellow-200 text-yellow-900 dark:bg-yellow-900 dark:text-yellow-200",
+              'flex items-center justify-center rounded-full py-1 text-xs font-semibold',
+              marker.category === 'bronze' && 'bg-amber-200 text-amber-900 dark:bg-amber-900 dark:text-amber-200',
+              marker.category === 'silver' && 'bg-gray-200 text-gray-800 dark:bg-gray-700 dark:text-gray-200',
+              marker.category !== 'bronze' && marker.category !== 'silver' && 'bg-yellow-200 text-yellow-900 dark:bg-yellow-900 dark:text-yellow-200',
             )}
           >
             <Award className="inline" size={14} />
@@ -98,5 +98,5 @@ export default function PlotLocations({ marker, backgroundColor, onDirectionClic
         </div>
       </div>
     </motion.div>
-  );
+  )
 }

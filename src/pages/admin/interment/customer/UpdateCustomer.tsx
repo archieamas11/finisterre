@@ -1,64 +1,77 @@
-import type { Customer } from "@/api/customer.api";
-import { toast } from "sonner";
+import { toast } from 'sonner'
 
-import CustomerForm from "@/pages/admin/interment/customer/CustomerForm";
-import { useUpsertCustomer } from "@/hooks/customer-hooks/customer.hooks";
+import type { Customer } from '@/api/customer.api'
+import type { CustomerFormData } from '@/schema/customer.schema'
+
+import { useUpsertCustomer } from '@/hooks/customer-hooks/customer.hooks'
+import CustomerForm from '@/pages/admin/interment/customer/CustomerForm'
 
 interface EditCustomerDialogProps {
-  open: boolean;
-  customer: Customer;
-  onOpenChange: (open: boolean) => void;
+  open: boolean
+  customer: Customer
+  onOpenChange: (open: boolean) => void
 }
 
 export default function EditCustomerDialog({ open, customer, onOpenChange }: EditCustomerDialogProps) {
-  const { isPending, mutateAsync } = useUpsertCustomer();
+  const { isPending, mutateAsync } = useUpsertCustomer()
 
-  async function handleSubmit(values: any) {
+  async function handleSubmit(values: CustomerFormData) {
+    // map form values (CustomerFormData) back to API Customer shape
     const payload = {
-      gender: values.gender,
-      status: values.status,
+      gender: String(values.gender),
+      status: String(values.status),
       email: values.email.trim(),
       address: values.address.trim(),
       customer_id: customer.customer_id as string,
       last_name: values.last_name.trim(),
       first_name: values.first_name.trim(),
-      occupation: values.occupation.trim(),
-      citizenship: values.citizenship.trim(),
-      religion: values.religion?.trim() || "",
+      occupation: values.occupation?.trim() || null,
+      citizenship: values.citizenship?.trim() || null,
+      religion: values.religion?.trim() || null,
       contact_number: values.contact_number.trim(),
-      middle_name: values.middle_name?.trim() || "",
-      birth_date: values.birth_date ? new Date(values.birth_date).toISOString().slice(0, 10) : "",
-    };
-    await toast.promise(
+      middle_name: values.middle_name?.trim() || null,
+      birth_date: values.birth_date ? new Date(values.birth_date).toISOString().slice(0, 10) : null,
+    }
+
+    toast.promise(
       mutateAsync(payload).then((result) => {
-        if ((result as any)?.success) {
-          onOpenChange(false);
+        const typedResult = result as { success: boolean }
+        if (typedResult.success) {
+          onOpenChange(false)
         }
-        return result;
+        return typedResult
       }),
       {
-        loading: "Updating customer...",
-        success: "Customer updated successfully!",
-        error: "Failed to update customer.",
+        loading: 'Updating customer...',
+        success: 'Customer updated successfully!',
+        error: 'Failed to update customer.',
       },
-    );
+    )
   }
 
-  const initialValues = {
-    email: customer.email || "",
-    address: customer.address || "",
-    nickname: customer.nickname || "",
-    gender: (customer.gender as string) || "male",
-    religion: customer.religion || "",
-    last_name: customer.last_name || "",
-    status: (customer.status as string) || "single",
-    first_name: customer.first_name || "",
-    occupation: customer.occupation || "",
-    middle_name: customer.middle_name || "",
-    citizenship: customer.citizenship || "",
-    contact_number: customer.contact_number || "",
-    birth_date: customer.birth_date ? String(customer.birth_date).slice(0, 10) : "",
-  };
+  // map API Customer -> CustomerFormData expected by the form/schema
+  const initialValues: CustomerFormData = {
+    email: customer.email || '',
+    address: customer.address || '',
+    middle_name: customer.middle_name || undefined,
+    gender: (customer.gender === 'Female' ? 'Female' : 'Male') as CustomerFormData['gender'],
+    religion: customer.religion || '',
+    last_name: customer.last_name || '',
+    status: (customer.status === 'Married'
+      ? 'Married'
+      : customer.status === 'Widowed'
+        ? 'Widowed'
+        : customer.status === 'Divorced'
+          ? 'Divorced'
+          : customer.status === 'Separated'
+            ? 'Separated'
+            : 'Single') as CustomerFormData['status'],
+    first_name: customer.first_name || '',
+    occupation: customer.occupation || '',
+    citizenship: customer.citizenship || '',
+    contact_number: customer.contact_number || '',
+    birth_date: customer.birth_date ? String(customer.birth_date).slice(0, 10) : '',
+  }
 
-  return <CustomerForm initialValues={initialValues} onOpenChange={onOpenChange} onSubmit={handleSubmit} isPending={isPending} mode="edit" open={open} />;
+  return <CustomerForm initialValues={initialValues} onOpenChange={onOpenChange} onSubmit={handleSubmit} isPending={isPending} mode="edit" open={open} />
 }

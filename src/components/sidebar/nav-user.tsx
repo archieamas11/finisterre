@@ -1,9 +1,8 @@
-"use client";
+'use client'
 
-import { ChevronsUpDown, BadgeCheck, LogOut, Bell } from "lucide-react";
+import { ChevronsUpDown, BadgeCheck, LogOut, Bell } from 'lucide-react'
 
-import { AvatarFallback, AvatarImage, Avatar } from "@/components/ui/avatar";
-import { SidebarMenuButton, SidebarMenuItem, SidebarMenu, useSidebar } from "@/components/ui/sidebar";
+import { AvatarFallback, AvatarImage, Avatar } from '@/components/ui/avatar'
 import {
   DropdownMenuSeparator,
   DropdownMenuContent,
@@ -12,19 +11,20 @@ import {
   DropdownMenuLabel,
   DropdownMenuItem,
   DropdownMenu,
-} from "@/components/ui/dropdown-menu";
-import { useLogout } from "@/hooks/useLogout";
+} from '@/components/ui/dropdown-menu'
+import { SidebarMenuButton, SidebarMenuItem, SidebarMenu, useSidebar } from '@/components/ui/sidebar'
+import { useLogout } from '@/hooks/useLogout'
 export function NavUser({
   user,
 }: {
   user: {
-    avatar: string;
-    email: string;
-    name: string;
-  };
+    avatar: string
+    email: string
+    name: string
+  }
 }) {
-  const { isMobile } = useSidebar();
-  const { performLogout, isPending } = useLogout("/");
+  const { isMobile } = useSidebar()
+  const { performLogout, isPending } = useLogout('/')
 
   return (
     <SidebarMenu>
@@ -43,7 +43,7 @@ export function NavUser({
               <ChevronsUpDown className="ml-auto size-4" />
             </SidebarMenuButton>
           </DropdownMenuTrigger>
-          <DropdownMenuContent className="w-(--radix-dropdown-menu-trigger-width) min-w-56 rounded-lg" side={isMobile ? "bottom" : "right"} sideOffset={4} align="end">
+          <DropdownMenuContent className="w-(--radix-dropdown-menu-trigger-width) min-w-56 rounded-lg" side={isMobile ? 'bottom' : 'right'} sideOffset={4} align="end">
             <DropdownMenuLabel className="p-0 font-normal">
               <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
                 <Avatar className="h-8 w-8 rounded-lg">
@@ -76,5 +76,5 @@ export function NavUser({
         </DropdownMenu>
       </SidebarMenuItem>
     </SidebarMenu>
-  );
+  )
 }

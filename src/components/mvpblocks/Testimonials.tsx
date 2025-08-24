@@ -1,52 +1,53 @@
-"use client";
-import { cn } from "@/lib/utils";
-import { Star } from "lucide-react";
-import { Marquee } from "@/components/ui/marquee";
+'use client'
+import { Star } from 'lucide-react'
+
+import { Marquee } from '@/components/ui/marquee'
+import { cn } from '@/lib/utils'
 
 export function Highlight({ children, className }: { children: React.ReactNode; className?: string }) {
-  return <span className={cn("bg-primary/10 text-primary rounded-md px-1.5 py-0.5 font-semibold", className)}>{children}</span>;
+  return <span className={cn('rounded-md bg-black/30 px-1.5 py-0.5 font-semibold text-black/80', className)}>{children}</span>
 }
 
 export interface TestimonialCardProps {
-  name: string;
-  role: string;
-  img?: string;
-  description: React.ReactNode;
-  className?: string;
-  [key: string]: any;
+  name: string
+  role: string
+  img?: string
+  description: React.ReactNode
+  className?: string
+  [key: string]: unknown
 }
 
 export function TestimonialCard({ description, name, img, role, className, ...props }: TestimonialCardProps) {
   return (
     <figure
       className={cn(
-        "bg-card/50 relative h-full w-full transform-gpu cursor-pointer break-inside-avoid-page overflow-hidden rounded-xl border p-6 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-lg",
+        'relative h-full w-full transform-gpu cursor-pointer break-inside-avoid-page overflow-hidden rounded-xl border bg-white p-6 text-black shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-lg',
         className,
       )}
       {...props}
     >
       <div className="flex flex-row items-center gap-x-4">
-        <img width={48} height={48} src={img || ""} alt={name} className="ring-primary/20 size-12 rounded-full object-cover ring-1" />
+        <img width={48} height={48} src={img || ''} alt={name} className="size-12 rounded-full object-cover ring-1 ring-black" />
         <div className="flex flex-col">
-          <figcaption className="text-foreground text-sm font-medium">{name}</figcaption>
-          <p className="text-muted-foreground text-xs">{role}</p>
+          <figcaption className="text-sm font-medium text-black">{name}</figcaption>
+          <p className="text-xs text-gray-600">{role}</p>
         </div>
       </div>
-      <blockquote className="text-muted-foreground mt-4 text-base">{description}</blockquote>
+      <blockquote className="mt-4 text-base text-gray-800">{description}</blockquote>
       <div className="mt-4 flex items-center gap-1">
         {[...Array(5)].map((_, i) => (
           <Star key={i} className="h-4 w-4 fill-yellow-400 text-yellow-400" />
         ))}
       </div>
     </figure>
-  );
+  )
 }
 
 const testimonials = [
   {
-    name: "Maria Santos",
-    role: "Family Member for 3 Generations",
-    img: "https://randomuser.me/api/portraits/women/65.jpg",
+    name: 'Maria Santos',
+    role: 'Family Member for 3 Generations',
+    img: 'https://randomuser.me/api/portraits/women/65.jpg',
     description: (
       <p>
         Our family has trusted this memorial park for over fifty years. <Highlight>The lifetime memorial rights</Highlight> gave us peace of mind that our legacy would be
@@ -55,9 +56,9 @@ const testimonials = [
     ),
   },
   {
-    name: "Juan Dela Cruz",
-    role: "Funeral Director",
-    img: "https://randomuser.me/api/portraits/men/41.jpg",
+    name: 'Juan Dela Cruz',
+    role: 'Funeral Director',
+    img: 'https://randomuser.me/api/portraits/men/41.jpg',
     description: (
       <p>
         I've worked with many cemeteries, but this one stands apart. <Highlight>Their complete burial services</Highlight> and modern facilities make every arrangement dignified
@@ -66,9 +67,9 @@ const testimonials = [
     ),
   },
   {
-    name: "Luz Navarro",
-    role: "Community Historian",
-    img: "https://randomuser.me/api/portraits/women/72.jpg",
+    name: 'Luz Navarro',
+    role: 'Community Historian',
+    img: 'https://randomuser.me/api/portraits/women/72.jpg',
     description: (
       <p>
         The <Highlight>digital map feature</Highlight> has transformed how our community connects with its history. Finding relatives and learning about local heritage has never
@@ -77,9 +78,9 @@ const testimonials = [
     ),
   },
   {
-    name: "Jose Rizal",
-    role: "Veterans Association President",
-    img: "https://randomuser.me/api/portraits/men/58.jpg",
+    name: 'Jose Rizal',
+    role: 'Veterans Association President',
+    img: 'https://randomuser.me/api/portraits/men/58.jpg',
     description: (
       <p>
         The memorial sections for veterans are truly exceptional. <Highlight>The respect and honor shown</Highlight> to those who served is evident in every detail. Our members
@@ -88,9 +89,9 @@ const testimonials = [
     ),
   },
   {
-    name: "Carmen Reyes",
-    role: "Garden Club Member",
-    img: "https://randomuser.me/api/portraits/women/36.jpg",
+    name: 'Carmen Reyes',
+    role: 'Garden Club Member',
+    img: 'https://randomuser.me/api/portraits/women/36.jpg',
     description: (
       <p>
         As someone who appreciates horticulture, I'm continually impressed by the grounds. <Highlight>The serene gardens</Highlight> are thoughtfully designed and maintained with
@@ -99,9 +100,9 @@ const testimonials = [
     ),
   },
   {
-    name: "Antonio Luna",
-    role: "Estate Planning Attorney",
-    img: "https://randomuser.me/api/portraits/men/63.jpg",
+    name: 'Antonio Luna',
+    role: 'Estate Planning Attorney',
+    img: 'https://randomuser.me/api/portraits/men/63.jpg',
     description: (
       <p>
         I often recommend this memorial park to clients. <Highlight>The growing value of the property</Highlight> makes it a sound investment for future generations. It's rare to
@@ -109,31 +110,43 @@ const testimonials = [
       </p>
     ),
   },
-];
+]
 
 export default function Testimonials() {
   return (
-    <section className="relative overflow-hidden py-24 sm:py-32">
-      <div className="mx-auto w-full px-6 sm:w-[85%] md:w-[80%] lg:w-[75%] lg:px-8 xl:w-[80%]">
+    <section className="relative overflow-hidden sm:py-32">
+      <div className="mx-auto w-full sm:w-[85%] md:w-[80%] lg:w-[75%] xl:w-full">
         <div className="mx-auto max-w-3xl text-center">
-          <h2 className="text-foreground text-4xl font-bold tracking-tight sm:text-5xl">What Families Are Saying</h2>
-          <p className="text-muted-foreground mt-6 text-lg leading-8">Don't just take our word for it. Here's what families in our community are saying about our memorial park.</p>
+          <h2 className="text-4xl font-bold tracking-tight text-black sm:text-5xl">What Families Are Saying</h2>
+          <p className="mt-6 text-lg leading-8 text-gray-700">Don't just take our word for it. Here's what families in our community are saying about our memorial park.</p>
         </div>
         <div className="relative mt-16 [mask-image:linear-gradient(to_bottom,transparent,black_10%,black_90%,transparent)]">
           <Marquee pauseOnHover className="[--duration:60s]">
             {testimonials.map((testimonial) => (
-              <TestimonialCard key={testimonial.name} {...testimonial} className="w-80" />
+              <TestimonialCard key={testimonial.name} {...testimonial} className="w-80 bg-white/70" />
             ))}
           </Marquee>
           <Marquee reverse pauseOnHover className="[--duration:60s]">
             {testimonials.map((testimonial) => (
-              <TestimonialCard key={testimonial.name} {...testimonial} className="w-80" />
+              <TestimonialCard key={testimonial.name} {...testimonial} className="w-80 bg-white/70" />
             ))}
           </Marquee>
-          <div className="from-background via-background/80 pointer-events-none absolute inset-y-0 left-0 w-1/9 bg-gradient-to-r to-transparent"></div>
-          <div className="from-background via-background/80 pointer-events-none absolute inset-y-0 right-0 w-1/9 bg-gradient-to-l to-transparent"></div>
+          <div
+            aria-hidden="true"
+            className="pointer-events-none absolute inset-y-0 left-0 w-1/4 transform-gpu"
+            style={{
+              background: 'linear-gradient(90deg, rgba(247,234,255,0.95) 0%, rgba(247,234,255,0.65) 25%, rgba(247,234,255,0.0) 60%)',
+            }}
+          />
+          <div
+            aria-hidden="true"
+            className="pointer-events-none absolute inset-y-0 right-0 w-1/4 transform-gpu"
+            style={{
+              background: 'linear-gradient(270deg, rgba(253,226,234,0.95) 0%, rgba(253,226,234,0.65) 25%, rgba(253,226,234,0.0) 60%)',
+            }}
+          />
         </div>
       </div>
     </section>
-  );
+  )
 }

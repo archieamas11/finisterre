@@ -258,8 +258,6 @@ await rateLimiter.wait();
 
 ---
 
----
-
 ## 🛠️ Project Conventions
 
 - **Check `components.json`** before creating new UI components — use Shadcn generator.
@@ -267,3 +265,56 @@ await rateLimiter.wait();
 - **Verify `package.json`** scripts and dependencies before suggesting commands.
 - Use **absolute paths** for imports (e.g., `@/components/ui/button`).
 - Aim for **clean, modern UI** aligned with Tailwind's utility-first approach.
+
+----
+
+## ✅ **Never Cause Reflows: Short & Critical Rules**
+
+1. **Don't read layout in loops**  
+   ❌ Avoid: `el.offsetWidth`, `clientHeight`, etc. in rapid succession.  
+   ✅ Read once, then write.
+
+2. **Never mix read & write**  
+   ❌ Don't do:
+   ```js
+   el.offsetWidth;         // read → forces reflow
+   el.style.margin = '5px'; // write
+   el.offsetHeight;        // read → forces another reflow
+   ```
+   ✅ Read all first, then write.
+
+3. **Use `key={item.id}` — never `key={index}`**  
+   Prevents unnecessary DOM changes → fewer reflows.
+
+4. **Use `React.memo`, `useMemo`, `useCallback`**  
+   Stop unnecessary re-renders → less DOM churn.
+
+5. **Avoid inline styles for layout**  
+   ❌ `style={{ width: x }}` in lists → re-calc on every render.  
+   ✅ Use CSS classes or CSS variables.
+
+6. **Animate with `transform`, not `width`/`top`**  
+   `transform` and `opacity` don't cause reflow.  
+   `width`, `height`, `left` → **do cause reflow**.
+
+7. **Don't update state in loops**  
+   ❌ 100x `setState` → 100 re-renders → potential reflows.  
+   ✅ Compute final value, update once.
+
+8. **Defer non-urgent updates**  
+   ```js
+   startTransition(() => setSearch(input));
+   ```
+
+9. **Prefer CSS Grid/Flexbox over JS layout**  
+   Let browser handle layout — not your code.
+
+10. **Minimize direct DOM manipulation**  
+    Use React + className, not `ref.current.style`.
+
+---
+
+### 🎯 Golden Rule:  
+**Read → then write.  
+Update smart → not often.  
+Style with CSS → not JS.**

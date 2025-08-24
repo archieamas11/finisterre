@@ -1,61 +1,60 @@
-import { z } from "zod";
-import { toast } from "sonner";
-import { useState } from "react";
-import { MapPin } from "lucide-react";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useNavigate, useLocation, Link } from "react-router-dom";
+import { zodResolver } from '@hookform/resolvers/zod'
+import { MapPin } from 'lucide-react'
+import { useState } from 'react'
+import { useForm } from 'react-hook-form'
+import { toast } from 'sonner'
+import { z } from 'zod'
 
-import { Input } from "@/components/ui/input";
-import { resetPassword } from "@/api/auth.api";
-import { Button } from "@/components/ui/button";
-import { FormControl, FormMessage, FormField, FormLabel, FormItem, Form } from "@/components/ui/form";
-import { Card } from "@/components/ui/card";
+import { resetPassword } from '@/api/auth.api'
+import { Button } from '@/components/ui/button'
+import { Card } from '@/components/ui/card'
+import { FormControl, FormMessage, FormField, FormLabel, FormItem, Form } from '@/components/ui/form'
+import { Input } from '@/components/ui/input'
 
 const FormSchema = z
   .object({
-    confirm: z.string().min(2, { message: "Please confirm your password." }),
-    password: z.string().min(3, { message: "Password must be at least 3 characters." }),
+    confirm: z.string().min(2, { message: 'Please confirm your password.' }),
+    password: z.string().min(3, { message: 'Password must be at least 3 characters.' }),
   })
   .refine((data) => data.password === data.confirm, {
-    path: ["confirm"],
-    message: "Passwords do not match.",
-  });
+    path: ['confirm'],
+    message: 'Passwords do not match.',
+  })
 
-type FormSchemaType = z.infer<typeof FormSchema>;
+type FormSchemaType = z.infer<typeof FormSchema>
 
 export default function ResetPassword() {
-  const navigate = useNavigate();
-  const location = useLocation();
-  const initialUsername = location.state?.username || "";
-  const [username] = useState(initialUsername);
+  const navigate = useNavigate()
+  const location = useLocation()
+  const initialUsername = location.state?.username || ''
+  const [username] = useState(initialUsername)
 
   const form = useForm<FormSchemaType>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
-      confirm: "",
-      password: "",
+      confirm: '',
+      password: '',
     },
-  });
+  })
 
   const onSubmit = async (values: FormSchemaType) => {
     const resetPromise = async () => {
-      const response = await resetPassword(username.trim(), values.password);
+      const response = await resetPassword(username.trim(), values.password)
 
       if (response.success) {
-        navigate("/login");
-        return "Password reset successful!";
+        navigate('/login')
+        return 'Password reset successful!'
       } else {
-        throw new Error(response.message || "Reset failed");
+        throw new Error(response.message || 'Reset failed')
       }
-    };
+    }
 
     toast.promise(resetPromise(), {
-      loading: "🔐 Resetting your password...",
+      loading: '🔐 Resetting your password...',
       success: (message) => message,
-      error: (err) => err.message || "An unexpected error occurred.",
-    });
-  };
+      error: (err) => err.message || 'An unexpected error occurred.',
+    })
+  }
 
   return (
     <div className="flex min-h-screen items-center justify-center">
@@ -112,5 +111,5 @@ export default function ResetPassword() {
         </Form>
       </Card>
     </div>
-  );
+  )
 }

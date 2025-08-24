@@ -1,37 +1,40 @@
-import { Suspense } from "react";
-import { BrowserRouter, Navigate, Routes, Route } from "react-router-dom";
-import { RequireAdmin, RequireAuth, RequireUser } from "@/authRoutes";
-import { ErrorBoundary } from "react-error-boundary";
-import React from "react";
-import Spinner from "@/components/ui/spinner";
-import { Button } from "./components/ui/button";
+import { Suspense } from 'react'
+import React from 'react'
+import { ErrorBoundary } from 'react-error-boundary'
+
+import { RequireAdmin, RequireAuth, RequireUser } from '@/authRoutes'
+import Spinner from '@/components/ui/spinner'
+
+import { Button } from './components/ui/button'
 
 // Lazy imports
-const LoginPage = React.lazy(() => import("@/auth/LoginPage"));
-const Logout = React.lazy(() => import("@/auth/Logout"));
-const UserMap = React.lazy(() => import("@/pages/user/contents/Map"));
-const ResetPassword = React.lazy(() => import("@/auth/ResetPassword"));
-const ForgotPassword = React.lazy(() => import("@/auth/ForgotPassword"));
-const UnauthorizedPage = React.lazy(() => import("@/pages/UnauthorizedPage"));
-const UserProfile = React.lazy(() => import("@/pages/user/contents/Profile"));
-const UserServices = React.lazy(() => import("@/pages/user/contents/Services"));
-const Bookings = React.lazy(() => import("@/pages/admin/bookings/ManageBookings"));
-const AdminDashboard = React.lazy(() => import("@/pages/admin/home/AdminDashboard"));
-const UserDashboard = React.lazy(() => import("@/pages/user/contents/UserDashboard"));
-const AdminMapLayout = React.lazy(() => import("@/pages/admin/map4admin/AdminMapLayout"));
-const IntermentSetup = React.lazy(() => import("@/pages/admin/interment/IntermentSetup"));
-const AdminControlPanel = React.lazy(() => import("@/pages/admin/control/AdminControlPanel"));
-const AdminIntermentDeceasedPage = React.lazy(() => import("@/pages/admin/interment/deceased-records/deceased"));
-const AdminIntermentLotOwnersPage = React.lazy(() => import("@/pages/admin/interment/lot-owners/lot-owners"));
-const AdminIntermentCustomerPage = React.lazy(() => import("./pages/admin/interment/customer/CustomersLayout"));
+const LoginPage = React.lazy(() => import('@/auth/LoginPage'))
+const Logout = React.lazy(() => import('@/auth/Logout'))
+const UserMap = React.lazy(() => import('@/pages/user/contents/Map'))
+const ResetPassword = React.lazy(() => import('@/auth/ResetPassword'))
+const ForgotPassword = React.lazy(() => import('@/auth/ForgotPassword'))
+const UnauthorizedPage = React.lazy(() => import('@/pages/UnauthorizedPage'))
+const UserProfile = React.lazy(() => import('@/pages/user/contents/Profile'))
+const UserServices = React.lazy(() => import('@/pages/user/contents/Services'))
+const Bookings = React.lazy(() => import('@/pages/admin/bookings/ManageBookings'))
+const AdminDashboard = React.lazy(() => import('@/pages/admin/home/AdminDashboard'))
+const UserDashboard = React.lazy(() => import('@/pages/user/contents/UserDashboard'))
+const AdminMapLayout = React.lazy(() => import('@/pages/admin/map4admin/AdminMapLayout'))
+const IntermentSetup = React.lazy(() => import('@/pages/admin/interment/IntermentSetup'))
+const AdminControlPanel = React.lazy(() => import('@/pages/admin/control/AdminControlPanel'))
+const AdminIntermentDeceasedPage = React.lazy(() => import('@/pages/admin/interment/deceased-records/deceased'))
+const AdminIntermentLotOwnersPage = React.lazy(() => import('@/pages/admin/interment/lot-owners/lot-owners'))
+const AdminIntermentCustomerPage = React.lazy(() => import('./pages/admin/interment/customer/CustomersLayout'))
+import { BrowserRouter } from 'react-router-dom'
+
+import DashboardLayout from '@/components/layout/DashboardLayout'
+import LandingLayout from '@/components/layout/LandingLayout'
 // const MapPage = React.lazy(() => import("@/components/layout/WebMapLayout"));
-import MapPage from "@/components/layout/WebMapLayout";
-import DashboardLayout from "@/components/layout/DashboardLayout";
-import LandingLayout from "@/components/layout/LandingLayout";
+import MapPage from '@/components/layout/WebMapLayout'
 // Type for ErrorFallback props
 interface ErrorFallbackProps {
-  error: Error;
-  resetErrorBoundary: () => void;
+  error: Error
+  resetErrorBoundary: () => void
 }
 
 const ErrorFallback: React.FC<ErrorFallbackProps> = ({ error, resetErrorBoundary }) => (
@@ -42,7 +45,7 @@ const ErrorFallback: React.FC<ErrorFallbackProps> = ({ error, resetErrorBoundary
       <Button onClick={resetErrorBoundary}>Try again</Button>
     </div>
   </div>
-);
+)
 
 export default function App() {
   return (
@@ -110,5 +113,5 @@ export default function App() {
         </Suspense>
       </ErrorBoundary>
     </BrowserRouter>
-  );
+  )
 }

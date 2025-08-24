@@ -23,8 +23,8 @@
   transform-origin: center center;
 }
 
-@import "tailwindcss";
-@import "tw-animate-css";
+@import 'tailwindcss';
+@import 'tw-animate-css';
 
 @custom-variant dark (&:is(.dark *));
 
@@ -109,8 +109,8 @@
   --destructive: oklch(0.577 0.245 27.325);
   --border: oklch(0.922 0 0);
   --input: oklch(0.922 0 0);
-  --ring: oklch(0.4428 0.0405 259.3330);
-  --chart-1: oklch(0.4428 0.0405 259.3330);
+  --ring: oklch(0.4428 0.0405 259.333);
+  --chart-1: oklch(0.4428 0.0405 259.333);
   --chart-2: oklch(0.9052 0.1657 98.1108);
   --chart-3: oklch(0.7155 0 0);
   --chart-4: oklch(0.4386 0 0);
@@ -131,34 +131,34 @@
 }
 
 .dark {
-  --background: oklch(0.145 0 0);
+  --background: oklch(18.583% 0.01131 260.674);
   --foreground: oklch(0.985 0 0);
-  --card: oklch(0.205 0 0);
+  --card: oklch(22.6% 0.01678 264.177);
   --card-foreground: oklch(0.985 0 0);
-  --popover: oklch(0.205 0 0);
+  --popover: oklch(22.6% 0.01678 264.177);
   --popover-foreground: oklch(0.985 0 0);
-  --primary: oklch(0.922 0 0);
+  --primary: oklch(92.191% 0.0001 271.152);
   --primary-foreground: oklch(0.205 0 0);
-  --secondary: oklch(0.269 0 0);
+  --secondary: oklch(34.835% 0.03178 265.116);
   --secondary-foreground: oklch(0.985 0 0);
-  --muted: oklch(0.269 0 0);
+  --muted: oklch(34.835% 0.03178 265.116);
   --muted-foreground: oklch(0.708 0 0);
-  --accent: oklch(0.269 0 0);
+  --accent: oklch(34.835% 0.03178 265.116);
   --accent-foreground: oklch(0.985 0 0);
   --destructive: oklch(0.704 0.191 22.216);
   --border: oklch(1 0 0 / 10%);
   --input: oklch(1 0 0 / 15%);
-  --ring: oklch(0.4428 0.0405 259.3330);
-  --chart-1: oklch(0.4428 0.0405 259.3330);
+  --ring: oklch(0.4428 0.0405 259.333);
+  --chart-1: oklch(0.4428 0.0405 259.333);
   --chart-2: oklch(0.9052 0.1657 98.1108);
   --chart-3: oklch(0.7155 0 0);
   --chart-4: oklch(0.4386 0 0);
   --chart-5: oklch(0.9612 0 0);
-  --sidebar: oklch(0.205 0 0);
+  --sidebar: oklch(22.6% 0.01678 264.177);
   --sidebar-foreground: oklch(0.985 0 0);
-  --sidebar-primary: oklch(0.488 0.243 264.376);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.269 0 0);
+  --sidebar-primary: oklch(0.9052 0.1657 98.1108);
+  --sidebar-primary-foreground: oklch(0.21 0.034 264.665);
+  --sidebar-accent: oklch(34.835% 0.03178 265.116);
   --sidebar-accent-foreground: oklch(0.985 0 0);
   --sidebar-border: oklch(1 0 0 / 10%);
   --sidebar-ring: oklch(0.556 0 0);
@@ -185,16 +185,16 @@
   @apply bg-background/90 supports-[backdrop-filter]:bg-background/60 backdrop-blur;
 }
 
+.bg-floating-card {
+  @apply bg-background/90 supports-[backdrop-filter]:bg-background/60 backdrop-blur;
+}
+
 .leaflet-control-attribution.leaflet-control {
   display: none;
 }
 
 .leaflet-container a.leaflet-popup-close-button {
   display: none;
-}
-
-.bg-gradient-u {
-  background: radial-gradient(ellipse at bottom, theme("colors.background") 0%, theme("colors.background / 0.6") 50%, transparent 75%);
 }
 
 /* 🎯 Add marker mode styling */
@@ -244,4 +244,109 @@
 .animate-marquee-vertical {
   animation: marquee-vertical var(--duration, 40s) linear infinite;
   will-change: transform;
+}
+
+/* ⚡️ Optimized marker cluster styles to prevent reflows */
+
+.custom-marker-cluster {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+}
+
+.cluster-marker {
+  position: relative;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  /* ⚡️ Use transform for animations instead of changing layout properties */
+  transform-origin: center center;
+  transition: transform 0.2s ease-out;
+}
+
+.cluster-marker:hover {
+  transform: scale(1.1);
+}
+
+.cluster-inner {
+  width: 32px;
+  height: 32px;
+  background: rgba(0, 0, 0, 0.7);
+  border: 2px solid white;
+  border-radius: 50%;
+  color: white;
+  font-weight: bold;
+  font-size: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+  /* ⚡️ Use will-change to optimize for animations */
+  will-change: transform;
+}
+
+/* ⚡️ Optimized plot marker styles */
+.plot-marker-icon {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+}
+
+.marker-pop-in {
+  /* ⚡️ Use transform for smooth animations */
+  animation: markerPopIn 0.3s ease-out;
+  transform-origin: center bottom;
+}
+
+@keyframes markerPopIn {
+  0% {
+    transform: scale(0) translateY(100%);
+    opacity: 0;
+  }
+
+  50% {
+    transform: scale(1.2) translateY(0);
+    opacity: 0.8;
+  }
+
+  100% {
+    transform: scale(1) translateY(0);
+    opacity: 1;
+  }
+}
+
+/* ⚡️ Optimize leaflet popup performance */
+.leaflet-popup-content-wrapper {
+  /* ⚡️ Use GPU acceleration */
+  transform: translateZ(0);
+  will-change: transform;
+}
+
+/* ⚡️ Prevent layout thrashing in marker cluster groups */
+.marker-cluster-small,
+.marker-cluster-medium,
+.marker-cluster-large {
+  /* ⚡️ Use contain for layout optimization */
+  contain: layout style paint;
+}
+
+/* ⚡️ Performance optimizations for map container */
+.leaflet-container {
+  /* ⚡️ Enable hardware acceleration */
+  transform: translateZ(0);
+  backface-visibility: hidden;
+}
+
+/* ⚡️ Optimize marker cluster animations */
+.marker-cluster {
+  /* ⚡️ Composite on GPU */
+  transform: translateZ(0);
+  will-change: transform;
+}
+
+/* ⚡️ Prevent reflow during zoom transitions */
+.leaflet-zoom-animated {
+  transform: translateZ(0);
 }

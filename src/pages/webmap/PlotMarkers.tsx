@@ -1,54 +1,76 @@
-import L from "leaflet";
-import { memo, useState, useCallback } from "react";
-import { Marker, Popup } from "react-leaflet";
-import ColumbariumPopup from "@/pages/admin/map4admin/ColumbariumPopup";
-import PlotLocations from "@/pages/webmap/WebMapPopup";
-import type { ConvertedMarker } from "@/types/map.types";
-import { getCategoryBackgroundColor, getStatusColor } from "@/types/map.types";
-import { Drawer, DrawerContent, DrawerDescription, DrawerTitle } from "@/components/ui/drawer";
+import L from 'leaflet'
+import { memo, useState, useCallback } from 'react'
+import { Marker, Popup } from 'react-leaflet'
+
+import type { ConvertedMarker } from '@/types/map.types'
+
+import { Drawer, DrawerContent, DrawerDescription, DrawerTitle } from '@/components/ui/drawer'
+import { useIsMobile } from '@/hooks/use-mobile'
+import ColumbariumPopup from '@/pages/admin/map4admin/ColumbariumPopup'
+import PlotLocations from '@/pages/webmap/WebMapPopup'
+import { getCategoryBackgroundColor, getStatusColor } from '@/types/map.types'
 
 // Icon caching
-const iconCache: Record<string, L.DivIcon> = {};
+const iconCache: Record<string, L.DivIcon> = {}
 const getIcon = (color: string) => {
   if (!iconCache[color]) {
     iconCache[color] = L.divIcon({
-      className: "plot-marker-icon",
+      className: 'plot-marker-icon',
       iconSize: [15, 15],
-      html: `<div class="marker-pop-in" style="width: 15px; height: 15px; border-radius: 50%; background: ${color}; border: 2px solid #fff; box-shadow: 0 0 5px rgba(0,0,0,0.5);"></div>`,
-    });
+      html: `<div class="" style="width: 15px; height: 15px; border-radius: 50%; background: ${color}; border: 2px solid #fff; box-shadow: 0 0 5px rgba(0,0,0,0.5);"></div>`,
+    })
   }
-  return iconCache[color];
-};
-
-interface PlotMarkersProps {
-  markers: ConvertedMarker[];
-  isDirectionLoading: boolean;
-  onDirectionClick: (to: [number, number]) => void;
-  block: string;
+  return iconCache[color]
 }
 
-const PlotMarkers: React.FC<PlotMarkersProps> = memo(({ markers, isDirectionLoading, onDirectionClick, block: _block }) => {
-  const [openDrawerPlotId, setOpenDrawerPlotId] = useState<string | number | null>(null);
+interface PlotMarkersProps {
+  markers: ConvertedMarker[]
+  isDirectionLoading: boolean
+  onDirectionClick: (to: [number, number]) => void
+  block: string
+}
 
-  const handleMarkerClick = useCallback((plotId: string | number) => {
-    requestAnimationFrame(() => {
-      setOpenDrawerPlotId(plotId);
-    });
-  }, []);
+const PlotMarkers: React.FC<PlotMarkersProps> = memo(({ markers, isDirectionLoading, onDirectionClick }) => {
+  const [openDrawerPlotId, setOpenDrawerPlotId] = useState<string | number | null>(null)
+  const isSmallScreen = useIsMobile()
+  const handleMarkerClick = useCallback(
+    (plotId: string | number) => {
+      if (!isSmallScreen) return
+      requestAnimationFrame(() => {
+        setOpenDrawerPlotId(plotId)
+      })
+    },
+    [isSmallScreen],
+  )
 
   const handleDrawerOpenChange = useCallback((open: boolean, plotId: string | number) => {
     requestAnimationFrame(() => {
-      setOpenDrawerPlotId(open ? plotId : null);
-    });
-  }, []);
+      setOpenDrawerPlotId(open ? plotId : null)
+    })
+  }, [])
 
   return (
     <>
       {markers.map((marker) => {
-        const statusColor = getStatusColor(marker.plotStatus);
-        const circleIcon = getIcon(statusColor);
+        const statusColor = getStatusColor(marker.plotStatus)
+        const circleIcon = getIcon(statusColor)
 
-        const onDir = () => onDirectionClick(marker.position as [number, number]);
+        const onDir = () => {
+          // If directions are currently loading, do not close the drawer/popup yet
+          if (isDirectionLoading) {
+            onDirectionClick(marker.position as [number, number])
+            return
+          }
+          // Close any open drawer
+          setOpenDrawerPlotId(null)
+          try {
+            const popups = document.querySelectorAll('.leaflet-popup')
+            popups.forEach((p) => p.parentElement?.removeChild(p))
+          } catch {
+            // ignore DOM errors
+          }
+          onDirectionClick(marker.position as [number, number])
+        }
 
         return (
           <Marker
@@ -58,7 +80,7 @@ const PlotMarkers: React.FC<PlotMarkersProps> = memo(({ markers, isDirectionLoad
             eventHandlers={{
               click: () => {
                 if (marker.rows && marker.columns) {
-                  handleMarkerClick(marker.plot_id);
+                  handleMarkerClick(marker.plot_id)
                 }
               },
             }}
@@ -75,7 +97,7 @@ const PlotMarkers: React.FC<PlotMarkersProps> = memo(({ markers, isDirectionLoad
               </Popup>
             )}
 
-            {marker.rows && marker.columns ? (
+            {marker.rows && marker.columns && isSmallScreen ? (
               <Drawer open={openDrawerPlotId === marker.plot_id} onOpenChange={(open) => handleDrawerOpenChange(open, marker.plot_id)}>
                 <DrawerContent className="z-9999 max-h-[85vh] overflow-hidden rounded-t-xl md:hidden">
                   <DrawerTitle>
@@ -91,10 +113,10 @@ const PlotMarkers: React.FC<PlotMarkersProps> = memo(({ markers, isDirectionLoad
               </Drawer>
             ) : null}
           </Marker>
-        );
+        )
       })}
     </>
-  );
-});
+  )
+})
 
-export default PlotMarkers;
+export default PlotMarkers

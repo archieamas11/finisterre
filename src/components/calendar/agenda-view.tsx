@@ -1,34 +1,36 @@
-"use client";
+'use client'
 
-import { useMemo } from "react";
-import { RiCalendarEventLine } from "@remixicon/react";
-import { addDays, format, isToday } from "date-fns";
-import { AgendaDaysToShow } from "./constants";
-import type { CalendarEvent } from "./types";
-import { getAgendaEventsForDay } from "./utils";
-import { EventItem } from "./event-item";
+import { RiCalendarEventLine } from '@remixicon/react'
+import { addDays, format, isToday } from 'date-fns'
+import { useMemo } from 'react'
+
+import type { CalendarEvent } from './types'
+
+import { AgendaDaysToShow } from './constants'
+import { EventItem } from './event-item'
+import { getAgendaEventsForDay } from './utils'
 
 interface AgendaViewProps {
-  currentDate: Date;
-  events: CalendarEvent[];
-  onEventSelect: (event: CalendarEvent) => void;
+  currentDate: Date
+  events: CalendarEvent[]
+  onEventSelect: (event: CalendarEvent) => void
 }
 
 export function AgendaView({ currentDate, events, onEventSelect }: AgendaViewProps) {
   // Show events for the next days based on constant
   const days = useMemo(() => {
-    console.log("Agenda view updating with date:", currentDate.toISOString());
-    return Array.from({ length: AgendaDaysToShow }, (_, i) => addDays(new Date(currentDate), i));
-  }, [currentDate]);
+    console.log('Agenda view updating with date:', currentDate.toISOString())
+    return Array.from({ length: AgendaDaysToShow }, (_, i) => addDays(new Date(currentDate), i))
+  }, [currentDate])
 
   const handleEventClick = (event: CalendarEvent, e: React.MouseEvent) => {
-    e.stopPropagation();
-    console.log("Agenda view event clicked:", event);
-    onEventSelect(event);
-  };
+    e.stopPropagation()
+    console.log('Agenda view event clicked:', event)
+    onEventSelect(event)
+  }
 
   // Check if there are any days with events
-  const hasEvents = days.some((day) => getAgendaEventsForDay(events, day).length > 0);
+  const hasEvents = days.some((day) => getAgendaEventsForDay(events, day).length > 0)
 
   return (
     <div className="border-border/70 border-t px-4">
@@ -40,9 +42,9 @@ export function AgendaView({ currentDate, events, onEventSelect }: AgendaViewPro
         </div>
       ) : (
         days.map((day) => {
-          const dayEvents = getAgendaEventsForDay(events, day);
+          const dayEvents = getAgendaEventsForDay(events, day)
 
-          if (dayEvents.length === 0) return null;
+          if (dayEvents.length === 0) return null
 
           return (
             <div key={day.toString()} className="border-border/70 relative my-12 border-t">
@@ -50,7 +52,7 @@ export function AgendaView({ currentDate, events, onEventSelect }: AgendaViewPro
                 className="bg-background absolute -top-3 left-0 flex h-6 items-center pe-4 text-[10px] uppercase data-today:font-medium sm:pe-4 sm:text-xs"
                 data-today={isToday(day) || undefined}
               >
-                {format(day, "d MMM, EEEE")}
+                {format(day, 'd MMM, EEEE')}
               </span>
               <div className="mt-6 space-y-2">
                 {dayEvents.map((event) => (
@@ -58,9 +60,9 @@ export function AgendaView({ currentDate, events, onEventSelect }: AgendaViewPro
                 ))}
               </div>
             </div>
-          );
+          )
         })
       )}
     </div>
-  );
+  )
 }

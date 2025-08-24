@@ -1,12 +1,13 @@
-import { AiOutlineEnter } from "react-icons/ai";
-import { Card } from "@/components/ui/card";
-import { Edit, MousePointer } from "lucide-react";
-import { motion, AnimatePresence } from "framer-motion";
-import { cn } from "@/lib/utils";
+import { motion, AnimatePresence } from 'framer-motion'
+import { Edit, MousePointer } from 'lucide-react'
+import { AiOutlineEnter } from 'react-icons/ai'
+
+import { Card } from '@/components/ui/card'
+import { cn } from '@/lib/utils'
 
 interface EditMarkerInstructionsProps {
-  isVisible: boolean;
-  step: "select" | "edit";
+  isVisible: boolean
+  step: 'select' | 'edit'
 }
 
 export default function EditMarkerInstructions({ isVisible, step }: EditMarkerInstructionsProps) {
@@ -17,18 +18,18 @@ export default function EditMarkerInstructions({ isVisible, step }: EditMarkerIn
           initial={{ opacity: 0, x: -20 }}
           animate={{ opacity: 1, x: 0 }}
           exit={{ opacity: 0, x: -20 }}
-          transition={{ duration: 0.2, ease: "easeOut" }}
+          transition={{ duration: 0.2, ease: 'easeOut' }}
           className="absolute top-4 left-4 z-[1000] w-80"
           role="dialog"
           aria-modal="true"
-          aria-label={step === "select" ? "Select marker to edit" : "Edit marker position"}
+          aria-label={step === 'select' ? 'Select marker to edit' : 'Edit marker position'}
         >
           <Card
             className={cn(
-              "from-background to-muted/80 relative overflow-hidden rounded-xl border-0 bg-gradient-to-br",
-              "py-5 shadow-xl backdrop-blur-md",
-              "before:absolute before:inset-0 before:z-[-1] before:rounded-xl before:bg-gradient-to-r",
-              "before:from-primary/10 before:to-transparent",
+              'from-background to-muted/80 relative overflow-hidden rounded-xl border-0 bg-gradient-to-br',
+              'py-5 shadow-xl backdrop-blur-md',
+              'before:absolute before:inset-0 before:z-[-1] before:rounded-xl before:bg-gradient-to-r',
+              'before:from-primary/10 before:to-transparent',
             )}
           >
             <div className="relative flex flex-col items-center gap-4 px-6 text-center">
@@ -39,7 +40,7 @@ export default function EditMarkerInstructions({ isVisible, step }: EditMarkerIn
                 </div>
               </div>
 
-              {step === "select" ? (
+              {step === 'select' ? (
                 <>
                   <h3 className="text-base font-semibold">Edit Plot Marker</h3>
                   <p className="text-muted-foreground text-sm">Click on any marker to select it for editing.</p>
@@ -73,5 +74,5 @@ export default function EditMarkerInstructions({ isVisible, step }: EditMarkerIn
         </motion.div>
       )}
     </AnimatePresence>
-  );
+  )
 }

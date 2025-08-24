@@ -1,55 +1,58 @@
-import { useState } from "react";
-import type { MarkerType } from "@/types/map.types";
-import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { MarkerTypeStep } from "./add-plot-marker-dialog/MarkerTypeStep";
-import { SerenityLawnStep } from "./add-plot-marker-dialog/SerenityLawnStep";
-import { MemorialChambersStep } from "./add-plot-marker-dialog/MemorialChambersStep";
-import { ColumbariumStep } from "./add-plot-marker-dialog/ColumbariumStep";
+import { useState } from 'react'
+
+import type { MarkerType } from '@/types/map.types'
+
+import { Button } from '@/components/ui/button'
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog'
+
+import { ColumbariumStep } from './add-plot-marker-dialog/ColumbariumStep'
+import { MarkerTypeStep } from './add-plot-marker-dialog/MarkerTypeStep'
+import { MemorialChambersStep } from './add-plot-marker-dialog/MemorialChambersStep'
+import { SerenityLawnStep } from './add-plot-marker-dialog/SerenityLawnStep'
 
 interface AddPlotMarkerDialogProps {
-  open: boolean;
-  onOpenChange: (open: boolean) => void;
-  coordinates: [number, number] | null;
+  open: boolean
+  onOpenChange: (open: boolean) => void
+  coordinates: [number, number] | null
   // Called when a plot is successfully created and we should resume add mode
-  onDoneAdd?: () => void;
+  onDoneAdd?: () => void
   // Called when user cancels adding; should end the add session
-  onCancelAdd?: () => void;
+  onCancelAdd?: () => void
 }
 
 export default function AddPlotMarkerDialog({ open, onOpenChange, coordinates, onDoneAdd, onCancelAdd }: AddPlotMarkerDialogProps) {
-  const [selectedMarkerType, setSelectedMarkerType] = useState<MarkerType | null>(null);
+  const [selectedMarkerType, setSelectedMarkerType] = useState<MarkerType | null>(null)
   // 🧭 Inner dialog controls the second step (type-specific form)
-  const [innerOpen, setInnerOpen] = useState(false);
+  const [innerOpen, setInnerOpen] = useState(false)
 
   // 🧹 Reset all forms
   const resetAllForms = () => {
-    setSelectedMarkerType(null);
-    setInnerOpen(false);
-  };
+    setSelectedMarkerType(null)
+    setInnerOpen(false)
+  }
 
   // 🎯 Handle marker type selection and move to next step
   const onMarkerTypeSelect = (type: MarkerType) => {
-    setSelectedMarkerType(type);
-    setInnerOpen(true);
-  };
+    setSelectedMarkerType(type)
+    setInnerOpen(true)
+  }
 
   // 🚫 Handle cancel - clear forms and close
   const onCancel = () => {
-    resetAllForms();
+    resetAllForms()
     // 🔔 Notify parent that the add session was explicitly cancelled
-    onCancelAdd?.();
-    onOpenChange(false);
-  };
+    onCancelAdd?.()
+    onOpenChange(false)
+  }
 
   // 🚫 Handle dialog close - reset forms and state
   const onDialogOpenChange = (nextOpen: boolean) => {
-    if (nextOpen === open) return;
+    if (nextOpen === open) return
     if (!nextOpen) {
-      resetAllForms();
+      resetAllForms()
     }
-    onOpenChange(nextOpen);
-  };
+    onOpenChange(nextOpen)
+  }
 
   return (
     <>
@@ -69,49 +72,49 @@ export default function AddPlotMarkerDialog({ open, onOpenChange, coordinates, o
         <DialogContent>
           <DialogHeader>
             <DialogTitle>
-              {selectedMarkerType === "Serenity Lawn" && "Add Serenity Lawn Plot"}
-              {selectedMarkerType === "Memorial Chambers" && "Add Memorial Chambers"}
-              {selectedMarkerType === "Columbarium" && "Add Columbarium"}
-              {!selectedMarkerType && "Select Marker Type First"}
+              {selectedMarkerType === 'Serenity Lawn' && 'Add Serenity Lawn Plot'}
+              {selectedMarkerType === 'Memorial Chambers' && 'Add Memorial Chambers'}
+              {selectedMarkerType === 'Columbarium' && 'Add Columbarium'}
+              {!selectedMarkerType && 'Select Marker Type First'}
             </DialogTitle>
-            <DialogDescription>{selectedMarkerType ? "Provide the required details then save the plot." : "Go back and choose a marker type to proceed."}</DialogDescription>
+            <DialogDescription>{selectedMarkerType ? 'Provide the required details then save the plot.' : 'Go back and choose a marker type to proceed.'}</DialogDescription>
           </DialogHeader>
-          {selectedMarkerType === "Serenity Lawn" && (
+          {selectedMarkerType === 'Serenity Lawn' && (
             <SerenityLawnStep
               coordinates={coordinates}
               onBack={() => setInnerOpen(false)}
               onCancel={onCancel}
               onDone={() => {
-                resetAllForms();
+                resetAllForms()
                 // ✅ Inform parent to resume add mode after successful save
-                onDoneAdd?.();
-                onOpenChange(false);
+                onDoneAdd?.()
+                onOpenChange(false)
               }}
             />
           )}
 
-          {selectedMarkerType === "Memorial Chambers" && (
+          {selectedMarkerType === 'Memorial Chambers' && (
             <MemorialChambersStep
               coordinates={coordinates}
               onBack={() => setInnerOpen(false)}
               onCancel={onCancel}
               onDone={() => {
-                resetAllForms();
-                onDoneAdd?.();
-                onOpenChange(false);
+                resetAllForms()
+                onDoneAdd?.()
+                onOpenChange(false)
               }}
             />
           )}
 
-          {selectedMarkerType === "Columbarium" && (
+          {selectedMarkerType === 'Columbarium' && (
             <ColumbariumStep
               coordinates={coordinates}
               onBack={() => setInnerOpen(false)}
               onCancel={onCancel}
               onDone={() => {
-                resetAllForms();
-                onDoneAdd?.();
-                onOpenChange(false);
+                resetAllForms()
+                onDoneAdd?.()
+                onOpenChange(false)
               }}
             />
           )}
@@ -132,5 +135,5 @@ export default function AddPlotMarkerDialog({ open, onOpenChange, coordinates, o
         </DialogContent>
       </Dialog>
     </>
-  );
+  )
 }

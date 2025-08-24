@@ -1,13 +1,13 @@
-import React from "react";
-import { Pie, PieChart, Cell } from "recharts";
+import { PrinterIcon } from 'lucide-react'
+import React from 'react'
+import { Pie, PieChart, Cell } from 'recharts'
 
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { type ChartConfig, ChartContainer, ChartStyle, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Button } from "@/components/ui/button";
-import { PrinterIcon } from "lucide-react";
+import { Button } from '@/components/ui/button'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { type ChartConfig, ChartContainer, ChartStyle, ChartTooltip, ChartTooltipContent } from '@/components/ui/chart'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 
-export const description = "Plot status distribution per category";
+export const description = 'Plot status distribution per category'
 
 // Mock data - keep for now. Replace with API integration when available.
 const plotData = {
@@ -20,81 +20,79 @@ const plotData = {
   },
   columbarium: { Available: 180, Occupied: 260, Reserved: 40 },
   memorial: { Available: 60, Occupied: 200, Reserved: 20 },
-};
+}
 
-// Softer, modern semantic palette (accessible contrast)
 const COLORS: Record<string, string> = {
-  Available: "#047857",
-  Occupied: "#b91c1c",
-  Reserved: "#fbbf24",
-};
+  Available: '#047857',
+  Occupied: '#b91c1c',
+  Reserved: '#fbbf24',
+}
 
 const chartConfig = {
-  Available: { label: "Available" },
-  Occupied: { label: "Occupied" },
-  Reserved: { label: "Reserved" },
-} satisfies ChartConfig;
+  Available: { label: 'Available' },
+  Occupied: { label: 'Occupied' },
+  Reserved: { label: 'Reserved' },
+} satisfies ChartConfig
 
 function toPieArray(obj: Record<string, number>) {
-  return Object.entries(obj).map(([name, value]) => ({ name, value }));
+  return Object.entries(obj).map(([name, value]) => ({ name, value }))
 }
 
 function PrintButton({ onClick }: { onClick: () => void }) {
   return (
-    <Button type="button" variant="secondary" onClick={onClick} aria-label="Print chart" size="icon" className="text-muted-foreground hover:text-foreground ml-2">
+    <Button type="button" variant="outline" onClick={onClick} aria-label="Print chart" size="icon" className="text-muted-foreground hover:text-foreground ml-2">
       <PrinterIcon />
     </Button>
-  );
+  )
 }
 
 export function ChartPieInteractive() {
-  const id = "plots-pie-grid";
-  const [serenityBlock, setSerenityBlock] = React.useState<string>("all");
+  const id = 'plots-pie-grid'
+  const [serenityBlock, setSerenityBlock] = React.useState<string>('all')
 
-  const serenityData = React.useMemo(() => toPieArray(plotData.serenity[serenityBlock as keyof typeof plotData.serenity]), [serenityBlock]);
-  const columbariumData = React.useMemo(() => toPieArray(plotData.columbarium), []);
-  const memorialData = React.useMemo(() => toPieArray(plotData.memorial), []);
+  const serenityData = React.useMemo(() => toPieArray(plotData.serenity[serenityBlock as keyof typeof plotData.serenity]), [serenityBlock])
+  const columbariumData = React.useMemo(() => toPieArray(plotData.columbarium), [])
+  const memorialData = React.useMemo(() => toPieArray(plotData.memorial), [])
 
-  const serenityTotal = serenityData.reduce((s, d) => s + d.value, 0);
-  const columbariumTotal = columbariumData.reduce((s, d) => s + d.value, 0);
-  const memorialTotal = memorialData.reduce((s, d) => s + d.value, 0);
+  const serenityTotal = serenityData.reduce((s, d) => s + d.value, 0)
+  const columbariumTotal = columbariumData.reduce((s, d) => s + d.value, 0)
+  const memorialTotal = memorialData.reduce((s, d) => s + d.value, 0)
 
   // Reusable legend component for each card
   const Legend = ({ data }: { data: { name: string; value: number }[] }) => (
     <div className="mt-3 flex flex-wrap items-center gap-3" aria-hidden>
       {data.map((d) => (
         <div key={d.name} className="flex items-center gap-2">
-          <span className="inline-block h-3 w-3 rounded" style={{ backgroundColor: COLORS[d.name] ?? "var(--color-2)" }} />
+          <span className="inline-block h-3 w-3 rounded" style={{ backgroundColor: COLORS[d.name] ?? 'var(--color-2)' }} />
           <span className="text-muted-foreground text-sm">{d.name}</span>
         </div>
       ))}
     </div>
-  );
+  )
 
   const renderPieCard = (title: string, desc: string, data: { name: string; value: number }[], total: number, extra?: React.ReactNode) => {
-    const chartId = `${id}-${title.replace(/\s+/g, "-").toLowerCase()}`;
+    const chartId = `${id}-${title.replace(/\s+/g, '-').toLowerCase()}`
 
     const handlePrint = () => {
       try {
-        const selector = `[data-chart="${chartId}"]`;
-        const card = document.querySelector(selector) as HTMLElement | null;
-        if (!card) return;
+        const selector = `[data-chart="${chartId}"]`
+        const card = document.querySelector(selector) as HTMLElement | null
+        if (!card) return
 
-        const chartContainer = card.querySelector(".chart-container, svg, .recharts-surface") as HTMLElement | null;
-        const contentToPrint = chartContainer ? chartContainer.outerHTML : card.innerHTML;
+        const chartContainer = card.querySelector('.chart-container, svg, .recharts-surface') as HTMLElement | null
+        const contentToPrint = chartContainer ? chartContainer.outerHTML : card.innerHTML
 
-        const newWindow = window.open("", "_blank", "noopener,noreferrer,width=900,height=700");
-        if (!newWindow) return;
+        const newWindow = window.open('', '_blank', 'noopener,noreferrer,width=900,height=700')
+        if (!newWindow) return
 
-        const html = `<!doctype html><html><head><meta charset="utf-8"/><title>${title} - Print</title><style>body{font-family: Inter, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;margin:0;padding:20px;display:flex;align-items:center;justify-content:center}svg{max-width:95vw;max-height:90vh}</style></head><body><div>${contentToPrint}</div><script>window.onload=function(){setTimeout(()=>{window.print();window.close()},200)}</script></body></html>`;
-        newWindow.document.open();
-        newWindow.document.write(html);
-        newWindow.document.close();
+        const html = `<!doctype html><html><head><meta charset="utf-8"/><title>${title} - Print</title><style>body{font-family: Inter, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;margin:0;padding:20px;display:flex;align-items:center;justify-content:center}svg{max-width:95vw;max-height:90vh}</style></head><body><div>${contentToPrint}</div><script>window.onload=function(){setTimeout(()=>{window.print();window.close()},200)}</script></body></html>`
+        newWindow.document.open()
+        newWindow.document.write(html)
+        newWindow.document.close()
       } catch (err) {
-        // eslint-disable-next-line no-console
-        console.error(err);
+        console.error(err)
       }
-    };
+    }
 
     return (
       <Card key={chartId} data-chart={chartId} className="flex flex-col shadow-sm">
@@ -119,7 +117,7 @@ export function ChartPieInteractive() {
                 <ChartTooltip cursor={false} content={<ChartTooltipContent hideLabel />} />
                 <Pie data={data} dataKey="value" nameKey="name" innerRadius={56} outerRadius={86} strokeWidth={2} paddingAngle={4}>
                   {data.map((entry) => (
-                    <Cell key={entry.name} fill={COLORS[entry.name] ?? "var(--color-2)"} stroke="#fff" strokeWidth={1.5} />
+                    <Cell key={entry.name} fill={COLORS[entry.name] ?? 'var(--color-2)'} stroke="#fff" strokeWidth={1.5} />
                   ))}
                 </Pie>
               </PieChart>
@@ -136,13 +134,13 @@ export function ChartPieInteractive() {
           <Legend data={data} />
         </CardContent>
       </Card>
-    );
-  };
+    )
+  }
 
   return (
     <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
       {renderPieCard(
-        "Serenity Lawn",
+        'Serenity Lawn',
         `Block: ${serenityBlock.toUpperCase()}`,
         serenityData,
         serenityTotal,
@@ -160,9 +158,9 @@ export function ChartPieInteractive() {
         </Select>,
       )}
 
-      {renderPieCard("Columbarium", "Niches distribution", columbariumData, columbariumTotal)}
+      {renderPieCard('Columbarium', 'Niches distribution', columbariumData, columbariumTotal)}
 
-      {renderPieCard("Memorial Chambers", "Chambers distribution", memorialData, memorialTotal)}
+      {renderPieCard('Memorial Chambers', 'Chambers distribution', memorialData, memorialTotal)}
     </div>
-  );
+  )
 }

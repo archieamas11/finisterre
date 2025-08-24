@@ -1,69 +1,48 @@
-"use client";
+'use client'
 
-import type { ColumnDef } from "@tanstack/react-table";
-import React from "react";
-import { MoreHorizontal, Archive } from "lucide-react";
-import type { DeceasedRecords } from "@/types/interment.types";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Checkbox } from "@/components/ui/checkbox";
-import { capitalizeWords } from "@/lib/stringUtils";
-import { DropdownMenuSeparator, DropdownMenuContent, DropdownMenuTrigger, DropdownMenuLabel, DropdownMenuItem, DropdownMenu } from "@/components/ui/dropdown-menu";
+import type { ColumnDef } from '@tanstack/react-table'
 
-// Fix: Checkbox with indeterminate state for header
-function SelectAllCheckbox({ table }: { table: any }) {
-  // Use ref to set indeterminate on the native input
-  const wrapperRef = React.useRef<HTMLDivElement>(null);
-  React.useEffect(() => {
-    if (wrapperRef.current) {
-      const input = wrapperRef.current.querySelector('input[type="checkbox"]');
-      // 🛡️ Only set indeterminate if input is HTMLInputElement
-      if (input instanceof HTMLInputElement) {
-        input.indeterminate = table.getIsSomePageRowsSelected() && !table.getIsAllPageRowsSelected();
-      }
-    }
-  }, [table.getIsSomePageRowsSelected(), table.getIsAllPageRowsSelected()]);
-  return (
-    <div ref={wrapperRef}>
-      <Checkbox
-        onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-        className="border-gray-500 dark:border-gray-600"
-        checked={table.getIsAllPageRowsSelected()}
-        aria-label="Select all"
-      />
-    </div>
-  );
-}
+import { MoreHorizontal, Archive } from 'lucide-react'
+// React import intentionally omitted; JSX runtime handles it
+
+import type { DeceasedRecords } from '@/types/interment.types'
+
+import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
+import { Checkbox } from '@/components/ui/checkbox'
+import { DropdownMenuSeparator, DropdownMenuContent, DropdownMenuTrigger, DropdownMenuLabel, DropdownMenuItem, DropdownMenu } from '@/components/ui/dropdown-menu'
+import { capitalizeWords } from '@/lib/stringUtils'
+import DeceasedSelectAllCheckbox from '@/pages/admin/interment/columns/DeceasedSelectAllCheckbox'
 
 export const deceasedRecordsColumns: ColumnDef<DeceasedRecords>[] = [
   {
-    id: "select",
+    id: 'select',
     size: 40,
     enableHiding: false,
     enableSorting: false,
-    header: ({ table }) => <SelectAllCheckbox table={table} />,
+    header: ({ table }) => <DeceasedSelectAllCheckbox table={table} />,
     cell: ({ row }) => {
-      if (!row || typeof row.getIsSelected !== "function" || typeof row.toggleSelected !== "function") return null;
+      if (!row || typeof row.getIsSelected !== 'function' || typeof row.toggleSelected !== 'function') return null
       return (
         <Checkbox
           onCheckedChange={(value) => {
-            row.toggleSelected(!!value);
+            row.toggleSelected(!!value)
           }}
           className="border-gray-300 dark:border-gray-600"
           checked={row.getIsSelected()}
           aria-label="Select row"
         />
-      );
+      )
     },
   },
   {
-    header: "ID",
+    header: 'ID',
     size: 40,
-    accessorKey: "deceased_id",
+    accessorKey: 'deceased_id',
   },
   {
-    header: "Decesed Name",
-    accessorKey: "dead_fullname",
+    header: 'Decesed Name',
+    accessorKey: 'dead_fullname',
     cell: ({ row }) =>
       row.original.dead_fullname ? (
         row.original.dead_fullname
@@ -74,8 +53,8 @@ export const deceasedRecordsColumns: ColumnDef<DeceasedRecords>[] = [
       ),
   },
   {
-    header: "Kin",
-    accessorKey: "full_name",
+    header: 'Kin',
+    accessorKey: 'full_name',
     cell: ({ row }) =>
       row.original.full_name ? (
         row.original.full_name
@@ -86,8 +65,8 @@ export const deceasedRecordsColumns: ColumnDef<DeceasedRecords>[] = [
       ),
   },
   {
-    id: "location",
-    header: "Buried Location",
+    id: 'location',
+    header: 'Buried Location',
     accessorFn: (row) =>
       row.block && row.plot_id
         ? `Block ${row.block} • Grave ${row.plot_id}`
@@ -97,21 +76,21 @@ export const deceasedRecordsColumns: ColumnDef<DeceasedRecords>[] = [
     cell: ({ row }) => {
       // 🧩 Show block/plot if present, else category/niche_id, else N/A badge
       if (row.original.block && row.original.plot_id) {
-        return `Block ${row.original.block} • Grave ${row.original.plot_id}`;
+        return `Block ${row.original.block} • Grave ${row.original.plot_id}`
       } else if (row.original.category && row.original.niche_number) {
-        return `${capitalizeWords(row.original.category)} • Niche ${row.original.niche_number}`;
+        return `${capitalizeWords(row.original.category)} • Niche ${row.original.niche_number}`
       } else {
         return (
           <Badge variant="secondary" asChild={false}>
             <span>N/A</span>
           </Badge>
-        );
+        )
       }
     },
   },
   {
-    header: "Interment Date",
-    accessorKey: "dead_interment",
+    header: 'Interment Date',
+    accessorKey: 'dead_interment',
     cell: ({ row }) =>
       row.original.dead_interment ? (
         row.original.dead_interment
@@ -122,31 +101,31 @@ export const deceasedRecordsColumns: ColumnDef<DeceasedRecords>[] = [
       ),
   },
   {
-    header: "Status",
-    id: "years_buried",
+    header: 'Status',
+    id: 'years_buried',
     cell: ({ row }) => {
-      const buriedDateStr = row.original.dead_interment;
-      if (!buriedDateStr) return "Unknown";
+      const buriedDateStr = row.original.dead_interment
+      if (!buriedDateStr) return 'Unknown'
 
-      const buriedDate = new Date(buriedDateStr);
-      const now = new Date();
+      const buriedDate = new Date(buriedDateStr)
+      const now = new Date()
 
-      const yearsBuried = now.getFullYear() - buriedDate.getFullYear();
-      const monthDiff = now.getMonth() - buriedDate.getMonth();
-      const dayDiff = now.getDate() - buriedDate.getDate();
+      const yearsBuried = now.getFullYear() - buriedDate.getFullYear()
+      const monthDiff = now.getMonth() - buriedDate.getMonth()
+      const dayDiff = now.getDate() - buriedDate.getDate()
 
       // If less than a full year
-      const isLessThanOneYear = yearsBuried < 1 || (yearsBuried === 1 && (monthDiff < 0 || (monthDiff === 0 && dayDiff < 0)));
+      const isLessThanOneYear = yearsBuried < 1 || (yearsBuried === 1 && (monthDiff < 0 || (monthDiff === 0 && dayDiff < 0)))
 
-      return isLessThanOneYear ? "Less than a year" : `${yearsBuried} year${yearsBuried > 1 ? "s" : ""}`;
+      return isLessThanOneYear ? 'Less than a year' : `${yearsBuried} year${yearsBuried > 1 ? 's' : ''}`
     },
   },
   {
-    id: "actions",
+    id: 'actions',
     size: 40,
     enableHiding: false,
     cell: ({ row }) => {
-      if (!row?.original) return null;
+      if (!row?.original) return null
       return (
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
@@ -162,7 +141,7 @@ export const deceasedRecordsColumns: ColumnDef<DeceasedRecords>[] = [
             <DropdownMenuSeparator />
             <DropdownMenuItem
               onClick={() => {
-                alert("Archive clicked");
+                alert('Archive clicked')
               }}
               className="text-red-600 hover:bg-red-100"
             >
@@ -171,7 +150,7 @@ export const deceasedRecordsColumns: ColumnDef<DeceasedRecords>[] = [
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
-      );
+      )
     },
   },
-];
+]

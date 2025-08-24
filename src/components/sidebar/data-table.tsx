@@ -1,11 +1,7 @@
-import { z } from "zod";
-import * as React from "react";
-import { toast } from "sonner";
-import { CSS } from "@dnd-kit/utilities";
-import { restrictToVerticalAxis } from "@dnd-kit/modifiers";
-import { CartesianGrid, AreaChart, XAxis, Area } from "recharts";
-import { verticalListSortingStrategy, SortableContext, useSortable, arrayMove } from "@dnd-kit/sortable";
-import { type UniqueIdentifier, type DragEndEvent, KeyboardSensor, closestCenter, MouseSensor, TouchSensor, DndContext, useSensors, useSensor } from "@dnd-kit/core";
+import { type UniqueIdentifier, type DragEndEvent, KeyboardSensor, closestCenter, MouseSensor, TouchSensor, DndContext, useSensors, useSensor } from '@dnd-kit/core'
+import { restrictToVerticalAxis } from '@dnd-kit/modifiers'
+import { verticalListSortingStrategy, SortableContext, useSortable, arrayMove } from '@dnd-kit/sortable'
+import { CSS } from '@dnd-kit/utilities'
 import {
   IconCircleCheckFilled,
   IconChevronsRight,
@@ -19,7 +15,7 @@ import {
   IconTrendingUp,
   IconLoader,
   IconPlus,
-} from "@tabler/icons-react";
+} from '@tabler/icons-react'
 import {
   type ColumnFiltersState,
   getFacetedUniqueValues,
@@ -34,21 +30,25 @@ import {
   useReactTable,
   flexRender,
   type Row,
-} from "@tanstack/react-table";
+} from '@tanstack/react-table'
+import * as React from 'react'
+import { CartesianGrid, AreaChart, XAxis, Area } from 'recharts'
+import { toast } from 'sonner'
+import { z } from 'zod'
 
-import { Badge } from "@/components/ui/badge";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Button } from "@/components/ui/button";
-import { useIsMobile } from "@/hooks/use-mobile";
-import { Checkbox } from "@/components/ui/checkbox";
-import { Separator } from "@/components/ui/separator";
-import { TabsContent, TabsTrigger, TabsList, Tabs } from "@/components/ui/tabs";
-import { SelectContent, SelectTrigger, SelectValue, SelectItem, Select } from "@/components/ui/select";
-import { ChartTooltipContent, type ChartConfig, ChartContainer, ChartTooltip } from "@/components/ui/chart";
-import { TableHeader, TableBody, TableCell, TableHead, TableRow, Table } from "@/components/ui/table";
-import { DrawerDescription, DrawerContent, DrawerTrigger, DrawerFooter, DrawerHeader, DrawerClose, DrawerTitle, Drawer } from "@/components/ui/drawer";
-import { DropdownMenuCheckboxItem, DropdownMenuSeparator, DropdownMenuContent, DropdownMenuTrigger, DropdownMenuItem, DropdownMenu } from "@/components/ui/dropdown-menu";
+import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
+import { ChartTooltipContent, type ChartConfig, ChartContainer, ChartTooltip } from '@/components/ui/chart'
+import { Checkbox } from '@/components/ui/checkbox'
+import { DrawerDescription, DrawerContent, DrawerTrigger, DrawerFooter, DrawerHeader, DrawerClose, DrawerTitle, Drawer } from '@/components/ui/drawer'
+import { DropdownMenuCheckboxItem, DropdownMenuSeparator, DropdownMenuContent, DropdownMenuTrigger, DropdownMenuItem, DropdownMenu } from '@/components/ui/dropdown-menu'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import { SelectContent, SelectTrigger, SelectValue, SelectItem, Select } from '@/components/ui/select'
+import { Separator } from '@/components/ui/separator'
+import { TableHeader, TableBody, TableCell, TableHead, TableRow, Table } from '@/components/ui/table'
+import { TabsContent, TabsTrigger, TabsList, Tabs } from '@/components/ui/tabs'
+import { useIsMobile } from '@/hooks/use-mobile'
 
 export const schema = z.object({
   id: z.number(),
@@ -58,37 +58,37 @@ export const schema = z.object({
   status: z.string(),
   target: z.string(),
   reviewer: z.string(),
-});
+})
 
 // Create a separate component for the drag handle
 function DragHandle({ id }: { id: number }) {
   const { listeners, attributes } = useSortable({
     id,
-  });
+  })
 
   return (
     <Button {...attributes} {...listeners} className="text-muted-foreground size-7 hover:bg-transparent" variant="ghost" size="icon">
       <IconGripVertical className="text-muted-foreground size-3" />
       <span className="sr-only">Drag to reorder</span>
     </Button>
-  );
+  )
 }
 
 const columns: ColumnDef<z.infer<typeof schema>>[] = [
   {
-    id: "drag",
+    id: 'drag',
     header: () => null,
     cell: ({ row }) => <DragHandle id={row.original.id} />,
   },
   {
-    id: "select",
+    id: 'select',
     enableHiding: false,
     enableSorting: false,
     cell: ({ row }) => (
       <div className="flex items-center justify-center">
         <Checkbox
           onCheckedChange={(value) => {
-            row.toggleSelected(!!value);
+            row.toggleSelected(!!value)
           }}
           checked={row.getIsSelected()}
           aria-label="Select row"
@@ -98,9 +98,9 @@ const columns: ColumnDef<z.infer<typeof schema>>[] = [
     header: ({ table }) => (
       <div className="flex items-center justify-center">
         <Checkbox
-          checked={table.getIsAllPageRowsSelected() || (table.getIsSomePageRowsSelected() && "indeterminate")}
+          checked={table.getIsAllPageRowsSelected() || (table.getIsSomePageRowsSelected() && 'indeterminate')}
           onCheckedChange={(value) => {
-            table.toggleAllPageRowsSelected(!!value);
+            table.toggleAllPageRowsSelected(!!value)
           }}
           aria-label="Select all"
         />
@@ -108,16 +108,16 @@ const columns: ColumnDef<z.infer<typeof schema>>[] = [
     ),
   },
   {
-    header: "Header",
+    header: 'Header',
     enableHiding: false,
-    accessorKey: "header",
+    accessorKey: 'header',
     cell: ({ row }) => {
-      return <TableCellViewer item={row.original} />;
+      return <TableCellViewer item={row.original} />
     },
   },
   {
-    accessorKey: "type",
-    header: "Section Type",
+    accessorKey: 'type',
+    header: 'Section Type',
     cell: ({ row }) => (
       <div className="w-32">
         <Badge className="text-muted-foreground px-1.5" variant="outline">
@@ -127,27 +127,27 @@ const columns: ColumnDef<z.infer<typeof schema>>[] = [
     ),
   },
   {
-    header: "Status",
-    accessorKey: "status",
+    header: 'Status',
+    accessorKey: 'status',
     cell: ({ row }) => (
       <Badge className="text-muted-foreground px-1.5" variant="outline">
-        {row.original.status === "Done" ? <IconCircleCheckFilled className="fill-green-500 dark:fill-green-400" /> : <IconLoader />}
+        {row.original.status === 'Done' ? <IconCircleCheckFilled className="fill-green-500 dark:fill-green-400" /> : <IconLoader />}
         {row.original.status}
       </Badge>
     ),
   },
   {
-    accessorKey: "target",
+    accessorKey: 'target',
     header: () => <div className="w-full text-right">Target</div>,
     cell: ({ row }) => (
       <form
         onSubmit={(e) => {
-          e.preventDefault();
+          e.preventDefault()
           toast.promise(new Promise((resolve) => setTimeout(resolve, 1000)), {
-            error: "Error",
-            success: "Done",
+            error: 'Error',
+            success: 'Done',
             loading: `Saving ${row.original.header}`,
-          });
+          })
         }}
       >
         <Label htmlFor={`${row.original.id}-target`} className="sr-only">
@@ -162,17 +162,17 @@ const columns: ColumnDef<z.infer<typeof schema>>[] = [
     ),
   },
   {
-    accessorKey: "limit",
+    accessorKey: 'limit',
     header: () => <div className="w-full text-right">Limit</div>,
     cell: ({ row }) => (
       <form
         onSubmit={(e) => {
-          e.preventDefault();
+          e.preventDefault()
           toast.promise(new Promise((resolve) => setTimeout(resolve, 1000)), {
-            error: "Error",
-            success: "Done",
+            error: 'Error',
+            success: 'Done',
             loading: `Saving ${row.original.header}`,
-          });
+          })
         }}
       >
         <Label htmlFor={`${row.original.id}-limit`} className="sr-only">
@@ -187,13 +187,13 @@ const columns: ColumnDef<z.infer<typeof schema>>[] = [
     ),
   },
   {
-    header: "Reviewer",
-    accessorKey: "reviewer",
+    header: 'Reviewer',
+    accessorKey: 'reviewer',
     cell: ({ row }) => {
-      const isAssigned = row.original.reviewer !== "Assign reviewer";
+      const isAssigned = row.original.reviewer !== 'Assign reviewer'
 
       if (isAssigned) {
-        return row.original.reviewer;
+        return row.original.reviewer
       }
 
       return (
@@ -211,11 +211,11 @@ const columns: ColumnDef<z.infer<typeof schema>>[] = [
             </SelectContent>
           </Select>
         </>
-      );
+      )
     },
   },
   {
-    id: "actions",
+    id: 'actions',
     cell: () => (
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
@@ -234,22 +234,22 @@ const columns: ColumnDef<z.infer<typeof schema>>[] = [
       </DropdownMenu>
     ),
   },
-];
+]
 
 export function DataTable({ data: initialData }: { data: z.infer<typeof schema>[] }) {
-  const [data, setData] = React.useState(() => initialData);
-  const [rowSelection, setRowSelection] = React.useState({});
-  const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({});
-  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([]);
-  const [sorting, setSorting] = React.useState<SortingState>([]);
+  const [data, setData] = React.useState(() => initialData)
+  const [rowSelection, setRowSelection] = React.useState({})
+  const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({})
+  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([])
+  const [sorting, setSorting] = React.useState<SortingState>([])
   const [pagination, setPagination] = React.useState({
     pageIndex: 0,
     pageSize: 10,
-  });
-  const sortableId = React.useId();
-  const sensors = useSensors(useSensor(MouseSensor, {}), useSensor(TouchSensor, {}), useSensor(KeyboardSensor, {}));
+  })
+  const sortableId = React.useId()
+  const sensors = useSensors(useSensor(MouseSensor, {}), useSensor(TouchSensor, {}), useSensor(KeyboardSensor, {}))
 
-  const dataIds = React.useMemo<UniqueIdentifier[]>(() => data?.map(({ id }) => id) || [], [data]);
+  const dataIds = React.useMemo<UniqueIdentifier[]>(() => data?.map(({ id }) => id) || [], [data])
 
   const table = useReactTable({
     data,
@@ -274,16 +274,16 @@ export function DataTable({ data: initialData }: { data: z.infer<typeof schema>[
       columnFilters,
       columnVisibility,
     },
-  });
+  })
 
   function handleDragEnd(event: DragEndEvent) {
-    const { over, active } = event;
+    const { over, active } = event
     if (active && over && active.id !== over.id) {
       setData((data) => {
-        const oldIndex = dataIds.indexOf(active.id);
-        const newIndex = dataIds.indexOf(over.id);
-        return arrayMove(data, oldIndex, newIndex);
-      });
+        const oldIndex = dataIds.indexOf(active.id)
+        const newIndex = dataIds.indexOf(over.id)
+        return arrayMove(data, oldIndex, newIndex)
+      })
     }
   }
 
@@ -327,12 +327,12 @@ export function DataTable({ data: initialData }: { data: z.infer<typeof schema>[
             <DropdownMenuContent className="w-56" align="end">
               {table
                 .getAllColumns()
-                .filter((column) => typeof column.accessorFn !== "undefined" && column.getCanHide())
+                .filter((column) => typeof column.accessorFn !== 'undefined' && column.getCanHide())
                 .map((column) => {
                   return (
                     <DropdownMenuCheckboxItem
                       onCheckedChange={(value) => {
-                        column.toggleVisibility(!!value);
+                        column.toggleVisibility(!!value)
                       }}
                       checked={column.getIsVisible()}
                       className="capitalize"
@@ -340,7 +340,7 @@ export function DataTable({ data: initialData }: { data: z.infer<typeof schema>[
                     >
                       {column.id}
                     </DropdownMenuCheckboxItem>
-                  );
+                  )
                 })}
             </DropdownMenuContent>
           </DropdownMenu>
@@ -362,7 +362,7 @@ export function DataTable({ data: initialData }: { data: z.infer<typeof schema>[
                         <TableHead colSpan={header.colSpan} key={header.id}>
                           {header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
                         </TableHead>
-                      );
+                      )
                     })}
                   </TableRow>
                 ))}
@@ -396,7 +396,7 @@ export function DataTable({ data: initialData }: { data: z.infer<typeof schema>[
               </Label>
               <Select
                 onValueChange={(value) => {
-                  table.setPageSize(Number(value));
+                  table.setPageSize(Number(value))
                 }}
                 value={`${table.getState().pagination.pageSize}`}
               >
@@ -418,7 +418,7 @@ export function DataTable({ data: initialData }: { data: z.infer<typeof schema>[
             <div className="ml-auto flex items-center gap-2 lg:ml-0">
               <Button
                 onClick={() => {
-                  table.setPageIndex(0);
+                  table.setPageIndex(0)
                 }}
                 className="hidden h-8 w-8 p-0 lg:flex"
                 disabled={!table.getCanPreviousPage()}
@@ -429,7 +429,7 @@ export function DataTable({ data: initialData }: { data: z.infer<typeof schema>[
               </Button>
               <Button
                 onClick={() => {
-                  table.previousPage();
+                  table.previousPage()
                 }}
                 disabled={!table.getCanPreviousPage()}
                 className="size-8"
@@ -441,7 +441,7 @@ export function DataTable({ data: initialData }: { data: z.infer<typeof schema>[
               </Button>
               <Button
                 onClick={() => {
-                  table.nextPage();
+                  table.nextPage()
                 }}
                 disabled={!table.getCanNextPage()}
                 className="size-8"
@@ -453,7 +453,7 @@ export function DataTable({ data: initialData }: { data: z.infer<typeof schema>[
               </Button>
               <Button
                 onClick={() => {
-                  table.setPageIndex(table.getPageCount() - 1);
+                  table.setPageIndex(table.getPageCount() - 1)
                 }}
                 disabled={!table.getCanNextPage()}
                 className="hidden size-8 lg:flex"
@@ -477,13 +477,13 @@ export function DataTable({ data: initialData }: { data: z.infer<typeof schema>[
         <div className="aspect-video w-full flex-1 rounded-lg border border-dashed"></div>
       </TabsContent>
     </Tabs>
-  );
+  )
 }
 
 function DraggableRow({ row }: { row: Row<z.infer<typeof schema>> }) {
   const { transform, transition, setNodeRef, isDragging } = useSortable({
     id: row.original.id,
-  });
+  })
 
   return (
     <TableRow
@@ -492,7 +492,7 @@ function DraggableRow({ row }: { row: Row<z.infer<typeof schema>> }) {
         transform: CSS.Transform.toString(transform),
       }}
       className="relative z-0 data-[dragging=true]:z-10 data-[dragging=true]:opacity-80"
-      data-state={row.getIsSelected() && "selected"}
+      data-state={row.getIsSelected() && 'selected'}
       data-dragging={isDragging}
       ref={setNodeRef}
     >
@@ -500,34 +500,34 @@ function DraggableRow({ row }: { row: Row<z.infer<typeof schema>> }) {
         <TableCell key={cell.id}>{flexRender(cell.column.columnDef.cell, cell.getContext())}</TableCell>
       ))}
     </TableRow>
-  );
+  )
 }
 
 const chartData = [
-  { mobile: 80, desktop: 186, month: "January" },
-  { mobile: 200, desktop: 305, month: "February" },
-  { mobile: 120, desktop: 237, month: "March" },
-  { desktop: 73, mobile: 190, month: "April" },
-  { mobile: 130, month: "May", desktop: 209 },
-  { mobile: 140, desktop: 214, month: "June" },
-];
+  { mobile: 80, desktop: 186, month: 'January' },
+  { mobile: 200, desktop: 305, month: 'February' },
+  { mobile: 120, desktop: 237, month: 'March' },
+  { desktop: 73, mobile: 190, month: 'April' },
+  { mobile: 130, month: 'May', desktop: 209 },
+  { mobile: 140, desktop: 214, month: 'June' },
+]
 
 const chartConfig = {
   mobile: {
-    label: "Mobile",
-    color: "var(--primary)",
+    label: 'Mobile',
+    color: 'var(--primary)',
   },
   desktop: {
-    label: "Desktop",
-    color: "var(--primary)",
+    label: 'Desktop',
+    color: 'var(--primary)',
   },
-} satisfies ChartConfig;
+} satisfies ChartConfig
 
 function TableCellViewer({ item }: { item: z.infer<typeof schema> }) {
-  const isMobile = useIsMobile();
+  const isMobile = useIsMobile()
 
   return (
-    <Drawer direction={isMobile ? "bottom" : "right"}>
+    <Drawer direction={isMobile ? 'bottom' : 'right'}>
       <DrawerTrigger asChild>
         <Button className="text-foreground w-fit px-0 text-left" variant="link">
           {item.header}
@@ -640,5 +640,5 @@ function TableCellViewer({ item }: { item: z.infer<typeof schema> }) {
         </DrawerFooter>
       </DrawerContent>
     </Drawer>
-  );
+  )
 }

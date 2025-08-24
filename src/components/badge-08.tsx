@@ -1,4 +1,4 @@
-import { Badge } from "@/components/ui/badge";
+import { Badge } from '@/components/ui/badge'
 
 const SoftBadgeDemo = () => {
   return (
@@ -13,7 +13,7 @@ const SoftBadgeDemo = () => {
         <div className="mr-2 h-1.5 w-1.5 rounded-full bg-emerald-500" /> Done
       </Badge>
     </div>
-  );
-};
+  )
+}
 
-export default SoftBadgeDemo;
+export default SoftBadgeDemo

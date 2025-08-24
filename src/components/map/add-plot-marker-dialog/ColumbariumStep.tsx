@@ -1,30 +1,32 @@
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
-import { ColumbariumSchema, type ColumbariumFormData } from "@/schema/plot.scheme";
-import { useCreatePlotMutations } from "./useCreatePlotMutations";
+import { zodResolver } from '@hookform/resolvers/zod'
+import { useForm } from 'react-hook-form'
+
+import { Button } from '@/components/ui/button'
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form'
+import { Input } from '@/components/ui/input'
+import { ColumbariumSchema, type ColumbariumFormData } from '@/schema/plot.scheme'
+
+import { useCreatePlotMutations } from './useCreatePlotMutations'
 
 interface ColumbariumStepProps {
-  coordinates: [number, number] | null;
-  onBack: () => void;
-  onCancel: () => void;
-  onDone: () => void;
+  coordinates: [number, number] | null
+  onBack: () => void
+  onCancel: () => void
+  onDone: () => void
 }
 
 export function ColumbariumStep({ coordinates, onBack, onCancel, onDone }: ColumbariumStepProps) {
   const form = useForm<ColumbariumFormData>({
     resolver: zodResolver(ColumbariumSchema),
-    defaultValues: { rows: "", columns: "" },
-  });
+    defaultValues: { rows: '', columns: '' },
+  })
 
-  const { columbarium, submitColumbarium } = useCreatePlotMutations({ onDone });
+  const { columbarium, submitColumbarium } = useCreatePlotMutations({ onDone })
 
   function onSubmit(data: ColumbariumFormData) {
-    if (!coordinates) return;
-    const coordinatesString = `${coordinates[1]}, ${coordinates[0]}`;
-    submitColumbarium({ ...data, coordinates: coordinatesString });
+    if (!coordinates) return
+    const coordinatesString = `${coordinates[1]}, ${coordinates[0]}`
+    submitColumbarium({ ...data, coordinates: coordinatesString })
   }
 
   return (
@@ -71,10 +73,10 @@ export function ColumbariumStep({ coordinates, onBack, onCancel, onDone }: Colum
             Cancel
           </Button>
           <Button type="submit" disabled={columbarium.isPending || !coordinates}>
-            {columbarium.isPending ? "Saving..." : "Save Plot"}
+            {columbarium.isPending ? 'Saving...' : 'Save Plot'}
           </Button>
         </div>
       </form>
     </Form>
-  );
+  )
 }

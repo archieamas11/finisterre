@@ -1,242 +1,237 @@
-import L from "leaflet";
-import "leaflet/dist/leaflet.css";
-import { createContext, useRef, useState, useEffect, Suspense, lazy } from "react";
-import iconUrl from "leaflet/dist/images/marker-icon.png";
-import shadowUrl from "leaflet/dist/images/marker-shadow.png";
-import iconRetinaUrl from "leaflet/dist/images/marker-icon-2x.png";
-import { MapContainer, TileLayer, Popup, GeoJSON } from "react-leaflet";
-import MarkerClusterGroup from "react-leaflet-markercluster";
-import { useQueryClient } from "@tanstack/react-query";
-import type { ConvertedMarker } from "@/types/map.types";
-import WebMapNavs from "@/pages/webmap/WebMapNavs";
-import { usePlots } from "@/hooks/plots-hooks/plot.hooks";
-import { getCategoryBackgroundColor, convertPlotToMarker, getStatusColor } from "@/types/map.types";
-import Spinner from "@/components/ui/spinner";
-import { ErrorMessage } from "@/components/ErrorMessage";
-import MapStats from "./MapStats";
-import MapClickHandler from "@/components/map/MapClickHandler";
-import AddPlotMarkerDialog from "@/components/map/AddPlotMarkerDialog";
-import AddMarkerInstructions from "@/components/map/AddMarkerInstructions";
-import EditMarkerInstructions from "@/components/map/EditMarkerInstructions";
-import EditableMarker from "@/components/map/EditableMarker";
-import ColumbariumPopup from "@/pages/admin/map4admin/ColumbariumPopup";
-import SinglePlotLocations from "@/pages/admin/map4admin/SinglePlotPopup";
-import guide4BlockCUrl from "./guide-4-block-b.geojson?url";
+import { useQueryClient } from '@tanstack/react-query'
+import 'leaflet/dist/leaflet.css'
+import L from 'leaflet'
+import iconRetinaUrl from 'leaflet/dist/images/marker-icon-2x.png'
+import iconUrl from 'leaflet/dist/images/marker-icon.png'
+import shadowUrl from 'leaflet/dist/images/marker-shadow.png'
+import { Suspense } from 'react'
+import { MapContainer, TileLayer, Popup, GeoJSON } from 'react-leaflet'
+import MarkerClusterGroup from 'react-leaflet-markercluster'
 
-const ComfortRoomMarker = lazy(() => import("@/pages/webmap/ComfortRoomMarkers"));
-const ParkingMarkers = lazy(() => import("@/pages/webmap/ParkingMarkers"));
-const CenterSerenityMarkers = lazy(() => import("@/pages/webmap/CenterSerenityMarkers"));
-const MainEntranceMarkers = lazy(() => import("@/pages/webmap/MainEntranceMarkers"));
-const ChapelMarkers = lazy(() => import("@/pages/webmap/ChapelMarkers"));
-const PlaygroundMarkers = lazy(() => import("@/pages/webmap/PlaygroundMarkers"));
+import type { ConvertedMarker } from '@/types/map.types'
+
+import { ErrorMessage } from '@/components/ErrorMessage'
+import AddMarkerInstructions from '@/components/map/AddMarkerInstructions'
+import AddPlotMarkerDialog from '@/components/map/AddPlotMarkerDialog'
+import EditableMarker from '@/components/map/EditableMarker'
+import EditMarkerInstructions from '@/components/map/EditMarkerInstructions'
+import MapClickHandler from '@/components/map/MapClickHandler'
+import Spinner from '@/components/ui/spinner'
+import { usePlots } from '@/hooks/plots-hooks/plot.hooks'
+import { useAuthQuery } from '@/hooks/useAuthQuery'
+import { groupMarkersByKey, getLabelFromGroupKey, createClusterIconFactory } from '@/lib/clusterUtils'
+import { ucwords } from '@/lib/format'
+import ColumbariumPopup from '@/pages/admin/map4admin/ColumbariumPopup'
+import SinglePlotLocations from '@/pages/admin/map4admin/SinglePlotPopup'
+import WebMapNavs from '@/pages/webmap/WebMapNavs'
+import { getCategoryBackgroundColor, convertPlotToMarker, getStatusColor } from '@/types/map.types'
+
+import guide4BlockCUrl from './guide-4-block-b.geojson?url'
+import { LocateContext } from './LocateContext'
+import MapStats from './MapStats'
+
+const ComfortRoomMarker = lazy(() => import('@/pages/webmap/ComfortRoomMarkers'))
+const ParkingMarkers = lazy(() => import('@/pages/webmap/ParkingMarkers'))
+const CenterSerenityMarkers = lazy(() => import('@/pages/webmap/CenterSerenityMarkers'))
+const MainEntranceMarkers = lazy(() => import('@/pages/webmap/MainEntranceMarkers'))
+const ChapelMarkers = lazy(() => import('@/pages/webmap/ChapelMarkers'))
+const PlaygroundMarkers = lazy(() => import('@/pages/webmap/PlaygroundMarkers'))
 
 const DefaultIcon = L.icon({
   iconUrl,
   shadowUrl,
   iconRetinaUrl,
-});
-L.Marker.prototype.options.icon = DefaultIcon;
-
-export const LocateContext = createContext<{
-  requestLocate: () => void;
-  isAddingMarker: boolean;
-  toggleAddMarker: () => void;
-  isEditingMarker: boolean;
-  toggleEditMarker: () => void;
-} | null>(null);
+})
+L.Marker.prototype.options.icon = DefaultIcon
 
 export default function AdminMapLayout() {
-  const showGuide4 = false;
-  const { isError, refetch, isLoading, data: plotsData } = usePlots();
-  const queryClient = useQueryClient();
-  const markers = plotsData?.map(convertPlotToMarker) || [];
-  const [guide4Data, setGuide4Data] = useState<GeoJSON.GeoJSON | null>(null);
+  const { data: authData } = useAuthQuery()
+  const showGuide4 = !!((authData?.user?.username === 'test' || authData?.user?.username === 'test') && !!authData?.user?.isAdmin)
+  const { isError, refetch, isLoading, data: plotsData } = usePlots()
+  const queryClient = useQueryClient()
+  const markers = plotsData?.map(convertPlotToMarker) || []
+  const [guide4Data, setGuide4Data] = useState<GeoJSON.GeoJSON | null>(null)
   const bounds: [[number, number], [number, number]] = [
     [10.248073279164613, 123.79742173990627],
     [10.249898252065757, 123.79838766292835],
-  ];
-  const locateRef = useRef<(() => void) | null>(null);
+  ]
+  const [isAddingMarker, setIsAddingMarker] = useState(false)
+  const [selectedCoordinates, setSelectedCoordinates] = useState<[number, number] | null>(null)
+  const [showAddDialog, setShowAddDialog] = useState(false)
+  const [isEditingMarker, setIsEditingMarker] = useState(false)
+  const [selectedPlotForEdit, setSelectedPlotForEdit] = useState<string | null>(null)
+  const locateRef = useRef<(() => void) | null>(null)
   const requestLocate = () => {
-    if (locateRef.current) locateRef.current();
-  };
-
-  // 🎯 Add marker state
-  const [isAddingMarker, setIsAddingMarker] = useState(false);
-  const [selectedCoordinates, setSelectedCoordinates] = useState<[number, number] | null>(null);
-  const [showAddDialog, setShowAddDialog] = useState(false);
-
-  // ✏️ Edit marker state
-  const [isEditingMarker, setIsEditingMarker] = useState(false);
-  const [selectedPlotForEdit, setSelectedPlotForEdit] = useState<string | null>(null);
+    if (locateRef.current) locateRef.current()
+  }
 
   const toggleAddMarker = () => {
-    setIsAddingMarker(!isAddingMarker);
-    // ✨ Toggle CSS class for cursor style
-    if (!isAddingMarker) {
-      document.body.classList.add("add-marker-mode");
-    } else {
-      document.body.classList.remove("add-marker-mode");
-    }
-  };
+    setIsAddingMarker((prev) => {
+      const next = !prev
+      document.body.classList.toggle('add-marker-mode', next)
+      return next
+    })
+  }
 
   const toggleEditMarker = () => {
-    setIsEditingMarker(!isEditingMarker);
-    // 🔄 Reset selected plot when toggling off
-    if (isEditingMarker) {
-      setSelectedPlotForEdit(null);
-    }
-    // ✨ Toggle CSS class for cursor style
-    if (!isEditingMarker) {
-      document.body.classList.add("edit-marker-mode");
-    } else {
-      document.body.classList.remove("edit-marker-mode");
-    }
-  };
+    setIsEditingMarker((prev) => {
+      const next = !prev
+      if (!next) setSelectedPlotForEdit(null)
+      document.body.classList.toggle('edit-marker-mode', next)
+      return next
+    })
+  }
 
-  // ✏️ Handle marker selection for editing
   const onMarkerClickForEdit = (plotId: string) => {
     if (isEditingMarker) {
-      setSelectedPlotForEdit(plotId);
+      setSelectedPlotForEdit(plotId)
     }
-  };
+  }
 
   // ✅ Handle edit completion (save or cancel)
-  const onEditComplete = () => {
-    setSelectedPlotForEdit(null);
-    setIsEditingMarker(false);
-    document.body.classList.remove("edit-marker-mode");
-  };
+  const onEditComplete = useCallback(() => {
+    setSelectedPlotForEdit(null)
+    setIsEditingMarker(false)
+    document.body.classList.remove('edit-marker-mode')
+  }, [])
 
   // 📍 Handle map click when adding marker
   const onMapClick = (coordinates: [number, number]) => {
-    setSelectedCoordinates(coordinates);
-    setShowAddDialog(true);
+    setSelectedCoordinates(coordinates)
+    setShowAddDialog(true)
     // Pause add mode while dialog is open to prevent accidental clicks
-    setIsAddingMarker(false);
-    document.body.classList.remove("add-marker-mode");
-  };
+    setIsAddingMarker(false)
+    document.body.classList.remove('add-marker-mode')
+  }
 
   // 🚫 Handle dialog close
   const onDialogClose = (open: boolean) => {
-    setShowAddDialog(open);
+    setShowAddDialog(open)
     if (!open) {
-      setSelectedCoordinates(null);
+      setSelectedCoordinates(null)
     }
-  };
+  }
 
   // ✅ After a successful add, immediately return to add mode for rapid entry
   const onAddDone = () => {
-    setSelectedCoordinates(null);
-    setShowAddDialog(false);
-    setIsAddingMarker(true);
-    document.body.classList.add("add-marker-mode");
-  };
+    setSelectedCoordinates(null)
+    setShowAddDialog(false)
+    setIsAddingMarker(true)
+    document.body.classList.add('add-marker-mode')
+  }
 
   // 🧹 Cleanup effect to remove cursor class on unmount
   useEffect(() => {
     return () => {
-      document.body.classList.remove("add-marker-mode");
-      document.body.classList.remove("edit-marker-mode");
-    };
-  }, []);
+      document.body.classList.remove('add-marker-mode')
+      document.body.classList.remove('edit-marker-mode')
+    }
+  }, [])
 
   // ⎋ Unified Escape handler: cancel add/edit flows and close dialog reliably
   useEffect(() => {
     function onKeyDown(e: KeyboardEvent) {
-      if (e.key !== "Escape") return;
-      e.preventDefault();
+      if (e.key !== 'Escape') return
+      e.preventDefault()
 
       // If add dialog is open, close it and reset coordinates
       if (showAddDialog) {
-        setShowAddDialog(false);
-        setSelectedCoordinates(null);
-        setIsAddingMarker(false);
-        document.body.classList.remove("add-marker-mode");
-        return;
+        setShowAddDialog(false)
+        setSelectedCoordinates(null)
+        setIsAddingMarker(false)
+        document.body.classList.remove('add-marker-mode')
+        return
       }
 
       // If currently in add-marker mode (and dialog not open), cancel it
       if (isAddingMarker) {
-        setIsAddingMarker(false);
-        setSelectedCoordinates(null);
-        document.body.classList.remove("add-marker-mode");
-        return;
+        setIsAddingMarker(false)
+        setSelectedCoordinates(null)
+        document.body.classList.remove('add-marker-mode')
+        return
       }
 
       // If editing and a specific plot is selected, cancel that edit
       if (isEditingMarker && selectedPlotForEdit) {
-        onEditComplete();
-        return;
+        onEditComplete()
+        return
       }
 
       // If editing mode is active but no plot selected, exit editing mode
       if (isEditingMarker) {
-        setIsEditingMarker(false);
-        setSelectedPlotForEdit(null);
-        document.body.classList.remove("edit-marker-mode");
-        return;
+        setIsEditingMarker(false)
+        setSelectedPlotForEdit(null)
+        document.body.classList.remove('edit-marker-mode')
+        return
       }
     }
 
     // Attach listener only when relevant states are active to avoid global interception
-    if (!(isAddingMarker || isEditingMarker || showAddDialog || selectedPlotForEdit)) return;
+    if (!(isAddingMarker || isEditingMarker || showAddDialog || selectedPlotForEdit)) return
 
-    window.addEventListener("keydown", onKeyDown);
-    return () => window.removeEventListener("keydown", onKeyDown);
-  }, [isAddingMarker, isEditingMarker, showAddDialog, selectedPlotForEdit, onEditComplete]);
+    window.addEventListener('keydown', onKeyDown)
+    return () => window.removeEventListener('keydown', onKeyDown)
+  }, [isAddingMarker, isEditingMarker, showAddDialog, selectedPlotForEdit, onEditComplete])
 
   // 📦 Load local GeoJSON asset at runtime (avoids bundler parsing issues)
   useEffect(() => {
-    let mounted = true;
+    let mounted = true
     async function load() {
       try {
-        const res = await fetch(guide4BlockCUrl);
-        if (!res.ok) return;
-        const json = (await res.json()) as GeoJSON.GeoJSON;
-        if (mounted) setGuide4Data(json);
+        const res = await fetch(guide4BlockCUrl)
+        if (!res.ok) return
+        const json = (await res.json()) as GeoJSON.GeoJSON
+        if (mounted) setGuide4Data(json)
       } catch {
         // 🧯 Ignore optional layer load failure
       }
     }
-    load();
+    load()
     return () => {
-      mounted = false;
-    };
-  }, []);
+      mounted = false
+    }
+  }, [])
 
   // Track popup close events to reset child UI (like comboboxes)
-  const [popupCloseTick, setPopupCloseTick] = useState(0);
-
+  const [popupCloseTick, setPopupCloseTick] = useState(0)
   // Function to handle popup opening - invalidate cache for fresh data
   const handlePopupOpen = (plot_id: string) => {
     // Invalidate the specific plot details cache when popup opens
     queryClient.invalidateQueries({
-      queryKey: ["plotDetails", plot_id],
-    });
-  };
+      queryKey: ['plotDetails', plot_id],
+    })
+  }
 
   if (isLoading) {
     return (
       <div className="flex h-screen w-full items-center justify-center">
         <Spinner />
       </div>
-    );
+    )
   }
 
   if (isError || !plotsData) {
-    return <ErrorMessage message="Failed to load map data. Please check your connection and try again." onRetry={refetch} showRetryButton={true} />;
+    return <ErrorMessage message="Failed to load map data. Please check your connection and try again." onRetry={refetch} showRetryButton={true} />
   }
 
   return (
-    <div className="h-full w-full rounded-lg border p-2">
-      <LocateContext.Provider value={{ requestLocate, isAddingMarker, toggleAddMarker, isEditingMarker, toggleEditMarker }}>
+    <div className="mt-4 h-full w-full rounded-lg border p-2">
+      <LocateContext.Provider
+        value={{
+          requestLocate,
+          isAddingMarker,
+          toggleAddMarker,
+          isEditingMarker,
+          toggleEditMarker,
+        }}
+      >
         <div className="relative z-1 h-full w-full">
           <WebMapNavs />
           <MapStats />
           {/* 🎯 Instructions for add marker mode */}
           <AddMarkerInstructions isVisible={isAddingMarker} />
           {/* ✏️ Instructions for edit marker mode */}
-          <EditMarkerInstructions isVisible={isEditingMarker} step={selectedPlotForEdit ? "edit" : "select"} />
+          <EditMarkerInstructions isVisible={isEditingMarker} step={selectedPlotForEdit ? 'edit' : 'select'} />
           <MapContainer
             className="h-full w-full rounded-lg"
             markerZoomAnimation={true}
@@ -252,15 +247,18 @@ export default function AdminMapLayout() {
             {/* GeoJSON overlay: Guide 4 Block C */}
             {showGuide4 && guide4Data && (
               <GeoJSON
+                interactive={false}
                 data={guide4Data}
                 style={() => ({
-                  color: "#FFDE21",
+                  color: '#FFDE21',
                   weight: 1,
                   opacity: 1,
                 })}
                 onEachFeature={(feature, layer) => {
-                  const id = (feature.properties as { id?: string | number | null } | undefined)?.id ?? "Guide Path";
-                  layer.bindTooltip(String(id), { sticky: true });
+                  const id = (feature.properties as { id?: string | number | null } | undefined)?.id ?? 'Guide Path'
+                  layer.bindTooltip(String(id), {
+                    sticky: true,
+                  })
                 }}
               />
             )}
@@ -277,57 +275,22 @@ export default function AdminMapLayout() {
             </Suspense>
             {/* Plot Markers grouped into clusters by block or category */}
             {(() => {
-              const markersByGroup: Record<string, ConvertedMarker[]> = {};
-              markers.forEach((marker: ConvertedMarker) => {
-                const groupKey = marker.block && String(marker.block).trim() !== "" ? `block:${marker.block}` : `category:${marker.category || "Uncategorized"}`;
-                if (!markersByGroup[groupKey]) markersByGroup[groupKey] = [];
-                markersByGroup[groupKey].push(marker);
-              });
-
-              const getLabel = (groupKey: string): string => {
-                if (groupKey.startsWith("block:")) {
-                  const block = groupKey.split("block:")[1];
-                  return `Block ${block}`;
-                } else {
-                  const category = groupKey
-                    .split("category:")[1]
-                    .split(" ")
-                    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-                    .join(" ");
-                  return category;
-                }
-              };
-
-              const createClusterIcon = (groupKey: string) => (cluster: any) => {
-                const count = cluster.getChildCount();
-                const label = getLabel(groupKey);
-
-                return L.divIcon({
-                  html: `
-                  <div class="relative flex flex-col items-center justify-center">
-                    <div
-                      class="border-2 border-white text-white bg-black/50 w-12 h-12 rounded-full flex items-center justify-center font-bold text-xs shadow-[0_4px_6px_-1px_rgba(0,0,0,0.1),0_2px_4px_-1px_rgba(0,0,0,0.06)]"
-                    >
-                      ${count}
-                    </div>
-                    <span class="shadow-md mt-1 text-xs font-bold text-gray-200">${label}</span>
-                  </div>
-                `,
-                  className: "custom-marker-cluster",
-                  iconSize: [50, 60],
-                  iconAnchor: [25, 30],
-                });
-              };
+              const markersByGroup = groupMarkersByKey(markers)
+              const labelLookup = (k: string) => {
+                const raw = getLabelFromGroupKey(k)
+                return k.startsWith('category:') ? ucwords(String(raw)) : String(raw)
+              }
+              const createClusterIcon = createClusterIconFactory(labelLookup)
 
               return Object.entries(markersByGroup).map(([groupKey, groupMarkers]) => {
-                // When editing markers, disable clustering so markers are individually clickable/draggable
-                if (isEditingMarker) {
+                // When editing markers or adding a new marker, disable clustering so markers are individually clickable/draggable
+                if (isEditingMarker || isAddingMarker) {
                   return (
                     <div key={`cluster-${groupKey}`}>
                       {groupMarkers.map((marker: ConvertedMarker) => {
-                        const statusColor = getStatusColor(marker.plotStatus);
+                        const statusColor = getStatusColor(marker.plotStatus)
                         const circleIcon = L.divIcon({
-                          className: "",
+                          className: '',
                           html: `<div style="
                           width: 15px;
                           height: 15px;
@@ -336,8 +299,8 @@ export default function AdminMapLayout() {
                           border: 1px solid #fff;
                           box-shadow: 0 0 4px rgba(0,0,0,0.15);
                           "></div>`,
-                        });
-                        const backgroundColor = getCategoryBackgroundColor(marker.category);
+                        })
+                        const backgroundColor = getCategoryBackgroundColor(marker.category)
 
                         return (
                           <EditableMarker
@@ -365,24 +328,28 @@ export default function AdminMapLayout() {
                               </Popup>
                             )}
                           </EditableMarker>
-                        );
+                        )
                       })}
                     </div>
-                  );
+                  )
                 }
 
                 return (
                   <MarkerClusterGroup
                     key={`cluster-${groupKey}`}
                     iconCreateFunction={createClusterIcon(groupKey)}
-                    chunkedLoading
-                    maxClusterRadius={Infinity}
+                    chunkedLoading={true}
+                    maxClusterRadius={200}
                     disableClusteringAtZoom={20}
+                    showCoverageOnHover={false}
+                    spiderfyOnMaxZoom={false}
+                    removeOutsideVisibleBounds={true}
+                    animate={false}
                   >
                     {groupMarkers.map((marker: ConvertedMarker) => {
-                      const statusColor = getStatusColor(marker.plotStatus);
+                      const statusColor = getStatusColor(marker.plotStatus)
                       const circleIcon = L.divIcon({
-                        className: "",
+                        className: '',
                         html: `<div style="
                         width: 15px;
                         height: 15px;
@@ -391,8 +358,8 @@ export default function AdminMapLayout() {
                         border: 1px solid #fff;
                         box-shadow: 0 0 4px rgba(0,0,0,0.15);
                         "></div>`,
-                      });
-                      const backgroundColor = getCategoryBackgroundColor(marker.category);
+                      })
+                      const backgroundColor = getCategoryBackgroundColor(marker.category)
 
                       return (
                         <EditableMarker
@@ -420,11 +387,11 @@ export default function AdminMapLayout() {
                             </Popup>
                           )}
                         </EditableMarker>
-                      );
+                      )
                     })}
                   </MarkerClusterGroup>
-                );
-              });
+                )
+              })
             })()}
           </MapContainer>
         </div>
@@ -432,5 +399,5 @@ export default function AdminMapLayout() {
         <AddPlotMarkerDialog open={showAddDialog} onOpenChange={onDialogClose} coordinates={selectedCoordinates} onDoneAdd={onAddDone} />
       </LocateContext.Provider>
     </div>
-  );
+  )
 }

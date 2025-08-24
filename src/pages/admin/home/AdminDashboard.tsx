@@ -1,14 +1,15 @@
-import { ChartAreaInteractive } from "@/components/sidebar/chart-area-interactive";
-import { ChartAreaStackedExpand } from "@/components/sidebar/plots-stats";
-import { SectionCards } from "@/components/sidebar/section-cards";
-import { DataTableSkeleton } from "@/components/data-table/data-table-skeleton";
-import { ErrorMessage } from "@/components/ErrorMessage";
-import { useGetLogs } from "@/hooks/logs-hooks/useGetLogs";
-import LogsTable from "./LogsTable";
-import { ChartPieInteractive } from "./PieChart";
+import { DataTableSkeleton } from '@/components/data-table/data-table-skeleton'
+import { ErrorMessage } from '@/components/ErrorMessage'
+import { ChartAreaInteractive } from '@/components/sidebar/chart-area-interactive'
+import { ChartAreaStackedExpand } from '@/components/sidebar/plots-stats'
+import { SectionCards } from '@/components/sidebar/section-cards'
+import { useGetLogs } from '@/hooks/logs-hooks/useGetLogs'
+
+import LogsTable from './LogsTable'
+import { ChartPieInteractive } from './PieChart'
 
 export default function UserDashboard() {
-  const { data, isPending, isError } = useGetLogs({ limit: 25 });
+  const { data, isPending, isError } = useGetLogs({ limit: 25 })
   return (
     <div className="w-full p-4 shadow-sm">
       <div className="@container/main flex flex-1 flex-col justify-between gap-4 py-4 md:gap-6">
@@ -35,5 +36,5 @@ export default function UserDashboard() {
         </div>
       </section>
     </div>
-  );
+  )
 }

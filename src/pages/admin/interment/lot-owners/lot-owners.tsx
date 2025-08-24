@@ -1,5 +1,6 @@
-import { LandPlot } from "lucide-react";
-import LotOwnersTablePage from "./LotOwnersTablePage";
+import { LandPlot } from 'lucide-react'
+
+import LotOwnersTablePage from './LotOwnersTablePage'
 
 export default function AdminIntermentLotOwnersPage() {
   return (
@@ -13,5 +14,5 @@ export default function AdminIntermentLotOwnersPage() {
       </div>
       <LotOwnersTablePage />
     </div>
-  );
+  )
 }

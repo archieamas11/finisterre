@@ -1,10 +1,10 @@
-import { useNavigate } from "react-router-dom";
-import { ShieldX, Home, Mail, ArrowLeft } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { ShieldX, Home, Mail, ArrowLeft } from 'lucide-react'
+
+import { Button } from '@/components/ui/button'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 
 export default function UnauthorizedPage() {
-  const navigate = useNavigate();
+  const navigate = useNavigate()
 
   return (
     <div className="bg-background flex min-h-screen items-center justify-center p-4">
@@ -23,7 +23,7 @@ export default function UnauthorizedPage() {
           </p>
 
           <div className="flex flex-col gap-3 pt-2">
-            <Button onClick={() => navigate("/login")} className="w-full">
+            <Button onClick={() => navigate('/login')} className="w-full">
               Go to Login
             </Button>
 
@@ -33,13 +33,13 @@ export default function UnauthorizedPage() {
                 Go Back
               </Button>
 
-              <Button variant="outline" onClick={() => navigate("/")} className="flex-1">
+              <Button variant="outline" onClick={() => navigate('/')} className="flex-1">
                 <Home className="mr-2 h-4 w-4" />
                 Home
               </Button>
             </div>
 
-            <Button variant="ghost" onClick={() => navigate("/contact")} className="text-muted-foreground hover:text-foreground w-full">
+            <Button variant="ghost" onClick={() => navigate('/contact')} className="text-muted-foreground hover:text-foreground w-full">
               <Mail className="mr-2 h-4 w-4" />
               Contact Support
             </Button>
@@ -47,5 +47,5 @@ export default function UnauthorizedPage() {
         </CardContent>
       </Card>
     </div>
-  );
+  )
 }

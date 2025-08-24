@@ -1,30 +1,32 @@
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
-import { MemorialChambersSchema, type MemorialChambersFormData } from "@/schema/plot.scheme";
-import { useCreatePlotMutations } from "./useCreatePlotMutations";
+import { zodResolver } from '@hookform/resolvers/zod'
+import { useForm } from 'react-hook-form'
+
+import { Button } from '@/components/ui/button'
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form'
+import { Input } from '@/components/ui/input'
+import { MemorialChambersSchema, type MemorialChambersFormData } from '@/schema/plot.scheme'
+
+import { useCreatePlotMutations } from './useCreatePlotMutations'
 
 interface MemorialChambersStepProps {
-  coordinates: [number, number] | null;
-  onBack: () => void;
-  onCancel: () => void;
-  onDone: () => void;
+  coordinates: [number, number] | null
+  onBack: () => void
+  onCancel: () => void
+  onDone: () => void
 }
 
 export function MemorialChambersStep({ coordinates, onBack, onCancel, onDone }: MemorialChambersStepProps) {
   const form = useForm<MemorialChambersFormData>({
     resolver: zodResolver(MemorialChambersSchema),
-    defaultValues: { rows: "", columns: "" },
-  });
+    defaultValues: { rows: '', columns: '' },
+  })
 
-  const { chambers, submitChambers } = useCreatePlotMutations({ onDone });
+  const { chambers, submitChambers } = useCreatePlotMutations({ onDone })
 
   function onSubmit(data: MemorialChambersFormData) {
-    if (!coordinates) return;
-    const coordinatesString = `${coordinates[1]}, ${coordinates[0]}`;
-    submitChambers({ ...data, coordinates: coordinatesString });
+    if (!coordinates) return
+    const coordinatesString = `${coordinates[1]}, ${coordinates[0]}`
+    submitChambers({ ...data, coordinates: coordinatesString })
   }
 
   return (
@@ -71,10 +73,10 @@ export function MemorialChambersStep({ coordinates, onBack, onCancel, onDone }: 
             Cancel
           </Button>
           <Button type="submit" disabled={chambers.isPending || !coordinates}>
-            {chambers.isPending ? "Saving..." : "Save Plot"}
+            {chambers.isPending ? 'Saving...' : 'Save Plot'}
           </Button>
         </div>
       </form>
     </Form>
-  );
+  )
 }

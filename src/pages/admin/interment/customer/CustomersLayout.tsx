@@ -1,5 +1,6 @@
-import { UserCircle } from "lucide-react";
-import CustomersPage from "./CustomerPage";
+import { UserCircle } from 'lucide-react'
+
+import CustomersPage from './CustomerPage'
 
 export default function AdminIntermentCustomerPage() {
   return (
@@ -15,5 +16,5 @@ export default function AdminIntermentCustomerPage() {
       {/* Customers Table */}
       <CustomersPage />
     </div>
-  );
+  )
 }

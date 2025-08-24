@@ -1,40 +1,49 @@
-import React from "react";
-import { BiMessageSquareEdit } from "react-icons/bi";
-import { Printer } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Sheet, SheetContent } from "@/components/ui/sheet";
-import type { Customer, LotInfo } from "@/api/customer.api";
-import CustomerForm from "@/pages/admin/interment/customer/CustomerForm";
-import { editCustomer } from "@/api/customer.api";
-import { calculateYearsBuried } from "@/utils/date.utils";
+import { Printer } from 'lucide-react'
+import React from 'react'
+import { BiMessageSquareEdit } from 'react-icons/bi'
+
+import type { Customer, LotInfo } from '@/api/customer.api'
+
+import { editCustomer } from '@/api/customer.api'
+import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
+import { Sheet, SheetContent } from '@/components/ui/sheet'
+import CustomerForm from '@/pages/admin/interment/customer/CustomerForm'
+import { calculateYearsBuried } from '@/utils/date.utils'
 
 interface ViewCustomerDialogProps {
-  open: boolean;
-  customer: Customer;
-  onOpenChange: (open: boolean) => void;
+  open: boolean
+  customer: Customer
+  onOpenChange: (open: boolean) => void
 }
 
 // Utility to format date strings for display
 function formatDate(date?: string | null) {
   if (!date) {
-    return "-";
+    return '-'
   }
 
-  const d = new Date(date);
+  const d = new Date(date)
   if (Number.isNaN(d.getTime())) {
-    return "-";
+    return '-'
   }
 
   return d.toLocaleDateString(undefined, {
-    year: "numeric",
-    month: "short",
-    day: "numeric",
-  });
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric',
+  })
 }
 
 // Component for rendering deceased information
-function DeceasedInfoCard({ deceased }: { deceased: any }) {
+type LocalDeceasedInfo = {
+  deceased_id?: string | null
+  dead_fullname?: string | null
+  dead_date_death?: string | null
+  dead_interment?: string | null
+}
+
+function DeceasedInfoCard({ deceased }: { deceased: LocalDeceasedInfo }) {
   return (
     <div className="bg-muted/30 space-y-2 rounded-lg border border-dashed p-3">
       <div className="flex items-center gap-2">
@@ -57,18 +66,18 @@ function DeceasedInfoCard({ deceased }: { deceased: any }) {
       <div className="text-xs">
         <span className="text-muted-foreground">Years Buried:</span>
         <Badge variant="secondary" className="ml-2 text-xs">
-          {calculateYearsBuried(deceased.dead_date_death)}
+          {calculateYearsBuried(String(deceased.dead_date_death ?? ''))}
         </Badge>
       </div>
     </div>
-  );
+  )
 }
 
 // Component for rendering combined property and deceased information
 function PropertyDeceasedCard({ lot }: { lot: LotInfo }) {
-  const hasGraveLot = lot.block != null && lot.block !== "" && lot.lot_plot_id != null;
-  const hasNiche = lot.category != null && lot.category !== "" && lot.niche_number != null;
-  const hasDeceased = Array.isArray(lot.deceased_info) && lot.deceased_info.length > 0;
+  const hasGraveLot = lot.block != null && lot.block !== '' && lot.lot_plot_id != null
+  const hasNiche = lot.category != null && lot.category !== '' && lot.niche_number != null
+  const hasDeceased = Array.isArray(lot.deceased_info) && lot.deceased_info.length > 0
 
   return (
     <div className="bg-card space-y-4 rounded-lg border p-4">
@@ -94,7 +103,7 @@ function PropertyDeceasedCard({ lot }: { lot: LotInfo }) {
             <div className="bg-primary/10 text-primary rounded p-2 text-sm">🏢</div>
             <div>
               <div className="font-medium">
-                {lot.category} {lot.plot_id ?? ""}
+                {lot.category} {lot.plot_id ?? ''}
               </div>
               <div className="text-muted-foreground text-sm">Niche {lot.niche_number}</div>
             </div>
@@ -122,7 +131,7 @@ function PropertyDeceasedCard({ lot }: { lot: LotInfo }) {
         )}
       </div>
     </div>
-  );
+  )
 }
 
 // Section header component
@@ -133,7 +142,7 @@ function SectionHeader({ title }: { title: string }) {
       <h3 className="text-muted-foreground text-sm font-medium tracking-wider uppercase">{title}</h3>
       <div className="bg-border h-px flex-1" />
     </div>
-  );
+  )
 }
 
 // Info item component
@@ -142,22 +151,22 @@ function InfoItem({ label, value, children }: { label: string; value?: string | 
     <div>
       <div className="text-muted-foreground mb-1 text-xs">{label}</div>
       <div className="font-medium">
-        {value !== undefined && value !== null ? value : "-"}
+        {value !== undefined && value !== null ? value : '-'}
         {children}
       </div>
     </div>
-  );
+  )
 }
 
 export default function ViewCustomer({ open, customer, onOpenChange }: ViewCustomerDialogProps) {
-  if (!customer) {
-    return null;
-  }
-
-  const [editOpen, setEditOpen] = React.useState(false);
+  const [editOpen, setEditOpen] = React.useState(false)
   React.useEffect(() => {
-    if (open) setEditOpen(false);
-  }, [open]);
+    if (open) setEditOpen(false)
+  }, [open])
+
+  if (!customer) {
+    return null
+  }
 
   return (
     <>
@@ -173,8 +182,8 @@ export default function ViewCustomer({ open, customer, onOpenChange }: ViewCusto
                 variant="ghost"
                 className="gap-1"
                 onClick={() => {
-                  setEditOpen(true);
-                  onOpenChange(false);
+                  setEditOpen(true)
+                  onOpenChange(false)
                 }}
               >
                 <BiMessageSquareEdit />
@@ -190,7 +199,7 @@ export default function ViewCustomer({ open, customer, onOpenChange }: ViewCusto
             {/* Name */}
             <h2 className="mt-4 text-center text-xl font-bold tracking-tight">
               {customer.first_name}
-              {customer.middle_name ? ` ${customer.middle_name}` : ""} {customer.last_name ? ` ${customer.last_name}` : ""}
+              {customer.middle_name ? ` ${customer.middle_name}` : ''} {customer.last_name ? ` ${customer.last_name}` : ''}
             </h2>
 
             {/* Status Badges */}
@@ -273,12 +282,41 @@ export default function ViewCustomer({ open, customer, onOpenChange }: ViewCusto
       <CustomerForm
         mode="edit"
         open={editOpen}
-        initialValues={customer}
+        initialValues={{
+          email: customer.email || '',
+          address: customer.address || '',
+          middle_name: customer.middle_name ?? undefined,
+          gender: customer.gender === 'Female' ? 'Female' : 'Male',
+          religion: customer.religion || '',
+          last_name: customer.last_name || '',
+          status:
+            customer.status === 'Married'
+              ? 'Married'
+              : customer.status === 'Widowed'
+                ? 'Widowed'
+                : customer.status === 'Divorced'
+                  ? 'Divorced'
+                  : customer.status === 'Separated'
+                    ? 'Separated'
+                    : 'Single',
+          first_name: customer.first_name || '',
+          occupation: customer.occupation || '',
+          citizenship: customer.citizenship || '',
+          contact_number: customer.contact_number || '',
+          birth_date: customer.birth_date ? String(customer.birth_date).slice(0, 10) : '',
+        }}
         onOpenChange={setEditOpen}
         onSubmit={async (values) => {
-          await editCustomer(values as Customer);
+          const payload: Partial<Customer> = {
+            ...values,
+            middle_name: values.middle_name ?? null,
+            occupation: values.occupation || null,
+            citizenship: values.citizenship || null,
+            birth_date: values.birth_date || null,
+          }
+          await editCustomer(payload as Customer)
         }}
       />
     </>
-  );
+  )
 }

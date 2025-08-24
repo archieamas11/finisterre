@@ -1,8 +1,7 @@
-import * as React from "react";
-import { Link } from "react-router-dom";
-import { cn } from "@/lib/utils";
-import { Button } from "@/components/ui/button";
-import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
+import { ChevronDownIcon, type LucideIcon, MapPinIcon, ClockIcon, MenuIcon, BoneIcon, LayersIcon, TreesIcon, Building2Icon, ArrowLeftRightIcon } from 'lucide-react'
+import * as React from 'react'
+
+import { Button } from '@/components/ui/button'
 import {
   NavigationMenu,
   NavigationMenuContent,
@@ -11,85 +10,86 @@ import {
   NavigationMenuList,
   NavigationMenuTrigger,
   navigationMenuTriggerStyle,
-} from "@/components/ui/navigation-menu";
-import { ChevronDownIcon, type LucideIcon, MapPinIcon, ClockIcon, MenuIcon, BoneIcon, LayersIcon, TreesIcon, Building2Icon, ArrowLeftRightIcon } from "lucide-react";
+} from '@/components/ui/navigation-menu'
+import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet'
+import { cn } from '@/lib/utils'
 
 type NavItem = {
-  title: string;
-  description: string;
-  href: string;
-  icon: LucideIcon;
-};
+  title: string
+  description: string
+  href: string
+  icon: LucideIcon
+}
 
 // Products (Our Products)
 const products: NavItem[] = [
   {
     icon: TreesIcon,
-    title: "Serenity Lawn",
-    href: "#products",
-    description: "Double-depth in-ground burial plot with marble marker and well-manicured grass.",
+    title: 'Serenity Lawn',
+    href: '#products',
+    description: 'Double-depth in-ground burial plot with marble marker and well-manicured grass.',
   },
   {
     icon: LayersIcon,
-    title: "Columbarium (Niche)",
-    href: "#products",
-    description: "Best-in-class burial unit crafted with premium concrete and marble markers.",
+    title: 'Columbarium (Niche)',
+    href: '#products',
+    description: 'Best-in-class burial unit crafted with premium concrete and marble markers.',
   },
   {
     icon: BoneIcon,
-    title: "Bone Chamber & Ash Vault",
-    href: "#products",
-    description: "Concrete repository for bone and ash remains at the upper park level with garden views.",
+    title: 'Bone Chamber & Ash Vault',
+    href: '#products',
+    description: 'Concrete repository for bone and ash remains at the upper park level with garden views.',
   },
   {
     icon: Building2Icon,
-    title: "Family Estate",
-    href: "#products",
-    description: "A sacred way to honor family—an estate of your own.",
+    title: 'Family Estate',
+    href: '#products',
+    description: 'A sacred way to honor family—an estate of your own.',
   },
-];
+]
 
 // Services (Our Services)
 const coreServices: NavItem[] = [
   {
     icon: MapPinIcon,
-    title: "Interment",
-    href: "#services",
-    description: "Complete interment services with modern equipment and dignified care.",
+    title: 'Interment',
+    href: '#services',
+    description: 'Complete interment services with modern equipment and dignified care.',
   },
   {
     icon: ArrowLeftRightIcon,
-    title: "Transfer & Reburial",
-    href: "#services",
-    description: "Careful relocation of remains including documentation and coordination.",
+    title: 'Transfer & Reburial',
+    href: '#services',
+    description: 'Careful relocation of remains including documentation and coordination.',
   },
   {
     icon: ClockIcon,
-    title: "Exhumation & Reburial",
-    href: "#services",
-    description: "For fresh, skeletal, and cinerary remains handled with utmost respect.",
+    title: 'Exhumation & Reburial',
+    href: '#services',
+    description: 'For fresh, skeletal, and cinerary remains handled with utmost respect.',
   },
-];
+]
 
 // Mobile menu item component
 const MobileMenuItem = ({ href, title, children, onSelect, icon: Icon }: { children?: React.ReactNode; onSelect?: () => void; icon?: LucideIcon; title: string; href: string }) => {
-  if (children) {
-    const [isOpen, setIsOpen] = React.useState(false);
+  const [isOpen, setIsOpen] = React.useState(false)
 
+  if (children) {
     return (
       <div className="border-b border-gray-200">
         <button
           className="hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex w-full items-center justify-between px-4 py-3 text-left"
           onClick={() => {
-            setIsOpen(!isOpen);
+            setIsOpen(!isOpen)
           }}
         >
           <span className="font-medium">{title}</span>
-          <ChevronDownIcon className={cn("h-4 w-4 transition-transform", isOpen && "rotate-180")} />
+          <ChevronDownIcon className={cn('h-4 w-4 transition-transform', isOpen && 'rotate-180')} />
         </button>
         {isOpen && <div className="bg-background pb-2">{children}</div>}
       </div>
-    );
+    )
   }
 
   return (
@@ -101,8 +101,8 @@ const MobileMenuItem = ({ href, title, children, onSelect, icon: Icon }: { child
       {Icon && <Icon className="h-5 w-5" />}
       <span className="font-medium">{title}</span>
     </Link>
-  );
-};
+  )
+}
 
 // Mobile submenu item
 const MobileSubMenuItem = ({ href, title, onSelect, icon: Icon, description }: { onSelect?: () => void; description: string; icon: LucideIcon; title: string; href: string }) => {
@@ -114,15 +114,23 @@ const MobileSubMenuItem = ({ href, title, onSelect, icon: Icon, description }: {
         <div className="mt-1 text-xs text-gray-600">{description}</div>
       </div>
     </Link>
-  );
-};
+  )
+}
 
 export function NavigationMenuSection() {
-  const [isOpen, setIsOpen] = React.useState(false);
+  const [isOpen, setIsOpen] = React.useState(false)
+  const [scrolled, setScrolled] = useState<boolean>(false)
+
+  useEffect(() => {
+    const handleScroll = () => setScrolled(window.scrollY > 10)
+    window.addEventListener('scroll', handleScroll, { passive: true })
+    handleScroll()
+    return () => window.removeEventListener('scroll', handleScroll)
+  }, [])
 
   const handleMobileMenuClose = () => {
-    setIsOpen(false);
-  };
+    setIsOpen(false)
+  }
 
   return (
     <>
@@ -130,12 +138,25 @@ export function NavigationMenuSection() {
       <NavigationMenu className="z-20 hidden md:flex">
         <NavigationMenuList>
           <NavigationMenuItem>
-            <NavigationMenuLink className={cn(navigationMenuTriggerStyle(), "bg-transparent")} asChild>
+            <NavigationMenuLink
+              className={cn(navigationMenuTriggerStyle(), 'bg-transparent', {
+                'text-black': scrolled,
+                'text-white': !scrolled,
+              })}
+              asChild
+            >
               <Link to="/">Home</Link>
             </NavigationMenuLink>
           </NavigationMenuItem>
           <NavigationMenuItem>
-            <NavigationMenuTrigger className="bg-transparent">Products</NavigationMenuTrigger>
+            <NavigationMenuTrigger
+              className={cn(navigationMenuTriggerStyle(), 'bg-transparent', {
+                'text-black': scrolled,
+                'text-white': !scrolled,
+              })}
+            >
+              Products
+            </NavigationMenuTrigger>
             <NavigationMenuContent className="p-4">
               <div className="grid w-[900px] grid-cols-3 gap-3 divide-x p-4">
                 <div className="col-span-2">
@@ -162,7 +183,14 @@ export function NavigationMenuSection() {
             </NavigationMenuContent>
           </NavigationMenuItem>
           <NavigationMenuItem>
-            <NavigationMenuTrigger className="bg-transparent">Services</NavigationMenuTrigger>
+            <NavigationMenuTrigger
+              className={cn(navigationMenuTriggerStyle(), 'bg-transparent', {
+                'text-black': scrolled,
+                'text-white': !scrolled,
+              })}
+            >
+              Services
+            </NavigationMenuTrigger>
             <NavigationMenuContent className="px-4 py-6">
               <div className="pl-4">
                 <h6 className="text-muted-foreground pl-2.5 text-sm font-semibold uppercase">Our Services</h6>
@@ -177,12 +205,24 @@ export function NavigationMenuSection() {
             </NavigationMenuContent>
           </NavigationMenuItem>
           <NavigationMenuItem>
-            <NavigationMenuLink className={cn(navigationMenuTriggerStyle(), "bg-transparent")} asChild>
+            <NavigationMenuLink
+              className={cn(navigationMenuTriggerStyle(), 'bg-transparent', {
+                'text-black': scrolled,
+                'text-white': !scrolled,
+              })}
+              asChild
+            >
               <Link to="/about">About</Link>
             </NavigationMenuLink>
           </NavigationMenuItem>
           <NavigationMenuItem>
-            <NavigationMenuLink className={cn(navigationMenuTriggerStyle(), "bg-transparent")} asChild>
+            <NavigationMenuLink
+              className={cn(navigationMenuTriggerStyle(), 'bg-transparent', {
+                'text-black': scrolled,
+                'text-white': !scrolled,
+              })}
+              asChild
+            >
               <Link to="#contact">Contact</Link>
             </NavigationMenuLink>
           </NavigationMenuItem>
@@ -194,8 +234,13 @@ export function NavigationMenuSection() {
         <div className="flex items-center gap-2 p-2 py-8 lg:py-0">
           <Sheet onOpenChange={setIsOpen} open={isOpen}>
             <SheetTrigger asChild>
-              <Button className="absolute left-12 h-10 w-10" variant="ghost" size="icon" type="button">
-                <MenuIcon className="h-6 w-6" />
+              <Button className="absolute left-12" variant="ghost" size="icon" type="button">
+                <MenuIcon
+                  className={cn('h-6 w-6', {
+                    'text-black': scrolled,
+                    'text-white': !scrolled,
+                  })}
+                />
                 <span className="sr-only">Toggle menu</span>
               </Button>
             </SheetTrigger>
@@ -244,27 +289,27 @@ export function NavigationMenuSection() {
         </div>
       </div>
     </>
-  );
+  )
 }
 
 const ListItem = React.forwardRef<
   React.ElementRef<typeof Link>,
   {
-    children?: React.ReactNode;
-    icon: LucideIcon;
-    title: string;
-    to: string;
-  } & Omit<React.ComponentPropsWithoutRef<typeof Link>, "href">
+    children?: React.ReactNode
+    icon: LucideIcon
+    title: string
+    to: string
+  } & Omit<React.ComponentPropsWithoutRef<typeof Link>, 'href'>
 >(({ to, title, children, className, icon: Icon, ...props }, ref) => {
   return (
     <li>
       <NavigationMenuLink asChild>
         <Link
           className={cn(
-            "hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex items-start gap-3 rounded-md p-3 leading-none no-underline transition-colors outline-none select-none",
+            'hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex items-start gap-3 rounded-md p-3 leading-none no-underline transition-colors outline-none select-none',
             className,
           )}
-          ref={ref as any}
+          ref={ref}
           to={to}
           {...props}
         >
@@ -276,6 +321,6 @@ const ListItem = React.forwardRef<
         </Link>
       </NavigationMenuLink>
     </li>
-  );
-});
-ListItem.displayName = "ListItem";
+  )
+})
+ListItem.displayName = 'ListItem'

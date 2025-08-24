@@ -1,23 +1,25 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { Marker } from "react-leaflet";
-import { useMapEvents } from "react-leaflet";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import L from "leaflet";
-import { updatePlotCoordinates } from "@/api/plots.api";
-import { toast } from "sonner";
+import { useMutation, useQueryClient } from '@tanstack/react-query'
+import L from 'leaflet'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { Marker } from 'react-leaflet'
+import { useMapEvents } from 'react-leaflet'
+import { toast } from 'sonner'
+
+import { updatePlotCoordinates } from '@/api/plots.api'
+import type { ConvertedMarker } from '@/types/map.types'
 
 interface EditableMarkerProps {
-  plotId: string;
-  position: [number, number];
-  icon: L.DivIcon;
-  children: React.ReactNode;
-  isEditable: boolean;
-  isSelected: boolean;
-  onMarkerClick: (plotId: string) => void;
-  onEditComplete: () => void;
-  onSaveSuccess?: () => void;
-  onPopupOpen?: () => void;
-  onPopupClose?: () => void;
+  plotId: string
+  position: [number, number]
+  icon: L.DivIcon
+  children: React.ReactNode
+  isEditable: boolean
+  isSelected: boolean
+  onMarkerClick: (plotId: string) => void
+  onEditComplete: () => void
+  onSaveSuccess?: () => void
+  onPopupOpen?: () => void
+  onPopupClose?: () => void
 }
 
 export default function EditableMarker({
@@ -33,42 +35,42 @@ export default function EditableMarker({
   onPopupOpen,
   onPopupClose,
 }: EditableMarkerProps) {
-  const markerRef = useRef<L.Marker | null>(null);
-  const isDraggingRef = useRef(false);
-  const currentPositionRef = useRef<[number, number]>(position);
-  const [localPosition, setLocalPosition] = useState<[number, number]>(position);
-  const queryClient = useQueryClient();
+  const markerRef = useRef<L.Marker | null>(null)
+  const isDraggingRef = useRef(false)
+  const currentPositionRef = useRef<[number, number]>(position)
+  const [localPosition, setLocalPosition] = useState<[number, number]>(position)
+  const queryClient = useQueryClient()
 
   // Update local position when prop changes, but only if it's different
   useEffect(() => {
-    const [currentLat, currentLng] = localPosition;
-    const [newLat, newLng] = position;
+    const [currentLat, currentLng] = localPosition
+    const [newLat, newLng] = position
 
     if (currentLat !== newLat || currentLng !== newLng) {
-      setLocalPosition(position);
+      setLocalPosition(position)
     }
-  }, [position, localPosition]);
+  }, [position, localPosition])
 
   // Update marker position when local position changes
   useEffect(() => {
     if (markerRef.current) {
-      const currentLatLng = markerRef.current.getLatLng();
-      const [newLat, newLng] = localPosition;
+      const currentLatLng = markerRef.current.getLatLng()
+      const [newLat, newLng] = localPosition
 
       // Only update if the position has actually changed
       if (currentLatLng.lat !== newLat || currentLatLng.lng !== newLng) {
-        markerRef.current.setLatLng(localPosition);
-        currentPositionRef.current = localPosition;
+        markerRef.current.setLatLng(localPosition)
+        currentPositionRef.current = localPosition
       }
     }
-  }, [localPosition]);
+  }, [localPosition])
 
   // Selected plot marker style to edit
   useEffect(() => {
-    let style = document.getElementById("selected-marker-styles");
-    if (style) return;
-    style = document.createElement("style");
-    style.id = "selected-marker-styles";
+    let style = document.getElementById('selected-marker-styles')
+    if (style) return
+    style = document.createElement('style')
+    style.id = 'selected-marker-styles'
     style.innerHTML = `
       @keyframes markerPulse {
         0% { box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.7); }
@@ -105,62 +107,62 @@ export default function EditableMarker({
       .leaflet-marker-draggable {
         cursor: move !important;
       }
-    `;
-    document.head.appendChild(style);
-  }, []);
+    `
+    document.head.appendChild(style)
+  }, [])
 
   const markerIcon = useMemo(() => {
     if (!isSelected || !isEditable) {
-      return icon;
+      return icon
     }
-    let originalHtml = "";
-    if (typeof icon.options.html === "string") {
-      originalHtml = icon.options.html;
-    } else if (icon.options.html && typeof icon.options.html === "object" && "outerHTML" in icon.options.html) {
-      originalHtml = (icon.options.html as HTMLElement).outerHTML;
+    let originalHtml = ''
+    if (typeof icon.options.html === 'string') {
+      originalHtml = icon.options.html
+    } else if (icon.options.html && typeof icon.options.html === 'object' && 'outerHTML' in icon.options.html) {
+      originalHtml = (icon.options.html as HTMLElement).outerHTML
     }
     const enhancedHtml = `
       <div style="position: relative; display: inline-block;">
         ${originalHtml}
         <div class="marker-editing-indicator"></div>
       </div>
-    `;
+    `
     return L.divIcon({
       ...icon.options,
       html: enhancedHtml,
-      className: `${icon.options.className || ""} marker-selected`.trim(),
-    });
-  }, [icon, isSelected, isEditable]);
+      className: `${icon.options.className || ''} marker-selected`.trim(),
+    })
+  }, [icon, isSelected, isEditable])
 
   // Mutation for updating coordinates with optimistic updates
   const updateCoordinatesMutation = useMutation({
     mutationFn: async ({ plot_id, coordinates }: { plot_id: string; coordinates: string }) => {
-      return updatePlotCoordinates(plot_id, coordinates);
+      return updatePlotCoordinates(plot_id, coordinates)
     },
     onMutate: async ({ plot_id, coordinates }) => {
-      await queryClient.cancelQueries({ queryKey: ["plots"] });
-      await queryClient.cancelQueries({ queryKey: ["plotDetails", plot_id] });
+      await queryClient.cancelQueries({ queryKey: ['plots'] })
+      await queryClient.cancelQueries({ queryKey: ['plotDetails', plot_id] })
 
-      const previousPlots = queryClient.getQueryData<any[]>(["plots"]);
-      const previousPlotsClone = previousPlots ? JSON.parse(JSON.stringify(previousPlots)) : undefined;
+      const previousPlots = queryClient.getQueryData<ConvertedMarker[]>(['plots'])
+      const previousPlotsClone = previousPlots ? JSON.parse(JSON.stringify(previousPlots)) : undefined
 
       // parse "lng, lat" safely
       const parts = String(coordinates)
-        .split(",")
-        .map((s) => parseFloat(s.trim()));
-      const [lng, lat] = parts.length >= 2 && !Number.isNaN(parts[0]) && !Number.isNaN(parts[1]) ? [parts[0], parts[1]] : [undefined, undefined];
+        .split(',')
+        .map((s) => parseFloat(s.trim()))
+      const [lng, lat] = parts.length >= 2 && !Number.isNaN(parts[0]) && !Number.isNaN(parts[1]) ? [parts[0], parts[1]] : [undefined, undefined]
 
       if (lat !== undefined && lng !== undefined) {
         // set local marker position so UI moves right away
-        setLocalPosition([lat, lng]);
-        currentPositionRef.current = [lat, lng];
+        setLocalPosition([lat, lng])
+        currentPositionRef.current = [lat, lng]
       }
 
       // update cache fields that your UI may read
       if (previousPlots) {
-        queryClient.setQueryData(["plots"], (old: any) => {
-          if (!old) return old;
-          return old.map((plot: any) =>
+        queryClient.setQueryData(['plots'], (old: ConvertedMarker[] | undefined) => {
+          if (!old) return old
+          return old.map((plot: ConvertedMarker) =>
             plot.plot_id === plot_id
               ? {
                   ...plot,
@@ -169,37 +171,39 @@ export default function EditableMarker({
                   position: lat !== undefined && lng !== undefined ? [lat, lng] : plot.position,
                 }
               : plot,
-          );
-        });
+          )
+        })
       }
 
-      return { previousPlots: previousPlotsClone };
+      return { previousPlots: previousPlotsClone }
     },
 
     onError: (_err, _variables, context) => {
       // Roll back cache if we saved a snapshot in onMutate
       if (context?.previousPlots) {
-        queryClient.setQueryData(["plots"], context.previousPlots);
+        queryClient.setQueryData(['plots'], context.previousPlots)
       }
       // Reset marker position on error
-      setLocalPosition(position);
-      currentPositionRef.current = position;
+      setLocalPosition(position)
+      currentPositionRef.current = position
     },
     onSettled: (_data, _error, variables) => {
-      queryClient.invalidateQueries({ queryKey: ["plots"] });
+      queryClient.invalidateQueries({ queryKey: ['plots'] })
       if (variables?.plot_id) {
-        queryClient.invalidateQueries({ queryKey: ["plotDetails", variables.plot_id] });
+        queryClient.invalidateQueries({
+          queryKey: ['plotDetails', variables.plot_id],
+        })
       }
     },
     onSuccess: () => {
       // ✅ Keep edit session active; return to select mode
-      onSaveSuccess?.();
+      onSaveSuccess?.()
     },
-  });
+  })
 
   // Save current position
   const savePosition = useCallback(async () => {
-    const [lat, lng] = currentPositionRef.current;
+    const [lat, lng] = currentPositionRef.current
     try {
       await toast.promise(
         updateCoordinatesMutation.mutateAsync({
@@ -207,109 +211,109 @@ export default function EditableMarker({
           coordinates: `${lng}, ${lat}`,
         }),
         {
-          loading: "Updating marker position...",
-          success: "Marker position updated.",
-          error: "Failed to update marker position.",
+          loading: 'Updating marker position...',
+          success: 'Marker position updated.',
+          error: 'Failed to update marker position.',
         },
-      );
+      )
     } catch (e) {}
-  }, [plotId, updateCoordinatesMutation]);
+  }, [plotId, updateCoordinatesMutation])
 
   // Cancel editing and reset position
   const cancelEditing = useCallback(() => {
-    setLocalPosition(position);
-    onEditComplete();
-  }, [position, onEditComplete]);
+    setLocalPosition(position)
+    onEditComplete()
+  }, [position, onEditComplete])
 
   // Handle keyboard events (unchanged)
   useMapEvents({
     keydown(e: L.LeafletKeyboardEvent) {
-      if (!isSelected) return;
-      if (e.originalEvent.key === "Enter") {
-        e.originalEvent.preventDefault();
-        savePosition();
-      } else if (e.originalEvent.key === "Escape") {
-        e.originalEvent.preventDefault();
-        cancelEditing();
+      if (!isSelected) return
+      if (e.originalEvent.key === 'Enter') {
+        e.originalEvent.preventDefault()
+        savePosition()
+      } else if (e.originalEvent.key === 'Escape') {
+        e.originalEvent.preventDefault()
+        cancelEditing()
       }
     },
-  });
+  })
 
   // Setup dragging behavior (unchanged)
   useEffect(() => {
-    const marker = markerRef.current;
-    if (!marker) return;
+    const marker = markerRef.current
+    if (!marker) return
 
     // Clear existing event listeners
-    marker.off("dragstart").off("drag").off("dragend");
+    marker.off('dragstart').off('drag').off('dragend')
 
     if (isSelected && isEditable) {
       // Enable dragging
       if (!marker.dragging?.enabled()) {
-        marker.dragging?.enable();
+        marker.dragging?.enable()
       }
 
       // Set up drag event listeners
-      marker.on("dragstart", () => {
-        isDraggingRef.current = true;
-      });
+      marker.on('dragstart', () => {
+        isDraggingRef.current = true
+      })
 
-      marker.on("drag", (e) => {
-        const { lat, lng } = e.target.getLatLng();
-        currentPositionRef.current = [lat, lng];
-      });
+      marker.on('drag', (e) => {
+        const { lat, lng } = e.target.getLatLng()
+        currentPositionRef.current = [lat, lng]
+      })
 
-      marker.on("dragend", () => {
-        isDraggingRef.current = false;
-      });
+      marker.on('dragend', () => {
+        isDraggingRef.current = false
+      })
 
       // Focus map container for keyboard events
-      const mapContainer = document.querySelector(".leaflet-container") as HTMLElement;
-      if (mapContainer && mapContainer.getAttribute("tabindex") !== "0") {
-        mapContainer.setAttribute("tabindex", "0");
-        mapContainer.style.outline = "none";
+      const mapContainer = document.querySelector('.leaflet-container') as HTMLElement
+      if (mapContainer && mapContainer.getAttribute('tabindex') !== '0') {
+        mapContainer.setAttribute('tabindex', '0')
+        mapContainer.style.outline = 'none'
       }
     } else {
       // Disable dragging
       if (marker.dragging?.enabled()) {
-        marker.dragging?.disable();
+        marker.dragging?.disable()
       }
     }
-  }, [isSelected, isEditable, savePosition]);
+  }, [isSelected, isEditable, savePosition])
 
   // Handle marker click
   const handleMarkerClick = useCallback(() => {
     // Prevent click during drag
-    if (isDraggingRef.current) return;
+    if (isDraggingRef.current) return
     if (isEditable) {
-      onMarkerClick(plotId);
+      onMarkerClick(plotId)
       // Focus map for keyboard events
       setTimeout(() => {
-        const mapContainer = document.querySelector(".leaflet-container") as HTMLElement;
+        const mapContainer = document.querySelector('.leaflet-container') as HTMLElement
         if (mapContainer) {
-          mapContainer.focus();
+          mapContainer.focus()
         }
-      }, 0);
+      }, 0)
     }
-  }, [isEditable, onMarkerClick, plotId]);
+  }, [isEditable, onMarkerClick, plotId])
 
   // Event handlers
   const eventHandlers = useMemo(() => {
-    const handlers: any = {
+    const handlers: Record<string, (...args: unknown[]) => void> = {
       click: handleMarkerClick,
-    };
+    }
     // Only add popup handlers when not in edit mode
     if (!isEditable) {
-      if (onPopupOpen) handlers.popupopen = onPopupOpen;
-      if (onPopupClose) handlers.popupclose = onPopupClose;
+      if (onPopupOpen) handlers.popupopen = onPopupOpen
+      if (onPopupClose) handlers.popupclose = onPopupClose
     }
-    return handlers;
-  }, [handleMarkerClick, isEditable, onPopupOpen, onPopupClose]);
+    return handlers
+  }, [handleMarkerClick, isEditable, onPopupOpen, onPopupClose])
 
   return (
     <Marker ref={markerRef} position={localPosition} icon={markerIcon} eventHandlers={eventHandlers} draggable={isSelected && isEditable}>
       {/* Only render popup content when not in editable mode */}
       {!isEditable && children}
     </Marker>
-  );
+  )
 }
