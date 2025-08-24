@@ -25,7 +25,7 @@ export interface ValhallaCostingOptions {
 
 export interface ValhallaRouteRequest {
   locations: ValhallaLocation[]
-  costing: 'auto' | 'pedestrian' | 'bicycle' | 'car'
+  costing: 'auto' | 'pedestrian' | 'bicycle'
   costing_options?: ValhallaCostingOptions
   directions_options?: {
     units?: 'kilometers' | 'miles'
