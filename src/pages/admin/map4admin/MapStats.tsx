@@ -3,9 +3,11 @@ import { Menu, X } from 'lucide-react'
 import { useState, useEffect, useRef } from 'react'
 
 import { getChambersStats, getSerenityStats } from '@/api/map-stats.api'
+import { ErrorMessage } from '@/components/ErrorMessage'
 import { Badge } from '@/components/ui/badge'
 import { Card } from '@/components/ui/card'
 import { Progress } from '@/components/ui/progress'
+import { Skeleton } from '@/components/ui/skeleton'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 
 export default function MapStats() {
@@ -69,7 +71,7 @@ export default function MapStats() {
     },
     {
       id: 'chambers',
-      name: 'Memorial Chambers',
+      name: 'Chambers',
       stats: [
         {
           label: 'Available',
@@ -138,160 +140,161 @@ export default function MapStats() {
 
   // Stats Card Component (reused in both desktop and panel)
   const StatsCard = () => (
-    <Card className='w-full overflow-hidden border border-white/20 bg-[#f1eff5]/90 p-0 shadow-xl backdrop-blur-md dark:border-stone-700/50 dark:bg-[#16141e]/80'>
-      {/* Header */}
-      <div className='border-b border-gray-200 px-6 pt-5 pb-3 dark:border-stone-700'>
-        <h2 className='text-lg font-bold text-gray-800 dark:text-gray-100'>
-          Location Statistics
-        </h2>
-        <p className='mt-1 text-xs text-gray-500 dark:text-gray-400'>
-          Real-time availability data
-        </p>
-      </div>
-
-      {/* Summary Stats */}
-      <div className='bg-gray-50 px-6 py-5 dark:bg-stone-800/50'>
-        {/* Loading / Error States */}
-        {isLoading && (
-          <div className='text-xs text-gray-500 dark:text-gray-400'>
-            Loading statistics…
+    <>
+      <Card className='w-full overflow-hidden border border-white/20 bg-[#f1eff5]/90 p-0 shadow-xl backdrop-blur-md dark:border-stone-700/50 dark:bg-[#16141e]/80'>
+        {hasError && <ErrorMessage message='Error fetching map statistics' />}
+        {/* Header */}
+        <div className='border-b border-gray-200 px-6 pt-5 pb-3 dark:border-stone-700'>
+          <h2 className='text-lg font-bold text-gray-800 dark:text-gray-100'>
+            Location Statistics
+          </h2>
+          <p className='mt-1 text-xs text-gray-500 dark:text-gray-400'>
+            Real-time availability data
+          </p>
+        </div>
+        {/* Summary Stats */}
+        <div className='bg-gray-50 px-6 py-5 dark:bg-stone-800/50'>
+          <div className='mb-3 flex items-center justify-between'>
+            <span className='text-xs font-medium text-gray-500 dark:text-gray-400'>
+              Total Spaces
+            </span>
+            <Badge
+              variant='outline'
+              className='px-3 py-1 text-xs font-semibold'
+            >
+              {isLoading ? 'Loading...' : totalSpaces}
+            </Badge>
           </div>
-        )}
-        {hasError && !isLoading && (
-          <div className='text-xs text-red-600 dark:text-red-400'>
-            Failed to load some statistics.
-          </div>
-        )}
 
-        {!isLoading && (
-          <>
-            <div className='mb-3 flex items-center justify-between'>
-              <span className='text-xs font-medium text-gray-500 dark:text-gray-400'>
-                Total Spaces
-              </span>
-              <Badge
-                variant='outline'
-                className='px-3 py-1 text-xs font-semibold'
-              >
-                {totalSpaces}
-              </Badge>
-            </div>
-
-            <div className='grid grid-cols-3 gap-4'>
-              <div className='rounded-lg bg-green-50 p-3 text-center dark:bg-green-900/20'>
-                <div className='text-lg font-bold text-green-600 dark:text-green-400'>
-                  {totals.available}
-                </div>
-                <div className='text-xs text-green-700 dark:text-green-300'>
-                  Available
-                </div>
+          <div className='grid grid-cols-3 gap-4'>
+            <div className='rounded-lg bg-green-50 p-3 text-center dark:bg-green-900/20'>
+              <div className='text-lg font-bold text-green-600 dark:text-green-400'>
+                {isLoading ? (
+                  <Skeleton className='h-6 mb-1 w-full rounded' />
+                ) : (
+                  totals.available
+                )}
               </div>
-              <div className='rounded-lg bg-red-50 p-3 text-center dark:bg-red-900/20'>
-                <div className='text-lg font-bold text-red-600 dark:text-red-400'>
-                  {totals.occupied}
-                </div>
-                <div className='text-xs text-red-700 dark:text-red-300'>
-                  Occupied
-                </div>
-              </div>
-              <div className='rounded-lg bg-yellow-50 p-3 text-center dark:bg-yellow-900/20'>
-                <div className='text-lg font-bold text-yellow-600 dark:text-yellow-400'>
-                  {totals.reserved}
-                </div>
-                <div className='text-xs text-yellow-700 dark:text-yellow-300'>
-                  Reserved
-                </div>
+              <div className='text-xs text-green-700 dark:text-green-300'>
+                Available
               </div>
             </div>
-          </>
-        )}
-      </div>
+            <div className='rounded-lg bg-red-50 p-3 text-center dark:bg-red-900/20'>
+              <div className='text-lg font-bold text-red-600 dark:text-red-400'>
+                {isLoading ? (
+                  <Skeleton className='h-6 mb-1 w-full rounded' />
+                ) : (
+                  totals.occupied
+                )}
+              </div>
+              <div className='text-xs text-red-700 dark:text-red-300'>
+                Occupied
+              </div>
+            </div>
+            <div className='rounded-lg bg-yellow-50 p-3 text-center dark:bg-yellow-900/20'>
+              <div className='text-lg font-bold text-yellow-600 dark:text-yellow-400'>
+                {isLoading ? (
+                  <Skeleton className='h-6 mb-1 w-full rounded' />
+                ) : (
+                  totals.reserved
+                )}
+              </div>
+              <div className='text-xs text-yellow-700 dark:text-yellow-300'>
+                Reserved
+              </div>
+            </div>
+          </div>
+        </div>
 
-      {/* Location Tabs */}
-      <div className='px-2 pt-2 pb-1'>
-        <Tabs defaultValue='serenity' className='w-full'>
-          <TabsList className='mb-2 grid h-auto w-full grid-cols-2 gap-1 rounded-lg bg-gray-100 p-1 dark:bg-stone-800'>
-            {locationData.map((location) => (
-              <TabsTrigger
-                key={location.id}
-                value={location.id}
-                className='rounded-md px-2 py-2 text-xs transition-colors data-[state=active]:bg-white data-[state=active]:shadow-sm dark:data-[state=active]:bg-stone-700'
-              >
-                {location.name.split(' ')[0]}
-              </TabsTrigger>
-            ))}
-          </TabsList>
+        {/* Location Tabs */}
+        <div className='px-2 pt-2 pb-1'>
+          <Tabs defaultValue='serenity' className='w-full'>
+            <TabsList className='mb-2 grid h-auto w-full grid-cols-2 gap-1 rounded-lg bg-gray-100 p-1 dark:bg-stone-800'>
+              {locationData.map((location) => (
+                <TabsTrigger
+                  key={location.id}
+                  value={location.id}
+                  className='rounded-md px-2 py-2 text-xs transition-colors data-[state=active]:bg-white data-[state=active]:shadow-sm dark:data-[state=active]:bg-stone-700'
+                >
+                  {location.name.split(' ')[0]}
+                </TabsTrigger>
+              ))}
+            </TabsList>
 
-          {locationData.map((location) => {
-            const locationTotal =
-              location.total ??
-              location.stats.reduce((sum, stat) => sum + stat.value, 0)
+            {locationData.map((location) => {
+              const locationTotal =
+                location.total ??
+                location.stats.reduce((sum, stat) => sum + stat.value, 0)
 
-            return (
-              <TabsContent
-                key={location.id}
-                value={location.id}
-                className='space-y-5 p-3 pt-1'
-              >
-                <div>
-                  <h3 className='font-semibold text-gray-800 dark:text-gray-100'>
-                    {location.name}
-                  </h3>
-                  <p className='text-xs text-gray-500 dark:text-gray-400'>
-                    {locationTotal} total spaces
-                  </p>
-                </div>
-
-                <div className='space-y-4'>
-                  {location.stats.map((stat) => {
-                    const denominator = locationTotal > 0 ? locationTotal : 1
-                    const percentage = Math.round(
-                      (stat.value / denominator) * 100
-                    )
-
-                    return (
-                      <div key={stat.label} className='space-y-1'>
-                        <div className='flex items-center justify-between'>
-                          <span className='text-sm font-medium text-gray-700 dark:text-gray-300'>
-                            {stat.label}
-                          </span>
-                          <span className={`text-sm font-bold ${stat.color}`}>
-                            {stat.value}
-                          </span>
-                        </div>
-                        <div className='flex items-center gap-2'>
-                          <Progress value={percentage} className='h-2 flex-1' />
-                          <span className='w-8 text-right text-xs text-gray-500 dark:text-gray-400'>
-                            {Number.isFinite(percentage) ? percentage : 0}%
-                          </span>
-                        </div>
-                      </div>
-                    )
-                  })}
-                </div>
-
-                <div className='pt-2'>
-                  <div className='flex items-center justify-between'>
-                    <span className='text-xs font-medium text-gray-500 dark:text-gray-400'>
-                      Occupancy Rate
-                    </span>
-                    <span className='text-xs font-bold text-gray-700 dark:text-gray-300'>
-                      {(() => {
-                        const denominator =
-                          locationTotal > 0 ? locationTotal : 1
-                        const occupied = location.stats[1]?.value ?? 0
-                        return Math.round((occupied / denominator) * 100)
-                      })()}
-                      %
-                    </span>
+              return (
+                <TabsContent
+                  key={location.id}
+                  value={location.id}
+                  className='space-y-5 p-3 pt-1'
+                >
+                  <div>
+                    <h3 className='font-semibold text-gray-800 dark:text-gray-100'>
+                      {location.name}
+                    </h3>
+                    <p className='text-xs text-gray-500 dark:text-gray-400'>
+                      {locationTotal} total spaces
+                    </p>
                   </div>
-                </div>
-              </TabsContent>
-            )
-          })}
-        </Tabs>
-      </div>
-    </Card>
+
+                  <div className='space-y-4'>
+                    {location.stats.map((stat) => {
+                      const denominator = locationTotal > 0 ? locationTotal : 1
+                      const percentage = Math.round(
+                        (stat.value / denominator) * 100
+                      )
+
+                      return (
+                        <div key={stat.label} className='space-y-1'>
+                          <div className='flex items-center justify-between'>
+                            <span className='text-sm font-medium text-gray-700 dark:text-gray-300'>
+                              {stat.label}
+                            </span>
+                            <span className={`text-sm font-bold ${stat.color}`}>
+                              {stat.value}
+                            </span>
+                          </div>
+                          <div className='flex items-center gap-2'>
+                            <Progress
+                              value={percentage}
+                              className='h-2 flex-1'
+                            />
+                            <span className='w-8 text-right text-xs text-gray-500 dark:text-gray-400'>
+                              {Number.isFinite(percentage) ? percentage : 0}%
+                            </span>
+                          </div>
+                        </div>
+                      )
+                    })}
+                  </div>
+
+                  <div className='pt-2'>
+                    <div className='flex items-center justify-between'>
+                      <span className='text-xs font-medium text-gray-500 dark:text-gray-400'>
+                        Occupancy Rate
+                      </span>
+                      <span className='text-xs font-bold text-gray-700 dark:text-gray-300'>
+                        {(() => {
+                          const denominator =
+                            locationTotal > 0 ? locationTotal : 1
+                          const occupied = location.stats[1]?.value ?? 0
+                          return Math.round((occupied / denominator) * 100)
+                        })()}
+                        %
+                      </span>
+                    </div>
+                  </div>
+                </TabsContent>
+              )
+            })}
+          </Tabs>
+        </div>
+      </Card>
+    </>
   )
 
   return (

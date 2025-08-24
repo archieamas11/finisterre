@@ -1,33 +1,20 @@
 import { useQuery } from '@tanstack/react-query'
 
+import type { DeceasedData as DeceasedType } from '@/types/deceased.types'
+
 import { getPlotDetails } from '@/api/plots.api'
 
 interface OwnerData {
-  lot_id?: string // include lot id for binding deceased records
+  lot_id?: string
   fullname: string
   email: string
   contact: string
   customer_id: string
 }
 
-interface DeceasedData {
-  deceased_id: string
-  dead_fullname: string
-  dead_gender?: string
-  dead_citizenship?: string
-  dead_civil_status?: string
-  dead_relationship?: string
-  dead_message?: string
-  dead_bio?: string
-  dead_profile_link?: string
-  dead_interment: string
-  dead_birth_date?: string
-  dead_date_death?: string
-}
-
 interface PlotDetailsData {
   owner: OwnerData | null
-  deceased: DeceasedData[]
+  deceased: DeceasedType[]
 }
 
 export const usePlotDetails = (plot_id: string) => {

@@ -40,7 +40,6 @@ const plotData = {
   memorial: { Available: 60, Occupied: 200, Reserved: 20 }
 }
 
-// Softer, modern semantic palette (accessible contrast)
 const COLORS: Record<string, string> = {
   Available: '#047857',
   Occupied: '#b91c1c',

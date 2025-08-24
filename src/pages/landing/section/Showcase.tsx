@@ -24,7 +24,7 @@ const galleryImages = [
     alt: 'Panoramic view of peaceful cemetery grounds with rolling hills',
     caption:
       'Panoramic view of our 150-acre grounds nestled in the rolling countryside',
-    category: 'panoramic'
+    category: 'chapel'
   },
   {
     id: 2,
@@ -32,7 +32,7 @@ const galleryImages = [
     alt: 'Spring blossoms throughout the cemetery pathways',
     caption:
       'Spring transformation with cherry blossoms lining memorial pathways',
-    category: 'seasonal'
+    category: 'serenity'
   },
   {
     id: 3,
@@ -40,7 +40,7 @@ const galleryImages = [
     alt: 'Aerial view showing the full expanse of the cemetery property',
     caption:
       'Aerial perspective showcasing the thoughtful layout and natural integration',
-    category: 'aerial'
+    category: 'chambers'
   },
   {
     id: 4,
@@ -48,7 +48,7 @@ const galleryImages = [
     alt: 'Historic monument with intricate architectural details',
     caption:
       'Historic memorial featuring 19th-century craftsmanship and artistry',
-    category: 'architecture'
+    category: 'columbarium'
   },
   {
     id: 5,
@@ -56,14 +56,14 @@ const galleryImages = [
     alt: 'Golden sunset casting peaceful light across the grounds',
     caption:
       'Evening tranquility as golden hour illuminates the sacred grounds',
-    category: 'sunset'
+    category: 'playground'
   },
   {
     id: 6,
     src: 'https://picsum.photos/id/1025/2070/1380',
     alt: 'Carefully maintained memorial gardens with seasonal flowers',
     caption: 'Memorial gardens featuring native plants and seasonal displays',
-    category: 'gardens'
+    category: 'parking'
   },
   {
     id: 7,
@@ -71,7 +71,7 @@ const galleryImages = [
     alt: 'A serene lake reflecting the sky within the memorial park',
     caption:
       'A serene lake reflecting the sky, offering a place for quiet contemplation',
-    category: 'gardens'
+    category: 'parking'
   }
 ]
 
@@ -118,12 +118,12 @@ export default function CemeteryShowcase() {
 
   const categories = [
     { id: 'all', label: 'All Views' },
-    { id: 'panoramic', label: 'Panoramic' },
-    { id: 'seasonal', label: 'Seasonal' },
-    { id: 'aerial', label: 'Aerial' },
-    { id: 'architecture', label: 'Architecture' },
-    { id: 'sunset', label: 'Golden Hour' },
-    { id: 'gardens', label: 'Gardens' }
+    { id: 'chapel', label: 'Chapel' },
+    { id: 'serenity', label: 'Serenity' },
+    { id: 'chambers', label: 'Chambers' },
+    { id: 'columbarium', label: 'Columbarium' },
+    { id: 'playground', label: 'Playground' },
+    { id: 'parking', label: 'Parking' }
   ]
 
   const filteredImages = useMemo(() => {

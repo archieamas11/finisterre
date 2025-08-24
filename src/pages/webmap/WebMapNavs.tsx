@@ -84,16 +84,32 @@ export default function WebMapNavs() {
       className='pointer-events-auto absolute top-4 right-4 z-[990] flex flex-col gap-3 sm:top-8 sm:right-8 sm:gap-4 md:top-8 md:right-auto md:left-1/2 md:-translate-x-1/2 md:flex-row md:gap-4'
       style={{ pointerEvents: 'auto' }}
     >
-      <Button variant={'secondary'} className='rounded-full' size='icon'>
+      <Button
+        variant={'secondary'}
+        className='rounded-full bg-background'
+        size='icon'
+      >
         <Search className='text-accent-foreground' />
       </Button>
-      <Button variant={'secondary'} className='rounded-full' size='icon'>
+      <Button
+        variant={'secondary'}
+        className='rounded-full bg-background'
+        size='icon'
+      >
         <RiListSettingsFill className='text-accent-foreground' />
       </Button>
-      <Button variant={'secondary'} className='rounded-full' size='icon'>
+      <Button
+        variant={'secondary'}
+        className='rounded-full bg-background'
+        size='icon'
+      >
         <Filter className='text-accent-foreground' />
       </Button>
-      <Button variant={'secondary'} className='rounded-full' size='icon'>
+      <Button
+        variant={'secondary'}
+        className='rounded-full bg-background'
+        size='icon'
+      >
         <RefreshCw className='text-accent-foreground' />
       </Button>
       {(isAdmin() && location.pathname === '/') ||
@@ -110,7 +126,11 @@ export default function WebMapNavs() {
       ) : null}
 
       {/* 🗺️ Layer Toggle Button */}
-      <Button variant={'secondary'} className='rounded-full' size='icon'>
+      <Button
+        variant={'secondary'}
+        className='rounded-full bg-background'
+        size='icon'
+      >
         <Layers className='text-accent-foreground' />
       </Button>
 
@@ -118,7 +138,11 @@ export default function WebMapNavs() {
       {(isAdmin() && location.pathname === '/map') ||
       (!isAdmin() && location.pathname === '/map') ? (
         <Link to='/'>
-          <Button variant={'secondary'} className='rounded-full' size='icon'>
+          <Button
+            variant={'secondary'}
+            className='rounded-full bg-background'
+            size='icon'
+          >
             <Home className='text-accent-foreground' />
           </Button>
         </Link>
@@ -130,7 +154,11 @@ export default function WebMapNavs() {
           {/* Dropdown for Add Marker Options */}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant='secondary' className='rounded-full' size='icon'>
+              <Button
+                variant='secondary'
+                className='rounded-full bg-background'
+                size='icon'
+              >
                 <RiMapPinAddLine
                   className={
                     isAdminContext(locateCtx) && locateCtx.isAddingMarker

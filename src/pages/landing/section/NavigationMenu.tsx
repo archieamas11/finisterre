@@ -314,12 +314,17 @@ export function NavigationMenuSection() {
           <Sheet onOpenChange={setIsOpen} open={isOpen}>
             <SheetTrigger asChild>
               <Button
-                className='absolute left-12 h-10 w-10'
+                className='absolute left-12'
                 variant='ghost'
                 size='icon'
                 type='button'
               >
-                <MenuIcon className='h-6 w-6 text-black' />
+                <MenuIcon
+                  className={cn('h-6 w-6', {
+                    'text-black': scrolled,
+                    'text-white': !scrolled
+                  })}
+                />
                 <span className='sr-only'>Toggle menu</span>
               </Button>
             </SheetTrigger>
