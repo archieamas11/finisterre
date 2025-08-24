@@ -1,27 +1,27 @@
-import type { Table } from "@tanstack/react-table";
+import type { Table } from '@tanstack/react-table'
 
-import React from "react";
+import React from 'react'
 
-import type { DeceasedRecords } from "@/types/interment.types";
+import type { DeceasedRecords } from '@/types/interment.types'
 
-import { Checkbox } from "@/components/ui/checkbox";
+import { Checkbox } from '@/components/ui/checkbox'
 
 type Props = {
-  table: Table<DeceasedRecords>;
-};
+  table: Table<DeceasedRecords>
+}
 
 export default function DeceasedSelectAllCheckbox({ table }: Props) {
-  const wrapperRef = React.useRef<HTMLDivElement>(null);
+  const wrapperRef = React.useRef<HTMLDivElement>(null)
   React.useEffect(() => {
     if (wrapperRef.current) {
-      const input = wrapperRef.current.querySelector('input[type="checkbox"]');
+      const input = wrapperRef.current.querySelector('input[type="checkbox"]')
       if (input instanceof HTMLInputElement) {
-        const someSelected = table.getIsSomePageRowsSelected();
-        const allSelected = table.getIsAllPageRowsSelected();
-        input.indeterminate = someSelected && !allSelected;
+        const someSelected = table.getIsSomePageRowsSelected()
+        const allSelected = table.getIsAllPageRowsSelected()
+        input.indeterminate = someSelected && !allSelected
       }
     }
-  }, [table]);
+  }, [table])
   return (
     <div ref={wrapperRef}>
       <Checkbox
@@ -31,5 +31,5 @@ export default function DeceasedSelectAllCheckbox({ table }: Props) {
         aria-label="Select all"
       />
     </div>
-  );
+  )
 }

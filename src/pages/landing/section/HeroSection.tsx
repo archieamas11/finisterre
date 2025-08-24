@@ -1,9 +1,9 @@
-import { ArrowRight, Sparkles, MapPin, Heart } from "lucide-react";
-import { Link } from "react-router-dom";
+import { ArrowRight, Sparkles, MapPin, Heart } from 'lucide-react'
+import { Link } from 'react-router-dom'
 
-import { AnimatedGradientText } from "@/components/magicui/animated-gradient-text";
-import { RainbowButton } from "@/components/magicui/rainbow-button";
-import { Button } from "@/components/ui/button";
+import { AnimatedGradientText } from '@/components/magicui/animated-gradient-text'
+import { RainbowButton } from '@/components/magicui/rainbow-button'
+import { Button } from '@/components/ui/button'
 
 export default function HeroSection() {
   return (
@@ -34,7 +34,7 @@ export default function HeroSection() {
         {/* CTA Section */}
         <div className="flex flex-col items-center justify-center gap-4 sm:flex-row">
           {/* Primary CTA */}
-          <RainbowButton size={"lg"} className="rounded-full font-semibold">
+          <RainbowButton size={'lg'} className="rounded-full font-semibold">
             <Link className="flex items-center gap-3" aria-label="Explore Map" to="/map">
               <MapPin />
               <hr className="h-4 w-px shrink-0 bg-neutral-400" />
@@ -57,5 +57,5 @@ export default function HeroSection() {
         </div>
       </div>
     </section>
-  );
+  )
 }

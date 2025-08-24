@@ -1,4 +1,4 @@
-"use client";
+'use client'
 import {
   type ColumnFiltersState,
   type RowSelectionState,
@@ -10,35 +10,35 @@ import {
   getCoreRowModel,
   useReactTable,
   type Row,
-} from "@tanstack/react-table";
-import { ArrowRightIcon, SearchIcon } from "lucide-react";
-import * as React from "react";
+} from '@tanstack/react-table'
+import { ArrowRightIcon, SearchIcon } from 'lucide-react'
+import * as React from 'react'
 
-import type { DeceasedRecords } from "@/types/interment.types";
+import type { DeceasedRecords } from '@/types/interment.types'
 
-import { DataTable } from "@/components/data-table/data-table";
-import { DataTableToolbar } from "@/components/data-table/data-table-toolbar";
-import { Card } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
+import { DataTable } from '@/components/data-table/data-table'
+import { DataTableToolbar } from '@/components/data-table/data-table-toolbar'
+import { Card } from '@/components/ui/card'
+import { Input } from '@/components/ui/input'
 
-import { deceasedRecordsColumns } from "../columns/DeceasedColumns";
+import { deceasedRecordsColumns } from '../columns/DeceasedColumns'
 
 interface DeceasedRecordsTableProps {
-  data: DeceasedRecords[];
+  data: DeceasedRecords[]
 }
 
 export default function DeceasedRecordsTable({ data }: DeceasedRecordsTableProps) {
-  const [sorting, setSorting] = React.useState<SortingState>([]);
-  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([]);
-  const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({});
-  const [rowSelection, setRowSelection] = React.useState<RowSelectionState>({});
+  const [sorting, setSorting] = React.useState<SortingState>([])
+  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([])
+  const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({})
+  const [rowSelection, setRowSelection] = React.useState<RowSelectionState>({})
 
-  const [globalFilter, setGlobalFilter] = React.useState("");
+  const [globalFilter, setGlobalFilter] = React.useState('')
   const globalFilterFn = React.useCallback((row: Row<DeceasedRecords>, _columnId: string, filterValue: string) => {
-    if (!filterValue) return true;
-    if (!row.original || typeof row.original !== "object") return true;
-    return Object.values(row.original as unknown as Record<string, unknown>).some((val) => typeof val === "string" && val.toLowerCase().includes(filterValue.toLowerCase()));
-  }, []);
+    if (!filterValue) return true
+    if (!row.original || typeof row.original !== 'object') return true
+    return Object.values(row.original as unknown as Record<string, unknown>).some((val) => typeof val === 'string' && val.toLowerCase().includes(filterValue.toLowerCase()))
+  }, [])
 
   const table = useReactTable<DeceasedRecords>({
     data,
@@ -60,7 +60,7 @@ export default function DeceasedRecordsTable({ data }: DeceasedRecordsTableProps
       columnFilters,
       columnVisibility,
     },
-  });
+  })
 
   return (
     <Card className="p-4">
@@ -70,7 +70,7 @@ export default function DeceasedRecordsTable({ data }: DeceasedRecordsTableProps
             <Input
               className="peer h-8 ps-9 pe-9"
               onChange={(event) => {
-                table.setGlobalFilter(event.target.value);
+                table.setGlobalFilter(event.target.value)
               }}
               placeholder="Search..."
               type="search"
@@ -91,5 +91,5 @@ export default function DeceasedRecordsTable({ data }: DeceasedRecordsTableProps
 
       <DataTable table={table} />
     </Card>
-  );
+  )
 }

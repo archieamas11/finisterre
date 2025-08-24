@@ -1,8 +1,8 @@
-import { MapPin } from "lucide-react";
+import { MapPin } from 'lucide-react'
 // src/components/sidebar/app-sidebar.tsx
-import * as React from "react";
+import * as React from 'react'
 
-import { NavMain } from "@/components/sidebar/nav-main";
+import { NavMain } from '@/components/sidebar/nav-main'
 import {
   SidebarGroupLabel,
   SidebarMenuButton,
@@ -14,11 +14,11 @@ import {
   SidebarMenu,
   SidebarRail,
   Sidebar,
-} from "@/components/ui/sidebar";
-import { rootUser } from "@/data/users";
-import { type NavGroup } from "@/navigation/sidebar/sidebar-items";
+} from '@/components/ui/sidebar'
+import { rootUser } from '@/data/users'
+import { type NavGroup } from '@/navigation/sidebar/sidebar-items'
 
-import { NavUser } from "./nav-user";
+import { NavUser } from './nav-user'
 
 export function AppSidebar({ items, ...props }: React.ComponentProps<typeof Sidebar> & { items: NavGroup[] }) {
   return (
@@ -53,5 +53,5 @@ export function AppSidebar({ items, ...props }: React.ComponentProps<typeof Side
         <NavUser user={rootUser} />
       </SidebarFooter>
     </Sidebar>
-  );
+  )
 }

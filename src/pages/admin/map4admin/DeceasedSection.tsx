@@ -1,23 +1,23 @@
-import { Users } from "lucide-react";
-import { GiCoffin } from "react-icons/gi";
-import { HiClock } from "react-icons/hi";
+import { Users } from 'lucide-react'
+import { GiCoffin } from 'react-icons/gi'
+import { HiClock } from 'react-icons/hi'
 
-import type { CustomerData } from "@/types/customer.types";
-import type { DeceasedData as DeceasedType } from "@/types/deceased.types";
+import type { CustomerData } from '@/types/customer.types'
+import type { DeceasedData as DeceasedType } from '@/types/deceased.types'
 
-import { Badge } from "@/components/ui/badge";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Separator } from "@/components/ui/separator";
-import { Skeleton } from "@/components/ui/skeleton";
-import { calculateYearsBuried, formatDate } from "@/utils/date.utils";
+import { Badge } from '@/components/ui/badge'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Separator } from '@/components/ui/separator'
+import { Skeleton } from '@/components/ui/skeleton'
+import { calculateYearsBuried, formatDate } from '@/utils/date.utils'
 
-type OwnerData = Partial<Pick<CustomerData, "fullname" | "customer_id">>;
-type DeceasedItem = Partial<Pick<DeceasedType, "dead_fullname" | "dead_interment" | "deceased_id">>;
+type OwnerData = Partial<Pick<CustomerData, 'fullname' | 'customer_id'>>
+type DeceasedItem = Partial<Pick<DeceasedType, 'dead_fullname' | 'dead_interment' | 'deceased_id'>>
 
 interface CombinedSectionProps {
-  owner: OwnerData | null;
-  deceased: DeceasedItem[];
-  isLoading: boolean;
+  owner: OwnerData | null
+  deceased: DeceasedItem[]
+  isLoading: boolean
 }
 
 export function DeceasedSection({ owner, deceased, isLoading }: CombinedSectionProps) {
@@ -40,7 +40,7 @@ export function DeceasedSection({ owner, deceased, isLoading }: CombinedSectionP
           </div>
         </CardContent>
       </Card>
-    );
+    )
   }
 
   return (
@@ -83,8 +83,8 @@ export function DeceasedSection({ owner, deceased, isLoading }: CombinedSectionP
         {deceased && deceased.length > 0 ? (
           <div className="mt-3">
             {deceased.slice(0, 2).map((person) => {
-              const interment = person.dead_interment ?? "";
-              const yearsBuried = calculateYearsBuried(interment);
+              const interment = person.dead_interment ?? ''
+              const yearsBuried = calculateYearsBuried(interment)
               return (
                 <div className="grid-col-2 mb-2 grid rounded-lg border px-2 text-xs">
                   <div className="flex items-center justify-between">
@@ -100,7 +100,7 @@ export function DeceasedSection({ owner, deceased, isLoading }: CombinedSectionP
                     </span>
                   </div>
                 </div>
-              );
+              )
             })}
             {deceased.length > 2 && <div className="text-muted-foreground mt-1 border-t pt-1 text-center text-xs">+{deceased.length - 2} more deceased</div>}
           </div>
@@ -109,5 +109,5 @@ export function DeceasedSection({ owner, deceased, isLoading }: CombinedSectionP
         )}
       </CardContent>
     </Card>
-  );
+  )
 }

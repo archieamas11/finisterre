@@ -1,15 +1,15 @@
-import { ArchiveIcon, Settings, FileText, BellOff, Shield, User, Bell } from "lucide-react";
-import { useState } from "react";
+import { ArchiveIcon, Settings, FileText, BellOff, Shield, User, Bell } from 'lucide-react'
+import { useState } from 'react'
 
-import { Button } from "@/components/ui/button";
-import { CardContent, CardHeader, CardFooter, CardTitle, Card } from "@/components/ui/card";
-import { Switch } from "@/components/ui/switch";
-import AdminUsersTable from "@/pages/admin/home/AdminUsersTable";
+import { Button } from '@/components/ui/button'
+import { CardContent, CardHeader, CardFooter, CardTitle, Card } from '@/components/ui/card'
+import { Switch } from '@/components/ui/switch'
+import AdminUsersTable from '@/pages/admin/home/AdminUsersTable'
 
 export default function AdminControlPanel() {
-  const [maintenanceMode, setMaintenanceMode] = useState(false);
-  const [sendNotifications, setSendNotifications] = useState(true);
-  const [receiveNotifications, setReceiveNotifications] = useState(true);
+  const [maintenanceMode, setMaintenanceMode] = useState(false)
+  const [sendNotifications, setSendNotifications] = useState(true)
+  const [receiveNotifications, setReceiveNotifications] = useState(true)
 
   return (
     <div className="min-h-screen p-6 md:p-8">
@@ -35,7 +35,7 @@ export default function AdminControlPanel() {
                   </div>
                   <div>
                     <p className="font-medium">Maintenance Mode</p>
-                    <p className="text-muted-foreground text-xs">{maintenanceMode ? "Active" : "Inactive"}</p>
+                    <p className="text-muted-foreground text-xs">{maintenanceMode ? 'Active' : 'Inactive'}</p>
                   </div>
                 </div>
                 <Switch checked={maintenanceMode} onCheckedChange={setMaintenanceMode} />
@@ -48,7 +48,7 @@ export default function AdminControlPanel() {
                   </div>
                   <div>
                     <p className="font-medium">Send Notifications</p>
-                    <p className="text-muted-foreground text-xs">{sendNotifications ? "Enabled" : "Disabled"}</p>
+                    <p className="text-muted-foreground text-xs">{sendNotifications ? 'Enabled' : 'Disabled'}</p>
                   </div>
                 </div>
                 <Switch checked={sendNotifications} onCheckedChange={setSendNotifications} />
@@ -61,7 +61,7 @@ export default function AdminControlPanel() {
                   </div>
                   <div>
                     <p className="font-medium">Receive Notifications</p>
-                    <p className="text-muted-foreground text-xs">{receiveNotifications ? "Enabled" : "Disabled"}</p>
+                    <p className="text-muted-foreground text-xs">{receiveNotifications ? 'Enabled' : 'Disabled'}</p>
                   </div>
                 </div>
                 <Switch checked={receiveNotifications} onCheckedChange={setReceiveNotifications} />
@@ -161,7 +161,7 @@ export default function AdminControlPanel() {
               <p className="text-muted-foreground text-xs">Configure site preferences and options.</p>
             </CardContent>
             <CardFooter>
-              <Button size="sm" className="w-full" variant={"outline"}>
+              <Button size="sm" className="w-full" variant={'outline'}>
                 Edit Settings
               </Button>
             </CardFooter>
@@ -176,7 +176,7 @@ export default function AdminControlPanel() {
               <p className="text-muted-foreground text-xs">View system logs and activity reports.</p>
             </CardContent>
             <CardFooter>
-              <Button size="sm" className="w-full" variant={"outline"}>
+              <Button size="sm" className="w-full" variant={'outline'}>
                 View Logs
               </Button>
             </CardFooter>
@@ -191,7 +191,7 @@ export default function AdminControlPanel() {
               <p className="text-muted-foreground text-xs">Manage and view archived data in all tables.</p>
             </CardContent>
             <CardFooter>
-              <Button size="sm" className="w-full" variant={"outline"}>
+              <Button size="sm" className="w-full" variant={'outline'}>
                 View archived data
               </Button>
             </CardFooter>
@@ -201,5 +201,5 @@ export default function AdminControlPanel() {
         <AdminUsersTable />
       </div>
     </div>
-  );
+  )
 }

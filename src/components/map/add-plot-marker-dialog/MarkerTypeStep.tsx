@@ -1,26 +1,26 @@
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
+import { zodResolver } from '@hookform/resolvers/zod'
+import { useForm } from 'react-hook-form'
 
-import type { MarkerType } from "@/types/map.types";
+import type { MarkerType } from '@/types/map.types'
 
-import { Button } from "@/components/ui/button";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { MarkerTypeSchema, type MarkerTypeFormData } from "@/schema/plot.scheme";
+import { Button } from '@/components/ui/button'
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import { MarkerTypeSchema, type MarkerTypeFormData } from '@/schema/plot.scheme'
 
 interface MarkerTypeStepProps {
-  onCancel: () => void;
-  onContinue: (type: MarkerType) => void;
+  onCancel: () => void
+  onContinue: (type: MarkerType) => void
 }
 
 export function MarkerTypeStep({ onCancel, onContinue }: MarkerTypeStepProps) {
   const form = useForm<MarkerTypeFormData>({
     resolver: zodResolver(MarkerTypeSchema),
     defaultValues: { markerType: undefined },
-  });
+  })
 
   function onSubmit(data: MarkerTypeFormData) {
-    onContinue(data.markerType);
+    onContinue(data.markerType)
   }
 
   return (
@@ -32,7 +32,7 @@ export function MarkerTypeStep({ onCancel, onContinue }: MarkerTypeStepProps) {
           render={({ field }) => (
             <FormItem>
               <FormLabel>Marker Type</FormLabel>
-              <Select onValueChange={field.onChange} value={field.value ?? ""}>
+              <Select onValueChange={field.onChange} value={field.value ?? ''}>
                 <FormControl>
                   <SelectTrigger className="w-full">
                     <SelectValue placeholder="Choose marker type to add" />
@@ -57,5 +57,5 @@ export function MarkerTypeStep({ onCancel, onContinue }: MarkerTypeStepProps) {
         </div>
       </form>
     </Form>
-  );
+  )
 }

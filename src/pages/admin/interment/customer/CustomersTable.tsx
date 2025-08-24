@@ -1,4 +1,4 @@
-"use client";
+'use client'
 
 import {
   type ColumnFiltersState,
@@ -11,45 +11,45 @@ import {
   getCoreRowModel,
   useReactTable,
   type Row,
-} from "@tanstack/react-table";
-import { ArrowRightIcon, SearchIcon } from "lucide-react";
-import React from "react";
+} from '@tanstack/react-table'
+import { ArrowRightIcon, SearchIcon } from 'lucide-react'
+import React from 'react'
 
-import type { Customer } from "@/api/customer.api";
+import type { Customer } from '@/api/customer.api'
 
-import { DataTable } from "@/components/data-table/data-table";
-import { DataTableToolbar } from "@/components/data-table/data-table-toolbar";
-import { Card } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { customerColumns } from "@/pages/admin/interment/columns/CustomerColumns";
+import { DataTable } from '@/components/data-table/data-table'
+import { DataTableToolbar } from '@/components/data-table/data-table-toolbar'
+import { Card } from '@/components/ui/card'
+import { Input } from '@/components/ui/input'
+import { customerColumns } from '@/pages/admin/interment/columns/CustomerColumns'
 
-import CreateCustomer from "./CreateCustomer";
+import CreateCustomer from './CreateCustomer'
 
 interface CustomersTableProps {
-  data: Customer[];
+  data: Customer[]
 }
 
 export default function CustomersTable({ data }: CustomersTableProps) {
-  const [sorting, setSorting] = React.useState<SortingState>([]);
-  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([]);
-  const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({});
-  const [rowSelection, setRowSelection] = React.useState<RowSelectionState>({});
+  const [sorting, setSorting] = React.useState<SortingState>([])
+  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([])
+  const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({})
+  const [rowSelection, setRowSelection] = React.useState<RowSelectionState>({})
 
-  const [globalFilter, setGlobalFilter] = React.useState("");
+  const [globalFilter, setGlobalFilter] = React.useState('')
   const globalFilterFn = React.useCallback((row: Row<Customer>, _columnId: string, filterValue: string) => {
-    if (!filterValue) return true;
-    const q = String(filterValue).toLowerCase().trim();
-    const c = row.original as Customer;
-    if (!c) return true;
+    if (!filterValue) return true
+    const q = String(filterValue).toLowerCase().trim()
+    const c = row.original as Customer
+    if (!c) return true
 
-    const id = String((c as unknown as Record<string, unknown>)?.customer_id ?? "").toLowerCase();
-    const first = c.first_name?.toLowerCase?.() ?? "";
-    const middle = (c.middle_name ?? "").toLowerCase?.() ?? "";
-    const last = c.last_name?.toLowerCase?.() ?? "";
-    const full = `${first}${middle ? ` ${middle}` : ""} ${last}`.trim();
+    const id = String((c as unknown as Record<string, unknown>)?.customer_id ?? '').toLowerCase()
+    const first = c.first_name?.toLowerCase?.() ?? ''
+    const middle = (c.middle_name ?? '').toLowerCase?.() ?? ''
+    const last = c.last_name?.toLowerCase?.() ?? ''
+    const full = `${first}${middle ? ` ${middle}` : ''} ${last}`.trim()
 
-    return id.includes(q) || first.includes(q) || middle.includes(q) || last.includes(q) || full.includes(q);
-  }, []);
+    return id.includes(q) || first.includes(q) || middle.includes(q) || last.includes(q) || full.includes(q)
+  }, [])
 
   const table = useReactTable<Customer>({
     data,
@@ -71,7 +71,7 @@ export default function CustomersTable({ data }: CustomersTableProps) {
       columnFilters,
       columnVisibility,
     },
-  });
+  })
 
   return (
     <Card className="p-4">
@@ -81,7 +81,7 @@ export default function CustomersTable({ data }: CustomersTableProps) {
             <Input
               className="peer h-8 ps-9 pe-9"
               onChange={(event) => {
-                table.setGlobalFilter(event.target.value);
+                table.setGlobalFilter(event.target.value)
               }}
               placeholder="Search...."
               type="search"
@@ -102,5 +102,5 @@ export default function CustomersTable({ data }: CustomersTableProps) {
       </DataTableToolbar>
       <DataTable table={table} />
     </Card>
-  );
+  )
 }

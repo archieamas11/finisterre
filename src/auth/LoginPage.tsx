@@ -1,96 +1,96 @@
-import { zodResolver } from "@hookform/resolvers/zod";
-import { MapPin, Eye, EyeOff, Loader2 } from "lucide-react";
-import React from "react";
-import { useForm } from "react-hook-form";
-import { useNavigate, Link } from "react-router-dom";
-import { toast } from "sonner";
-import { z } from "zod";
+import { zodResolver } from '@hookform/resolvers/zod'
+import { MapPin, Eye, EyeOff, Loader2 } from 'lucide-react'
+import React from 'react'
+import { useForm } from 'react-hook-form'
+import { useNavigate, Link } from 'react-router-dom'
+import { toast } from 'sonner'
+import { z } from 'zod'
 
-import { loginUser } from "@/api/auth.api";
-import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
-import { Checkbox } from "@/components/ui/checkbox";
-import { FormControl, FormMessage, FormField, FormLabel, FormItem, Form } from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { useAuthQuery } from "@/hooks/useAuthQuery";
-import { cn } from "@/lib/utils";
+import { loginUser } from '@/api/auth.api'
+import { Button } from '@/components/ui/button'
+import { Card } from '@/components/ui/card'
+import { Checkbox } from '@/components/ui/checkbox'
+import { FormControl, FormMessage, FormField, FormLabel, FormItem, Form } from '@/components/ui/form'
+import { Input } from '@/components/ui/input'
+import { useAuthQuery } from '@/hooks/useAuthQuery'
+import { cn } from '@/lib/utils'
 
 const FormSchema = z.object({
   remember: z.boolean().optional(),
-  password: z.string().min(4, { message: "Password must be at least 4 characters." }),
-  username: z.string().min(2, { message: "Property ID must be at least 2 characters." }),
-});
+  password: z.string().min(4, { message: 'Password must be at least 4 characters.' }),
+  username: z.string().min(2, { message: 'Property ID must be at least 2 characters.' }),
+})
 
 export default function LoginPage() {
-  const navigate = useNavigate();
-  const { data, isSuccess, setAuthFromToken } = useAuthQuery();
-  const [showPassword, setShowPassword] = React.useState(false);
-  const [isLoading, setIsLoading] = React.useState(false);
+  const navigate = useNavigate()
+  const { data, isSuccess, setAuthFromToken } = useAuthQuery()
+  const [showPassword, setShowPassword] = React.useState(false)
+  const [isLoading, setIsLoading] = React.useState(false)
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
-      username: "",
-      password: "",
+      username: '',
+      password: '',
       remember: false,
     },
-  });
+  })
 
   // Redirect if already authenticated
   React.useEffect(() => {
-    const hasToken = !!localStorage.getItem("token");
+    const hasToken = !!localStorage.getItem('token')
     if (hasToken && isSuccess && data?.success) {
-      const admin = !!data?.user?.isAdmin;
-      navigate(admin ? "/admin" : "/user", { replace: true });
+      const admin = !!data?.user?.isAdmin
+      navigate(admin ? '/admin' : '/user', { replace: true })
     }
-  }, [data, isSuccess, navigate]);
+  }, [data, isSuccess, navigate])
 
   const onSubmit = async (formData: z.infer<typeof FormSchema>) => {
-    setIsLoading(true);
+    setIsLoading(true)
     const loginPromise = async () => {
-      const res = await loginUser(formData.username, formData.password);
+      const res = await loginUser(formData.username, formData.password)
 
       if (res.success) {
         // Save token and role
-        localStorage.setItem("token", res.token!);
-        localStorage.setItem("isAdmin", res.isAdmin ? "1" : "0");
+        localStorage.setItem('token', res.token!)
+        localStorage.setItem('isAdmin', res.isAdmin ? '1' : '0')
 
         // Prime query cache from token to avoid race when redirecting
-        setAuthFromToken();
+        setAuthFromToken()
 
         // Navigate based on role
         if (res.isAdmin) {
-          navigate("/admin");
+          navigate('/admin')
         } else {
-          navigate("/user");
+          navigate('/user')
         }
 
-        return `Welcome back, ${formData.username}!`;
+        return `Welcome back, ${formData.username}!`
       } else {
         // Set backend error to form state
-        form.setValue("password", "");
-        if (res.message === "User not found") {
-          form.setError("username", {
-            type: "manual",
-            message: "Incorrect Property ID or Password",
-          });
-        } else if (res.message === "Invalid password") {
-          form.setError("password", {
-            type: "manual",
-            message: "Incorrect Property ID or Password",
-          });
+        form.setValue('password', '')
+        if (res.message === 'User not found') {
+          form.setError('username', {
+            type: 'manual',
+            message: 'Incorrect Property ID or Password',
+          })
+        } else if (res.message === 'Invalid password') {
+          form.setError('password', {
+            type: 'manual',
+            message: 'Incorrect Property ID or Password',
+          })
         }
-        throw new Error(res.message || "Login failed");
+        throw new Error(res.message || 'Login failed')
       }
-    };
+    }
 
     toast.promise(loginPromise(), {
-      loading: "🔐 Signing you in...",
+      loading: '🔐 Signing you in...',
       success: (message) => message,
       error: (err) =>
-        err.message === "User not found" || err.message === "Invalid password" ? "Please check your credentials and try again" : "Something went wrong. Please try again later.",
-    });
-    setIsLoading(false);
-  };
+        err.message === 'User not found' || err.message === 'Invalid password' ? 'Please check your credentials and try again' : 'Something went wrong. Please try again later.',
+    })
+    setIsLoading(false)
+  }
 
   return (
     <main className="bg-background flex min-h-screen items-center justify-center" aria-label="Login page">
@@ -131,7 +131,7 @@ export default function LoginPage() {
                       <Input
                         autoComplete="current-password"
                         placeholder="Password"
-                        type={showPassword ? "text" : "password"}
+                        type={showPassword ? 'text' : 'password'}
                         id="password"
                         {...field}
                         aria-required="true"
@@ -143,7 +143,7 @@ export default function LoginPage() {
                         size="icon"
                         onClick={() => setShowPassword((v) => !v)}
                         className="absolute top-2 right-2 size-6"
-                        aria-label={showPassword ? "Hide password" : "Show password"}
+                        aria-label={showPassword ? 'Hide password' : 'Show password'}
                         tabIndex={0}
                       >
                         {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
@@ -171,7 +171,7 @@ export default function LoginPage() {
             />
             <div className="space-y-2">
               <Button
-                className={cn("mt-2 flex w-full items-center justify-center gap-2", { "pointer-events-none opacity-70": isLoading })}
+                className={cn('mt-2 flex w-full items-center justify-center gap-2', { 'pointer-events-none opacity-70': isLoading })}
                 variant="default"
                 type="submit"
                 disabled={isLoading}
@@ -189,5 +189,5 @@ export default function LoginPage() {
         </Form>
       </Card>
     </main>
-  );
+  )
 }

@@ -1,33 +1,33 @@
-"use client";
-import { Star } from "lucide-react";
+'use client'
+import { Star } from 'lucide-react'
 
-import { Marquee } from "@/components/ui/marquee";
-import { cn } from "@/lib/utils";
+import { Marquee } from '@/components/ui/marquee'
+import { cn } from '@/lib/utils'
 
 export function Highlight({ children, className }: { children: React.ReactNode; className?: string }) {
-  return <span className={cn("rounded-md bg-black/30 px-1.5 py-0.5 font-semibold text-black/80", className)}>{children}</span>;
+  return <span className={cn('rounded-md bg-black/30 px-1.5 py-0.5 font-semibold text-black/80', className)}>{children}</span>
 }
 
 export interface TestimonialCardProps {
-  name: string;
-  role: string;
-  img?: string;
-  description: React.ReactNode;
-  className?: string;
-  [key: string]: unknown;
+  name: string
+  role: string
+  img?: string
+  description: React.ReactNode
+  className?: string
+  [key: string]: unknown
 }
 
 export function TestimonialCard({ description, name, img, role, className, ...props }: TestimonialCardProps) {
   return (
     <figure
       className={cn(
-        "relative h-full w-full transform-gpu cursor-pointer break-inside-avoid-page overflow-hidden rounded-xl border bg-white p-6 text-black shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-lg",
+        'relative h-full w-full transform-gpu cursor-pointer break-inside-avoid-page overflow-hidden rounded-xl border bg-white p-6 text-black shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-lg',
         className,
       )}
       {...props}
     >
       <div className="flex flex-row items-center gap-x-4">
-        <img width={48} height={48} src={img || ""} alt={name} className="size-12 rounded-full object-cover ring-1 ring-black" />
+        <img width={48} height={48} src={img || ''} alt={name} className="size-12 rounded-full object-cover ring-1 ring-black" />
         <div className="flex flex-col">
           <figcaption className="text-sm font-medium text-black">{name}</figcaption>
           <p className="text-xs text-gray-600">{role}</p>
@@ -40,14 +40,14 @@ export function TestimonialCard({ description, name, img, role, className, ...pr
         ))}
       </div>
     </figure>
-  );
+  )
 }
 
 const testimonials = [
   {
-    name: "Maria Santos",
-    role: "Family Member for 3 Generations",
-    img: "https://randomuser.me/api/portraits/women/65.jpg",
+    name: 'Maria Santos',
+    role: 'Family Member for 3 Generations',
+    img: 'https://randomuser.me/api/portraits/women/65.jpg',
     description: (
       <p>
         Our family has trusted this memorial park for over fifty years. <Highlight>The lifetime memorial rights</Highlight> gave us peace of mind that our legacy would be
@@ -56,9 +56,9 @@ const testimonials = [
     ),
   },
   {
-    name: "Juan Dela Cruz",
-    role: "Funeral Director",
-    img: "https://randomuser.me/api/portraits/men/41.jpg",
+    name: 'Juan Dela Cruz',
+    role: 'Funeral Director',
+    img: 'https://randomuser.me/api/portraits/men/41.jpg',
     description: (
       <p>
         I've worked with many cemeteries, but this one stands apart. <Highlight>Their complete burial services</Highlight> and modern facilities make every arrangement dignified
@@ -67,9 +67,9 @@ const testimonials = [
     ),
   },
   {
-    name: "Luz Navarro",
-    role: "Community Historian",
-    img: "https://randomuser.me/api/portraits/women/72.jpg",
+    name: 'Luz Navarro',
+    role: 'Community Historian',
+    img: 'https://randomuser.me/api/portraits/women/72.jpg',
     description: (
       <p>
         The <Highlight>digital map feature</Highlight> has transformed how our community connects with its history. Finding relatives and learning about local heritage has never
@@ -78,9 +78,9 @@ const testimonials = [
     ),
   },
   {
-    name: "Jose Rizal",
-    role: "Veterans Association President",
-    img: "https://randomuser.me/api/portraits/men/58.jpg",
+    name: 'Jose Rizal',
+    role: 'Veterans Association President',
+    img: 'https://randomuser.me/api/portraits/men/58.jpg',
     description: (
       <p>
         The memorial sections for veterans are truly exceptional. <Highlight>The respect and honor shown</Highlight> to those who served is evident in every detail. Our members
@@ -89,9 +89,9 @@ const testimonials = [
     ),
   },
   {
-    name: "Carmen Reyes",
-    role: "Garden Club Member",
-    img: "https://randomuser.me/api/portraits/women/36.jpg",
+    name: 'Carmen Reyes',
+    role: 'Garden Club Member',
+    img: 'https://randomuser.me/api/portraits/women/36.jpg',
     description: (
       <p>
         As someone who appreciates horticulture, I'm continually impressed by the grounds. <Highlight>The serene gardens</Highlight> are thoughtfully designed and maintained with
@@ -100,9 +100,9 @@ const testimonials = [
     ),
   },
   {
-    name: "Antonio Luna",
-    role: "Estate Planning Attorney",
-    img: "https://randomuser.me/api/portraits/men/63.jpg",
+    name: 'Antonio Luna',
+    role: 'Estate Planning Attorney',
+    img: 'https://randomuser.me/api/portraits/men/63.jpg',
     description: (
       <p>
         I often recommend this memorial park to clients. <Highlight>The growing value of the property</Highlight> makes it a sound investment for future generations. It's rare to
@@ -110,7 +110,7 @@ const testimonials = [
       </p>
     ),
   },
-];
+]
 
 export default function Testimonials() {
   return (
@@ -135,18 +135,18 @@ export default function Testimonials() {
             aria-hidden="true"
             className="pointer-events-none absolute inset-y-0 left-0 w-1/4 transform-gpu"
             style={{
-              background: "linear-gradient(90deg, rgba(247,234,255,0.95) 0%, rgba(247,234,255,0.65) 25%, rgba(247,234,255,0.0) 60%)",
+              background: 'linear-gradient(90deg, rgba(247,234,255,0.95) 0%, rgba(247,234,255,0.65) 25%, rgba(247,234,255,0.0) 60%)',
             }}
           />
           <div
             aria-hidden="true"
             className="pointer-events-none absolute inset-y-0 right-0 w-1/4 transform-gpu"
             style={{
-              background: "linear-gradient(270deg, rgba(253,226,234,0.95) 0%, rgba(253,226,234,0.65) 25%, rgba(253,226,234,0.0) 60%)",
+              background: 'linear-gradient(270deg, rgba(253,226,234,0.95) 0%, rgba(253,226,234,0.65) 25%, rgba(253,226,234,0.0) 60%)',
             }}
           />
         </div>
       </div>
     </section>
-  );
+  )
 }

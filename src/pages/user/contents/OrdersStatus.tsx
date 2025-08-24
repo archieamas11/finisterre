@@ -10,5 +10,5 @@ export default function OrdersStatus() {
         </div>
       </div>
     </div>
-  );
+  )
 }

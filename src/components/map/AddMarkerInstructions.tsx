@@ -1,11 +1,11 @@
-import { motion, AnimatePresence } from "framer-motion";
-import { Plus } from "lucide-react";
+import { motion, AnimatePresence } from 'framer-motion'
+import { Plus } from 'lucide-react'
 
-import { Card } from "@/components/ui/card";
-import { cn } from "@/lib/utils";
+import { Card } from '@/components/ui/card'
+import { cn } from '@/lib/utils'
 
 interface AddMarkerInstructionsProps {
-  isVisible: boolean;
+  isVisible: boolean
 }
 
 export default function AddMarkerInstructions({ isVisible }: AddMarkerInstructionsProps) {
@@ -16,7 +16,7 @@ export default function AddMarkerInstructions({ isVisible }: AddMarkerInstructio
           initial={{ opacity: 0, x: -20 }}
           animate={{ opacity: 1, x: 0 }}
           exit={{ opacity: 0, x: -20 }}
-          transition={{ duration: 0.2, ease: "easeOut" }}
+          transition={{ duration: 0.2, ease: 'easeOut' }}
           className="absolute top-4 left-4 z-[1000] w-80"
           role="dialog"
           aria-modal="true"
@@ -24,10 +24,10 @@ export default function AddMarkerInstructions({ isVisible }: AddMarkerInstructio
         >
           <Card
             className={cn(
-              "from-background to-muted/80 relative overflow-hidden rounded-xl border-0 bg-gradient-to-br",
-              "py-5 shadow-xl backdrop-blur-md",
-              "before:absolute before:inset-0 before:z-[-1] before:rounded-xl before:bg-gradient-to-r",
-              "before:from-primary/10 before:to-transparent",
+              'from-background to-muted/80 relative overflow-hidden rounded-xl border-0 bg-gradient-to-br',
+              'py-5 shadow-xl backdrop-blur-md',
+              'before:absolute before:inset-0 before:z-[-1] before:rounded-xl before:bg-gradient-to-r',
+              'before:from-primary/10 before:to-transparent',
             )}
           >
             <div className="relative flex flex-col items-center gap-4 px-6 text-center">
@@ -54,5 +54,5 @@ export default function AddMarkerInstructions({ isVisible }: AddMarkerInstructio
         </motion.div>
       )}
     </AnimatePresence>
-  );
+  )
 }

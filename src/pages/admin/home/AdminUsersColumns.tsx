@@ -1,22 +1,22 @@
-import type { ColumnDef } from "@tanstack/react-table";
+import type { ColumnDef } from '@tanstack/react-table'
 
-import { AiOutlineUser } from "react-icons/ai";
+import { AiOutlineUser } from 'react-icons/ai'
 
-import type { UserRecord } from "@/api/users.api";
+import type { UserRecord } from '@/api/users.api'
 
-import { DataTableColumnHeader } from "@/components/data-table/data-table-column-header";
-import { Badge } from "@/components/ui/badge";
-import { ucwords } from "@/lib/format";
+import { DataTableColumnHeader } from '@/components/data-table/data-table-column-header'
+import { Badge } from '@/components/ui/badge'
+import { ucwords } from '@/lib/format'
 
 export const adminUsersColumns: ColumnDef<UserRecord>[] = [
   {
-    accessorKey: "user_id",
+    accessorKey: 'user_id',
     header: ({ column }) => <DataTableColumnHeader column={column} title="ID" />,
     size: 60,
-    meta: { label: "ID" },
+    meta: { label: 'ID' },
   },
   {
-    id: "username",
+    id: 'username',
     header: ({ column }) => <DataTableColumnHeader column={column} title="Username" />,
     accessorFn: (row) => row.username,
     cell: ({ row }) => (
@@ -27,24 +27,24 @@ export const adminUsersColumns: ColumnDef<UserRecord>[] = [
         {ucwords(row.original.username)}
       </span>
     ),
-    meta: { label: "Username" },
+    meta: { label: 'Username' },
   },
   {
-    accessorKey: "isAdmin",
+    accessorKey: 'isAdmin',
     header: ({ column }) => <DataTableColumnHeader column={column} title="Role" />,
-    cell: ({ row }) => <Badge variant="outline">{row.original.isAdmin === 1 ? "Admin" : "User"}</Badge>,
-    meta: { label: "Role" },
+    cell: ({ row }) => <Badge variant="outline">{row.original.isAdmin === 1 ? 'Admin' : 'User'}</Badge>,
+    meta: { label: 'Role' },
   },
   {
-    id: "created_at",
+    id: 'created_at',
     header: ({ column }) => <DataTableColumnHeader column={column} title="Created" />,
     accessorFn: (row) => (row.created_at ? new Date(row.created_at).getTime() : 0),
     cell: ({ row }) => {
-      const d = row.original.created_at ? new Date(row.original.created_at) : null;
-      const fmt = d && !isNaN(d.getTime()) ? d.toLocaleString() : (row.original.created_at ?? "-");
-      return <span title={String(row.original.created_at ?? "-")}>{fmt}</span>;
+      const d = row.original.created_at ? new Date(row.original.created_at) : null
+      const fmt = d && !isNaN(d.getTime()) ? d.toLocaleString() : (row.original.created_at ?? '-')
+      return <span title={String(row.original.created_at ?? '-')}>{fmt}</span>
     },
     enableSorting: true,
-    meta: { label: "Created" },
+    meta: { label: 'Created' },
   },
-];
+]

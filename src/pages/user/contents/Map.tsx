@@ -10,5 +10,5 @@ export default function AdminMap() {
         </div>
       </div>
     </div>
-  );
+  )
 }

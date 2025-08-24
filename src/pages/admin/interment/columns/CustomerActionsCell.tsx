@@ -1,19 +1,19 @@
-import type { Row } from "@tanstack/react-table";
+import type { Row } from '@tanstack/react-table'
 
-import { Archive, MoreHorizontal } from "lucide-react";
-import React from "react";
+import { Archive, MoreHorizontal } from 'lucide-react'
+import React from 'react'
 
-import type { Customer } from "@/api/customer.api";
+import type { Customer } from '@/api/customer.api'
 
-import { Button } from "@/components/ui/button";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
-import EditCustomerDialog from "@/pages/admin/interment/customer/UpdateCustomer";
-import ViewCustomerDialog from "@/pages/admin/interment/customer/ViewCustomer";
+import { Button } from '@/components/ui/button'
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
+import EditCustomerDialog from '@/pages/admin/interment/customer/UpdateCustomer'
+import ViewCustomerDialog from '@/pages/admin/interment/customer/ViewCustomer'
 
 export default function CustomerActionsCell({ row }: { row: Row<Customer> }) {
-  const [open, setOpen] = React.useState(false);
-  const [viewOpen, setViewOpen] = React.useState(false);
-  if (!row?.original) return null;
+  const [open, setOpen] = React.useState(false)
+  const [viewOpen, setViewOpen] = React.useState(false)
+  if (!row?.original) return null
   return (
     <>
       <DropdownMenu>
@@ -28,14 +28,14 @@ export default function CustomerActionsCell({ row }: { row: Row<Customer> }) {
           <DropdownMenuSeparator />
           <DropdownMenuItem
             onClick={() => {
-              setOpen(true);
+              setOpen(true)
             }}
           >
             Edit Customer
           </DropdownMenuItem>
           <DropdownMenuItem
             onClick={() => {
-              setViewOpen(true);
+              setViewOpen(true)
             }}
           >
             View Customer
@@ -50,5 +50,5 @@ export default function CustomerActionsCell({ row }: { row: Row<Customer> }) {
       <EditCustomerDialog customer={row.original} onOpenChange={setOpen} open={open} />
       <ViewCustomerDialog onOpenChange={setViewOpen} customer={row.original} open={viewOpen} />
     </>
-  );
+  )
 }

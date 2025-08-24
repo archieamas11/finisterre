@@ -1,32 +1,32 @@
-import { Facebook, Twitter, Linkedin, Instagram, MapPin } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Facebook, Twitter, Linkedin, Instagram, MapPin } from 'lucide-react'
+import { Link } from 'react-router-dom'
 
 export default function Footer() {
   const footerLinks = {
     solutions: [
-      { name: "Burial Plots", href: "#" },
-      { name: "Mausoleums", href: "#" },
-      { name: "Cremation Niches", href: "#" },
-      { name: "Memorial Services", href: "#" },
+      { name: 'Burial Plots', href: '#' },
+      { name: 'Mausoleums', href: '#' },
+      { name: 'Cremation Niches', href: '#' },
+      { name: 'Memorial Services', href: '#' },
     ],
     support: [
-      { name: "Grief Counseling", href: "#" },
-      { name: "Pre-need Planning", href: "#" },
-      { name: "FAQs", href: "#" },
-      { name: "Contact Us", href: "#" },
+      { name: 'Grief Counseling', href: '#' },
+      { name: 'Pre-need Planning', href: '#' },
+      { name: 'FAQs', href: '#' },
+      { name: 'Contact Us', href: '#' },
     ],
     company: [
-      { name: "About Us", href: "#" },
-      { name: "Our History", href: "#" },
-      { name: "Careers", href: "#" },
-      { name: "Blog", href: "#" },
+      { name: 'About Us', href: '#' },
+      { name: 'Our History', href: '#' },
+      { name: 'Careers', href: '#' },
+      { name: 'Blog', href: '#' },
     ],
     legal: [
-      { name: "Privacy Policy", href: "#" },
-      { name: "Terms of Service", href: "#" },
-      { name: "Accessibility", href: "#" },
+      { name: 'Privacy Policy', href: '#' },
+      { name: 'Terms of Service', href: '#' },
+      { name: 'Accessibility', href: '#' },
     ],
-  };
+  }
 
   return (
     <footer id="contact" className="border-t border-black/30" aria-labelledby="footer-heading">
@@ -122,5 +122,5 @@ export default function Footer() {
         </div>
       </div>
     </footer>
-  );
+  )
 }

@@ -1,6 +1,6 @@
-import { SkullIcon } from "lucide-react";
+import { SkullIcon } from 'lucide-react'
 
-import DeceasedTablePage from "@/pages/admin/interment/deceased-records/DeceasedTablePage";
+import DeceasedTablePage from '@/pages/admin/interment/deceased-records/DeceasedTablePage'
 
 export default function AdminIntermentDeceasedPage() {
   return (
@@ -14,5 +14,5 @@ export default function AdminIntermentDeceasedPage() {
       </div>
       <DeceasedTablePage />
     </div>
-  );
+  )
 }

@@ -1,19 +1,19 @@
-import type { Table } from "@tanstack/react-table";
+import type { Table } from '@tanstack/react-table'
 
-import { ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight } from "lucide-react";
+import { ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight } from 'lucide-react'
 
-import { Button } from "@/components/ui/button";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { cn } from "@/lib/utils";
+import { Button } from '@/components/ui/button'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import { cn } from '@/lib/utils'
 
-interface DataTablePaginationProps<TData> extends React.ComponentProps<"div"> {
-  table: Table<TData>;
-  pageSizeOptions?: number[];
+interface DataTablePaginationProps<TData> extends React.ComponentProps<'div'> {
+  table: Table<TData>
+  pageSizeOptions?: number[]
 }
 
 export function DataTablePagination<TData>({ table, pageSizeOptions = [10, 20, 30, 40, 50], className, ...props }: DataTablePaginationProps<TData>) {
   return (
-    <div className={cn("flex w-full flex-col-reverse items-center justify-between gap-4 overflow-auto p-1 sm:flex-row sm:gap-8", className)} {...props}>
+    <div className={cn('flex w-full flex-col-reverse items-center justify-between gap-4 overflow-auto p-1 sm:flex-row sm:gap-8', className)} {...props}>
       <div className="text-muted-foreground flex-1 text-sm whitespace-nowrap">
         {table.getFilteredSelectedRowModel().rows.length} of {table.getFilteredRowModel().rows.length} row(s) selected.
       </div>
@@ -23,7 +23,7 @@ export function DataTablePagination<TData>({ table, pageSizeOptions = [10, 20, 3
           <Select
             value={`${table.getState().pagination.pageSize}`}
             onValueChange={(value) => {
-              table.setPageSize(Number(value));
+              table.setPageSize(Number(value))
             }}
           >
             <SelectTrigger className="h-8 w-[4.5rem] [&[data-size]]:h-8">
@@ -71,5 +71,5 @@ export function DataTablePagination<TData>({ table, pageSizeOptions = [10, 20, 3
         </div>
       </div>
     </div>
-  );
+  )
 }

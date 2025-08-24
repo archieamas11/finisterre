@@ -1,16 +1,16 @@
-import type { NavMainItem, NavSubItem } from "@/navigation/sidebar/sidebar-items";
+import type { NavMainItem, NavSubItem } from '@/navigation/sidebar/sidebar-items'
 
-import { BreadcrumbSeparator, BreadcrumbItem, BreadcrumbList, BreadcrumbPage, BreadcrumbLink, Breadcrumb } from "@/components/ui/breadcrumb";
-import Notification from "@/components/ui/notification-button";
-import { Separator } from "@/components/ui/separator";
-import { SidebarTrigger } from "@/components/ui/sidebar";
-import { ThemeToggleButton } from "@/components/ui/theme-toggle-button";
+import { BreadcrumbSeparator, BreadcrumbItem, BreadcrumbList, BreadcrumbPage, BreadcrumbLink, Breadcrumb } from '@/components/ui/breadcrumb'
+import Notification from '@/components/ui/notification-button'
+import { Separator } from '@/components/ui/separator'
+import { SidebarTrigger } from '@/components/ui/sidebar'
+import { ThemeToggleButton } from '@/components/ui/theme-toggle-button'
 
 interface SiteHeaderProps {
   breadcrumbItem?: {
-    mainItem: NavMainItem;
-    subItem?: NavSubItem;
-  } | null;
+    mainItem: NavMainItem
+    subItem?: NavSubItem
+  } | null
 }
 
 export function SiteHeader({ breadcrumbItem }: SiteHeaderProps) {
@@ -22,7 +22,7 @@ export function SiteHeader({ breadcrumbItem }: SiteHeaderProps) {
         <Breadcrumb>
           <BreadcrumbList>
             <BreadcrumbItem className="hidden md:block">
-              <BreadcrumbLink href={breadcrumbItem?.mainItem ? breadcrumbItem.mainItem.url : "/admin"}>Dashboard</BreadcrumbLink>
+              <BreadcrumbLink href={breadcrumbItem?.mainItem ? breadcrumbItem.mainItem.url : '/admin'}>Dashboard</BreadcrumbLink>
             </BreadcrumbItem>
             <BreadcrumbSeparator className="hidden md:block" />
             {breadcrumbItem ? (
@@ -54,5 +54,5 @@ export function SiteHeader({ breadcrumbItem }: SiteHeaderProps) {
         </div>
       </div>
     </header>
-  );
+  )
 }

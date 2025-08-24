@@ -1,33 +1,33 @@
-import type { ColumnDef } from "@tanstack/react-table";
+import type { ColumnDef } from '@tanstack/react-table'
 
-import { Archive, MapPin, MoreHorizontal } from "lucide-react";
-import React from "react";
-import { AiOutlineUser } from "react-icons/ai";
+import { Archive, MapPin, MoreHorizontal } from 'lucide-react'
+import React from 'react'
+import { AiOutlineUser } from 'react-icons/ai'
 
-import type { LotOwners } from "@/types/interment.types";
+import type { LotOwners } from '@/types/interment.types'
 
-import { DataTableColumnHeader } from "@/components/data-table/data-table-column-header";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import { DataTableColumnHeader } from '@/components/data-table/data-table-column-header'
+import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
 
 const IndeterminateCheckbox = React.forwardRef<HTMLInputElement, React.InputHTMLAttributes<HTMLInputElement> & { indeterminate?: boolean }>(({ indeterminate, ...props }, ref) => {
-  const localRef = React.useRef<HTMLInputElement>(null);
-  const resolvedRef = (ref as React.RefObject<HTMLInputElement>) ?? localRef;
+  const localRef = React.useRef<HTMLInputElement>(null)
+  const resolvedRef = (ref as React.RefObject<HTMLInputElement>) ?? localRef
 
   React.useEffect(() => {
     if (resolvedRef.current) {
-      resolvedRef.current.indeterminate = Boolean(indeterminate) && !props.checked;
+      resolvedRef.current.indeterminate = Boolean(indeterminate) && !props.checked
     }
-  }, [indeterminate, props.checked, resolvedRef]);
+  }, [indeterminate, props.checked, resolvedRef])
 
-  return <input ref={resolvedRef} type="checkbox" {...props} />;
-});
-IndeterminateCheckbox.displayName = "IndeterminateCheckbox";
+  return <input ref={resolvedRef} type="checkbox" {...props} />
+})
+IndeterminateCheckbox.displayName = 'IndeterminateCheckbox'
 
 export const lotOwnerColumns: ColumnDef<LotOwners>[] = [
   {
-    id: "select",
+    id: 'select',
     header: ({ table: tbl }) => (
       <IndeterminateCheckbox
         aria-label="Select all rows"
@@ -43,12 +43,12 @@ export const lotOwnerColumns: ColumnDef<LotOwners>[] = [
   },
   {
     size: 40,
-    accessorKey: "lot_id",
+    accessorKey: 'lot_id',
     header: ({ column }) => <DataTableColumnHeader column={column} title="ID" />,
-    meta: { label: "ID" },
+    meta: { label: 'ID' },
   },
   {
-    id: "customer_name",
+    id: 'customer_name',
     header: ({ column }) => <DataTableColumnHeader column={column} title="Lot Owner" />,
     accessorFn: (row) => `${row.customer_name}`,
     cell: ({ row }) => {
@@ -59,13 +59,13 @@ export const lotOwnerColumns: ColumnDef<LotOwners>[] = [
           </div>
           <span>{row.original.customer_name}</span>
         </div>
-      );
+      )
     },
-    meta: { label: "Full Name" },
+    meta: { label: 'Full Name' },
   },
 
   {
-    id: "location",
+    id: 'location',
     header: ({ column }) => <DataTableColumnHeader column={column} title="Location" />,
     accessorFn: (row) =>
       row.block && row.plot_id
@@ -82,7 +82,7 @@ export const lotOwnerColumns: ColumnDef<LotOwners>[] = [
             </div>
             Block {row.original.block} • Grave {row.original.plot_id}
           </div>
-        );
+        )
       } else if (row.original.category && row.original.niche_number) {
         return (
           <div className="flex items-center gap-2">
@@ -91,60 +91,60 @@ export const lotOwnerColumns: ColumnDef<LotOwners>[] = [
             </div>
             {row.original.category} {row.original.plot_id} • Niche {row.original.niche_number}
           </div>
-        );
+        )
       }
-      return null;
+      return null
     },
-    meta: { label: "Location" },
+    meta: { label: 'Location' },
   },
   {
     header: ({ column }) => <DataTableColumnHeader column={column} title="Status" />,
-    accessorKey: "lot_status",
+    accessorKey: 'lot_status',
     cell: ({ row }) => {
-      const status = row.original.lot_status;
-      if (status === "active") {
+      const status = row.original.lot_status
+      if (status === 'active') {
         return (
           <Badge variant="outline" className="border-amber-500" asChild={false}>
             <span className="text-xs text-amber-600">Active</span>
           </Badge>
-        );
+        )
       }
-      if (status === "canceled") {
+      if (status === 'canceled') {
         return (
           <Badge variant="destructive" asChild={false}>
             <span className="text-xs text-red-600">Canceled</span>
           </Badge>
-        );
+        )
       }
-      if (status === "completed") {
+      if (status === 'completed') {
         return (
           <Badge variant="outline" className="bg-green-500 text-white" asChild={false}>
             <span className="text-xs">Completed</span>
           </Badge>
-        );
+        )
       }
       return (
         <Badge variant="outline" asChild={false}>
           <span>{row.original.lot_status}</span>
         </Badge>
-      );
+      )
     },
     meta: {
-      label: "Status",
-      variant: "select",
+      label: 'Status',
+      variant: 'select',
       options: [
-        { label: "Active", value: "active" },
-        { label: "Canceled", value: "canceled" },
-        { label: "Completed", value: "completed" },
+        { label: 'Active', value: 'active' },
+        { label: 'Canceled', value: 'canceled' },
+        { label: 'Completed', value: 'completed' },
       ],
     },
   },
   {
-    id: "actions",
+    id: 'actions',
     size: 40,
     enableHiding: false,
     cell: ({ row }) => {
-      if (!row?.original) return null;
+      if (!row?.original) return null
       return (
         <>
           <DropdownMenu>
@@ -166,7 +166,7 @@ export const lotOwnerColumns: ColumnDef<LotOwners>[] = [
             </DropdownMenuContent>
           </DropdownMenu>
         </>
-      );
+      )
     },
   },
-];
+]

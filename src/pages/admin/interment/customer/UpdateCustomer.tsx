@@ -1,19 +1,19 @@
-import { toast } from "sonner";
+import { toast } from 'sonner'
 
-import type { Customer } from "@/api/customer.api";
-import type { CustomerFormData } from "@/schema/customer.schema";
+import type { Customer } from '@/api/customer.api'
+import type { CustomerFormData } from '@/schema/customer.schema'
 
-import { useUpsertCustomer } from "@/hooks/customer-hooks/customer.hooks";
-import CustomerForm from "@/pages/admin/interment/customer/CustomerForm";
+import { useUpsertCustomer } from '@/hooks/customer-hooks/customer.hooks'
+import CustomerForm from '@/pages/admin/interment/customer/CustomerForm'
 
 interface EditCustomerDialogProps {
-  open: boolean;
-  customer: Customer;
-  onOpenChange: (open: boolean) => void;
+  open: boolean
+  customer: Customer
+  onOpenChange: (open: boolean) => void
 }
 
 export default function EditCustomerDialog({ open, customer, onOpenChange }: EditCustomerDialogProps) {
-  const { isPending, mutateAsync } = useUpsertCustomer();
+  const { isPending, mutateAsync } = useUpsertCustomer()
 
   async function handleSubmit(values: CustomerFormData) {
     // map form values (CustomerFormData) back to API Customer shape
@@ -31,47 +31,47 @@ export default function EditCustomerDialog({ open, customer, onOpenChange }: Edi
       contact_number: values.contact_number.trim(),
       middle_name: values.middle_name?.trim() || null,
       birth_date: values.birth_date ? new Date(values.birth_date).toISOString().slice(0, 10) : null,
-    };
+    }
 
     toast.promise(
       mutateAsync(payload).then((result) => {
-        const typedResult = result as { success: boolean };
+        const typedResult = result as { success: boolean }
         if (typedResult.success) {
-          onOpenChange(false);
+          onOpenChange(false)
         }
-        return typedResult;
+        return typedResult
       }),
       {
-        loading: "Updating customer...",
-        success: "Customer updated successfully!",
-        error: "Failed to update customer.",
+        loading: 'Updating customer...',
+        success: 'Customer updated successfully!',
+        error: 'Failed to update customer.',
       },
-    );
+    )
   }
 
   // map API Customer -> CustomerFormData expected by the form/schema
   const initialValues: CustomerFormData = {
-    email: customer.email || "",
-    address: customer.address || "",
+    email: customer.email || '',
+    address: customer.address || '',
     middle_name: customer.middle_name || undefined,
-    gender: (customer.gender === "Female" ? "Female" : "Male") as CustomerFormData["gender"],
-    religion: customer.religion || "",
-    last_name: customer.last_name || "",
-    status: (customer.status === "Married"
-      ? "Married"
-      : customer.status === "Widowed"
-        ? "Widowed"
-        : customer.status === "Divorced"
-          ? "Divorced"
-          : customer.status === "Separated"
-            ? "Separated"
-            : "Single") as CustomerFormData["status"],
-    first_name: customer.first_name || "",
-    occupation: customer.occupation || "",
-    citizenship: customer.citizenship || "",
-    contact_number: customer.contact_number || "",
-    birth_date: customer.birth_date ? String(customer.birth_date).slice(0, 10) : "",
-  };
+    gender: (customer.gender === 'Female' ? 'Female' : 'Male') as CustomerFormData['gender'],
+    religion: customer.religion || '',
+    last_name: customer.last_name || '',
+    status: (customer.status === 'Married'
+      ? 'Married'
+      : customer.status === 'Widowed'
+        ? 'Widowed'
+        : customer.status === 'Divorced'
+          ? 'Divorced'
+          : customer.status === 'Separated'
+            ? 'Separated'
+            : 'Single') as CustomerFormData['status'],
+    first_name: customer.first_name || '',
+    occupation: customer.occupation || '',
+    citizenship: customer.citizenship || '',
+    contact_number: customer.contact_number || '',
+    birth_date: customer.birth_date ? String(customer.birth_date).slice(0, 10) : '',
+  }
 
-  return <CustomerForm initialValues={initialValues} onOpenChange={onOpenChange} onSubmit={handleSubmit} isPending={isPending} mode="edit" open={open} />;
+  return <CustomerForm initialValues={initialValues} onOpenChange={onOpenChange} onSubmit={handleSubmit} isPending={isPending} mode="edit" open={open} />
 }

@@ -1,13 +1,13 @@
-import { Suspense, lazy } from "react";
-import { HeaderSection } from "@/pages/landing/section/HeaderSection";
-import Spinner from "@/components/ui/spinner";
+import { Suspense, lazy } from 'react'
+import { HeaderSection } from '@/pages/landing/section/HeaderSection'
+import Spinner from '@/components/ui/spinner'
 
-const HeroSection = lazy(() => import("@/pages/landing/section/HeroSection"));
-const FAQs = lazy(() => import("@/pages/landing/section/FAQs"));
-const Showcase = lazy(() => import("@/pages/landing/section/Showcase"));
-const Footer = lazy(() => import("@/pages/landing/section/Footer"));
-const FeatureSection = lazy(() => import("@/components/mvpblocks/FeatureSection"));
-const Testimonials = lazy(() => import("@/components/mvpblocks/Testimonials"));
+const HeroSection = lazy(() => import('@/pages/landing/section/HeroSection'))
+const FAQs = lazy(() => import('@/pages/landing/section/FAQs'))
+const Showcase = lazy(() => import('@/pages/landing/section/Showcase'))
+const Footer = lazy(() => import('@/pages/landing/section/Footer'))
+const FeatureSection = lazy(() => import('@/components/mvpblocks/FeatureSection'))
+const Testimonials = lazy(() => import('@/components/mvpblocks/Testimonials'))
 
 export default function LandingLayout() {
   return (
@@ -48,5 +48,5 @@ export default function LandingLayout() {
         </main>
       </div>
     </div>
-  );
+  )
 }

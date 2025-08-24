@@ -1,184 +1,184 @@
-import type { Map as LeafletMap } from "leaflet";
+import type { Map as LeafletMap } from 'leaflet'
 
-import { motion } from "framer-motion";
-import { ChevronLeft, ChevronRight, Maximize2, Car, Plug, CloudRain, ShieldCheck, Wrench } from "lucide-react";
-import { useEffect, useMemo, useRef, useState, useCallback } from "react";
-import { MapContainer, TileLayer, Marker, Popup, useMap } from "react-leaflet";
+import { motion } from 'framer-motion'
+import { ChevronLeft, ChevronRight, Maximize2, Car, Plug, CloudRain, ShieldCheck, Wrench } from 'lucide-react'
+import { useEffect, useMemo, useRef, useState, useCallback } from 'react'
+import { MapContainer, TileLayer, Marker, Popup, useMap } from 'react-leaflet'
 
-import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent } from "@/components/ui/dialog";
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Button } from '@/components/ui/button'
+import { Dialog, DialogContent } from '@/components/ui/dialog'
+import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs'
 const galleryImages = [
   {
     id: 1,
-    src: "https://picsum.photos/id/1025/2070/1380",
-    alt: "Panoramic view of peaceful cemetery grounds with rolling hills",
-    caption: "Panoramic view of our 150-acre grounds nestled in the rolling countryside",
-    category: "chapel",
+    src: 'https://picsum.photos/id/1025/2070/1380',
+    alt: 'Panoramic view of peaceful cemetery grounds with rolling hills',
+    caption: 'Panoramic view of our 150-acre grounds nestled in the rolling countryside',
+    category: 'chapel',
   },
   {
     id: 2,
-    src: "https://picsum.photos/id/1025/2070/1380",
-    alt: "Spring blossoms throughout the cemetery pathways",
-    caption: "Spring transformation with cherry blossoms lining memorial pathways",
-    category: "serenity",
+    src: 'https://picsum.photos/id/1025/2070/1380',
+    alt: 'Spring blossoms throughout the cemetery pathways',
+    caption: 'Spring transformation with cherry blossoms lining memorial pathways',
+    category: 'serenity',
   },
   {
     id: 3,
-    src: "https://picsum.photos/id/1025/2070/1380",
-    alt: "Aerial view showing the full expanse of the cemetery property",
-    caption: "Aerial perspective showcasing the thoughtful layout and natural integration",
-    category: "chambers",
+    src: 'https://picsum.photos/id/1025/2070/1380',
+    alt: 'Aerial view showing the full expanse of the cemetery property',
+    caption: 'Aerial perspective showcasing the thoughtful layout and natural integration',
+    category: 'chambers',
   },
   {
     id: 4,
-    src: "https://picsum.photos/id/1025/2070/1380",
-    alt: "Historic monument with intricate architectural details",
-    caption: "Historic memorial featuring 19th-century craftsmanship and artistry",
-    category: "columbarium",
+    src: 'https://picsum.photos/id/1025/2070/1380',
+    alt: 'Historic monument with intricate architectural details',
+    caption: 'Historic memorial featuring 19th-century craftsmanship and artistry',
+    category: 'columbarium',
   },
   {
     id: 5,
-    src: "https://picsum.photos/id/1025/2070/1380",
-    alt: "Golden sunset casting peaceful light across the grounds",
-    caption: "Evening tranquility as golden hour illuminates the sacred grounds",
-    category: "playground",
+    src: 'https://picsum.photos/id/1025/2070/1380',
+    alt: 'Golden sunset casting peaceful light across the grounds',
+    caption: 'Evening tranquility as golden hour illuminates the sacred grounds',
+    category: 'playground',
   },
   {
     id: 6,
-    src: "https://picsum.photos/id/1025/2070/1380",
-    alt: "Carefully maintained memorial gardens with seasonal flowers",
-    caption: "Memorial gardens featuring native plants and seasonal displays",
-    category: "parking",
+    src: 'https://picsum.photos/id/1025/2070/1380',
+    alt: 'Carefully maintained memorial gardens with seasonal flowers',
+    caption: 'Memorial gardens featuring native plants and seasonal displays',
+    category: 'parking',
   },
   {
     id: 7,
-    src: "https://picsum.photos/id/1025/2070/1380",
-    alt: "A serene lake reflecting the sky within the memorial park",
-    caption: "A serene lake reflecting the sky, offering a place for quiet contemplation",
-    category: "parking",
+    src: 'https://picsum.photos/id/1025/2070/1380',
+    alt: 'A serene lake reflecting the sky within the memorial park',
+    caption: 'A serene lake reflecting the sky, offering a place for quiet contemplation',
+    category: 'parking',
   },
-];
+]
 
 const locationFeatures = [
   {
     icon: Car,
-    title: "Ample Parking Facilities",
-    description: "Generous, well-lit parking areas for visitors and service vehicles",
+    title: 'Ample Parking Facilities',
+    description: 'Generous, well-lit parking areas for visitors and service vehicles',
   },
   {
     icon: Plug,
-    title: "Underground Utilities",
-    description: "Concealed utility lines for reliable service and unobstructed landscaping",
+    title: 'Underground Utilities',
+    description: 'Concealed utility lines for reliable service and unobstructed landscaping',
   },
   {
     icon: CloudRain,
-    title: "Drainage System & Network",
-    description: "Engineered drainage to protect grounds and manage stormwater effectively",
+    title: 'Drainage System & Network',
+    description: 'Engineered drainage to protect grounds and manage stormwater effectively',
   },
   {
     icon: ShieldCheck,
-    title: "24-hour Security",
-    description: "Continuous monitoring and patrols to ensure visitor safety and asset protection",
+    title: '24-hour Security',
+    description: 'Continuous monitoring and patrols to ensure visitor safety and asset protection',
   },
   {
     icon: Wrench,
-    title: "Perpetual Maintenance",
-    description: "Ongoing groundskeeping and infrastructure upkeep for lasting beauty",
+    title: 'Perpetual Maintenance',
+    description: 'Ongoing groundskeeping and infrastructure upkeep for lasting beauty',
   },
-];
+]
 
 export default function CemeteryShowcase() {
-  const [selectedImage, setSelectedImage] = useState(0);
-  const [isLightboxOpen, setIsLightboxOpen] = useState(false);
-  const [activeFilter, setActiveFilter] = useState("all");
-  const [isExpanded, setIsExpanded] = useState(false);
-  const [leafletMap, setLeafletMap] = useState<LeafletMap | null>(null);
-  const mapContainerRef = useRef<HTMLDivElement | null>(null);
+  const [selectedImage, setSelectedImage] = useState(0)
+  const [isLightboxOpen, setIsLightboxOpen] = useState(false)
+  const [activeFilter, setActiveFilter] = useState('all')
+  const [isExpanded, setIsExpanded] = useState(false)
+  const [leafletMap, setLeafletMap] = useState<LeafletMap | null>(null)
+  const mapContainerRef = useRef<HTMLDivElement | null>(null)
 
   const categories = [
-    { id: "all", label: "All Views" },
-    { id: "chapel", label: "Chapel" },
-    { id: "serenity", label: "Serenity" },
-    { id: "chambers", label: "Chambers" },
-    { id: "columbarium", label: "Columbarium" },
-    { id: "playground", label: "Playground" },
-    { id: "parking", label: "Parking" },
-  ];
+    { id: 'all', label: 'All Views' },
+    { id: 'chapel', label: 'Chapel' },
+    { id: 'serenity', label: 'Serenity' },
+    { id: 'chambers', label: 'Chambers' },
+    { id: 'columbarium', label: 'Columbarium' },
+    { id: 'playground', label: 'Playground' },
+    { id: 'parking', label: 'Parking' },
+  ]
 
   const filteredImages = useMemo(() => {
-    return activeFilter === "all" ? galleryImages : galleryImages.filter((img) => img.category === activeFilter);
-  }, [activeFilter]);
+    return activeFilter === 'all' ? galleryImages : galleryImages.filter((img) => img.category === activeFilter)
+  }, [activeFilter])
 
   const visibleImages = useMemo(() => {
-    return isExpanded ? filteredImages : filteredImages.slice(0, 6);
-  }, [filteredImages, isExpanded]);
+    return isExpanded ? filteredImages : filteredImages.slice(0, 6)
+  }, [filteredImages, isExpanded])
 
   useEffect(() => {
     if (selectedImage >= visibleImages.length) {
-      setSelectedImage(0);
+      setSelectedImage(0)
     }
-  }, [visibleImages, selectedImage]);
+  }, [visibleImages, selectedImage])
 
   const nextImage = useCallback(() => {
-    setSelectedImage((prev) => (prev + 1) % visibleImages.length);
-  }, [visibleImages.length]);
+    setSelectedImage((prev) => (prev + 1) % visibleImages.length)
+  }, [visibleImages.length])
 
   const prevImage = useCallback(() => {
-    setSelectedImage((prev) => (prev - 1 + visibleImages.length) % visibleImages.length);
-  }, [visibleImages.length]);
+    setSelectedImage((prev) => (prev - 1 + visibleImages.length) % visibleImages.length)
+  }, [visibleImages.length])
 
   const openLightbox = (index: number) => {
-    setSelectedImage(index);
-    setIsLightboxOpen(true);
-  };
+    setSelectedImage(index)
+    setIsLightboxOpen(true)
+  }
 
   // Ensure Leaflet redraws when the map instance becomes available or when the gallery expands
   useEffect(() => {
-    if (!leafletMap) return;
+    if (!leafletMap) return
     // give layout a tick then invalidate size
     const t = setTimeout(() => {
-      leafletMap.invalidateSize();
-    }, 0);
-    return () => clearTimeout(t);
-  }, [leafletMap, isExpanded]);
+      leafletMap.invalidateSize()
+    }, 0)
+    return () => clearTimeout(t)
+  }, [leafletMap, isExpanded])
 
   // Resize observer to invalidate leaflet size when the container size changes
   useEffect(() => {
-    if (!mapContainerRef.current || !leafletMap || typeof ResizeObserver === "undefined") return;
-    const el = mapContainerRef.current;
+    if (!mapContainerRef.current || !leafletMap || typeof ResizeObserver === 'undefined') return
+    const el = mapContainerRef.current
     const ro = new ResizeObserver(() => {
-      leafletMap.invalidateSize();
-    });
-    ro.observe(el);
-    return () => ro.disconnect();
-  }, [mapContainerRef, leafletMap]);
+      leafletMap.invalidateSize()
+    })
+    ro.observe(el)
+    return () => ro.disconnect()
+  }, [mapContainerRef, leafletMap])
 
   // small internal component to access the map instance from within MapContainer
   function MapInitializer({ onMap }: { onMap: (m: LeafletMap) => void }) {
-    const map = useMap();
+    const map = useMap()
     useEffect(() => {
-      onMap(map);
+      onMap(map)
       const t = setTimeout(() => {
-        map.invalidateSize();
-      }, 0);
-      return () => clearTimeout(t);
-    }, [map, onMap]);
-    return null;
+        map.invalidateSize()
+      }, 0)
+      return () => clearTimeout(t)
+    }, [map, onMap])
+    return null
   }
 
   useEffect(() => {
-    if (!isLightboxOpen) return;
+    if (!isLightboxOpen) return
 
     const onKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "ArrowRight") nextImage();
-      if (e.key === "ArrowLeft") prevImage();
-      if (e.key === "Escape") setIsLightboxOpen(false);
-    };
+      if (e.key === 'ArrowRight') nextImage()
+      if (e.key === 'ArrowLeft') prevImage()
+      if (e.key === 'Escape') setIsLightboxOpen(false)
+    }
 
-    window.addEventListener("keydown", onKeyDown);
-    return () => window.removeEventListener("keydown", onKeyDown);
-  }, [isLightboxOpen, nextImage, prevImage]);
+    window.addEventListener('keydown', onKeyDown)
+    return () => window.removeEventListener('keydown', onKeyDown)
+  }, [isLightboxOpen, nextImage, prevImage])
 
   return (
     <section id="showcase-section" className="w-full py-24 sm:py-32" aria-labelledby="showcase-heading">
@@ -199,7 +199,7 @@ export default function CemeteryShowcase() {
               <Tabs
                 defaultValue={activeFilter}
                 onValueChange={(val) => {
-                  if (val) setActiveFilter(val);
+                  if (val) setActiveFilter(val)
                 }}
                 className="w-full"
                 aria-label="Gallery category filter"
@@ -210,9 +210,9 @@ export default function CemeteryShowcase() {
                       key={category.id}
                       value={category.id}
                       className={
-                        "rounded-md px-3 py-1 text-sm font-medium whitespace-nowrap " +
-                        "text-gray-500" +
-                        "data-[state=active]:dark:text-foreground data-[state=active]:bg-gradient-to-r data-[state=active]:from-gray-700/80 data-[state=active]:to-gray-800/60 data-[state=active]:text-white data-[state=active]:shadow"
+                        'rounded-md px-3 py-1 text-sm font-medium whitespace-nowrap ' +
+                        'text-gray-500' +
+                        'data-[state=active]:dark:text-foreground data-[state=active]:bg-gradient-to-r data-[state=active]:from-gray-700/80 data-[state=active]:to-gray-800/60 data-[state=active]:text-white data-[state=active]:shadow'
                       }
                     >
                       {category.label}
@@ -258,7 +258,7 @@ export default function CemeteryShowcase() {
           {filteredImages.length > 6 && (
             <div className="mt-8 text-center">
               <Button variant="neon" onClick={() => setIsExpanded(!isExpanded)} className="w-full">
-                {isExpanded ? "Show Less" : "Show More"}
+                {isExpanded ? 'Show Less' : 'Show More'}
               </Button>
             </div>
           )}
@@ -314,8 +314,8 @@ export default function CemeteryShowcase() {
                       variant="neon"
                       onClick={() => {
                         if (leafletMap) {
-                          leafletMap.flyTo([10.249306880563585, 123.797848311330114], 18, { duration: 1.0 });
-                          leafletMap.invalidateSize();
+                          leafletMap.flyTo([10.249306880563585, 123.797848311330114], 18, { duration: 1.0 })
+                          leafletMap.invalidateSize()
                         }
                       }}
                     >
@@ -371,5 +371,5 @@ export default function CemeteryShowcase() {
         </DialogContent>
       </Dialog>
     </section>
-  );
+  )
 }

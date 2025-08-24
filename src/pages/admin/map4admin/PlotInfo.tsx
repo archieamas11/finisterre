@@ -1,12 +1,12 @@
-import { Award, CheckCircle, Clock, MapPin, XCircle } from "lucide-react";
+import { Award, CheckCircle, Clock, MapPin, XCircle } from 'lucide-react'
 
 // types (last)
-import type { ConvertedMarker } from "@/types/map.types";
+import type { ConvertedMarker } from '@/types/map.types'
 
-import { Badge } from "@/components/ui/badge";
-import { CardHeader, Card, CardTitle, CardContent } from "@/components/ui/card";
-import { Separator } from "@/components/ui/separator";
-import { cn } from "@/lib/utils";
+import { Badge } from '@/components/ui/badge'
+import { CardHeader, Card, CardTitle, CardContent } from '@/components/ui/card'
+import { Separator } from '@/components/ui/separator'
+import { cn } from '@/lib/utils'
 
 export default function PlotInfo({ marker }: { marker: ConvertedMarker }) {
   return (
@@ -25,7 +25,7 @@ export default function PlotInfo({ marker }: { marker: ConvertedMarker }) {
             <div className="flex items-center gap-2">
               <span className="text-muted-foreground font-medium">Location</span>
             </div>
-            <span className="font-semibold">{marker?.location ?? "N/A"}</span>
+            <span className="font-semibold">{marker?.location ?? 'N/A'}</span>
           </div>
           <Separator />
 
@@ -33,11 +33,11 @@ export default function PlotInfo({ marker }: { marker: ConvertedMarker }) {
           <div className="grid grid-cols-2 gap-2 py-2">
             <div className="text-center">
               <p className="text-muted-foreground mb-1 text-xs">Status</p>
-              <Badge variant={marker?.plotStatus === "available" ? "default" : marker?.plotStatus === "reserved" ? "secondary" : "destructive"} className="text-xs">
-                {marker?.plotStatus === "available" && <CheckCircle className="h-2 w-2" />}
-                {marker?.plotStatus === "reserved" && <Clock className="h-2 w-2" />}
-                {marker?.plotStatus === "occupied" && <XCircle className="h-2 w-2" />}
-                {marker?.plotStatus ?? "N/A"}
+              <Badge variant={marker?.plotStatus === 'available' ? 'default' : marker?.plotStatus === 'reserved' ? 'secondary' : 'destructive'} className="text-xs">
+                {marker?.plotStatus === 'available' && <CheckCircle className="h-2 w-2" />}
+                {marker?.plotStatus === 'reserved' && <Clock className="h-2 w-2" />}
+                {marker?.plotStatus === 'occupied' && <XCircle className="h-2 w-2" />}
+                {marker?.plotStatus ?? 'N/A'}
               </Badge>
             </div>
             <div className="text-center">
@@ -45,16 +45,16 @@ export default function PlotInfo({ marker }: { marker: ConvertedMarker }) {
               <Badge
                 variant="outline"
                 className={cn(
-                  "text-xs",
-                  marker?.category === "bronze" && "border-amber-400 text-amber-700",
-                  marker?.category === "silver" && "border-gray-400 text-gray-700",
-                  marker?.category === "platinum" && "border-yellow-400 text-yellow-700",
-                  marker?.category === "diamond" && "border-pink-400 text-pink-700",
-                  !["bronze", "silver", "platinum", "diamond"].includes(marker?.category ?? "") && "border-gray-300 text-gray-600",
+                  'text-xs',
+                  marker?.category === 'bronze' && 'border-amber-400 text-amber-700',
+                  marker?.category === 'silver' && 'border-gray-400 text-gray-700',
+                  marker?.category === 'platinum' && 'border-yellow-400 text-yellow-700',
+                  marker?.category === 'diamond' && 'border-pink-400 text-pink-700',
+                  !['bronze', 'silver', 'platinum', 'diamond'].includes(marker?.category ?? '') && 'border-gray-300 text-gray-600',
                 )}
               >
                 <Award className="h-2 w-2" />
-                {marker?.category ? marker.category.charAt(0).toUpperCase() + marker.category.slice(1) : "N/A"}
+                {marker?.category ? marker.category.charAt(0).toUpperCase() + marker.category.slice(1) : 'N/A'}
               </Badge>
             </div>
           </div>
@@ -68,16 +68,16 @@ export default function PlotInfo({ marker }: { marker: ConvertedMarker }) {
             <div className="flex flex-col items-end">
               <div className="flex items-center gap-1 text-xs font-semibold">
                 <span>
-                  {isNaN(Number(marker?.dimensions?.length)) || marker?.dimensions?.length === undefined || marker?.dimensions?.length === null ? "N/A" : marker.dimensions.length}m
+                  {isNaN(Number(marker?.dimensions?.length)) || marker?.dimensions?.length === undefined || marker?.dimensions?.length === null ? 'N/A' : marker.dimensions.length}m
                 </span>
                 <span className="text-muted-foreground">×</span>
                 <span>
-                  {isNaN(Number(marker?.dimensions?.width)) || marker?.dimensions?.width === undefined || marker?.dimensions?.width === null ? "N/A" : marker.dimensions.width}m
+                  {isNaN(Number(marker?.dimensions?.width)) || marker?.dimensions?.width === undefined || marker?.dimensions?.width === null ? 'N/A' : marker.dimensions.width}m
                 </span>
                 <span className="text-muted-foreground">×</span>
                 <span>
                   {isNaN(Number(marker?.dimensions?.area)) || marker?.dimensions?.area === undefined || marker?.dimensions?.area === null
-                    ? "N/A"
+                    ? 'N/A'
                     : marker.dimensions.area.toLocaleString()}
                   m²
                 </span>
@@ -88,5 +88,5 @@ export default function PlotInfo({ marker }: { marker: ConvertedMarker }) {
         </CardContent>
       </Card>
     </>
-  );
+  )
 }

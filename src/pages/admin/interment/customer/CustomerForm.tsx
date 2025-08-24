@@ -1,67 +1,67 @@
-import { zodResolver } from "@hookform/resolvers/zod";
-import React from "react";
-import { useForm } from "react-hook-form";
+import { zodResolver } from '@hookform/resolvers/zod'
+import React from 'react'
+import { useForm } from 'react-hook-form'
 
 // no direct dependency on API Customer here; callers should map to CustomerFormData
-import { Button } from "@/components/ui/button";
-import { DatePicker } from "@/components/ui/date-picker";
-import { DialogDescription, DialogContent, DialogHeader, DialogTitle, Dialog } from "@/components/ui/dialog";
-import { FormControl, FormMessage, FormField, FormLabel, FormItem, Form } from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { SelectTrigger, SelectContent, SelectValue, SelectItem, Select } from "@/components/ui/select";
-import { customerSchema, type CustomerFormData } from "@/schema/customer.schema";
+import { Button } from '@/components/ui/button'
+import { DatePicker } from '@/components/ui/date-picker'
+import { DialogDescription, DialogContent, DialogHeader, DialogTitle, Dialog } from '@/components/ui/dialog'
+import { FormControl, FormMessage, FormField, FormLabel, FormItem, Form } from '@/components/ui/form'
+import { Input } from '@/components/ui/input'
+import { SelectTrigger, SelectContent, SelectValue, SelectItem, Select } from '@/components/ui/select'
+import { customerSchema, type CustomerFormData } from '@/schema/customer.schema'
 
 export interface CustomerFormProps {
-  open: boolean;
-  initialValues?: CustomerFormData;
-  isPending?: boolean;
-  mode: CustomerFormMode;
-  onOpenChange: (open: boolean) => void;
-  onSubmit: (values: CustomerFormData) => Promise<void> | void;
+  open: boolean
+  initialValues?: CustomerFormData
+  isPending?: boolean
+  mode: CustomerFormMode
+  onOpenChange: (open: boolean) => void
+  onSubmit: (values: CustomerFormData) => Promise<void> | void
 }
 
-export type CustomerFormMode = "edit" | "add";
+export type CustomerFormMode = 'edit' | 'add'
 
 export default function CustomerForm({ mode, open, onSubmit, isPending, onOpenChange, initialValues }: CustomerFormProps) {
   const form = useForm<CustomerFormData>({
     resolver: zodResolver(customerSchema),
     defaultValues: (initialValues as CustomerFormData) || {
-      email: "",
-      gender: "Male",
-      status: "Single",
-      address: "",
-      religion: "",
-      last_name: "",
-      first_name: "",
-      birth_date: "",
-      occupation: "",
+      email: '',
+      gender: 'Male',
+      status: 'Single',
+      address: '',
+      religion: '',
+      last_name: '',
+      first_name: '',
+      birth_date: '',
+      occupation: '',
       middle_name: undefined,
-      citizenship: "",
-      contact_number: "",
+      citizenship: '',
+      contact_number: '',
     },
-  });
+  })
 
   // 🔄 Reset form when initialValues change (important for edit mode)
   React.useEffect(() => {
     if (initialValues && open) {
-      form.reset(initialValues);
+      form.reset(initialValues)
     }
-  }, [form, initialValues, open]);
+  }, [form, initialValues, open])
 
   const handleSubmit = async (values: CustomerFormData) => {
-    await onSubmit(values);
-    if (mode === "add") {
-      form.reset();
+    await onSubmit(values)
+    if (mode === 'add') {
+      form.reset()
     }
-    onOpenChange(false);
-  };
+    onOpenChange(false)
+  }
 
   return (
     <Dialog onOpenChange={onOpenChange} open={open}>
       <DialogContent className="lg:max-w-[900px]">
         <DialogHeader>
-          <DialogTitle>{mode === "add" ? "Add New Customer" : mode === "edit" ? "Edit Customer" : "View Customer"}</DialogTitle>
-          <DialogDescription>{mode === "add" ? "Click save when you're done." : mode === "edit" ? "Edit customer details and save." : "View customer details."}</DialogDescription>
+          <DialogTitle>{mode === 'add' ? 'Add New Customer' : mode === 'edit' ? 'Edit Customer' : 'View Customer'}</DialogTitle>
+          <DialogDescription>{mode === 'add' ? "Click save when you're done." : mode === 'edit' ? 'Edit customer details and save.' : 'View customer details.'}</DialogDescription>
         </DialogHeader>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4">
@@ -263,7 +263,7 @@ export default function CustomerForm({ mode, open, onSubmit, isPending, onOpenCh
             <div className="flex justify-end space-x-2 pt-4">
               <Button
                 onClick={() => {
-                  form.reset();
+                  form.reset()
                 }}
                 disabled={isPending}
                 variant="outline"
@@ -272,12 +272,12 @@ export default function CustomerForm({ mode, open, onSubmit, isPending, onOpenCh
                 Clear
               </Button>
               <Button disabled={isPending} type="submit">
-                {isPending ? (mode === "add" ? "Saving..." : "Updating...") : mode === "add" ? "Save" : "Update"}
+                {isPending ? (mode === 'add' ? 'Saving...' : 'Updating...') : mode === 'add' ? 'Save' : 'Update'}
               </Button>
             </div>
           </form>
         </Form>
       </DialogContent>
     </Dialog>
-  );
+  )
 }

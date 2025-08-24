@@ -1,10 +1,10 @@
-import tailwindcss from "@tailwindcss/vite";
-import react from "@vitejs/plugin-react-swc";
-import path from "path";
-import AutoImport from "unplugin-auto-import/vite";
-import { defineConfig } from "vite";
-import { ViteImageOptimizer } from "vite-plugin-image-optimizer";
-import removeConsole from "vite-plugin-remove-console";
+import tailwindcss from '@tailwindcss/vite'
+import react from '@vitejs/plugin-react-swc'
+import path from 'path'
+import AutoImport from 'unplugin-auto-import/vite'
+import { defineConfig } from 'vite'
+import { ViteImageOptimizer } from 'vite-plugin-image-optimizer'
+import removeConsole from 'vite-plugin-remove-console'
 
 // https://vite.dev/config/
 export default defineConfig({
@@ -14,20 +14,20 @@ export default defineConfig({
     ViteImageOptimizer(),
     removeConsole(),
     AutoImport({
-      imports: ["react", "react-router-dom"],
-      dts: "src/auto-imports.d.ts",
+      imports: ['react', 'react-router-dom'],
+      dts: 'src/auto-imports.d.ts',
     }),
   ],
   build: {
-    target: "esnext",
+    target: 'esnext',
   },
   resolve: {
     alias: {
-      "@": path.resolve(__dirname, "./src"),
+      '@': path.resolve(__dirname, './src'),
     },
   },
   server: {
     port: 5173,
     open: true,
   },
-});
+})
