@@ -185,6 +185,10 @@
   @apply bg-background/90 supports-[backdrop-filter]:bg-background/60 backdrop-blur;
 }
 
+.bg-floating-card {
+  @apply bg-background/90 supports-[backdrop-filter]:bg-background/60 backdrop-blur;
+}
+
 .leaflet-control-attribution.leaflet-control {
   display: none;
 }

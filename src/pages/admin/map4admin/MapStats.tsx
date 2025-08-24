@@ -141,19 +141,19 @@ export default function MapStats() {
   // Stats Card Component (reused in both desktop and panel)
   const StatsCard = () => (
     <>
-      <Card className='w-full overflow-hidden border border-white/20 bg-[#f1eff5]/90 p-0 shadow-xl backdrop-blur-md dark:border-stone-700/50 dark:bg-[#16141e]/80'>
+      <Card className='w-full overflow-hidden border bg-floating-card p-0'>
         {hasError && <ErrorMessage message='Error fetching map statistics' />}
         {/* Header */}
         <div className='border-b border-gray-200 px-6 pt-5 pb-3 dark:border-stone-700'>
           <h2 className='text-lg font-bold text-gray-800 dark:text-gray-100'>
-            Location Statistics
+            Plots Markers Statistics
           </h2>
-          <p className='mt-1 text-xs text-gray-500 dark:text-gray-400'>
+          <p className='text-xs text-gray-500 dark:text-gray-400'>
             Real-time availability data
           </p>
         </div>
         {/* Summary Stats */}
-        <div className='bg-gray-50 px-6 py-5 dark:bg-stone-800/50'>
+        <div className='bg-background px-5 py-5 rounded-md m-2'>
           <div className='mb-3 flex items-center justify-between'>
             <span className='text-xs font-medium text-gray-500 dark:text-gray-400'>
               Total Spaces
@@ -207,14 +207,14 @@ export default function MapStats() {
         </div>
 
         {/* Location Tabs */}
-        <div className='px-2 pt-2 pb-1'>
+        <div className='px-2 pb-2'>
           <Tabs defaultValue='serenity' className='w-full'>
-            <TabsList className='mb-2 grid h-auto w-full grid-cols-2 gap-1 rounded-lg bg-gray-100 p-1 dark:bg-stone-800'>
+            <TabsList className='mb-2 grid h-auto w-full grid-cols-2 gap-1 rounded-lg bg-gray-100 p-1 dark:bg-background'>
               {locationData.map((location) => (
                 <TabsTrigger
                   key={location.id}
                   value={location.id}
-                  className='rounded-md px-2 py-2 text-xs transition-colors data-[state=active]:bg-white data-[state=active]:shadow-sm dark:data-[state=active]:bg-stone-700'
+                  className='rounded-md px-2 py-2 text-xs transition-colors data-[state=active]:bg-white data-[state=active]:shadow-sm dark:data-[state=active]:bg-secondary/20'
                 >
                   {location.name.split(' ')[0]}
                 </TabsTrigger>
