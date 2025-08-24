@@ -298,9 +298,7 @@ export function NavigationInstructions({
                     )}
                   >
                     <Separator className='mt-2 mb-2' />
-                    <h4 className='mb-3 text-sm font-medium'>
-                      All Directions
-                    </h4>
+                    <h4 className='mb-3 text-sm font-medium'>All Directions</h4>
                     <ScrollArea className='h-40 sm:h-70'>
                       <div className='space-y-2'>
                         {allManeuvers.map((maneuver, index) => (
