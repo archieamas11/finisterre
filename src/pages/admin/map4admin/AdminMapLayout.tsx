@@ -247,6 +247,7 @@ export default function AdminMapLayout() {
             {/* GeoJSON overlay: Guide 4 Block C */}
             {showGuide4 && guide4Data && (
               <GeoJSON
+                interactive={false}
                 data={guide4Data}
                 style={() => ({
                   color: '#FFDE21',
