@@ -127,46 +127,18 @@ export default function WebMapNavs() {
       })}
       aria-label="Map Navigation Buttons"
     >
-      {/* 🔍 Search functionality - only on map page */}
-      {location.pathname === '/map' && isWebMapContext(locateCtx) && <SearchToggle context={locateCtx} />}
-
-      {/* Locate user Button */}
-      {(isAdmin() && location.pathname === '/') || (!isAdmin() && location.pathname === '/map') ? (
-        <Button
-          variant={'secondary'}
-          className="bg-background shrink-0 rounded-full text-xs sm:text-sm"
-          onClick={() => locateCtx?.requestLocate()}
-          aria-label="Locate me"
-          size="sm"
-        >
-          <Locate className="text-accent-foreground h-3 w-3 sm:h-4 sm:w-4" />
-          <span className="hidden lg:inline">Where am I?</span>
-        </Button>
+      {/* 🏠 Home Button */}
+      {location.pathname === '/map' ? (
+        <Link to="/">
+          <Button variant={'secondary'} className="bg-background shrink-0 rounded-full text-xs sm:text-sm" size="sm">
+            <Home className="text-accent-foreground h-3 w-3 sm:h-4 sm:w-4" />
+            <span className="ml-1 hidden lg:inline">Home</span>
+          </Button>
+        </Link>
       ) : null}
 
-      {/* 🔄 Reset Map View Button (reusable) */}
-      <ResetMapViewButton context={locateCtx as AdminContext | WebMapContext | null | undefined} />
-
-      {/* ➕ Add Marker Button for Admin */}
-      {isAdmin() && location.pathname === '/admin/map' && (
-        <>
-          {/* Dropdown for Add Marker Options */}
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="secondary" className="bg-background shrink-0 rounded-full" size="sm">
-                <RiMapPinAddLine
-                  className={`h-3 w-3 sm:h-4 sm:w-4 ${isAdminContext(locateCtx) && locateCtx.isAddingMarker ? 'text-primary-foreground' : 'text-accent-foreground'}`}
-                />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent>
-              <DropdownMenuItem onClick={onAddMarkerClick}>{isAdminContext(locateCtx) && locateCtx.isAddingMarker ? 'Cancel Add' : 'Add Marker'}</DropdownMenuItem>
-              <DropdownMenuItem onClick={onEditMarkerClick}>{isAdminContext(locateCtx) && locateCtx.isEditingMarker ? 'Cancel Edit' : 'Edit Marker'}</DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-        </>
-      )}
-
+      {/* 🔍 Search functionality - only on map page */}
+      {location.pathname === '/map' && isWebMapContext(locateCtx) && <SearchToggle context={locateCtx} />}
       <div className="bg-background flex shrink-0 flex-col gap-1 rounded-full sm:flex-col sm:gap-2 lg:flex-row">
         {/* 🎯 Cluster Control Dropdown */}
         {location.pathname === '/map' && isWebMapContext(locateCtx) && (
@@ -220,7 +192,42 @@ export default function WebMapNavs() {
           </Button>
         )}
       </div>
+      {/* Locate user Button */}
+      {location.pathname === '/map' && (
+        <Button
+          variant={'secondary'}
+          className="bg-background shrink-0 rounded-full text-xs sm:text-sm"
+          onClick={() => locateCtx?.requestLocate()}
+          aria-label="Locate me"
+          size="sm"
+        >
+          <Locate className="text-accent-foreground h-3 w-3 sm:h-4 sm:w-4" />
+          <span className="hidden lg:inline">Where am I?</span>
+        </Button>
+      )}
 
+      {/* 🔄 Reset Map View Button (reusable) */}
+      <ResetMapViewButton context={locateCtx as AdminContext | WebMapContext | null | undefined} />
+
+      {/* ➕ Add Marker Button for Admin */}
+      {isAdmin() && location.pathname === '/admin/map' && (
+        <>
+          {/* Dropdown for Add Marker Options */}
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="secondary" className="bg-background shrink-0 rounded-full" size="sm">
+                <RiMapPinAddLine
+                  className={`h-3 w-3 sm:h-4 sm:w-4 ${isAdminContext(locateCtx) && locateCtx.isAddingMarker ? 'text-primary-foreground' : 'text-accent-foreground'}`}
+                />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent>
+              <DropdownMenuItem onClick={onAddMarkerClick}>{isAdminContext(locateCtx) && locateCtx.isAddingMarker ? 'Cancel Add' : 'Add Marker'}</DropdownMenuItem>
+              <DropdownMenuItem onClick={onEditMarkerClick}>{isAdminContext(locateCtx) && locateCtx.isEditingMarker ? 'Cancel Edit' : 'Edit Marker'}</DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </>
+      )}
       {!isAuthenticated() ? (
         <Link to="/login">
           <Button variant="secondary" size="sm" className="bg-background z-0 shrink-0 rounded-full text-xs transition-all duration-200 sm:text-sm">
@@ -230,16 +237,6 @@ export default function WebMapNavs() {
         </Link>
       ) : meUser && !isUserLoading && location.pathname === '/map' ? (
         <ProfileMenu user={meUser} />
-      ) : null}
-
-      {/* 🏠 Home Button */}
-      {(isAdmin() && location.pathname === '/map') || (!isAdmin() && location.pathname === '/map') ? (
-        <Link to="/">
-          <Button variant={'secondary'} className="bg-background shrink-0 rounded-full text-xs sm:text-sm" size="sm">
-            <Home className="text-accent-foreground h-3 w-3 sm:h-4 sm:w-4" />
-            <span className="ml-1 hidden lg:inline">Home</span>
-          </Button>
-        </Link>
       ) : null}
     </nav>
   )

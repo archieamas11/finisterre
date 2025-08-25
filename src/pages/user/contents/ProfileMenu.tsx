@@ -1,4 +1,6 @@
-import { BoltIcon, BookOpenIcon, ChevronDownIcon, Layers2Icon, LogOutIcon, PinIcon, UserPenIcon } from 'lucide-react'
+import { BoltIcon, BookOpenIcon, ChevronDownIcon, Layers2Icon, LogOutIcon, PinIcon, MoonIcon, SunIcon } from 'lucide-react'
+import { useTheme } from 'next-themes'
+import { useEffect, useState } from 'react'
 
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
@@ -23,11 +25,24 @@ interface ProfileUser {
 
 export default function ProfileMenu({ user }: { user: ProfileUser }) {
   const { performLogout, isPending } = useLogout()
+  const { theme, setTheme, resolvedTheme } = useTheme()
+  const [isMounted, setIsMounted] = useState(false)
+
+  useEffect(() => {
+    setIsMounted(true)
+  }, [])
+
+  const current = (theme === 'system' ? resolvedTheme : theme) as 'light' | 'dark' | undefined
+  const isDark = current === 'dark'
+
+  const onToggleTheme = () => {
+    setTheme(isDark ? 'light' : 'dark')
+  }
 
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="ghost" className="h-auto p-0 hover:bg-transparent">
+        <Button variant="ghost" className="h-auto p-0 outline-0 hover:bg-transparent dark:hover:bg-transparent" aria-label="User menu">
           <Avatar>
             <AvatarImage src={user.avatar} alt={user.name} className="bg-background rounded-full p-0" />
             <AvatarFallback className="bg-background">{getInitials(user.name)}</AvatarFallback>
@@ -61,13 +76,13 @@ export default function ProfileMenu({ user }: { user: ProfileUser }) {
             <PinIcon size={16} className="opacity-60" aria-hidden="true" />
             <span>Option 4</span>
           </DropdownMenuItem>
-          <DropdownMenuItem>
-            <UserPenIcon size={16} className="opacity-60" aria-hidden="true" />
-            <span>Option 5</span>
+          <DropdownMenuItem onClick={onToggleTheme} disabled={!isMounted} aria-label="Toggle theme">
+            {isMounted && isDark ? <SunIcon size={16} className="opacity-60" aria-hidden="true" /> : <MoonIcon size={16} className="opacity-60" aria-hidden="true" />}
+            <span>{isMounted ? (isDark ? 'Light Mode' : 'Dark Mode') : 'Change Theme'}</span>
           </DropdownMenuItem>
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
-        <DropdownMenuItem onClick={() => performLogout()} disabled={isPending}>
+        <DropdownMenuItem onClick={() => performLogout()} disabled={isPending} aria-label="Logout">
           <LogOutIcon />
           <span>Logout</span>
         </DropdownMenuItem>

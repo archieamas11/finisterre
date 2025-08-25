@@ -1,5 +1,4 @@
 import { SearchIcon, X, ArrowRightIcon } from 'lucide-react'
-import { useState, useCallback, useEffect, useRef } from 'react'
 
 import { Input } from '@/components/ui/input'
 import { cn } from '@/lib/utils'
@@ -18,28 +17,8 @@ interface SearchToggleProps {
 }
 
 export default function SearchToggle({ context, className }: SearchToggleProps) {
-  const [isExpanded, setIsExpanded] = useState(false)
   const containerRef = useRef<HTMLDivElement>(null)
 
-  // 🎯 Handle focus events to manage auto-close on unfocus only
-  useEffect(() => {
-    const container = containerRef.current
-    if (!container || !isExpanded) return
-
-    const handleFocusOut = (e: FocusEvent) => {
-      // ⚡️ Only close if focus is leaving our component entirely
-      if (!container.contains(e.relatedTarget as Node)) {
-        setIsExpanded(false)
-        context.setSearchQuery('')
-      }
-    }
-
-    container.addEventListener('focusout', handleFocusOut)
-
-    return () => {
-      container.removeEventListener('focusout', handleFocusOut)
-    }
-  }, [isExpanded, context]) // 🔍 Search functions
   const handleSearchSubmit = useCallback(
     async (e: React.FormEvent) => {
       e.preventDefault()
@@ -54,7 +33,6 @@ export default function SearchToggle({ context, className }: SearchToggleProps) 
     (e: React.KeyboardEvent) => {
       if (e.key === 'Escape') {
         context.setSearchQuery('')
-        setIsExpanded(false)
       }
     },
     [context],
@@ -62,7 +40,6 @@ export default function SearchToggle({ context, className }: SearchToggleProps) 
 
   const handleClearSearch = useCallback(() => {
     context.clearSearch()
-    setIsExpanded(false)
   }, [context])
 
   return (
@@ -71,7 +48,7 @@ export default function SearchToggle({ context, className }: SearchToggleProps) 
         <form onSubmit={handleSearchSubmit} className="flex w-full gap-1">
           <div className="relative flex-1">
             <Input
-              className="peer dark:bg-background h-8 w-full rounded-full bg-white ps-9 pe-9 text-xs"
+              className="peer dark:bg-background h-8 w-40 rounded-full bg-white ps-9 pe-0 text-xs"
               placeholder="Search lot..."
               value={context.searchQuery}
               onChange={(e) => context.setSearchQuery(e.target.value)}
