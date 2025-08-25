@@ -3,7 +3,7 @@ import 'leaflet/dist/leaflet.css'
 import iconRetinaUrl from 'leaflet/dist/images/marker-icon-2x.png'
 import iconUrl from 'leaflet/dist/images/marker-icon.png'
 import shadowUrl from 'leaflet/dist/images/marker-shadow.png'
-import { createContext, useEffect, useMemo, useCallback, memo, useState, Suspense, lazy, useRef } from 'react'
+import { createContext, useEffect, useMemo, useCallback, memo, useState, Suspense, lazy } from 'react'
 import { MapContainer, TileLayer, useMap } from 'react-leaflet'
 import { toast } from 'sonner'
 
@@ -60,7 +60,7 @@ function MapInstanceBinder({ onMapReady }: { onMapReady: (map: L.Map) => void })
 }
 
 export const LocateContext = createContext<{
-  requestLocate: () => void
+  requestLocate: () => Promise<void>
   clearRoute: () => void
   resetView: () => void
   selectedGroups: Set<string>
@@ -165,21 +165,37 @@ export default function MapPage() {
   }, [shouldCenterOnUser, currentLocation])
 
   // Memoize callback functions to prevent them from being recreated on every render.
-  const requestLocate = useCallback(() => {
+  const requestLocate = useCallback(async () => {
+    // Start tracking if not already active
     if (!isTracking) {
       startTracking()
     }
-    setShouldCenterOnUser(true)
-  }, [isTracking, startTracking])
+    setShouldCenterOnUser(true) // still used by marker component for first-center behavior / animation
+
+    // Try to obtain a fresh location if we don't have one yet
+    let loc = currentLocation
+    if (!loc) {
+      try {
+        loc = await getCurrentLocation()
+      } catch (err) {
+        // 💡 Silent fail: toast not needed; user just won't see fly animation
+        console.warn('Could not get current location for flyTo:', err)
+      }
+    }
+
+    // Perform animated fly to the user's position
+    if (loc && mapInstance) {
+      const targetZoom = Math.max(mapInstance.getZoom(), 18)
+      // Using flyTo for smoother animated transition similar to resetView animation semantics
+      mapInstance.flyTo([loc.latitude, loc.longitude], targetZoom, { animate: true })
+    }
+  }, [isTracking, startTracking, currentLocation, getCurrentLocation, mapInstance])
 
   const clearRoute = useCallback(() => {
     stopNavigation()
     setIsNavigationInstructionsOpen(false)
     setIsDirectionLoading(false)
   }, [stopNavigation])
-
-  // 🔄 Will define resetView after helper callbacks to avoid use-before-declare
-  const resetViewRef = useRef<() => void>(() => {})
 
   const handleDirectionClick = useCallback(
     async (to: [number, number]) => {
@@ -308,15 +324,10 @@ export default function MapPage() {
             // Use coordinates from search result or fallback to marker position
             const centerCoords = plotCoords || matchedMarker.position
 
-            // Center and zoom the map on the found plot
-            // We'll need to trigger this via a map control component
-            setTimeout(() => {
-              const mapElement = document.querySelector('.leaflet-container') as any
-              if (mapElement && mapElement._leaflet_map) {
-                const map = mapElement._leaflet_map
-                map.setView(centerCoords, 18, { animate: true })
-              }
-            }, 100)
+            // Center and zoom the map on the found plot using stored map instance
+            if (mapInstance) {
+              mapInstance.setView(centerCoords, 18, { animate: true })
+            }
           }
 
           toast.success(`Lot found in ${result.data.category} - ${result.data.block ? `Block ${result.data.block}` : 'Chamber'}`)
@@ -330,7 +341,7 @@ export default function MapPage() {
         setIsSearching(false)
       }
     },
-    [markers],
+    [markers, mapInstance],
   )
 
   const clearSearch = useCallback(() => {
@@ -342,26 +353,27 @@ export default function MapPage() {
     setClusterViewMode('all')
   }, [])
 
-  // 🎯 Available groups for dropdown
-  const availableGroups = useMemo(() => {
-    const markersByGroup = groupMarkersByKey(markers)
-    return Object.entries(markersByGroup)
-      .map(([key, groupMarkers]) => {
-        const raw = key.startsWith('block:') ? key.split('block:')[1] : key.startsWith('category:') ? key.split('category:')[1] : key
-        const label = key.startsWith('category:') ? raw.charAt(0).toUpperCase() + raw.slice(1) : `Block ${raw}`
-        return { key, label, count: groupMarkers.length }
-      })
-      .sort((a, b) => a.label.localeCompare(b.label))
-  }, [markers])
+  // 🎯 Grouped markers (memoized) & available groups for dropdown
+  const markersByGroup = useMemo(() => groupMarkersByKey(markers), [markers])
+  const availableGroups = useMemo(
+    () =>
+      Object.entries(markersByGroup)
+        .map(([key, groupMarkers]) => {
+          const raw = key.startsWith('block:') ? key.split('block:')[1] : key.startsWith('category:') ? key.split('category:')[1] : key
+          const label = key.startsWith('category:') ? raw.charAt(0).toUpperCase() + raw.slice(1) : `Block ${raw}`
+          return { key, label, count: groupMarkers.length }
+        })
+        .sort((a, b) => a.label.localeCompare(b.label)),
+    [markersByGroup],
+  )
 
-  // Memoize the context value to prevent consumers from re-rendering unnecessarily.
   // 🔄 Reset map view to default state (center via bounds + default zoom)
   const resetView = useCallback(() => {
     if (mapInstance) {
       const targetZoom = 18
       const centerLat = (bounds[0][0] + bounds[1][0]) / 2
       const centerLng = (bounds[0][1] + bounds[1][1]) / 2
-      mapInstance.setView([centerLat, centerLng], targetZoom, { animate: true })
+      mapInstance.flyTo([centerLat, centerLng], targetZoom, { animate: true })
     }
     // 🔁 Reset related UI state
     resetGroupSelection()
@@ -370,9 +382,6 @@ export default function MapPage() {
     setHighlightedNiche(null)
     setAutoOpenPopupFor(null)
   }, [mapInstance, bounds, resetGroupSelection])
-
-  // Keep ref updated (optional future external usage)
-  resetViewRef.current = resetView
 
   const contextValue = useMemo(
     () => ({
@@ -456,10 +465,6 @@ export default function MapPage() {
           <MapInstanceBinder onMapReady={setMapInstance} />
           <TileLayer url="https://services.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}" maxNativeZoom={18} maxZoom={25} />
 
-          {!(route && routeCoordinates.length > 0) && (
-            <UserLocationMarker userLocation={currentLocation} centerOnFirst={shouldCenterOnUser} enableAnimation={true} showAccuracyCircle={true} />
-          )}
-
           <Suspense fallback={null}>
             {route && routeCoordinates.length > 0 && (
               <ValhallaRoute
@@ -476,10 +481,6 @@ export default function MapPage() {
               />
             )}
 
-            {!(route && routeCoordinates.length > 0) && (
-              <UserLocationMarker userLocation={currentLocation} centerOnFirst={shouldCenterOnUser} enableAnimation={true} showAccuracyCircle={true} />
-            )}
-
             <MemoizedComfortRoomMarker onDirectionClick={handleDirectionClick} isDirectionLoading={isDirectionLoading} />
             <MemoizedParkingMarkers onDirectionClick={handleDirectionClick} isDirectionLoading={isDirectionLoading} />
             <MemoizedPlaygroundMarkers onDirectionClick={handleDirectionClick} isDirectionLoading={isDirectionLoading} />
@@ -487,7 +488,7 @@ export default function MapPage() {
             <MemoizedMainEntranceMarkers onDirectionClick={handleDirectionClick} isDirectionLoading={isDirectionLoading} />
             <MemoizedChapelMarkers onDirectionClick={handleDirectionClick} isDirectionLoading={isDirectionLoading} />
             <CustomClusterManager
-              markersByGroup={groupMarkersByKey(markers)}
+              markersByGroup={markersByGroup}
               onDirectionClick={handleDirectionClick}
               isDirectionLoading={isDirectionLoading}
               selectedGroups={selectedGroups}
@@ -498,6 +499,9 @@ export default function MapPage() {
               highlightedNiche={highlightedNiche}
             />
           </Suspense>
+          {!(route && routeCoordinates.length > 0) && (
+            <UserLocationMarker userLocation={currentLocation} centerOnFirst={shouldCenterOnUser} enableAnimation={true} showAccuracyCircle={true} />
+          )}
         </MapContainer>
       </div>
     </LocateContext.Provider>

@@ -19,7 +19,10 @@ import {
 } from '@/components/ui/dropdown-menu'
 import ResetMapViewButton from '@/components/webmap/ResetMapViewButton'
 import SearchToggle from '@/components/webmap/SearchToggle'
+import { useMe } from '@/hooks/useMe'
+import { cn } from '@/lib/utils'
 import { LocateContext } from '@/pages/admin/map4admin/LocateContext'
+import ProfileMenu from '@/pages/user/contents/ProfileMenu'
 import { isAdmin, isAuthenticated } from '@/utils/auth.utils'
 
 export default function WebMapNavs() {
@@ -79,6 +82,8 @@ export default function WebMapNavs() {
 
   const location = useLocation()
 
+  const { user: meUser, isLoading: isUserLoading } = useMe()
+
   const onAddMarkerClick = () => {
     if (isAdminContext(locateCtx)) {
       if (locateCtx.isEditingMarker) {
@@ -115,8 +120,12 @@ export default function WebMapNavs() {
 
   return (
     <nav
-      className="pointer-events-auto absolute top-4 left-4 z-[990] flex flex-col gap-2 sm:top-6 sm:left-4 sm:flex-col sm:gap-3 md:top-8 md:left-4 md:flex-col md:gap-4 lg:left-1/2 lg:-translate-x-1/2 lg:flex-row lg:flex-wrap lg:items-center lg:justify-center"
-      style={{ pointerEvents: 'auto' }}
+      className={cn('absolute top-4 left-4 z-[990] flex flex-col gap-2', {
+        'sm:top-6 sm:left-4 sm:flex-col sm:gap-3': true,
+        'md:top-8 md:left-4 md:flex-col md:gap-4': true,
+        'lg:left-1/2 lg:-translate-x-1/2 lg:flex-row lg:items-center lg:justify-center': true,
+      })}
+      aria-label="Map Navigation Buttons"
     >
       {/* 🔍 Search functionality - only on map page */}
       {location.pathname === '/map' && isWebMapContext(locateCtx) && <SearchToggle context={locateCtx} />}
@@ -212,14 +221,16 @@ export default function WebMapNavs() {
         )}
       </div>
 
-      {!isAuthenticated() && (
+      {!isAuthenticated() ? (
         <Link to="/login">
           <Button variant="secondary" size="sm" className="bg-background z-0 shrink-0 rounded-full text-xs transition-all duration-200 sm:text-sm">
             <RiLoginBoxLine className="h-3 w-3 sm:h-4 sm:w-4" />
             <span className="ml-1 hidden lg:inline">Login</span>
           </Button>
         </Link>
-      )}
+      ) : meUser && !isUserLoading && location.pathname === '/map' ? (
+        <ProfileMenu user={meUser} />
+      ) : null}
 
       {/* 🏠 Home Button */}
       {(isAdmin() && location.pathname === '/map') || (!isAdmin() && location.pathname === '/map') ? (

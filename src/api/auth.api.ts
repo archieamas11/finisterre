@@ -52,3 +52,27 @@ export async function forgotPassword(username: string) {
   })
   return res.data
 }
+
+// Fetch current authenticated user (decoded from JWT)
+export interface MeResponse {
+  success: boolean
+  message: string
+  user?: {
+    user_id: number | null
+    username: string | null
+    isAdmin: boolean
+    iat: number | null
+    exp: number | null
+  }
+}
+
+export async function fetchMe(): Promise<MeResponse> {
+  try {
+    const res = await api.get<MeResponse>('auth/me.php')
+    return res.data
+  } catch (error) {
+    const err = error as { response?: { data?: Record<string, unknown> } }
+    const msg = String(err.response?.data?.message ?? 'Failed to fetch user')
+    return { success: false, message: msg }
+  }
+}

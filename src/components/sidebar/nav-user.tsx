@@ -14,16 +14,13 @@ import {
 } from '@/components/ui/dropdown-menu'
 import { SidebarMenuButton, SidebarMenuItem, SidebarMenu, useSidebar } from '@/components/ui/sidebar'
 import { useLogout } from '@/hooks/useLogout'
-export function NavUser({
-  user,
-}: {
-  user: {
-    avatar: string
-    email: string
-    name: string
-  }
-}) {
+import { useMe } from '@/hooks/useMe'
+import { getInitials } from '@/utils/avatar'
+import { ucwords } from '@/lib/format'
+export function NavUser() {
   const { isMobile } = useSidebar()
+  const { user: meUser } = useMe()
+
   const { performLogout, isPending } = useLogout()
 
   return (
@@ -33,12 +30,12 @@ export function NavUser({
           <DropdownMenuTrigger asChild>
             <SidebarMenuButton className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground" size="lg">
               <Avatar className="h-8 w-8 rounded-lg">
-                <AvatarImage src={user.avatar} alt={user.name} />
-                <AvatarFallback className="rounded-lg">AA</AvatarFallback>
+                <AvatarImage src={meUser?.avatar} alt={meUser?.name} />
+                <AvatarFallback className="rounded-lg">{getInitials(meUser?.name)}</AvatarFallback>
               </Avatar>
               <div className="grid flex-1 text-left text-sm leading-tight">
-                <span className="truncate font-medium">{user.name}</span>
-                <span className="truncate text-xs">{user.email}</span>
+                <span className="truncate font-medium">{ucwords(meUser?.name ?? '')}</span>
+                <span className="truncate text-xs">{meUser?.email ?? ''}</span>
               </div>
               <ChevronsUpDown className="ml-auto size-4" />
             </SidebarMenuButton>
@@ -47,12 +44,12 @@ export function NavUser({
             <DropdownMenuLabel className="p-0 font-normal">
               <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
                 <Avatar className="h-8 w-8 rounded-lg">
-                  <AvatarImage src={user.avatar} alt={user.name} />
-                  <AvatarFallback className="rounded-lg">CN</AvatarFallback>
+                  <AvatarImage src={meUser?.avatar} alt={meUser?.name} />
+                  <AvatarFallback className="rounded-lg">{getInitials(meUser?.name)}</AvatarFallback>
                 </Avatar>
                 <div className="grid flex-1 text-left text-sm leading-tight">
-                  <span className="truncate font-medium">{user.name}</span>
-                  <span className="truncate text-xs">{user.email}</span>
+                  <span className="truncate font-medium">{ucwords(meUser?.name ?? '')}</span>
+                  <span className="truncate text-xs">{meUser?.email ?? ''}</span>
                 </div>
               </div>
             </DropdownMenuLabel>

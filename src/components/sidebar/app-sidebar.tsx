@@ -15,7 +15,6 @@ import {
   SidebarRail,
   Sidebar,
 } from '@/components/ui/sidebar'
-import { rootUser } from '@/data/users'
 import { type NavGroup } from '@/navigation/sidebar/sidebar-items'
 
 import { NavUser } from './nav-user'
@@ -50,7 +49,7 @@ export function AppSidebar({ items, ...props }: React.ComponentProps<typeof Side
       </SidebarContent>
       <SidebarRail />
       <SidebarFooter>
-        <NavUser user={rootUser} />
+        <NavUser />
       </SidebarFooter>
     </Sidebar>
   )
