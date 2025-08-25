@@ -2,7 +2,7 @@ import { useQueryClient } from '@tanstack/react-query'
 import { motion } from 'framer-motion'
 import { ChevronsUpDown, Check, Heart } from 'lucide-react'
 import { Crown, Phone, User, Mail, Save, X } from 'lucide-react'
-import { useState } from 'react'
+import { useState, useContext } from 'react'
 import { BsFillPatchCheckFill } from 'react-icons/bs'
 import { FaDirections } from 'react-icons/fa'
 import { ImLibrary } from 'react-icons/im'
@@ -13,6 +13,7 @@ import type { ConvertedMarker } from '@/types/map.types'
 import type { nicheData } from '@/types/niche.types'
 
 import { ErrorMessage } from '@/components/ErrorMessage'
+import { LocateContext } from '@/components/layout/WebMapLayout'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { CardContent, CardHeader, CardTitle, Card } from '@/components/ui/card'
@@ -50,6 +51,9 @@ export default function ColumbariumPopup({ marker, onDirectionClick, isDirection
   const cols = parseInt(marker.columns)
   const queryClient = useQueryClient()
   const createLotOwnerMutation = useCreateLotOwner()
+
+  // 🔍 Get search context for highlighting searched niche
+  const locateContext = useContext(LocateContext)
 
   const handleCustomerSelect = (customerId: string) => {
     console.log('👤 Customer selected:', customerId)
@@ -181,19 +185,29 @@ export default function ColumbariumPopup({ marker, onDirectionClick, isDirection
           }}
           className="bg-background dark:bg-muted grid w-full gap-1 rounded-lg border p-2"
         >
-          {nicheData.map((niche, index) => (
-            <button
-              key={`${niche.lot_id}-${niche.row}-${niche.col}-${index}`}
-              onClick={() => handleNicheClick(niche)}
-              className={`flex aspect-square min-h-[40px] cursor-pointer flex-col items-center justify-center rounded border p-1 text-center transition-all duration-200 hover:scale-105 hover:shadow-sm ${getNicheStatusStyle(niche.niche_status)} `}
-              title={`${niche.lot_id} - ${niche.niche_status}${niche.owner ? ` (${niche.owner.name})` : ''}`}
-            >
-              <span className="font-mono text-[10px] leading-tight">N{niche.niche_number}</span>
-              <span className="font-mono text-[11px] leading-tight">
-                R{niche.row}C{niche.col}
-              </span>
-            </button>
-          ))}
+          {nicheData.map((niche, index) => {
+            // 🔍 Check if this niche is highlighted from search
+            const isHighlighted = locateContext?.highlightedNiche === String(niche.niche_number)
+
+            return (
+              <button
+                key={`${niche.lot_id}-${niche.row}-${niche.col}-${index}`}
+                onClick={() => handleNicheClick(niche)}
+                className={cn(
+                  'flex aspect-square min-h-[40px] cursor-pointer flex-col items-center justify-center rounded border p-1 text-center transition-all duration-200 hover:scale-105 hover:shadow-sm',
+                  getNicheStatusStyle(niche.niche_status),
+                  // 🔍 Add special highlighting for searched niche
+                  isHighlighted && 'scale-110 transform shadow-lg ring-4 ring-blue-500 ring-offset-2',
+                )}
+                title={`${niche.lot_id} - ${niche.niche_status}${niche.owner ? ` (${niche.owner.name})` : ''}${isHighlighted ? ' (Search Result)' : ''}`}
+              >
+                <span className="font-mono text-[10px] leading-tight">N{niche.niche_number}</span>
+                <span className="font-mono text-[11px] leading-tight">
+                  R{niche.row}C{niche.col}
+                </span>
+              </button>
+            )
+          })}
         </div>
       </div>
 

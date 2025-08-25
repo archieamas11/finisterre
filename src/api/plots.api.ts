@@ -91,3 +91,9 @@ export async function getPlotDetails(plot_id: string) {
   const res = await api.post('plots/get_plot_details.php', { plot_id })
   return res.data
 }
+
+// 🔍 Search for lot by lot_id
+export async function searchLotById(lot_id: string) {
+  const res = await api.post('plots/search_lot.php', { lot_id })
+  return res.data
+}

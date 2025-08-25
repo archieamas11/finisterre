@@ -18,7 +18,9 @@ import { useValhalla } from '@/hooks/useValhalla'
 import WebMapNavs from '@/pages/webmap/WebMapNavs'
 
 import { convertPlotToMarker } from '@/types/map.types'
+import type { LotSearchResult, ConvertedMarker } from '@/types/map.types'
 import { groupMarkersByKey } from '@/lib/clusterUtils'
+import { searchLotById } from '@/api/plots.api'
 
 const PlotMarkers = lazy(() => import('@/pages/webmap/PlotMarkers'))
 const ComfortRoomMarker = lazy(() => import('@/pages/webmap/ComfortRoomMarkers'))
@@ -55,6 +57,14 @@ export const LocateContext = createContext<{
   clusterViewMode: 'all' | 'selective'
   availableGroups: Array<{ key: string; label: string; count: number }>
   handleClusterClick: (groupKey: string) => void
+  // 🔍 Search functionality
+  searchQuery: string
+  setSearchQuery: (query: string) => void
+  searchResult: LotSearchResult | null
+  isSearching: boolean
+  searchLot: (lotId: string) => Promise<void>
+  clearSearch: () => void
+  highlightedNiche: string | null
 } | null>(null)
 
 export default function MapPage() {
@@ -102,6 +112,12 @@ export default function MapPage() {
   // 🎯 Cluster control state
   const [selectedGroups, setSelectedGroups] = useState<Set<string>>(new Set())
   const [clusterViewMode, setClusterViewMode] = useState<'all' | 'selective'>('all')
+
+  // 🔍 Search state
+  const [searchQuery, setSearchQuery] = useState<string>('')
+  const [searchResult, setSearchResult] = useState<LotSearchResult | null>(null)
+  const [isSearching, setIsSearching] = useState(false)
+  const [highlightedNiche, setHighlightedNiche] = useState<string | null>(null)
 
   const bounds: [[number, number], [number, number]] = [
     [10.247883800064669, 123.79691285546676],
@@ -216,6 +232,62 @@ export default function MapPage() {
     setClusterViewMode('selective')
   }, [])
 
+  // 🔍 Search functions
+  const searchLot = useCallback(
+    async (lotId: string) => {
+      if (!lotId.trim()) {
+        toast.error('Please enter a lot ID')
+        return
+      }
+
+      setIsSearching(true)
+      setSearchResult(null)
+      setHighlightedNiche(null)
+
+      try {
+        const result = await searchLotById(lotId.trim())
+        setSearchResult(result)
+
+        if (result.success && result.data) {
+          const { plot_id, niche_number } = result.data
+
+          // Find the matching plot in markers to get the correct group key
+          const matchedMarker = markers.find((m: ConvertedMarker) => m.plot_id === plot_id)
+          if (matchedMarker) {
+            const groupKey = matchedMarker.block ? `block:${matchedMarker.block}` : `category:${matchedMarker.category}`
+
+            // Switch to selective mode and select only this plot's group
+            setSelectedGroups(new Set([groupKey]))
+            setClusterViewMode('selective')
+
+            // If there's a niche number, highlight it
+            if (niche_number) {
+              setHighlightedNiche(niche_number)
+            }
+          }
+
+          toast.success(`Lot found in ${result.data.category} - ${result.data.block ? `Block ${result.data.block}` : 'Chamber'}`)
+        } else {
+          toast.error(result.message || 'Lot not found')
+        }
+      } catch (error) {
+        console.error('🔍 Search error:', error)
+        toast.error('Failed to search lot. Please try again.')
+      } finally {
+        setIsSearching(false)
+      }
+    },
+    [markers],
+  )
+
+  const clearSearch = useCallback(() => {
+    setSearchQuery('')
+    setSearchResult(null)
+    setHighlightedNiche(null)
+    setSelectedGroups(new Set())
+    setClusterViewMode('all')
+  }, [])
+
   // 🎯 Available groups for dropdown
   const availableGroups = useMemo(() => {
     const markersByGroup = groupMarkersByKey(markers)
@@ -239,8 +311,32 @@ export default function MapPage() {
       clusterViewMode,
       availableGroups,
       handleClusterClick,
+      // 🔍 Search properties
+      searchQuery,
+      setSearchQuery,
+      searchResult,
+      isSearching,
+      searchLot,
+      clearSearch,
+      highlightedNiche,
     }),
-    [requestLocate, clearRoute, selectedGroups, toggleGroupSelection, resetGroupSelection, clusterViewMode, availableGroups, handleClusterClick],
+    [
+      requestLocate,
+      clearRoute,
+      selectedGroups,
+      toggleGroupSelection,
+      resetGroupSelection,
+      clusterViewMode,
+      availableGroups,
+      handleClusterClick,
+      searchQuery,
+      setSearchQuery,
+      searchResult,
+      isSearching,
+      searchLot,
+      clearSearch,
+      highlightedNiche,
+    ],
   )
 
   if (isLoading) {
@@ -317,6 +413,8 @@ export default function MapPage() {
               clusterViewMode={clusterViewMode}
               onClusterClick={handleClusterClick}
               PlotMarkersComponent={MemoizedPlotMarkers}
+              searchResult={searchResult}
+              highlightedNiche={highlightedNiche}
             />
           </Suspense>
         </MapContainer>

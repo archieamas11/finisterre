@@ -190,3 +190,29 @@ export const getStatusColor = (status: string): string => {
       return '#a3a3a3'
   }
 }
+
+// 🔍 Search result interface for lot search
+export interface LotSearchResult {
+  success: boolean
+  message: string
+  data?: {
+    lot_id: string
+    plot_id: string
+    niche_number: string | null
+    niche_status: string | null
+    lot_status: string
+    customer_id: string
+    block: string
+    category: string
+    coordinates: string
+    label: string | null
+    rows: string | null
+    columns: string | null
+    length: string | null
+    width: string | null
+    area: string | null
+    plot_status: string
+    file_names: string | null
+    file_names_array: string[]
+  }
+}
