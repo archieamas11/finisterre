@@ -1,9 +1,10 @@
 import L from 'leaflet'
-import { memo, useState, useCallback } from 'react'
+import { memo, useState, useCallback, useContext, useEffect, useRef } from 'react'
 import { Marker, Popup } from 'react-leaflet'
 
 import type { ConvertedMarker } from '@/types/map.types'
 
+import { LocateContext } from '@/components/layout/WebMapLayout'
 import { Drawer, DrawerContent, DrawerDescription, DrawerTitle } from '@/components/ui/drawer'
 import { useIsMobile } from '@/hooks/use-mobile'
 import ColumbariumPopup from '@/pages/admin/map4admin/ColumbariumPopup'
@@ -33,6 +34,11 @@ interface PlotMarkersProps {
 const PlotMarkers: React.FC<PlotMarkersProps> = memo(({ markers, isDirectionLoading, onDirectionClick }) => {
   const [openDrawerPlotId, setOpenDrawerPlotId] = useState<string | number | null>(null)
   const isSmallScreen = useIsMobile()
+
+  // 🎯 Get search context for auto popup functionality
+  const locateContext = useContext(LocateContext)
+  const markerRefs = useRef<{ [key: string]: L.Marker | null }>({})
+
   const handleMarkerClick = useCallback(
     (plotId: string | number) => {
       if (!isSmallScreen) return
@@ -48,6 +54,23 @@ const PlotMarkers: React.FC<PlotMarkersProps> = memo(({ markers, isDirectionLoad
       setOpenDrawerPlotId(open ? plotId : null)
     })
   }, [])
+
+  // 🎯 Auto-open popup when search result is found
+  useEffect(() => {
+    if (locateContext?.autoOpenPopupFor) {
+      const plotId = locateContext.autoOpenPopupFor
+      const marker = markerRefs.current[plotId]
+
+      if (marker) {
+        // Open the popup programmatically
+        setTimeout(() => {
+          marker.openPopup()
+          // Clear the auto open flag after opening
+          locateContext.setAutoOpenPopupFor(null)
+        }, 200) // Small delay to ensure marker is fully rendered
+      }
+    }
+  }, [locateContext?.autoOpenPopupFor, locateContext])
 
   return (
     <>
@@ -77,6 +100,11 @@ const PlotMarkers: React.FC<PlotMarkersProps> = memo(({ markers, isDirectionLoad
             key={`plot-${marker.plot_id}`}
             position={marker.position}
             icon={circleIcon}
+            ref={(ref) => {
+              if (ref) {
+                markerRefs.current[marker.plot_id] = ref
+              }
+            }}
             eventHandlers={{
               click: () => {
                 if (marker.rows && marker.columns) {

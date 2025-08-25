@@ -65,6 +65,9 @@ export const LocateContext = createContext<{
   searchLot: (lotId: string) => Promise<void>
   clearSearch: () => void
   highlightedNiche: string | null
+  // 🎯 Auto popup functionality
+  autoOpenPopupFor: string | null
+  setAutoOpenPopupFor: (plotId: string | null) => void
 } | null>(null)
 
 export default function MapPage() {
@@ -118,6 +121,9 @@ export default function MapPage() {
   const [searchResult, setSearchResult] = useState<LotSearchResult | null>(null)
   const [isSearching, setIsSearching] = useState(false)
   const [highlightedNiche, setHighlightedNiche] = useState<string | null>(null)
+
+  // 🎯 Auto popup state
+  const [autoOpenPopupFor, setAutoOpenPopupFor] = useState<string | null>(null)
 
   const bounds: [[number, number], [number, number]] = [
     [10.247883800064669, 123.79691285546676],
@@ -249,7 +255,20 @@ export default function MapPage() {
         setSearchResult(result)
 
         if (result.success && result.data) {
-          const { plot_id, niche_number } = result.data
+          const { plot_id, niche_number, coordinates } = result.data
+
+          // Parse coordinates from "lng,lat" format to [lat, lng]
+          let plotCoords: [number, number] | null = null
+          if (coordinates) {
+            try {
+              const [lng, lat] = coordinates.split(',').map((coord: string) => parseFloat(coord.trim()))
+              if (!isNaN(lat) && !isNaN(lng)) {
+                plotCoords = [lat, lng]
+              }
+            } catch (coordError) {
+              console.warn('Failed to parse coordinates:', coordinates, coordError)
+            }
+          }
 
           // Find the matching plot in markers to get the correct group key
           const matchedMarker = markers.find((m: ConvertedMarker) => m.plot_id === plot_id)
@@ -264,6 +283,22 @@ export default function MapPage() {
             if (niche_number) {
               setHighlightedNiche(niche_number)
             }
+
+            // 🎯 Set auto popup for this plot and center map
+            setAutoOpenPopupFor(plot_id)
+
+            // Use coordinates from search result or fallback to marker position
+            const centerCoords = plotCoords || matchedMarker.position
+
+            // Center and zoom the map on the found plot
+            // We'll need to trigger this via a map control component
+            setTimeout(() => {
+              const mapElement = document.querySelector('.leaflet-container') as any
+              if (mapElement && mapElement._leaflet_map) {
+                const map = mapElement._leaflet_map
+                map.setView(centerCoords, 18, { animate: true })
+              }
+            }, 100)
           }
 
           toast.success(`Lot found in ${result.data.category} - ${result.data.block ? `Block ${result.data.block}` : 'Chamber'}`)
@@ -284,6 +319,7 @@ export default function MapPage() {
     setSearchQuery('')
     setSearchResult(null)
     setHighlightedNiche(null)
+    setAutoOpenPopupFor(null)
     setSelectedGroups(new Set())
     setClusterViewMode('all')
   }, [])
@@ -319,6 +355,9 @@ export default function MapPage() {
       searchLot,
       clearSearch,
       highlightedNiche,
+      // 🎯 Auto popup properties
+      autoOpenPopupFor,
+      setAutoOpenPopupFor,
     }),
     [
       requestLocate,
@@ -332,6 +371,12 @@ export default function MapPage() {
       searchQuery,
       setSearchQuery,
       searchResult,
+      isSearching,
+      searchLot,
+      clearSearch,
+      highlightedNiche,
+      autoOpenPopupFor,
+      setAutoOpenPopupFor,
       isSearching,
       searchLot,
       clearSearch,

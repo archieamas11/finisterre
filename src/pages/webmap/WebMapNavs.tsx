@@ -1,12 +1,20 @@
-import { Search, Filter, Locate, Home, ArrowLeft, X } from 'lucide-react'
-import { useContext, useEffect, useCallback, useState } from 'react'
+import { Filter, Locate, Home, ArrowLeft, ArrowRightIcon, SearchIcon } from 'lucide-react'
+import { FaRedo } from 'react-icons/fa'
 import { RiMapPinAddLine } from 'react-icons/ri'
 import { RiLoginBoxLine } from 'react-icons/ri'
 import { Link, useLocation } from 'react-router-dom'
 
 import { LocateContext as WebMapLocateContext } from '@/components/layout/WebMapLayout'
 import { Button } from '@/components/ui/button'
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, DropdownMenuCheckboxItem, DropdownMenuSeparator } from '@/components/ui/dropdown-menu'
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+  DropdownMenuCheckboxItem,
+  DropdownMenuSeparator,
+  DropdownMenuLabel,
+} from '@/components/ui/dropdown-menu'
 import { Input } from '@/components/ui/input'
 import { LocateContext } from '@/pages/admin/map4admin/LocateContext'
 import { isAdmin, isAuthenticated } from '@/utils/auth.utils'
@@ -16,8 +24,6 @@ export default function WebMapNavs() {
   const adminCtx = useContext(LocateContext)
   // 🎯 Use admin context if available, otherwise use web map context
   const locateCtx = adminCtx || webMapCtx
-
-  const [showSearchInput, setShowSearchInput] = useState(false)
 
   // Define types for different contexts
   interface AdminContext {
@@ -45,6 +51,9 @@ export default function WebMapNavs() {
     searchLot: (lotId: string) => Promise<void>
     clearSearch: () => void
     highlightedNiche: string | null
+    // 🎯 Auto popup functionality
+    autoOpenPopupFor: string | null
+    setAutoOpenPopupFor: (plotId: string | null) => void
   }
 
   // 🔧 Type guards
@@ -91,26 +100,14 @@ export default function WebMapNavs() {
       e.preventDefault()
       if (isWebMapContext(locateCtx) && locateCtx.searchQuery.trim()) {
         await locateCtx.searchLot(locateCtx.searchQuery)
-        setShowSearchInput(false)
       }
     },
     [locateCtx, isWebMapContext],
   )
 
-  const handleSearchToggle = useCallback(() => {
-    if (isWebMapContext(locateCtx)) {
-      if (showSearchInput && locateCtx.searchResult) {
-        // If search is active and has results, clear the search
-        locateCtx.clearSearch()
-      }
-      setShowSearchInput(!showSearchInput)
-    }
-  }, [showSearchInput, locateCtx, isWebMapContext])
-
   const handleSearchInputKeyDown = useCallback(
     (e: React.KeyboardEvent) => {
       if (e.key === 'Escape') {
-        setShowSearchInput(false)
         if (isWebMapContext(locateCtx)) {
           locateCtx.setSearchQuery('')
         }
@@ -143,35 +140,31 @@ export default function WebMapNavs() {
       {/* 🔍 Search functionality - only on map page */}
       {location.pathname === '/map' && isWebMapContext(locateCtx) && (
         <>
-          {showSearchInput ? (
-            <form onSubmit={handleSearchSubmit} className="flex gap-1">
-              <Input
-                placeholder="Enter Lot ID (e.g., 88)"
-                value={locateCtx.searchQuery}
-                onChange={(e) => locateCtx.setSearchQuery(e.target.value)}
-                onKeyDown={handleSearchInputKeyDown}
-                className="h-8 w-40 text-xs"
-                autoFocus
-                disabled={locateCtx.isSearching}
-              />
-              <Button type="submit" variant="secondary" size="sm" className="bg-background h-8 rounded-full" disabled={locateCtx.isSearching}>
-                <Search className="h-3 w-3" />
-              </Button>
-              <Button type="button" variant="secondary" size="sm" className="bg-background h-8 rounded-full" onClick={() => setShowSearchInput(false)}>
-                <X className="h-3 w-3" />
-              </Button>
-            </form>
-          ) : (
-            <Button
-              variant={locateCtx.searchResult?.success ? 'destructive' : 'secondary'}
-              className="bg-background shrink-0 rounded-full text-xs sm:text-sm"
-              size="sm"
-              onClick={handleSearchToggle}
-            >
-              <Search className="text-accent-foreground h-3 w-3 sm:h-4 sm:w-4" />
-              <span className="hidden lg:inline">{locateCtx.searchResult?.success ? 'Clear Search' : 'Search'}</span>
-            </Button>
-          )}
+          <form onSubmit={handleSearchSubmit} className="flex gap-1">
+            <div className="flex w-full flex-col justify-between gap-2 sm:flex-row">
+              <div className="relative">
+                <Input
+                  className="peer h-8 rounded-full bg-white ps-9 pe-9 text-xs dark:bg-zinc-900"
+                  placeholder="Search...."
+                  value={locateCtx.searchQuery}
+                  onChange={(e) => locateCtx.setSearchQuery(e.target.value)}
+                  onKeyDown={handleSearchInputKeyDown}
+                  autoFocus
+                  disabled={locateCtx.isSearching}
+                />
+                <div className="text-muted-foreground/80 pointer-events-none absolute inset-y-0 start-0 flex items-center justify-center ps-3 peer-disabled:opacity-50">
+                  <SearchIcon size={16} />
+                </div>
+                <button
+                  className="text-muted-foreground/80 hover:text-foreground focus-visible:border-ring focus-visible:ring-ring/50 absolute inset-y-0 end-0 flex h-full w-9 items-center justify-center rounded-e-md transition-[color,box-shadow] outline-none focus:z-10 focus-visible:ring-[3px] disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50"
+                  aria-label="Submit search"
+                  type="button"
+                >
+                  <ArrowRightIcon size={16} aria-hidden="true" />
+                </button>
+              </div>
+            </div>
+          </form>
         </>
       )}
       {(isAdmin() && location.pathname === '/') || (!isAdmin() && location.pathname === '/map') ? (
@@ -218,15 +211,18 @@ export default function WebMapNavs() {
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="center" className="w-56">
-              <DropdownMenuItem onClick={() => locateCtx.resetGroupSelection()}>
-                <span>Reset (Show All)</span>
-              </DropdownMenuItem>
+              <DropdownMenuLabel>Actions</DropdownMenuLabel>
               <DropdownMenuSeparator />
               {locateCtx.availableGroups.map((group: { key: string; label: string; count: number }) => (
                 <DropdownMenuCheckboxItem key={group.key} checked={locateCtx.selectedGroups.has(group.key)} onCheckedChange={() => locateCtx.toggleGroupSelection(group.key)}>
                   {group.label} ({group.count})
                 </DropdownMenuCheckboxItem>
               ))}
+              <DropdownMenuSeparator />
+              <DropdownMenuItem className="flex justify-center text-center" onClick={() => locateCtx.resetGroupSelection()}>
+                <FaRedo />
+                <span>Reset</span>
+              </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
         )}
