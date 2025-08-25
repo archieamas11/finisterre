@@ -3,8 +3,8 @@ import 'leaflet/dist/leaflet.css'
 import iconRetinaUrl from 'leaflet/dist/images/marker-icon-2x.png'
 import iconUrl from 'leaflet/dist/images/marker-icon.png'
 import shadowUrl from 'leaflet/dist/images/marker-shadow.png'
-import { createContext, useEffect, useMemo, useCallback, memo, useState, Suspense, lazy } from 'react'
-import { MapContainer, TileLayer } from 'react-leaflet'
+import { createContext, useEffect, useMemo, useCallback, memo, useState, Suspense, lazy, useRef } from 'react'
+import { MapContainer, TileLayer, useMap } from 'react-leaflet'
 import { toast } from 'sonner'
 
 import CustomClusterManager from '@/components/map/CustomClusterManager'
@@ -48,9 +48,21 @@ const MemoizedChapelMarkers = memo(ChapelMarkers)
 const MemoizedPlaygroundMarkers = memo(PlaygroundMarkers)
 const MemoizedPlotMarkers = memo(PlotMarkers)
 
+// 💡 Internal component to capture map instance once available
+function MapInstanceBinder({ onMapReady }: { onMapReady: (map: L.Map) => void }) {
+  const map = useMap()
+  useEffect(() => {
+    onMapReady(map)
+    // Attach reference for legacy direct DOM usage elsewhere
+    ;(map.getContainer() as any)._leaflet_map = map
+  }, [map, onMapReady])
+  return null
+}
+
 export const LocateContext = createContext<{
   requestLocate: () => void
   clearRoute: () => void
+  resetView: () => void
   selectedGroups: Set<string>
   toggleGroupSelection: (groupKey: string) => void
   resetGroupSelection: () => void
@@ -130,6 +142,9 @@ export default function MapPage() {
     [10.249302749341647, 123.7988598710129],
   ]
 
+  // 🗺️ Hold reference to Leaflet map for reset
+  const [mapInstance, setMapInstance] = useState<L.Map | null>(null)
+
   useEffect(() => {
     if (currentLocation && isNavigating) {
       handleLocationUpdate(currentLocation)
@@ -162,6 +177,9 @@ export default function MapPage() {
     setIsNavigationInstructionsOpen(false)
     setIsDirectionLoading(false)
   }, [stopNavigation])
+
+  // 🔄 Will define resetView after helper callbacks to avoid use-before-declare
+  const resetViewRef = useRef<() => void>(() => {})
 
   const handleDirectionClick = useCallback(
     async (to: [number, number]) => {
@@ -337,10 +355,30 @@ export default function MapPage() {
   }, [markers])
 
   // Memoize the context value to prevent consumers from re-rendering unnecessarily.
+  // 🔄 Reset map view to default state (center via bounds + default zoom)
+  const resetView = useCallback(() => {
+    if (mapInstance) {
+      const targetZoom = 18
+      const centerLat = (bounds[0][0] + bounds[1][0]) / 2
+      const centerLng = (bounds[0][1] + bounds[1][1]) / 2
+      mapInstance.setView([centerLat, centerLng], targetZoom, { animate: true })
+    }
+    // 🔁 Reset related UI state
+    resetGroupSelection()
+    setSearchQuery('')
+    setSearchResult(null)
+    setHighlightedNiche(null)
+    setAutoOpenPopupFor(null)
+  }, [mapInstance, bounds, resetGroupSelection])
+
+  // Keep ref updated (optional future external usage)
+  resetViewRef.current = resetView
+
   const contextValue = useMemo(
     () => ({
       requestLocate,
       clearRoute,
+      resetView,
       selectedGroups,
       toggleGroupSelection,
       resetGroupSelection,
@@ -362,6 +400,7 @@ export default function MapPage() {
     [
       requestLocate,
       clearRoute,
+      resetView,
       selectedGroups,
       toggleGroupSelection,
       resetGroupSelection,
@@ -377,10 +416,6 @@ export default function MapPage() {
       highlightedNiche,
       autoOpenPopupFor,
       setAutoOpenPopupFor,
-      isSearching,
-      searchLot,
-      clearSearch,
-      highlightedNiche,
     ],
   )
 
@@ -418,6 +453,7 @@ export default function MapPage() {
         )}
 
         <MapContainer className="h-full w-full" scrollWheelZoom={true} zoomControl={false} bounds={bounds} maxZoom={25} zoom={18}>
+          <MapInstanceBinder onMapReady={setMapInstance} />
           <TileLayer url="https://services.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}" maxNativeZoom={18} maxZoom={25} />
 
           {!(route && routeCoordinates.length > 0) && (

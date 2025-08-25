@@ -1,4 +1,6 @@
-import { Filter, Locate, Home, ArrowLeft, ArrowRightIcon, SearchIcon } from 'lucide-react'
+import { Filter, Locate, Home, ArrowLeft } from 'lucide-react'
+import { useContext, useCallback, useEffect } from 'react'
+import { BiBorderAll } from 'react-icons/bi'
 import { FaRedo } from 'react-icons/fa'
 import { RiMapPinAddLine } from 'react-icons/ri'
 import { RiLoginBoxLine } from 'react-icons/ri'
@@ -15,7 +17,8 @@ import {
   DropdownMenuSeparator,
   DropdownMenuLabel,
 } from '@/components/ui/dropdown-menu'
-import { Input } from '@/components/ui/input'
+import ResetMapViewButton from '@/components/webmap/ResetMapViewButton'
+import SearchToggle from '@/components/webmap/SearchToggle'
 import { LocateContext } from '@/pages/admin/map4admin/LocateContext'
 import { isAdmin, isAuthenticated } from '@/utils/auth.utils'
 
@@ -94,28 +97,6 @@ export default function WebMapNavs() {
     }
   }
 
-  // 🔍 Search functions
-  const handleSearchSubmit = useCallback(
-    async (e: React.FormEvent) => {
-      e.preventDefault()
-      if (isWebMapContext(locateCtx) && locateCtx.searchQuery.trim()) {
-        await locateCtx.searchLot(locateCtx.searchQuery)
-      }
-    },
-    [locateCtx, isWebMapContext],
-  )
-
-  const handleSearchInputKeyDown = useCallback(
-    (e: React.KeyboardEvent) => {
-      if (e.key === 'Escape') {
-        if (isWebMapContext(locateCtx)) {
-          locateCtx.setSearchQuery('')
-        }
-      }
-    },
-    [locateCtx, isWebMapContext],
-  )
-
   useEffect(() => {
     if (!isAdminContext(locateCtx) || !locateCtx.isAddingMarker) return
 
@@ -138,35 +119,9 @@ export default function WebMapNavs() {
       style={{ pointerEvents: 'auto' }}
     >
       {/* 🔍 Search functionality - only on map page */}
-      {location.pathname === '/map' && isWebMapContext(locateCtx) && (
-        <>
-          <form onSubmit={handleSearchSubmit} className="flex gap-1">
-            <div className="flex w-full flex-col justify-between gap-2 sm:flex-row">
-              <div className="relative">
-                <Input
-                  className="peer h-8 rounded-full bg-white ps-9 pe-9 text-xs dark:bg-zinc-900"
-                  placeholder="Search...."
-                  value={locateCtx.searchQuery}
-                  onChange={(e) => locateCtx.setSearchQuery(e.target.value)}
-                  onKeyDown={handleSearchInputKeyDown}
-                  autoFocus
-                  disabled={locateCtx.isSearching}
-                />
-                <div className="text-muted-foreground/80 pointer-events-none absolute inset-y-0 start-0 flex items-center justify-center ps-3 peer-disabled:opacity-50">
-                  <SearchIcon size={16} />
-                </div>
-                <button
-                  className="text-muted-foreground/80 hover:text-foreground focus-visible:border-ring focus-visible:ring-ring/50 absolute inset-y-0 end-0 flex h-full w-9 items-center justify-center rounded-e-md transition-[color,box-shadow] outline-none focus:z-10 focus-visible:ring-[3px] disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50"
-                  aria-label="Submit search"
-                  type="button"
-                >
-                  <ArrowRightIcon size={16} aria-hidden="true" />
-                </button>
-              </div>
-            </div>
-          </form>
-        </>
-      )}
+      {location.pathname === '/map' && isWebMapContext(locateCtx) && <SearchToggle context={locateCtx} />}
+
+      {/* Locate user Button */}
       {(isAdmin() && location.pathname === '/') || (!isAdmin() && location.pathname === '/map') ? (
         <Button
           variant={'secondary'}
@@ -179,6 +134,9 @@ export default function WebMapNavs() {
           <span className="hidden lg:inline">Where am I?</span>
         </Button>
       ) : null}
+
+      {/* 🔄 Reset Map View Button (reusable) */}
+      <ResetMapViewButton context={locateCtx as AdminContext | WebMapContext | null | undefined} />
 
       {/* ➕ Add Marker Button for Admin */}
       {isAdmin() && location.pathname === '/admin/map' && (
@@ -219,10 +177,29 @@ export default function WebMapNavs() {
                 </DropdownMenuCheckboxItem>
               ))}
               <DropdownMenuSeparator />
-              <DropdownMenuItem className="flex justify-center text-center" onClick={() => locateCtx.resetGroupSelection()}>
-                <FaRedo />
-                <span>Reset</span>
-              </DropdownMenuItem>
+              <div className="flex w-full gap-2">
+                <div className="flex-1">
+                  <DropdownMenuItem
+                    className="w-full"
+                    onClick={() => {
+                      locateCtx.availableGroups.forEach((group) => {
+                        if (!locateCtx.selectedGroups.has(group.key)) {
+                          locateCtx.toggleGroupSelection(group.key)
+                        }
+                      })
+                    }}
+                  >
+                    <BiBorderAll />
+                    <span>Show All</span>
+                  </DropdownMenuItem>
+                </div>
+                <div className="flex-1">
+                  <DropdownMenuItem className="w-full" onClick={() => locateCtx.resetGroupSelection()}>
+                    <FaRedo />
+                    <span>Reset</span>
+                  </DropdownMenuItem>
+                </div>
+              </div>
             </DropdownMenuContent>
           </DropdownMenu>
         )}
