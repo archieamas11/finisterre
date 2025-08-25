@@ -19,32 +19,59 @@ export default defineConfig({
     ViteImageOptimizer(),
     removeConsole(),
     VitePWA({
+      registerType: 'prompt',
       manifest: {
         name: 'Finisterre Gardenz',
         short_name: 'Finisterre',
-        icons: [
-          { src: '/web-app-manifest-192x192.png', sizes: '192x192', type: 'image/png' },
-          { src: '/web-app-manifest-512x512.png', sizes: '512x512', type: 'image/png' },
-        ],
+        description: 'A beautiful garden management app',
         start_url: '/',
         display: 'standalone',
         theme_color: '#ffffff',
         background_color: '#ffffff',
+        lang: 'en',
+        icons: [
+          { src: '/web-app-manifest-192x192.png', sizes: '192x192', type: 'image/png', purpose: 'any' },
+          { src: '/web-app-manifest-512x512.png', sizes: '512x512', type: 'image/png', purpose: 'any' },
+          {
+            src: '/web-app-manifest-512x512.png',
+            sizes: '512x512',
+            type: 'image/png',
+            purpose: 'maskable',
+          },
+        ],
       },
       workbox: {
         runtimeCaching: [
           {
-            urlPattern: ({ url }) => url.pathname.startsWith('/api'),
-            handler: 'CacheFirst',
+            urlPattern: ({ url }) => url.origin === 'https://finisterre.x10.bz' && url.pathname.startsWith('/api'),
+            handler: 'StaleWhileRevalidate',
             options: {
               cacheName: 'api-cache',
               expiration: {
-                maxEntries: 100,
+                maxEntries: 50,
                 maxAgeSeconds: 60 * 60 * 24 * 30,
+              },
+              cacheableResponse: {
+                statuses: [0, 200],
+              },
+            },
+          },
+          {
+            urlPattern: ({ request }) => request.destination === 'image',
+            handler: 'CacheFirst',
+            options: {
+              cacheName: 'images',
+              expiration: {
+                maxEntries: 60,
+                maxAgeSeconds: 30 * 24 * 60 * 60, // 30 days
               },
             },
           },
         ],
+      },
+      includeAssets: ['favicon.ico', 'robots.txt', 'apple-touch-icon.png'],
+      devOptions: {
+        enabled: false,
       },
     }),
     checker({
