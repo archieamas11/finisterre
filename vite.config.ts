@@ -31,6 +31,21 @@ export default defineConfig({
         theme_color: '#ffffff',
         background_color: '#ffffff',
       },
+      workbox: {
+        runtimeCaching: [
+          {
+            urlPattern: ({ url }) => url.pathname.startsWith('/api'),
+            handler: 'CacheFirst',
+            options: {
+              cacheName: 'api-cache',
+              expiration: {
+                maxEntries: 100,
+                maxAgeSeconds: 60 * 60 * 24 * 30,
+              },
+            },
+          },
+        ],
+      },
     }),
     checker({
       typescript: true,

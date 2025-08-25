@@ -1,12 +1,12 @@
-import { RefreshCw, Search, Filter, Locate, Layers, Home } from 'lucide-react'
+import { Search, Filter, Locate, Home, ArrowLeft } from 'lucide-react'
 import { useContext, useEffect, useCallback } from 'react'
 import { RiMapPinAddLine } from 'react-icons/ri'
 import { RiLoginBoxLine } from 'react-icons/ri'
-import { RiListSettingsFill } from 'react-icons/ri'
+import { Link, useLocation } from 'react-router-dom'
 
 import { LocateContext as WebMapLocateContext } from '@/components/layout/WebMapLayout'
 import { Button } from '@/components/ui/button'
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, DropdownMenuCheckboxItem, DropdownMenuSeparator } from '@/components/ui/dropdown-menu'
 import { LocateContext } from '@/pages/admin/map4admin/LocateContext'
 import { isAdmin, isAuthenticated } from '@/utils/auth.utils'
 
@@ -16,7 +16,7 @@ export default function WebMapNavs() {
   // 🎯 Use admin context if available, otherwise use web map context
   const locateCtx = adminCtx || webMapCtx
 
-  // Define a type for the admin context
+  // Define types for different contexts
   interface AdminContext {
     requestLocate: () => void
     isAddingMarker: boolean
@@ -25,9 +25,24 @@ export default function WebMapNavs() {
     toggleEditMarker: () => void
   }
 
-  // 🔧 Type guard for admin context
+  interface WebMapContext {
+    requestLocate: () => void
+    clearRoute: () => void
+    selectedGroups: Set<string>
+    toggleGroupSelection: (groupKey: string) => void
+    resetGroupSelection: () => void
+    clusterViewMode: 'all' | 'selective'
+    availableGroups: Array<{ key: string; label: string; count: number }>
+    handleClusterClick: (groupKey: string) => void
+  }
+
+  // 🔧 Type guards
   const isAdminContext = useCallback((ctx: unknown): ctx is AdminContext => {
     return typeof ctx === 'object' && ctx !== null && 'isAddingMarker' in ctx && 'toggleAddMarker' in ctx && 'isEditingMarker' in ctx && 'toggleEditMarker' in ctx
+  }, [])
+
+  const isWebMapContext = useCallback((ctx: unknown): ctx is WebMapContext => {
+    return typeof ctx === 'object' && ctx !== null && 'selectedGroups' in ctx && 'toggleGroupSelection' in ctx && 'resetGroupSelection' in ctx && 'handleClusterClick' in ctx
   }, [])
 
   const location = useLocation()
@@ -68,39 +83,24 @@ export default function WebMapNavs() {
 
   return (
     <nav
-      className="pointer-events-auto absolute top-4 right-4 z-[990] flex flex-col gap-3 sm:top-8 sm:right-8 sm:gap-4 md:top-8 md:right-auto md:left-1/2 md:-translate-x-1/2 md:flex-row md:gap-4"
+      className="pointer-events-auto absolute top-4 left-4 z-[990] flex flex-col gap-2 sm:top-6 sm:left-4 sm:flex-col sm:gap-3 md:top-8 md:left-4 md:flex-col md:gap-4 lg:left-1/2 lg:-translate-x-1/2 lg:flex-row lg:flex-wrap lg:items-center lg:justify-center"
       style={{ pointerEvents: 'auto' }}
     >
-      <Button variant={'secondary'} className="bg-background rounded-full" size="icon">
-        <Search className="text-accent-foreground" />
-      </Button>
-      <Button variant={'secondary'} className="bg-background rounded-full" size="icon">
-        <RiListSettingsFill className="text-accent-foreground" />
-      </Button>
-      <Button variant={'secondary'} className="bg-background rounded-full" size="icon">
-        <Filter className="text-accent-foreground" />
-      </Button>
-      <Button variant={'secondary'} className="bg-background rounded-full" size="icon">
-        <RefreshCw className="text-accent-foreground" />
+      <Button variant={'secondary'} className="bg-background shrink-0 rounded-full text-xs sm:text-sm" size="sm">
+        <Search className="text-accent-foreground h-3 w-3 sm:h-4 sm:w-4" />
+        <span className="hidden lg:inline">Search</span>
       </Button>
       {(isAdmin() && location.pathname === '/') || (!isAdmin() && location.pathname === '/map') ? (
-        <Button variant={'secondary'} className="bg-background rounded-full" onClick={() => locateCtx?.requestLocate()} aria-label="Locate me" size="icon">
-          <Locate className="text-accent-foreground" />
+        <Button
+          variant={'secondary'}
+          className="bg-background shrink-0 rounded-full text-xs sm:text-sm"
+          onClick={() => locateCtx?.requestLocate()}
+          aria-label="Locate me"
+          size="sm"
+        >
+          <Locate className="text-accent-foreground h-3 w-3 sm:h-4 sm:w-4" />
+          <span className="hidden lg:inline">Where am I?</span>
         </Button>
-      ) : null}
-
-      {/* 🗺️ Layer Toggle Button */}
-      <Button variant={'secondary'} className="bg-background rounded-full" size="icon">
-        <Layers className="text-accent-foreground" />
-      </Button>
-
-      {/* 🏠 Home Button */}
-      {(isAdmin() && location.pathname === '/map') || (!isAdmin() && location.pathname === '/map') ? (
-        <Link to="/">
-          <Button variant={'secondary'} className="bg-background rounded-full" size="icon">
-            <Home className="text-accent-foreground" />
-          </Button>
-        </Link>
       ) : null}
 
       {/* ➕ Add Marker Button for Admin */}
@@ -109,8 +109,10 @@ export default function WebMapNavs() {
           {/* Dropdown for Add Marker Options */}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="secondary" className="bg-background rounded-full" size="icon">
-                <RiMapPinAddLine className={isAdminContext(locateCtx) && locateCtx.isAddingMarker ? 'text-primary-foreground' : 'text-accent-foreground'} />
+              <Button variant="secondary" className="bg-background shrink-0 rounded-full" size="sm">
+                <RiMapPinAddLine
+                  className={`h-3 w-3 sm:h-4 sm:w-4 ${isAdminContext(locateCtx) && locateCtx.isAddingMarker ? 'text-primary-foreground' : 'text-accent-foreground'}`}
+                />
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent>
@@ -121,14 +123,56 @@ export default function WebMapNavs() {
         </>
       )}
 
+      <div className="bg-background flex shrink-0 flex-col gap-1 rounded-full sm:flex-col sm:gap-2 lg:flex-row">
+        {/* 🎯 Cluster Control Dropdown */}
+        {location.pathname === '/map' && isWebMapContext(locateCtx) && (
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant={'secondary'} className="bg-background shrink-0 rounded-full text-xs sm:text-sm" size="sm">
+                <Filter className="text-accent-foreground h-3 w-3 sm:h-4 sm:w-4" />
+                <span className="hidden lg:inline">Filter</span>
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="center" className="w-56">
+              <DropdownMenuItem onClick={() => locateCtx.resetGroupSelection()}>
+                <span>Reset (Show All)</span>
+              </DropdownMenuItem>
+              <DropdownMenuSeparator />
+              {locateCtx.availableGroups.map((group: { key: string; label: string; count: number }) => (
+                <DropdownMenuCheckboxItem key={group.key} checked={locateCtx.selectedGroups.has(group.key)} onCheckedChange={() => locateCtx.toggleGroupSelection(group.key)}>
+                  {group.label} ({group.count})
+                </DropdownMenuCheckboxItem>
+              ))}
+            </DropdownMenuContent>
+          </DropdownMenu>
+        )}
+
+        {/* 🔙 Back to Clusters Button */}
+        {location.pathname === '/map' && isWebMapContext(locateCtx) && locateCtx.clusterViewMode === 'selective' && (
+          <Button variant={'secondary'} className="bg-background shrink-0 rounded-full" size="sm" onClick={() => locateCtx.resetGroupSelection()} aria-label="Back to all clusters">
+            <ArrowLeft className="text-accent-foreground h-3 w-3 sm:h-4 sm:w-4" />
+          </Button>
+        )}
+      </div>
+
       {!isAuthenticated() && (
         <Link to="/login">
-          <Button variant="secondary" size="default" className="lg:size-default md:size-icon sm:size-icon bg-background rounded-full transition-all duration-200 lg:gap-2">
-            <RiLoginBoxLine className="h-4 w-4" />
-            <span className="hidden lg:inline">Login</span>
+          <Button variant="secondary" size="sm" className="bg-background z-0 shrink-0 rounded-full text-xs transition-all duration-200 sm:text-sm">
+            <RiLoginBoxLine className="h-3 w-3 sm:h-4 sm:w-4" />
+            <span className="ml-1 hidden lg:inline">Login</span>
           </Button>
         </Link>
       )}
+
+      {/* 🏠 Home Button */}
+      {(isAdmin() && location.pathname === '/map') || (!isAdmin() && location.pathname === '/map') ? (
+        <Link to="/">
+          <Button variant={'secondary'} className="bg-background shrink-0 rounded-full text-xs sm:text-sm" size="sm">
+            <Home className="text-accent-foreground h-3 w-3 sm:h-4 sm:w-4" />
+            <span className="ml-1 hidden lg:inline">Home</span>
+          </Button>
+        </Link>
+      ) : null}
     </nav>
   )
 }

@@ -5,9 +5,9 @@ import iconUrl from 'leaflet/dist/images/marker-icon.png'
 import shadowUrl from 'leaflet/dist/images/marker-shadow.png'
 import { createContext, useEffect, useMemo, useCallback, memo, useState, Suspense, lazy } from 'react'
 import { MapContainer, TileLayer } from 'react-leaflet'
-import MarkerClusterGroup from 'react-leaflet-markercluster'
 import { toast } from 'sonner'
 
+import CustomClusterManager from '@/components/map/CustomClusterManager'
 import { NavigationInstructions } from '@/components/map/NavigationInstructions'
 import { UserLocationMarker } from '@/components/map/UserLocationMarker'
 import { ValhallaRoute } from '@/components/map/ValhallaRoute'
@@ -16,11 +16,9 @@ import { usePlots } from '@/hooks/plots-hooks/plot.hooks'
 import { useLocationTracking } from '@/hooks/useLocationTracking'
 import { useValhalla } from '@/hooks/useValhalla'
 import WebMapNavs from '@/pages/webmap/WebMapNavs'
-import 'leaflet.markercluster/dist/MarkerCluster.css'
 
 import { convertPlotToMarker } from '@/types/map.types'
-import { ucwords } from '@/lib/format'
-import { groupMarkersByKey, getLabelFromGroupKey, createClusterIconFactory } from '@/lib/clusterUtils'
+import { groupMarkersByKey } from '@/lib/clusterUtils'
 
 const PlotMarkers = lazy(() => import('@/pages/webmap/PlotMarkers'))
 const ComfortRoomMarker = lazy(() => import('@/pages/webmap/ComfortRoomMarkers'))
@@ -51,6 +49,12 @@ const MemoizedPlotMarkers = memo(PlotMarkers)
 export const LocateContext = createContext<{
   requestLocate: () => void
   clearRoute: () => void
+  selectedGroups: Set<string>
+  toggleGroupSelection: (groupKey: string) => void
+  resetGroupSelection: () => void
+  clusterViewMode: 'all' | 'selective'
+  availableGroups: Array<{ key: string; label: string; count: number }>
+  handleClusterClick: (groupKey: string) => void
 } | null>(null)
 
 export default function MapPage() {
@@ -94,6 +98,10 @@ export default function MapPage() {
   const [isNavigationInstructionsOpen, setIsNavigationInstructionsOpen] = useState(false)
   const [isDirectionLoading, setIsDirectionLoading] = useState(false)
   const [shouldCenterOnUser, setShouldCenterOnUser] = useState(false)
+
+  // 🎯 Cluster control state
+  const [selectedGroups, setSelectedGroups] = useState<Set<string>>(new Set())
+  const [clusterViewMode, setClusterViewMode] = useState<'all' | 'selective'>('all')
 
   const bounds: [[number, number], [number, number]] = [
     [10.247883800064669, 123.79691285546676],
@@ -183,8 +191,57 @@ export default function MapPage() {
     [currentLocation, getCurrentLocation, isTracking, startNavigation, startTracking, requestLocate],
   )
 
+  // 🎯 Cluster control functions
+  const toggleGroupSelection = useCallback((groupKey: string) => {
+    setSelectedGroups((prev) => {
+      const newSet = new Set(prev)
+      if (newSet.has(groupKey)) {
+        newSet.delete(groupKey)
+      } else {
+        newSet.add(groupKey)
+      }
+      setClusterViewMode(newSet.size > 0 ? 'selective' : 'all')
+      return newSet
+    })
+  }, [])
+
+  const resetGroupSelection = useCallback(() => {
+    setSelectedGroups(new Set())
+    setClusterViewMode('all')
+  }, [])
+
+  // 🎯 Handle cluster click - select single group
+  const handleClusterClick = useCallback((groupKey: string) => {
+    setSelectedGroups(new Set([groupKey]))
+    setClusterViewMode('selective')
+  }, [])
+
+  // 🎯 Available groups for dropdown
+  const availableGroups = useMemo(() => {
+    const markersByGroup = groupMarkersByKey(markers)
+    return Object.entries(markersByGroup)
+      .map(([key, groupMarkers]) => {
+        const raw = key.startsWith('block:') ? key.split('block:')[1] : key.startsWith('category:') ? key.split('category:')[1] : key
+        const label = key.startsWith('category:') ? raw.charAt(0).toUpperCase() + raw.slice(1) : `Block ${raw}`
+        return { key, label, count: groupMarkers.length }
+      })
+      .sort((a, b) => a.label.localeCompare(b.label))
+  }, [markers])
+
   // Memoize the context value to prevent consumers from re-rendering unnecessarily.
-  const contextValue = useMemo(() => ({ requestLocate, clearRoute }), [requestLocate, clearRoute])
+  const contextValue = useMemo(
+    () => ({
+      requestLocate,
+      clearRoute,
+      selectedGroups,
+      toggleGroupSelection,
+      resetGroupSelection,
+      clusterViewMode,
+      availableGroups,
+      handleClusterClick,
+    }),
+    [requestLocate, clearRoute, selectedGroups, toggleGroupSelection, resetGroupSelection, clusterViewMode, availableGroups, handleClusterClick],
+  )
 
   if (isLoading) {
     return (
@@ -252,35 +309,15 @@ export default function MapPage() {
             <MemoizedCenterSerenityMarkers onDirectionClick={handleDirectionClick} isDirectionLoading={isDirectionLoading} />
             <MemoizedMainEntranceMarkers onDirectionClick={handleDirectionClick} isDirectionLoading={isDirectionLoading} />
             <MemoizedChapelMarkers onDirectionClick={handleDirectionClick} isDirectionLoading={isDirectionLoading} />
-            {(() => {
-              const markersByGroup = groupMarkersByKey(markers)
-              const labelLookup = (k: string) => {
-                const raw = getLabelFromGroupKey(k)
-                return k.startsWith('category:') ? ucwords(String(raw)) : String(raw)
-              }
-              const createClusterIcon = createClusterIconFactory(labelLookup)
-
-              return Object.entries(markersByGroup).map(([groupKey, groupMarkers]) => (
-                <MarkerClusterGroup
-                  key={`cluster-${groupKey}`}
-                  iconCreateFunction={createClusterIcon(groupKey)}
-                  chunkedLoading={true}
-                  maxClusterRadius={200}
-                  disableClusteringAtZoom={20}
-                  showCoverageOnHover={false}
-                  spiderfyOnMaxZoom={false}
-                  removeOutsideVisibleBounds={true}
-                  animate={false}
-                >
-                  <MemoizedPlotMarkers
-                    markers={groupMarkers}
-                    isDirectionLoading={isDirectionLoading}
-                    onDirectionClick={handleDirectionClick}
-                    block={groupKey.startsWith('block:') ? groupKey.split('block:')[1] : ''}
-                  />
-                </MarkerClusterGroup>
-              ))
-            })()}
+            <CustomClusterManager
+              markersByGroup={groupMarkersByKey(markers)}
+              onDirectionClick={handleDirectionClick}
+              isDirectionLoading={isDirectionLoading}
+              selectedGroups={selectedGroups}
+              clusterViewMode={clusterViewMode}
+              onClusterClick={handleClusterClick}
+              PlotMarkersComponent={MemoizedPlotMarkers}
+            />
           </Suspense>
         </MapContainer>
       </div>

@@ -30,6 +30,8 @@ function DropdownMenuItem({
 }
 
 function DropdownMenuContent({ className, sideOffset = 4, ...props }: React.ComponentProps<typeof DropdownMenuPrimitive.Content>) {
+  const mergedStyle = { ...(props as any).style, zIndex: 2147483647 }
+
   return (
     <DropdownMenuPrimitive.Portal>
       <DropdownMenuPrimitive.Content
@@ -40,6 +42,7 @@ function DropdownMenuContent({ className, sideOffset = 4, ...props }: React.Comp
         data-slot="dropdown-menu-content"
         sideOffset={sideOffset}
         {...props}
+        style={mergedStyle}
       />
     </DropdownMenuPrimitive.Portal>
   )
@@ -87,6 +90,8 @@ function DropdownMenuRadioItem({ children, className, ...props }: React.Componen
 }
 
 function DropdownMenuSubContent({ className, ...props }: React.ComponentProps<typeof DropdownMenuPrimitive.SubContent>) {
+  const mergedStyle = { ...(props as any).style, zIndex: 2147483647 }
+
   return (
     <DropdownMenuPrimitive.SubContent
       className={cn(
@@ -95,6 +100,7 @@ function DropdownMenuSubContent({ className, ...props }: React.ComponentProps<ty
       )}
       data-slot="dropdown-menu-sub-content"
       {...props}
+      style={mergedStyle}
     />
   )
 }
