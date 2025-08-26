@@ -205,7 +205,7 @@ export default function MapPage() {
     if (!isTracking) {
       startTracking()
     }
-    setShouldCenterOnUser(true) // still used by marker component for first-center behavior / animation
+    setShouldCenterOnUser(false)
 
     // Try to obtain a fresh location if we don't have one yet
     let loc = currentLocation

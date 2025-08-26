@@ -351,7 +351,7 @@ export function useValhalla(options: UseValhallaOptions = {}) {
   const handleLocationUpdate = useCallback(
     async (userLocation: UserLocation) => {
       if (routeState.isNavigating) {
-        updateRouteProgress(userLocation) // 🎯 Update route progress for dynamic polyline
+        updateRouteProgress(userLocation)
         updateNavigationProgress(userLocation)
         await checkAndReroute(userLocation)
       }
