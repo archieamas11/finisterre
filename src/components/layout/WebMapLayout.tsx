@@ -220,9 +220,8 @@ export default function MapPage() {
 
     // Perform animated fly to the user's position
     if (loc && mapInstance) {
-      const targetZoom = Math.max(mapInstance.getZoom(), 18)
       // Using flyTo for smoother animated transition similar to resetView animation semantics
-      mapInstance.flyTo([loc.latitude, loc.longitude], targetZoom, { animate: true })
+      mapInstance.flyTo([loc.latitude, loc.longitude], 18, { animate: true })
     }
   }, [isTracking, startTracking, currentLocation, getCurrentLocation, mapInstance])
 
