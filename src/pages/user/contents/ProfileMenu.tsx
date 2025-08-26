@@ -1,6 +1,7 @@
-import { BoltIcon, BookOpenIcon, ChevronDownIcon, Layers2Icon, LogOutIcon, PinIcon, MoonIcon, SunIcon } from 'lucide-react'
+import { BoltIcon, BookOpenIcon, ChevronDownIcon, Layers2Icon, LogOutIcon, PinIcon, MoonIcon, SunIcon, LayoutDashboard } from 'lucide-react'
 import { useTheme } from 'next-themes'
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useMemo } from 'react'
+import { useNavigate, useLocation } from 'react-router-dom'
 
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
@@ -21,10 +22,13 @@ interface ProfileUser {
   avatar: string
   email: string
   name: string
+  isAdmin?: boolean
 }
 
 export default function ProfileMenu({ user }: { user: ProfileUser }) {
   const { performLogout, isPending } = useLogout()
+  const navigate = useNavigate()
+  const location = useLocation()
   const { theme, setTheme, resolvedTheme } = useTheme()
   const [isMounted, setIsMounted] = useState(false)
 
@@ -38,6 +42,9 @@ export default function ProfileMenu({ user }: { user: ProfileUser }) {
   const onToggleTheme = () => {
     setTheme(isDark ? 'light' : 'dark')
   }
+
+  const dashboardPath = useMemo(() => (user.isAdmin ? '/admin' : '/user'), [user.isAdmin])
+  const onDashboard = location.pathname.startsWith(dashboardPath)
 
   return (
     <DropdownMenu>
@@ -57,6 +64,12 @@ export default function ProfileMenu({ user }: { user: ProfileUser }) {
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
+          {!onDashboard && (
+            <DropdownMenuItem onClick={() => navigate(dashboardPath)} aria-label="Go to dashboard">
+              <LayoutDashboard size={16} className="opacity-60" aria-hidden="true" />
+              <span>Dashboard</span>
+            </DropdownMenuItem>
+          )}
           <DropdownMenuItem>
             <BoltIcon size={16} className="opacity-60" aria-hidden="true" />
             <span>Option 1</span>

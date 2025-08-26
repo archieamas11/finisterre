@@ -175,7 +175,15 @@ export default function WebMapNavs() {
                   </DropdownMenuItem>
                 </div>
                 <div className="flex-1">
-                  <DropdownMenuItem className="w-full" onClick={() => locateCtx.resetGroupSelection()}>
+                  <DropdownMenuItem
+                    className="w-full"
+                    onClick={() => {
+                      if (isWebMapContext(locateCtx)) {
+                        locateCtx.clearSearch()
+                      }
+                      locateCtx.resetGroupSelection()
+                    }}
+                  >
                     <FaRedo />
                     <span>Reset</span>
                   </DropdownMenuItem>
@@ -187,7 +195,18 @@ export default function WebMapNavs() {
 
         {/* 🔙 Back to Clusters Button */}
         {location.pathname === '/map' && isWebMapContext(locateCtx) && locateCtx.clusterViewMode === 'selective' && (
-          <Button variant={'secondary'} className="bg-background shrink-0 rounded-full" size="sm" onClick={() => locateCtx.resetGroupSelection()} aria-label="Back to all clusters">
+          <Button
+            variant={'secondary'}
+            className="bg-background shrink-0 rounded-full"
+            size="sm"
+            onClick={() => {
+              if (isWebMapContext(locateCtx)) {
+                locateCtx.clearSearch()
+              }
+              locateCtx.resetGroupSelection()
+            }}
+            aria-label="Back to all clusters"
+          >
             <ArrowLeft className="text-accent-foreground h-3 w-3 sm:h-4 sm:w-4" />
           </Button>
         )}
