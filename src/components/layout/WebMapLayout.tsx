@@ -80,6 +80,8 @@ export const LocateContext = createContext<{
   // 🎯 Auto popup functionality
   autoOpenPopupFor: string | null
   setAutoOpenPopupFor: (plotId: string | null) => void
+  // 🚀 Route completion functionality
+  requestPopupClose: () => void
 } | null>(null)
 
 export default function MapPage() {
@@ -137,6 +139,9 @@ export default function MapPage() {
   // 🎯 Auto popup state
   const [autoOpenPopupFor, setAutoOpenPopupFor] = useState<string | null>(null)
 
+  // 🚀 Route completion state - track when popup should be closed after route loading
+  const [pendingPopupClose, setPendingPopupClose] = useState(false)
+
   const bounds: [[number, number], [number, number]] = [
     [10.247883800064669, 123.79691285546676],
     [10.249302749341647, 123.7988598710129],
@@ -163,6 +168,36 @@ export default function MapPage() {
       return () => clearTimeout(timeoutId)
     }
   }, [shouldCenterOnUser, currentLocation])
+
+  // 🚀 Effect to detect when route is fully loaded and flyTo animation is complete
+  useEffect(() => {
+    if (route && routeCoordinates.length > 0 && isDirectionLoading) {
+      // Route is loaded, start flyTo animation and wait for it to complete
+      const timeoutId = setTimeout(() => {
+        setIsDirectionLoading(false) // Mark direction loading as complete
+
+        // If there's a pending popup close, execute it now
+        if (pendingPopupClose) {
+          try {
+            const popups = document.querySelectorAll('.leaflet-popup')
+            popups.forEach((p) => p.parentElement?.removeChild(p))
+          } catch {
+            // ignore DOM errors
+          }
+          setPendingPopupClose(false)
+        }
+      }, 1500) // Wait for flyTo animation to complete (~1.5s)
+
+      return () => clearTimeout(timeoutId)
+    }
+  }, [route, routeCoordinates, isDirectionLoading, pendingPopupClose])
+
+  // 🔄 Reset route completion state when route is cleared
+  useEffect(() => {
+    if (!route || routeCoordinates.length === 0) {
+      setPendingPopupClose(false)
+    }
+  }, [route, routeCoordinates])
 
   // Memoize callback functions to prevent them from being recreated on every render.
   const requestLocate = useCallback(async () => {
@@ -353,6 +388,22 @@ export default function MapPage() {
     setClusterViewMode('all')
   }, [])
 
+  // 🚀 Request popup close - either immediately or after route completion
+  const requestPopupClose = useCallback(() => {
+    if (isDirectionLoading || (!route && !routeCoordinates.length)) {
+      // If route is being calculated or no route exists, schedule for later
+      setPendingPopupClose(true)
+    } else {
+      // Close immediately if route is already complete
+      try {
+        const popups = document.querySelectorAll('.leaflet-popup')
+        popups.forEach((p) => p.parentElement?.removeChild(p))
+      } catch {
+        // ignore DOM errors
+      }
+    }
+  }, [isDirectionLoading, route, routeCoordinates])
+
   // 🎯 Grouped markers (memoized) & available groups for dropdown
   const markersByGroup = useMemo(() => groupMarkersByKey(markers), [markers])
   const availableGroups = useMemo(
@@ -405,6 +456,8 @@ export default function MapPage() {
       // 🎯 Auto popup properties
       autoOpenPopupFor,
       setAutoOpenPopupFor,
+      // 🚀 Route completion properties
+      requestPopupClose,
     }),
     [
       requestLocate,
@@ -425,6 +478,7 @@ export default function MapPage() {
       highlightedNiche,
       autoOpenPopupFor,
       setAutoOpenPopupFor,
+      requestPopupClose,
     ],
   )
 

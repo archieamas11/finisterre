@@ -79,20 +79,17 @@ const PlotMarkers: React.FC<PlotMarkersProps> = memo(({ markers, isDirectionLoad
         const circleIcon = getIcon(statusColor)
 
         const onDir = () => {
-          // If directions are currently loading, do not close the drawer/popup yet
-          if (isDirectionLoading) {
-            onDirectionClick(marker.position as [number, number])
-            return
-          }
-          // Close any open drawer
-          setOpenDrawerPlotId(null)
-          try {
-            const popups = document.querySelectorAll('.leaflet-popup')
-            popups.forEach((p) => p.parentElement?.removeChild(p))
-          } catch {
-            // ignore DOM errors
-          }
+          // Start the navigation process
           onDirectionClick(marker.position as [number, number])
+
+          // Use the new context method to request popup close
+          // This will close the popup only after route is loaded and flyTo animation completes
+          if (locateContext?.requestPopupClose) {
+            locateContext.requestPopupClose()
+          }
+
+          // Close any open drawer immediately for mobile
+          setOpenDrawerPlotId(null)
         }
 
         return (

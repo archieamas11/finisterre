@@ -1,11 +1,12 @@
 import { motion } from 'framer-motion'
 import L from 'leaflet'
 import { Maximize2 } from 'lucide-react'
-import React, { cloneElement, isValidElement } from 'react'
+import React, { cloneElement, isValidElement, useContext } from 'react'
 import { renderToStaticMarkup } from 'react-dom/server'
 import { FaDirections } from 'react-icons/fa'
 import { Marker, Popup } from 'react-leaflet'
 
+import { LocateContext } from '@/components/layout/WebMapLayout'
 import { CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Dialog, DialogContent, DialogTrigger } from '@/components/ui/dialog'
 import { cn } from '@/lib/utils'
@@ -185,6 +186,8 @@ interface CustomMarkersProps {
 }
 
 function FinisterreMarkers({ items, onDirectionClick, isDirectionLoading = false }: CustomMarkersProps) {
+  const locateContext = useContext(LocateContext)
+
   return (
     <>
       {items.map((itemData) => (
@@ -203,12 +206,13 @@ function FinisterreMarkers({ items, onDirectionClick, isDirectionLoading = false
               className="mt-1 mb-1 w-full rounded-lg"
               onClick={(e) => {
                 e.stopPropagation()
+                // Start the navigation process
                 onDirectionClick?.([itemData.lat, itemData.lng])
-                try {
-                  const popups = document.querySelectorAll('.leaflet-popup')
-                  popups.forEach((p) => p.parentElement?.removeChild(p))
-                } catch {
-                  // ignore DOM errors
+
+                // Use the new context method to request popup close
+                // This will close the popup only after route is loaded and flyTo animation completes
+                if (locateContext?.requestPopupClose) {
+                  locateContext.requestPopupClose()
                 }
               }}
               disabled={isDirectionLoading}
