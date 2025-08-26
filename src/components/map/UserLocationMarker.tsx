@@ -113,7 +113,7 @@ export function UserLocationMarker({
       )}
 
       {/* 📍 User location marker */}
-      <ReactLeafletDriftMarker position={position} icon={userLocationIcon} duration={1000} />
+      <ReactLeafletDriftMarker position={position} icon={userLocationIcon} duration={2000} />
     </>
   )
 }

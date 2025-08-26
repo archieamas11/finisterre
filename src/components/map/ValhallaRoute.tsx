@@ -17,9 +17,6 @@ interface ValhallaRouteProps {
   // 👤 User location to render as the start marker
   userLocation?: UserLocation | null
   // 🎨 Styling options
-  routeColor?: string
-  routeWeight?: number
-  routeOpacity?: number
   // 🎯 Show start/end markers
   showMarkers?: boolean
   // 🔄 Auto-fit bounds to route
@@ -37,18 +34,10 @@ export function ValhallaRoute({
   originalStart,
   originalEnd,
   userLocation,
-  routeColor = '#3b82f6',
-  routeWeight = 5,
-  routeOpacity = 0.8,
   showMarkers = true,
   fitBounds = true,
 }: ValhallaRouteProps) {
   const map = useMap()
-
-  // Animation state: number of points currently rendered (for snake animation)
-  const [visibleIndex, setVisibleIndex] = React.useState<number>(0)
-  const animationRef = React.useRef<number | null>(null)
-  const timeoutRef = React.useRef<number | null>(null)
 
   if (!route || routeCoordinates.length === 0) {
     return null
@@ -81,10 +70,6 @@ export function ValhallaRoute({
       }
     }
   }, [boundsCoordinates, fitBounds, map])
-
-  // 🎨 Dynamic styling based on navigation state
-  const polylineColor = isNavigating ? '#3b82f6' : routeColor
-  const polylineOpacity = isNavigating ? 0.9 : routeOpacity
 
   // 🎯 End/Destination marker icon
   const endIcon = L.divIcon({
@@ -128,52 +113,6 @@ export function ValhallaRoute({
     return coords
   }, [routeCoordinates, remainingCoordinates, isNavigating, originalStart, originalEnd])
 
-  // Build the array of coordinates to animate (lat,lng)
-  const animCoords = React.useMemo(() => completePolylineCoordinates, [completePolylineCoordinates])
-
-  // Animation: progressively reveal the polyline and move a head marker
-  React.useEffect(() => {
-    // Reset when route changes or navigation toggles
-    setVisibleIndex(isNavigating ? 1 : animCoords.length)
-
-    // If not navigating, no animation needed
-    if (!isNavigating || animCoords.length === 0) {
-      return
-    }
-
-    let idx = 1
-    const speedPerPointMs = 30 // configurable speed (ms per point)
-
-    function step() {
-      if (idx >= animCoords.length) {
-        // finish animation, place head at final point
-        setVisibleIndex(animCoords.length)
-        return
-      }
-
-      setVisibleIndex(idx)
-      idx += 1
-      // request animation frame for smoother movement between points
-      animationRef.current = window.setTimeout(step, speedPerPointMs)
-    }
-
-    // small delay to let map settle before animating
-    timeoutRef.current = window.setTimeout(() => {
-      step()
-    }, 120)
-
-    return () => {
-      if (animationRef.current) {
-        clearTimeout(animationRef.current)
-        animationRef.current = null
-      }
-      if (timeoutRef.current) {
-        clearTimeout(timeoutRef.current)
-        timeoutRef.current = null
-      }
-    }
-  }, [isNavigating, animCoords])
-
   return (
     <>
       <Pane name="route-pane" style={{ zIndex: 600 }}>
@@ -181,29 +120,17 @@ export function ValhallaRoute({
           <Polyline
             positions={completePolylineCoordinates}
             pathOptions={{
-              color: '#FFFF',
-              opacity: 0.2,
+              color: '#3b82f6',
+              opacity: 1,
+              weight: 6,
               lineCap: 'round',
               lineJoin: 'round',
             }}
           />
         )}
-
-        {/* 🗺️ Animated visible polyline (snake) */}
-        <Polyline
-          positions={completePolylineCoordinates.slice(0, visibleIndex || 1)}
-          pathOptions={{
-            color: polylineColor,
-            weight: routeWeight,
-            opacity: polylineOpacity,
-            lineCap: 'round',
-            lineJoin: 'round',
-          }}
-        />
       </Pane>
       {/* 🎯 Start (user location) and end markers */}
       {showMarkers && userLocation && <UserLocationMarker userLocation={userLocation} centerOnFirst={false} showAccuracyCircle={isNavigating} enableAnimation />}
-
       <Pane name="end-icon" style={{ zIndex: 1000 }}>
         {showMarkers && endPoint && <Marker position={endPoint} icon={endIcon} zIndexOffset={1000} interactive={false}></Marker>}
       </Pane>
