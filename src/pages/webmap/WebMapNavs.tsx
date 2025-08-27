@@ -143,7 +143,7 @@ export default function WebMapNavs() {
                 <span>Login</span>
               </Button>
             </Link>
-          ) : meUser && !isUserLoading ? (
+          ) : location.pathname === '/map' && meUser && !isUserLoading ? (
             <div className="shrink-0">
               {/* Force trigger to match search bar height via descendant selector override if needed */}
               <ProfileMenu user={meUser} />
@@ -179,7 +179,7 @@ export default function WebMapNavs() {
         )}
 
         {/* 🎯 Cluster Control Dropdown */}
-        {location.pathname === '/map' && isWebMapContext(locateCtx) && (
+        {location.pathname !== '/admin/map' && isWebMapContext(locateCtx) && (
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="secondary" size="sm" className="bg-background shrink-0 rounded-full text-xs sm:text-sm">
@@ -232,7 +232,7 @@ export default function WebMapNavs() {
         )}
 
         {/* 🔙 Back to Clusters Button */}
-        {location.pathname === '/map' && isWebMapContext(locateCtx) && locateCtx.clusterViewMode === 'selective' && (
+        {location.pathname !== '/admin/map' && isWebMapContext(locateCtx) && locateCtx.clusterViewMode === 'selective' && (
           <Button
             variant="secondary"
             size="sm"
@@ -250,7 +250,7 @@ export default function WebMapNavs() {
         )}
 
         {/* 📍 Locate user */}
-        {location.pathname === '/map' && (
+        {location.pathname !== '/admin/map' && (
           <Button
             variant="secondary"
             size="sm"

@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button'
 import { NavigationMenu, NavigationMenuItem, NavigationMenuList } from '@/components/ui/navigation-menu'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 import { useMe } from '@/hooks/useMe'
+import { cn } from '@/lib/utils'
 import ProfileMenu from '@/pages/user/ProfileMenu'
 
 // Navigation links array to be used in both desktop and mobile menus
@@ -67,9 +68,14 @@ export default function UserDashboardNavbar() {
                     const Icon = link.icon
                     return (
                       <NavigationMenuItem key={index} className="w-full">
-                        <Link to={link.href} className="flex-row items-center gap-2 py-1.5">
-                          <Icon size={16} className="text-muted-foreground/80" aria-hidden="true" />
-                          <span>{link.label}</span>
+                        <Link
+                          to={link.href}
+                          className={cn('text-foreground hover:text-primary flex items-center gap-2 rounded-md px-2 py-1.5 transition-colors', {
+                            'bg-primary/10 text-primary': link.active,
+                          })}
+                        >
+                          <Icon size={16} className={cn('text-muted-foreground/80', { 'text-primary': link.active })} aria-hidden="true" />
+                          <span className="text-sm">{link.label}</span>
                         </Link>
                       </NavigationMenuItem>
                     )
@@ -80,7 +86,7 @@ export default function UserDashboardNavbar() {
           </Popover>
           {/* Logo */}
           <div className="flex items-center">
-            <Link to="/user" className="text-primary hover:text-primary/90">
+            <Link to="/" className="text-primary hover:text-primary/90">
               <MapPin />
             </Link>
           </div>
@@ -92,9 +98,14 @@ export default function UserDashboardNavbar() {
               const Icon = link.icon
               return (
                 <NavigationMenuItem key={index}>
-                  <Link to={link.href} className="text-foreground hover:text-primary flex-row items-center gap-2 py-1.5 font-medium">
-                    <Icon size={16} className="text-muted-foreground/80" aria-hidden="true" />
-                    <span>{link.label}</span>
+                  <Link
+                    to={link.href}
+                    className={cn('flex items-center gap-2 rounded-md px-2 py-1.5 font-medium transition-colors', 'text-foreground hover:text-primary', {
+                      'bg-primary/10 text-primary': link.active,
+                    })}
+                  >
+                    <Icon size={16} className={cn('text-muted-foreground/80', { 'text-primary': link.active })} aria-hidden="true" />
+                    <span className="text-sm">{link.label}</span>
                   </Link>
                 </NavigationMenuItem>
               )

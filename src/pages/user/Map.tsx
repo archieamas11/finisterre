@@ -1,37 +1,16 @@
-import { MapPin, Search, Filter, ZoomIn, ZoomOut } from 'lucide-react'
+import { MapPin, Search, Filter } from 'lucide-react'
 
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
+import MapPage from '@/layout/WebMapLayout'
 
 export default function UserMap() {
   return (
     <div className="space-y-6">
-      {/* Map Header */}
-      <div className="flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-center">
-        <div>
-          <h1 className="text-foreground text-3xl font-bold">Memorial Park Map</h1>
-          <p className="text-muted-foreground">Find and locate memorial plots</p>
-        </div>
-        <div className="flex gap-2">
-          <Button variant="outline" size="sm">
-            <ZoomOut className="mr-2 h-4 w-4" />
-            Zoom Out
-          </Button>
-          <Button variant="outline" size="sm">
-            <ZoomIn className="mr-2 h-4 w-4" />
-            Zoom In
-          </Button>
-        </div>
-      </div>
-
       {/* Search and Filter */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Search & Filter</CardTitle>
-          <CardDescription>Find specific plots or filter by criteria</CardDescription>
-        </CardHeader>
+      <Card className="mt-6">
         <CardContent className="space-y-4">
           <div className="flex flex-col gap-4 sm:flex-row">
             <div className="flex-1">
@@ -65,17 +44,9 @@ export default function UserMap() {
 
       {/* Map Container */}
       <Card>
-        <CardHeader>
-          <CardTitle>Interactive Map</CardTitle>
-          <CardDescription>Click on plots to view details</CardDescription>
-        </CardHeader>
         <CardContent>
-          <div className="bg-muted border-muted-foreground/25 flex aspect-video items-center justify-center rounded-lg border-2 border-dashed">
-            <div className="space-y-2 text-center">
-              <MapPin className="text-muted-foreground mx-auto h-12 w-12" />
-              <p className="text-muted-foreground">Interactive map will be displayed here</p>
-              <p className="text-muted-foreground text-sm">Sample map showing cemetery layout</p>
-            </div>
+          <div className="mt-4 h-full w-full rounded-lg border p-2">
+            <MapPage />
           </div>
         </CardContent>
       </Card>
