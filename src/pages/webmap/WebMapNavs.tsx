@@ -23,7 +23,7 @@ import { LocateContext as WebMapLocateContext } from '@/contexts/MapContext'
 import { useMe } from '@/hooks/useMe'
 import { cn } from '@/lib/utils'
 import { LocateContext } from '@/pages/admin/map4admin/LocateContext'
-import ProfileMenu from '@/pages/user/contents/ProfileMenu'
+import ProfileMenu from '@/pages/user/ProfileMenu'
 import { isAdmin, isAuthenticated } from '@/utils/auth.utils'
 
 export default function WebMapNavs() {

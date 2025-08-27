@@ -5,7 +5,7 @@ import { Link, useLocation } from 'react-router-dom'
 import { Button } from '@/components/ui/button'
 import { useMe } from '@/hooks/useMe'
 import { cn } from '@/lib/utils'
-import ProfileMenu from '@/pages/user/contents/ProfileMenu'
+import ProfileMenu from '@/pages/user/ProfileMenu'
 
 // Removed isAuthenticated in favor of hook-driven state to avoid stale token based UI desync
 import { NavigationMenuSection } from './NavigationMenu'
