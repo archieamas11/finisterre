@@ -17,6 +17,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuLabel,
 } from '@/components/ui/dropdown-menu'
+import AdminSearchBar from '@/components/webmap/AdminSearchBar'
 import ResetMapViewButton from '@/components/webmap/ResetMapViewButton'
 import SearchToggle from '@/components/webmap/SearchToggle'
 import { useMe } from '@/hooks/useMe'
@@ -126,11 +127,10 @@ export default function WebMapNavs() {
       )}
       aria-label="Map navigation"
     >
-      {/* 🔍 Full-width search bar (only on /map) */}
-      {location.pathname === '/map' && isWebMapContext(locateCtx) && (
+      {/* 🔍 Full-width search bar*/}
+      {isWebMapContext(locateCtx) && (
         <div className="flex w-full items-center gap-2">
           <div className="flex-1">
-            {/* Limit max width on large screens while staying fluid */}
             <div className="mx-auto w-full max-w-3xl xl:max-w-4xl">
               <SearchToggle context={locateCtx} className="w-full" />
             </div>
@@ -149,6 +149,16 @@ export default function WebMapNavs() {
               <ProfileMenu user={meUser} />
             </div>
           ) : null}
+        </div>
+      )}
+      {/* Admin search bar variant */}
+      {isAdmin() && location.pathname === '/admin/map' && (
+        <div className="items-left flex w-full gap-2">
+          <div className="flex-1">
+            <div className="mx-auto w-full max-w-sm">
+              <AdminSearchBar className="w-full" />
+            </div>
+          </div>
         </div>
       )}
 
@@ -258,7 +268,7 @@ export default function WebMapNavs() {
           <ResetMapViewButton context={locateCtx as AdminContext | WebMapContext | null | undefined} />
         </div>
 
-        {/* ➕ Admin marker controls */}
+        {/* ➕ Admin add/edit marker controls */}
         {isAdmin() && location.pathname === '/admin/map' && (
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
