@@ -26,11 +26,10 @@ const AdminIntermentDeceasedPage = React.lazy(() => import('@/pages/admin/interm
 const AdminIntermentLotOwnersPage = React.lazy(() => import('@/pages/admin/interment/lot-owners/lot-owners'))
 const AdminIntermentCustomerPage = React.lazy(() => import('./pages/admin/interment/customer/CustomersLayout'))
 import { BrowserRouter } from 'react-router-dom'
-
-import AdminLayout from '@/components/layout/AdminLayout'
-import LandingLayout from '@/components/layout/LandingLayout'
-import UserLayout from '@/components/layout/UserLayout'
-import MapPage from '@/components/layout/WebMapLayout'
+const AdminLayout = React.lazy(() => import('@/layout/AdminLayout'))
+const UserLayout = React.lazy(() => import('@/layout/UserLayout'))
+import LandingLayout from '@/layout/LandingLayout'
+import MapPage from '@/layout/WebMapLayout'
 interface ErrorFallbackProps {
   error: Error
   resetErrorBoundary: () => void

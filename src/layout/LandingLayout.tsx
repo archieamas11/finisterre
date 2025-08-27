@@ -1,6 +1,7 @@
 import { Suspense, lazy } from 'react'
-import { HeaderSection } from '@/pages/landing/section/HeaderSection'
+
 import Spinner from '@/components/ui/spinner'
+import { HeaderSection } from '@/pages/landing/section/HeaderSection'
 
 const HeroSection = lazy(() => import('@/pages/landing/section/HeroSection'))
 const FAQs = lazy(() => import('@/pages/landing/section/FAQs'))

@@ -1,13 +1,13 @@
 import { HouseIcon, MapPin, User, Settings } from 'lucide-react'
 import { Link, useLocation } from 'react-router-dom'
-import ProfileMenu from '@/pages/user/contents/ProfileMenu'
 
+import InfoMenu from '@/components/info-menu'
+import NotificationMenu from '@/components/notification-menu'
 import { Button } from '@/components/ui/button'
 import { NavigationMenu, NavigationMenuItem, NavigationMenuList } from '@/components/ui/navigation-menu'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 import { useMe } from '@/hooks/useMe'
-import InfoMenu from '@/components/info-menu'
-import NotificationMenu from '@/components/notification-menu'
+import ProfileMenu from '@/pages/user/contents/ProfileMenu'
 
 // Navigation links array to be used in both desktop and mobile menus
 const navigationLinks = [

@@ -6,7 +6,6 @@ import { RiMapPinAddLine } from 'react-icons/ri'
 import { RiLoginBoxLine } from 'react-icons/ri'
 import { Link, useLocation } from 'react-router-dom'
 
-import { LocateContext as WebMapLocateContext } from '@/components/layout/WebMapLayout'
 import { Button } from '@/components/ui/button'
 import {
   DropdownMenu,
@@ -20,6 +19,7 @@ import {
 import AdminSearchBar from '@/components/webmap/AdminSearchBar'
 import ResetMapViewButton from '@/components/webmap/ResetMapViewButton'
 import SearchToggle from '@/components/webmap/SearchToggle'
+import { LocateContext as WebMapLocateContext } from '@/contexts/MapContext'
 import { useMe } from '@/hooks/useMe'
 import { cn } from '@/lib/utils'
 import { LocateContext } from '@/pages/admin/map4admin/LocateContext'

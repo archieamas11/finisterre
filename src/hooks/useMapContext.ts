@@ -1,19 +1,6 @@
 import { useContext } from 'react'
 
-import { MapStateContext, MapDispatchContext } from '@/components/layout/WebMapLayout'
-
-// Re-export MapState type via module augmentation pattern (local only) — declare minimal shape
-// If MapState changes, consider exporting it explicitly from layout file for stronger typing.
-type MapState = {
-  selectedGroups: Set<string>
-  clusterViewMode: 'all' | 'selective'
-  searchQuery: string
-  searchResult: unknown
-  isSearching: boolean
-  highlightedNiche: string | null
-  autoOpenPopupFor: string | null
-  forceClosePopupsToken: number
-}
+import { MapStateContext, MapDispatchContext, type MapState } from '@/contexts/MapContext'
 
 // Generic selector-based state consumption to minimize component re-renders
 export function useMapSelector<T>(selector: (state: MapState) => T): T {

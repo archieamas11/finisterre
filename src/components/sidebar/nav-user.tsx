@@ -30,7 +30,7 @@ export function NavUser() {
           <DropdownMenuTrigger asChild>
             <SidebarMenuButton className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground" size="lg">
               <Avatar className="h-8 w-8 rounded-lg">
-                <AvatarImage src={meUser?.avatar} alt={meUser?.name} />
+                <AvatarImage src={meUser?.avatar} alt={meUser?.name} className="bg-red" />
                 <AvatarFallback className="rounded-lg">{getInitials(meUser?.name)}</AvatarFallback>
               </Avatar>
               <div className="grid flex-1 text-left text-sm leading-tight">

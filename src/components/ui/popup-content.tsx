@@ -6,7 +6,7 @@ import { renderToStaticMarkup } from 'react-dom/server'
 import { FaDirections } from 'react-icons/fa'
 import { Marker, Popup } from 'react-leaflet'
 
-import { LocateContext } from '@/components/layout/WebMapLayout'
+import { LocateContext } from '@/contexts/MapContext'
 import { CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Dialog, DialogContent, DialogTrigger } from '@/components/ui/dialog'
 import { cn } from '@/lib/utils'

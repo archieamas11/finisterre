@@ -3,29 +3,30 @@ import 'leaflet/dist/leaflet.css'
 import iconRetinaUrl from 'leaflet/dist/images/marker-icon-2x.png'
 import iconUrl from 'leaflet/dist/images/marker-icon.png'
 import shadowUrl from 'leaflet/dist/images/marker-shadow.png'
-import { createContext, useEffect, useMemo, useCallback, memo, useState, Suspense, lazy, useReducer, useRef, useContext } from 'react'
+import { useEffect, useMemo, useCallback, memo, useState, Suspense, lazy, useReducer, useRef } from 'react'
 import { MapContainer, TileLayer, useMap } from 'react-leaflet'
 import { toast } from 'sonner'
 
+import type { ConvertedMarker } from '@/types/map.types'
+
+import { searchLotById } from '@/api/plots.api'
 import CustomClusterManager from '@/components/map/CustomClusterManager'
 import { ValhallaRoute } from '@/components/map/ValhallaRoute'
 import Spinner from '@/components/ui/spinner'
+import { MapStateContext, MapDispatchContext, LocateContext, type MapState, type MapAction } from '@/contexts/MapContext'
 import { usePlots } from '@/hooks/plots-hooks/plot.hooks'
 import { useLocationTracking } from '@/hooks/useLocationTracking'
 import { useValhalla } from '@/hooks/useValhalla'
-import WebMapNavs from '@/pages/webmap/WebMapNavs'
-
-import { convertPlotToMarker } from '@/types/map.types'
-import type { LotSearchResult, ConvertedMarker } from '@/types/map.types'
 import { groupMarkersByKey } from '@/lib/clusterUtils'
-import { searchLotById } from '@/api/plots.api'
-import PlotMarkers from '@/pages/webmap/PlotMarkers'
-import ComfortRoomMarker from '@/pages/webmap/ComfortRoomMarkers'
-import ParkingMarkers from '@/pages/webmap/ParkingMarkers'
 import CenterSerenityMarkers from '@/pages/webmap/CenterSerenityMarkers'
-import MainEntranceMarkers from '@/pages/webmap/MainEntranceMarkers'
 import ChapelMarkers from '@/pages/webmap/ChapelMarkers'
+import ComfortRoomMarker from '@/pages/webmap/ComfortRoomMarkers'
+import MainEntranceMarkers from '@/pages/webmap/MainEntranceMarkers'
+import ParkingMarkers from '@/pages/webmap/ParkingMarkers'
 import PlaygroundMarkers from '@/pages/webmap/PlaygroundMarkers'
+import PlotMarkers from '@/pages/webmap/PlotMarkers'
+import WebMapNavs from '@/pages/webmap/WebMapNavs'
+import { convertPlotToMarker } from '@/types/map.types'
 const UserLocationMarker = lazy(() =>
   import('@/components/map/UserLocationMarker').then((module) => ({
     default: module.UserLocationMarker,
@@ -52,13 +53,20 @@ const MemoizedPlaygroundMarkers = memo(PlaygroundMarkers)
 const MemoizedPlotMarkers = memo(PlotMarkers)
 const MemoizedNavigationInstructions = memo(NavigationInstructions)
 
+// 💡 Extend HTMLElement to include the _leaflet_map property for legacy compatibility
+declare global {
+  interface HTMLElement {
+    _leaflet_map?: L.Map
+  }
+}
+
 // 💡 Internal component to capture map instance once available
 function MapInstanceBinder({ onMapReady }: { onMapReady: (map: L.Map) => void }) {
   const map = useMap()
   useEffect(() => {
     onMapReady(map)
     // Attach reference for legacy direct DOM usage elsewhere
-    ;(map.getContainer() as any)._leaflet_map = map
+    map.getContainer()._leaflet_map = map
     // 💡 Pre-create custom panes to avoid race conditions when conditionally rendering components
     // that expect these panes to exist (prevents intermittent appendChild undefined errors)
     const ensurePane = (name: string, zIndex: number) => {
@@ -74,43 +82,6 @@ function MapInstanceBinder({ onMapReady }: { onMapReady: (map: L.Map) => void })
 }
 
 // ==== New reducer-based state management ====
-interface MapState {
-  isNavigationInstructionsOpen: boolean
-  isDirectionLoading: boolean
-  shouldCenterOnUser: boolean
-  // Cluster
-  selectedGroups: Set<string>
-  clusterViewMode: 'all' | 'selective'
-  // Search
-  searchQuery: string
-  searchResult: LotSearchResult | null
-  isSearching: boolean
-  highlightedNiche: string | null
-  // Auto popup
-  autoOpenPopupFor: string | null
-  // Popup close orchestration
-  pendingPopupClose: boolean
-  // Declarative popup close flag (instead of DOM query removal)
-  forceClosePopupsToken: number // increment to signal popups should close
-}
-
-type MapAction =
-  | { type: 'SET_NAV_OPEN'; value: boolean }
-  | { type: 'SET_DIRECTION_LOADING'; value: boolean }
-  | { type: 'REQUEST_LOCATE' }
-  | { type: 'SELECT_GROUPS'; groups: Set<string> }
-  | { type: 'TOGGLE_GROUP'; group: string }
-  | { type: 'RESET_GROUPS' }
-  | { type: 'SET_SEARCH_QUERY'; query: string }
-  | { type: 'SEARCH_START' }
-  | { type: 'SEARCH_SUCCESS'; result: LotSearchResult | null }
-  | { type: 'SEARCH_END' }
-  | { type: 'SET_HIGHLIGHTED_NICHE'; niche: string | null }
-  | { type: 'SET_AUTO_POPUP'; plotId: string | null }
-  | { type: 'REQUEST_POPUP_CLOSE' }
-  | { type: 'POPUP_CLOSE_CONFIRMED' }
-  | { type: 'RESET_VIEW' }
-
 const initialMapState: MapState = {
   isNavigationInstructionsOpen: false,
   isDirectionLoading: false,
@@ -176,25 +147,6 @@ function mapReducer(state: MapState, action: MapAction): MapState {
   }
 }
 
-export const MapStateContext = createContext<MapState | null>(null)
-export const MapDispatchContext = createContext<React.Dispatch<MapAction> | null>(null)
-
-// Backwards compatible combined context (will be deprecated): retains original shape where feasible
-export const LocateContext = createContext<any>(null)
-
-// Selector hook to minimize re-renders
-export function useMapState<T>(selector: (s: MapState) => T): T {
-  const state = useContext(MapStateContext)
-  if (!state) throw new Error('useMapState must be used within MapPage provider')
-  return selector(state)
-}
-
-export function useMapDispatch() {
-  const dispatch = useContext(MapDispatchContext)
-  if (!dispatch) throw new Error('useMapDispatch must be used within MapPage provider')
-  return dispatch
-}
-
 export default function MapPage() {
   const { isLoading, data: plotsData } = usePlots()
   const markers = useMemo(() => plotsData?.map(convertPlotToMarker) || [], [plotsData])
@@ -240,6 +192,7 @@ export default function MapPage() {
   // 🛠️ Backward-compat bridge (TEMP): map former individual state variables to reducer state fields.
   // FIXME: Remove once all references are updated.
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const bounds: [[number, number], [number, number]] = [
     [10.247883800064669, 123.79691285546676],
     [10.249302749341647, 123.7988598710129],

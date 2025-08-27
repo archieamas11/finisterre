@@ -4,8 +4,8 @@ import { Marker, Popup } from 'react-leaflet'
 
 import type { ConvertedMarker } from '@/types/map.types'
 
-import { LocateContext } from '@/components/layout/WebMapLayout'
 import { Drawer, DrawerContent, DrawerDescription, DrawerTitle } from '@/components/ui/drawer'
+import { LocateContext } from '@/contexts/MapContext'
 import { useIsMobile } from '@/hooks/use-mobile'
 // import { usePopupState } from '@/hooks/useMapContext'
 import ColumbariumPopup from '@/pages/admin/map4admin/ColumbariumPopup'
