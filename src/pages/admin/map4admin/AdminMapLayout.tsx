@@ -4,7 +4,7 @@ import L from 'leaflet'
 import iconRetinaUrl from 'leaflet/dist/images/marker-icon-2x.png'
 import iconUrl from 'leaflet/dist/images/marker-icon.png'
 import shadowUrl from 'leaflet/dist/images/marker-shadow.png'
-import { Suspense } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { MapContainer, TileLayer, Popup, GeoJSON } from 'react-leaflet'
 import MarkerClusterGroup from 'react-leaflet-markercluster'
 
@@ -17,39 +17,68 @@ import EditableMarker from '@/components/map/EditableMarker'
 import EditMarkerInstructions from '@/components/map/EditMarkerInstructions'
 import MapClickHandler from '@/components/map/MapClickHandler'
 import Spinner from '@/components/ui/spinner'
+// 💡 Naming: underlying asset is *block-b*, align variable name for clarity
+import guide4BlockBUrl from '@/data/geojson/guide-4-block-b.geojson?url'
 import { usePlots } from '@/hooks/plots-hooks/plot.hooks'
 import { useAuthQuery } from '@/hooks/useAuthQuery'
 import { groupMarkersByKey, getLabelFromGroupKey, createClusterIconFactory } from '@/lib/clusterUtils'
 import { ucwords } from '@/lib/format'
 import ColumbariumPopup from '@/pages/admin/map4admin/ColumbariumPopup'
 import SinglePlotLocations from '@/pages/admin/map4admin/SinglePlotPopup'
+import CenterSerenityMarkers from '@/pages/webmap/CenterSerenityMarkers'
+import ChapelMarkers from '@/pages/webmap/ChapelMarkers'
+import ComfortRoomMarker from '@/pages/webmap/ComfortRoomMarkers'
+import MainEntranceMarkers from '@/pages/webmap/MainEntranceMarkers'
+import ParkingMarkers from '@/pages/webmap/ParkingMarkers'
+import PlaygroundMarkers from '@/pages/webmap/PlaygroundMarkers'
 import WebMapNavs from '@/pages/webmap/WebMapNavs'
 import { getCategoryBackgroundColor, convertPlotToMarker, getStatusColor } from '@/types/map.types'
 
-import guide4BlockCUrl from './guide-4-block-b.geojson?url'
 import { LocateContext } from './LocateContext'
 import MapStats from './MapStats'
 
-const ComfortRoomMarker = lazy(() => import('@/pages/webmap/ComfortRoomMarkers'))
-const ParkingMarkers = lazy(() => import('@/pages/webmap/ParkingMarkers'))
-const CenterSerenityMarkers = lazy(() => import('@/pages/webmap/CenterSerenityMarkers'))
-const MainEntranceMarkers = lazy(() => import('@/pages/webmap/MainEntranceMarkers'))
-const ChapelMarkers = lazy(() => import('@/pages/webmap/ChapelMarkers'))
-const PlaygroundMarkers = lazy(() => import('@/pages/webmap/PlaygroundMarkers'))
+// 💡 Set a default Leaflet marker icon globally (Leaflet otherwise requires manual asset wiring)
+const DefaultIcon = L.icon({ iconUrl, shadowUrl, iconRetinaUrl })
+// 💡 Leaflet prototype mutation (safe in app init scope) to apply default marker icon globally.
+;(L.Marker.prototype as unknown as { options: { icon: L.Icon } }).options.icon = DefaultIcon
 
-const DefaultIcon = L.icon({
-  iconUrl,
-  shadowUrl,
-  iconRetinaUrl,
-})
-L.Marker.prototype.options.icon = DefaultIcon
+// 🛠 Helper: build tiny colored status dot icon (kept outside component to avoid re-creation)
+function buildStatusCircleIcon(color: string) {
+  return L.divIcon({
+    className: '',
+    html: `<div style="width:15px;height:15px;border-radius:50%;background:${color};border:1px solid #fff;box-shadow:0 0 4px rgba(0,0,0,0.15);"></div>`,
+  })
+}
+
+// 🛠 Helper: popup content chooser (columbarium vs single plot)
+function renderPopupContent(marker: ConvertedMarker, backgroundColor: string, popupCloseTick: number) {
+  const isColumbarium = !!(marker.rows && marker.columns)
+  if (isColumbarium) {
+    return (
+      <Popup className="leaflet-theme-popup" closeButton={false} offset={[2, 10]} minWidth={450}>
+        <div className="w-full py-2">
+          <ColumbariumPopup marker={marker} />
+        </div>
+      </Popup>
+    )
+  }
+  return (
+    <Popup className="leaflet-theme-popup" closeButton={false} offset={[2, 10]} minWidth={600} maxWidth={600}>
+      <SinglePlotLocations backgroundColor={backgroundColor} marker={marker} popupCloseTick={popupCloseTick} />
+    </Popup>
+  )
+}
 
 export default function AdminMapLayout() {
   const { data: authData } = useAuthQuery()
-  const showGuide4 = !!((authData?.user?.username === 'test' || authData?.user?.username === 'test') && !!authData?.user?.isAdmin)
+  // 💡 Simplify redundant condition – previous OR duplicated the same username string.
+  const showGuide4 = Boolean(authData?.user?.isAdmin && authData?.user?.username === 'test')
   const { isError, refetch, isLoading, data: plotsData } = usePlots()
   const queryClient = useQueryClient()
-  const markers = plotsData?.map(convertPlotToMarker) || []
+
+  // ⚡️ Memoize expensive conversion to avoid re-creating marker objects every render when unchanged
+  const markers = useMemo(() => (plotsData ? plotsData.map(convertPlotToMarker) : []), [plotsData])
+
   const [guide4Data, setGuide4Data] = useState<GeoJSON.GeoJSON | null>(null)
   const bounds: [[number, number], [number, number]] = [
     [10.248073279164613, 123.79742173990627],
@@ -178,12 +207,12 @@ export default function AdminMapLayout() {
     let mounted = true
     async function load() {
       try {
-        const res = await fetch(guide4BlockCUrl)
+        const res = await fetch(guide4BlockBUrl)
         if (!res.ok) return
         const json = (await res.json()) as GeoJSON.GeoJSON
         if (mounted) setGuide4Data(json)
       } catch {
-        // 🧯 Ignore optional layer load failure
+        // 🧯 Optional layer load failure ignored (non-critical visual enhancement)
       }
     }
     load()
@@ -201,6 +230,14 @@ export default function AdminMapLayout() {
       queryKey: ['plotDetails', plot_id],
     })
   }
+
+  // ⚡️ Derived grouping + cluster icon factory (stable references reduce re-renders inside leaflet layer trees)
+  const markersByGroup = useMemo(() => groupMarkersByKey(markers), [markers])
+  const labelLookup = useCallback((k: string) => {
+    const raw = getLabelFromGroupKey(k)
+    return k.startsWith('category:') ? ucwords(String(raw)) : String(raw)
+  }, [])
+  const createClusterIcon = useMemo(() => createClusterIconFactory(labelLookup), [labelLookup])
 
   if (isLoading) {
     return (
@@ -265,102 +302,22 @@ export default function AdminMapLayout() {
 
             {/* 🎯 Map click handler for adding markers */}
             <MapClickHandler isAddingMarker={isAddingMarker} onMapClick={onMapClick} />
-            <Suspense fallback={null}>
-              <MainEntranceMarkers />
-              <ChapelMarkers />
-              <PlaygroundMarkers />
-              <ParkingMarkers />
-              <CenterSerenityMarkers />
-              <ComfortRoomMarker />
-            </Suspense>
+            <MainEntranceMarkers />
+            <ChapelMarkers />
+            <PlaygroundMarkers />
+            <ParkingMarkers />
+            <CenterSerenityMarkers />
+            <ComfortRoomMarker />
             {/* Plot Markers grouped into clusters by block or category */}
-            {(() => {
-              const markersByGroup = groupMarkersByKey(markers)
-              const labelLookup = (k: string) => {
-                const raw = getLabelFromGroupKey(k)
-                return k.startsWith('category:') ? ucwords(String(raw)) : String(raw)
-              }
-              const createClusterIcon = createClusterIconFactory(labelLookup)
-
-              return Object.entries(markersByGroup).map(([groupKey, groupMarkers]) => {
-                // When editing markers or adding a new marker, disable clustering so markers are individually clickable/draggable
-                if (isEditingMarker || isAddingMarker) {
-                  return (
-                    <div key={`cluster-${groupKey}`}>
-                      {groupMarkers.map((marker: ConvertedMarker) => {
-                        const statusColor = getStatusColor(marker.plotStatus)
-                        const circleIcon = L.divIcon({
-                          className: '',
-                          html: `<div style="
-                          width: 15px;
-                          height: 15px;
-                          border-radius: 50%;
-                          background: ${statusColor};
-                          border: 1px solid #fff;
-                          box-shadow: 0 0 4px rgba(0,0,0,0.15);
-                          "></div>`,
-                        })
-                        const backgroundColor = getCategoryBackgroundColor(marker.category)
-
-                        return (
-                          <EditableMarker
-                            key={`plot-${marker.plot_id}`}
-                            plotId={marker.plot_id}
-                            position={marker.position}
-                            icon={circleIcon}
-                            isEditable={isEditingMarker}
-                            isSelected={selectedPlotForEdit === marker.plot_id}
-                            onMarkerClick={onMarkerClickForEdit}
-                            onEditComplete={onEditComplete}
-                            onSaveSuccess={() => setSelectedPlotForEdit(null)}
-                            onPopupOpen={() => handlePopupOpen(marker.plot_id)}
-                            onPopupClose={() => setPopupCloseTick((t) => t + 1)}
-                          >
-                            {marker.rows && marker.columns ? (
-                              <Popup className="leaflet-theme-popup" closeButton={false} offset={[2, 10]} minWidth={450}>
-                                <div className="w-full py-2">
-                                  <ColumbariumPopup marker={marker} />
-                                </div>
-                              </Popup>
-                            ) : (
-                              <Popup className="leaflet-theme-popup" closeButton={false} offset={[2, 10]} minWidth={600} maxWidth={600}>
-                                <SinglePlotLocations backgroundColor={backgroundColor} marker={marker} popupCloseTick={popupCloseTick} />
-                              </Popup>
-                            )}
-                          </EditableMarker>
-                        )
-                      })}
-                    </div>
-                  )
-                }
-
+            {Object.entries(markersByGroup).map(([groupKey, groupMarkers]) => {
+              // When editing markers or adding a new marker, disable clustering so markers are individually clickable/draggable
+              if (isEditingMarker || isAddingMarker) {
                 return (
-                  <MarkerClusterGroup
-                    key={`cluster-${groupKey}`}
-                    iconCreateFunction={createClusterIcon(groupKey)}
-                    chunkedLoading={true}
-                    maxClusterRadius={200}
-                    disableClusteringAtZoom={20}
-                    showCoverageOnHover={false}
-                    spiderfyOnMaxZoom={false}
-                    removeOutsideVisibleBounds={true}
-                    animate={false}
-                  >
+                  <div key={`cluster-${groupKey}`}>
                     {groupMarkers.map((marker: ConvertedMarker) => {
                       const statusColor = getStatusColor(marker.plotStatus)
-                      const circleIcon = L.divIcon({
-                        className: '',
-                        html: `<div style="
-                        width: 15px;
-                        height: 15px;
-                        border-radius: 50%;
-                        background: ${statusColor};
-                        border: 1px solid #fff;
-                        box-shadow: 0 0 4px rgba(0,0,0,0.15);
-                        "></div>`,
-                      })
+                      const circleIcon = buildStatusCircleIcon(statusColor)
                       const backgroundColor = getCategoryBackgroundColor(marker.category)
-
                       return (
                         <EditableMarker
                           key={`plot-${marker.plot_id}`}
@@ -375,24 +332,51 @@ export default function AdminMapLayout() {
                           onPopupOpen={() => handlePopupOpen(marker.plot_id)}
                           onPopupClose={() => setPopupCloseTick((t) => t + 1)}
                         >
-                          {marker.rows && marker.columns ? (
-                            <Popup className="leaflet-theme-popup" closeButton={false} offset={[2, 10]} minWidth={450}>
-                              <div className="w-full py-2">
-                                <ColumbariumPopup marker={marker} />
-                              </div>
-                            </Popup>
-                          ) : (
-                            <Popup className="leaflet-theme-popup" closeButton={false} offset={[2, 10]} minWidth={600} maxWidth={600}>
-                              <SinglePlotLocations backgroundColor={backgroundColor} marker={marker} popupCloseTick={popupCloseTick} />
-                            </Popup>
-                          )}
+                          {renderPopupContent(marker, backgroundColor, popupCloseTick)}
                         </EditableMarker>
                       )
                     })}
-                  </MarkerClusterGroup>
+                  </div>
                 )
-              })
-            })()}
+              }
+
+              return (
+                <MarkerClusterGroup
+                  key={`cluster-${groupKey}`}
+                  iconCreateFunction={createClusterIcon(groupKey)}
+                  chunkedLoading={true}
+                  maxClusterRadius={200}
+                  disableClusteringAtZoom={20}
+                  showCoverageOnHover={false}
+                  spiderfyOnMaxZoom={false}
+                  removeOutsideVisibleBounds={true}
+                  animate={false}
+                >
+                  {groupMarkers.map((marker: ConvertedMarker) => {
+                    const statusColor = getStatusColor(marker.plotStatus)
+                    const circleIcon = buildStatusCircleIcon(statusColor)
+                    const backgroundColor = getCategoryBackgroundColor(marker.category)
+                    return (
+                      <EditableMarker
+                        key={`plot-${marker.plot_id}`}
+                        plotId={marker.plot_id}
+                        position={marker.position}
+                        icon={circleIcon}
+                        isEditable={isEditingMarker}
+                        isSelected={selectedPlotForEdit === marker.plot_id}
+                        onMarkerClick={onMarkerClickForEdit}
+                        onEditComplete={onEditComplete}
+                        onSaveSuccess={() => setSelectedPlotForEdit(null)}
+                        onPopupOpen={() => handlePopupOpen(marker.plot_id)}
+                        onPopupClose={() => setPopupCloseTick((t) => t + 1)}
+                      >
+                        {renderPopupContent(marker, backgroundColor, popupCloseTick)}
+                      </EditableMarker>
+                    )
+                  })}
+                </MarkerClusterGroup>
+              )
+            })}
           </MapContainer>
         </div>
         {/* 📝 Add Plot Dialog */}
