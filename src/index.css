@@ -1,28 +1,3 @@
-@keyframes marker-pop-in {
-  0% {
-    opacity: 0;
-    transform: scale(0.8);
-  }
-
-  60% {
-    opacity: 1;
-    transform: scale(1.15);
-  }
-
-  80% {
-    transform: scale(0.95);
-  }
-
-  100% {
-    transform: scale(1);
-  }
-}
-
-.marker-pop-in {
-  animation: marker-pop-in 0.5s cubic-bezier(0.25, 1, 0.5, 1) forwards;
-  transform-origin: center center;
-}
-
 @import 'tailwindcss';
 @import 'tw-animate-css';
 
@@ -294,29 +269,6 @@
   box-shadow: none !important;
 }
 
-.marker-pop-in {
-  /* ⚡️ Use transform for smooth animations */
-  animation: markerPopIn 0.3s ease-out;
-  transform-origin: center bottom;
-}
-
-@keyframes markerPopIn {
-  0% {
-    transform: scale(0) translateY(100%);
-    opacity: 0;
-  }
-
-  50% {
-    transform: scale(1.2) translateY(0);
-    opacity: 0.8;
-  }
-
-  100% {
-    transform: scale(1) translateY(0);
-    opacity: 1;
-  }
-}
-
 /* ⚡️ Optimize leaflet popup performance */
 .leaflet-popup-content-wrapper {
   /* ⚡️ Use GPU acceleration */
@@ -349,4 +301,17 @@
 /* ⚡️ Prevent reflow during zoom transitions */
 .leaflet-zoom-animated {
   transform: translateZ(0);
+}
+
+/* 🙈 Hide scrollbars for horizontally scrolling controls container */
+.no-scrollbar {
+  scrollbar-width: none;
+  /* Firefox */
+  -ms-overflow-style: none;
+  /* IE 10+ */
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+  /* Chrome/Safari */
 }

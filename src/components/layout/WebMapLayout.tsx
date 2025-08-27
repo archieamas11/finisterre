@@ -3,13 +3,11 @@ import 'leaflet/dist/leaflet.css'
 import iconRetinaUrl from 'leaflet/dist/images/marker-icon-2x.png'
 import iconUrl from 'leaflet/dist/images/marker-icon.png'
 import shadowUrl from 'leaflet/dist/images/marker-shadow.png'
-import { createContext, useEffect, useMemo, useCallback, memo, useState, Suspense, lazy } from 'react'
+import { createContext, useEffect, useMemo, useCallback, memo, useState, Suspense, lazy, useReducer, useRef, useContext } from 'react'
 import { MapContainer, TileLayer, useMap } from 'react-leaflet'
 import { toast } from 'sonner'
 
 import CustomClusterManager from '@/components/map/CustomClusterManager'
-import { NavigationInstructions } from '@/components/map/NavigationInstructions'
-import { UserLocationMarker } from '@/components/map/UserLocationMarker'
 import { ValhallaRoute } from '@/components/map/ValhallaRoute'
 import Spinner from '@/components/ui/spinner'
 import { usePlots } from '@/hooks/plots-hooks/plot.hooks'
@@ -21,14 +19,19 @@ import { convertPlotToMarker } from '@/types/map.types'
 import type { LotSearchResult, ConvertedMarker } from '@/types/map.types'
 import { groupMarkersByKey } from '@/lib/clusterUtils'
 import { searchLotById } from '@/api/plots.api'
-
-const PlotMarkers = lazy(() => import('@/pages/webmap/PlotMarkers'))
-const ComfortRoomMarker = lazy(() => import('@/pages/webmap/ComfortRoomMarkers'))
-const ParkingMarkers = lazy(() => import('@/pages/webmap/ParkingMarkers'))
-const CenterSerenityMarkers = lazy(() => import('@/pages/webmap/CenterSerenityMarkers'))
-const MainEntranceMarkers = lazy(() => import('@/pages/webmap/MainEntranceMarkers'))
-const ChapelMarkers = lazy(() => import('@/pages/webmap/ChapelMarkers'))
-const PlaygroundMarkers = lazy(() => import('@/pages/webmap/PlaygroundMarkers'))
+import PlotMarkers from '@/pages/webmap/PlotMarkers'
+import ComfortRoomMarker from '@/pages/webmap/ComfortRoomMarkers'
+import ParkingMarkers from '@/pages/webmap/ParkingMarkers'
+import CenterSerenityMarkers from '@/pages/webmap/CenterSerenityMarkers'
+import MainEntranceMarkers from '@/pages/webmap/MainEntranceMarkers'
+import ChapelMarkers from '@/pages/webmap/ChapelMarkers'
+import PlaygroundMarkers from '@/pages/webmap/PlaygroundMarkers'
+const UserLocationMarker = lazy(() =>
+  import('@/components/map/UserLocationMarker').then((module) => ({
+    default: module.UserLocationMarker,
+  })),
+)
+const NavigationInstructions = lazy(() => import('@/components/map/NavigationInstructions'))
 
 const DefaultIcon = L.icon({
   iconUrl,
@@ -47,6 +50,7 @@ const MemoizedMainEntranceMarkers = memo(MainEntranceMarkers)
 const MemoizedChapelMarkers = memo(ChapelMarkers)
 const MemoizedPlaygroundMarkers = memo(PlaygroundMarkers)
 const MemoizedPlotMarkers = memo(PlotMarkers)
+const MemoizedNavigationInstructions = memo(NavigationInstructions)
 
 // 💡 Internal component to capture map instance once available
 function MapInstanceBinder({ onMapReady }: { onMapReady: (map: L.Map) => void }) {
@@ -55,34 +59,141 @@ function MapInstanceBinder({ onMapReady }: { onMapReady: (map: L.Map) => void })
     onMapReady(map)
     // Attach reference for legacy direct DOM usage elsewhere
     ;(map.getContainer() as any)._leaflet_map = map
+    // 💡 Pre-create custom panes to avoid race conditions when conditionally rendering components
+    // that expect these panes to exist (prevents intermittent appendChild undefined errors)
+    const ensurePane = (name: string, zIndex: number) => {
+      if (!map.getPane(name)) {
+        const pane = map.createPane(name)
+        pane.style.zIndex = String(zIndex)
+      }
+    }
+    ensurePane('route-pane', 600)
+    ensurePane('end-icon', 1000)
   }, [map, onMapReady])
   return null
 }
 
-export const LocateContext = createContext<{
-  requestLocate: () => Promise<void>
-  clearRoute: () => void
-  resetView: () => void
+// ==== New reducer-based state management ====
+interface MapState {
+  isNavigationInstructionsOpen: boolean
+  isDirectionLoading: boolean
+  shouldCenterOnUser: boolean
+  // Cluster
   selectedGroups: Set<string>
-  toggleGroupSelection: (groupKey: string) => void
-  resetGroupSelection: () => void
   clusterViewMode: 'all' | 'selective'
-  availableGroups: Array<{ key: string; label: string; count: number }>
-  handleClusterClick: (groupKey: string) => void
-  // 🔍 Search functionality
+  // Search
   searchQuery: string
-  setSearchQuery: (query: string) => void
   searchResult: LotSearchResult | null
   isSearching: boolean
-  searchLot: (lotId: string) => Promise<void>
-  clearSearch: () => void
   highlightedNiche: string | null
-  // 🎯 Auto popup functionality
+  // Auto popup
   autoOpenPopupFor: string | null
-  setAutoOpenPopupFor: (plotId: string | null) => void
-  // 🚀 Route completion functionality
-  requestPopupClose: () => void
-} | null>(null)
+  // Popup close orchestration
+  pendingPopupClose: boolean
+  // Declarative popup close flag (instead of DOM query removal)
+  forceClosePopupsToken: number // increment to signal popups should close
+}
+
+type MapAction =
+  | { type: 'SET_NAV_OPEN'; value: boolean }
+  | { type: 'SET_DIRECTION_LOADING'; value: boolean }
+  | { type: 'REQUEST_LOCATE' }
+  | { type: 'SELECT_GROUPS'; groups: Set<string> }
+  | { type: 'TOGGLE_GROUP'; group: string }
+  | { type: 'RESET_GROUPS' }
+  | { type: 'SET_SEARCH_QUERY'; query: string }
+  | { type: 'SEARCH_START' }
+  | { type: 'SEARCH_SUCCESS'; result: LotSearchResult | null }
+  | { type: 'SEARCH_END' }
+  | { type: 'SET_HIGHLIGHTED_NICHE'; niche: string | null }
+  | { type: 'SET_AUTO_POPUP'; plotId: string | null }
+  | { type: 'REQUEST_POPUP_CLOSE' }
+  | { type: 'POPUP_CLOSE_CONFIRMED' }
+  | { type: 'RESET_VIEW' }
+
+const initialMapState: MapState = {
+  isNavigationInstructionsOpen: false,
+  isDirectionLoading: false,
+  shouldCenterOnUser: false,
+  selectedGroups: new Set(),
+  clusterViewMode: 'all',
+  searchQuery: '',
+  searchResult: null,
+  isSearching: false,
+  highlightedNiche: null,
+  autoOpenPopupFor: null,
+  pendingPopupClose: false,
+  forceClosePopupsToken: 0,
+}
+
+function mapReducer(state: MapState, action: MapAction): MapState {
+  switch (action.type) {
+    case 'SET_NAV_OPEN':
+      return { ...state, isNavigationInstructionsOpen: action.value }
+    case 'SET_DIRECTION_LOADING':
+      return { ...state, isDirectionLoading: action.value }
+    case 'REQUEST_LOCATE':
+      return { ...state, shouldCenterOnUser: true }
+    case 'SELECT_GROUPS':
+      return { ...state, selectedGroups: action.groups, clusterViewMode: action.groups.size > 0 ? 'selective' : 'all' }
+    case 'TOGGLE_GROUP': {
+      const newSet = new Set(state.selectedGroups)
+      if (newSet.has(action.group)) newSet.delete(action.group)
+      else newSet.add(action.group)
+      return { ...state, selectedGroups: newSet, clusterViewMode: newSet.size > 0 ? 'selective' : 'all' }
+    }
+    case 'RESET_GROUPS':
+      return { ...state, selectedGroups: new Set(), clusterViewMode: 'all' }
+    case 'SET_SEARCH_QUERY':
+      return { ...state, searchQuery: action.query }
+    case 'SEARCH_START':
+      return { ...state, isSearching: true, searchResult: null, highlightedNiche: null }
+    case 'SEARCH_SUCCESS':
+      return { ...state, searchResult: action.result }
+    case 'SEARCH_END':
+      return { ...state, isSearching: false }
+    case 'SET_HIGHLIGHTED_NICHE':
+      return { ...state, highlightedNiche: action.niche }
+    case 'SET_AUTO_POPUP':
+      return { ...state, autoOpenPopupFor: action.plotId }
+    case 'REQUEST_POPUP_CLOSE':
+      // Increment token to tell popups to close themselves
+      return { ...state, pendingPopupClose: true, forceClosePopupsToken: state.forceClosePopupsToken + 1 }
+    case 'POPUP_CLOSE_CONFIRMED':
+      return { ...state, pendingPopupClose: false }
+    case 'RESET_VIEW':
+      return {
+        ...state,
+        selectedGroups: new Set(),
+        clusterViewMode: 'all',
+        searchQuery: '',
+        searchResult: null,
+        highlightedNiche: null,
+        autoOpenPopupFor: null,
+      }
+    default:
+      return state
+  }
+}
+
+export const MapStateContext = createContext<MapState | null>(null)
+export const MapDispatchContext = createContext<React.Dispatch<MapAction> | null>(null)
+
+// Backwards compatible combined context (will be deprecated): retains original shape where feasible
+export const LocateContext = createContext<any>(null)
+
+// Selector hook to minimize re-renders
+export function useMapState<T>(selector: (s: MapState) => T): T {
+  const state = useContext(MapStateContext)
+  if (!state) throw new Error('useMapState must be used within MapPage provider')
+  return selector(state)
+}
+
+export function useMapDispatch() {
+  const dispatch = useContext(MapDispatchContext)
+  if (!dispatch) throw new Error('useMapDispatch must be used within MapPage provider')
+  return dispatch
+}
 
 export default function MapPage() {
   const { isLoading, data: plotsData } = usePlots()
@@ -122,25 +233,12 @@ export default function MapPage() {
     offRouteThreshold: 25,
   })
 
-  const [isNavigationInstructionsOpen, setIsNavigationInstructionsOpen] = useState(false)
-  const [isDirectionLoading, setIsDirectionLoading] = useState(false)
-  const [shouldCenterOnUser, setShouldCenterOnUser] = useState(false)
+  const [state, dispatch] = useReducer(mapReducer, initialMapState)
+  const stateRef = useRef(state)
+  stateRef.current = state
 
-  // 🎯 Cluster control state
-  const [selectedGroups, setSelectedGroups] = useState<Set<string>>(new Set())
-  const [clusterViewMode, setClusterViewMode] = useState<'all' | 'selective'>('all')
-
-  // 🔍 Search state
-  const [searchQuery, setSearchQuery] = useState<string>('')
-  const [searchResult, setSearchResult] = useState<LotSearchResult | null>(null)
-  const [isSearching, setIsSearching] = useState(false)
-  const [highlightedNiche, setHighlightedNiche] = useState<string | null>(null)
-
-  // 🎯 Auto popup state
-  const [autoOpenPopupFor, setAutoOpenPopupFor] = useState<string | null>(null)
-
-  // 🚀 Route completion state - track when popup should be closed after route loading
-  const [pendingPopupClose, setPendingPopupClose] = useState(false)
+  // 🛠️ Backward-compat bridge (TEMP): map former individual state variables to reducer state fields.
+  // FIXME: Remove once all references are updated.
 
   const bounds: [[number, number], [number, number]] = [
     [10.247883800064669, 123.79691285546676],
@@ -163,49 +261,39 @@ export default function MapPage() {
   }, [stopTracking])
 
   useEffect(() => {
-    if (shouldCenterOnUser && currentLocation) {
-      const timeoutId = setTimeout(() => setShouldCenterOnUser(false), 1000)
+    if (state.shouldCenterOnUser && currentLocation) {
+      const timeoutId = setTimeout(() => dispatch({ type: 'REQUEST_LOCATE' }), 1000) // reuse action to toggle flag
       return () => clearTimeout(timeoutId)
     }
-  }, [shouldCenterOnUser, currentLocation])
+  }, [state.shouldCenterOnUser, currentLocation])
 
   // 🚀 Effect to detect when route is fully loaded and flyTo animation is complete
   useEffect(() => {
-    if (route && routeCoordinates.length > 0 && isDirectionLoading) {
+    if (route && routeCoordinates.length > 0 && state.isDirectionLoading) {
       // Route is loaded, start flyTo animation and wait for it to complete
       const timeoutId = setTimeout(() => {
-        setIsDirectionLoading(false) // Mark direction loading as complete
-
-        // If there's a pending popup close, execute it now
-        if (pendingPopupClose) {
-          try {
-            const popups = document.querySelectorAll('.leaflet-popup')
-            popups.forEach((p) => p.parentElement?.removeChild(p))
-          } catch {
-            // ignore DOM errors
-          }
-          setPendingPopupClose(false)
+        dispatch({ type: 'SET_DIRECTION_LOADING', value: false })
+        if (stateRef.current.pendingPopupClose) {
+          dispatch({ type: 'POPUP_CLOSE_CONFIRMED' })
         }
       }, 1500) // Wait for flyTo animation to complete (~1.5s)
 
       return () => clearTimeout(timeoutId)
     }
-  }, [route, routeCoordinates, isDirectionLoading, pendingPopupClose])
+  }, [route, routeCoordinates, state.isDirectionLoading])
 
   // 🔄 Reset route completion state when route is cleared
   useEffect(() => {
     if (!route || routeCoordinates.length === 0) {
-      setPendingPopupClose(false)
+      if (state.pendingPopupClose) dispatch({ type: 'POPUP_CLOSE_CONFIRMED' })
     }
-  }, [route, routeCoordinates])
+  }, [route, routeCoordinates, state.pendingPopupClose])
 
   // Memoize callback functions to prevent them from being recreated on every render.
   const requestLocate = useCallback(async () => {
     // Start tracking if not already active
-    if (!isTracking) {
-      startTracking()
-    }
-    setShouldCenterOnUser(false)
+    if (!isTracking) startTracking()
+    // center will be handled inline; reset flag if needed
 
     // Try to obtain a fresh location if we don't have one yet
     let loc = currentLocation
@@ -227,8 +315,8 @@ export default function MapPage() {
 
   const clearRoute = useCallback(() => {
     stopNavigation()
-    setIsNavigationInstructionsOpen(false)
-    setIsDirectionLoading(false)
+    dispatch({ type: 'SET_NAV_OPEN', value: false })
+    dispatch({ type: 'SET_DIRECTION_LOADING', value: false })
   }, [stopNavigation])
 
   const handleDirectionClick = useCallback(
@@ -236,11 +324,11 @@ export default function MapPage() {
       const [toLatitude, toLongitude] = to
       if (!toLatitude || !toLongitude) {
         console.warn('⚠️ Invalid destination coordinates:', to)
-        setIsDirectionLoading(false)
+        dispatch({ type: 'SET_DIRECTION_LOADING', value: false })
         return
       }
-      setIsDirectionLoading(true)
-      setIsNavigationInstructionsOpen(false)
+      dispatch({ type: 'SET_DIRECTION_LOADING', value: true })
+      dispatch({ type: 'SET_NAV_OPEN', value: false })
 
       try {
         // Get user location: use current if available, otherwise fetch
@@ -266,7 +354,7 @@ export default function MapPage() {
         requestLocate()
 
         // Open navigation instructions UI
-        setIsNavigationInstructionsOpen(true)
+        dispatch({ type: 'SET_NAV_OPEN', value: true })
       } catch (error) {
         console.error('🚫 Failed to start navigation:', error)
         // Fallback: resume tracking if not already doing so
@@ -275,36 +363,19 @@ export default function MapPage() {
         }
         toast.error('Failed to start navigation. Using fallback tracking.')
       } finally {
-        setIsDirectionLoading(false)
+        dispatch({ type: 'SET_DIRECTION_LOADING', value: false })
       }
     },
     [currentLocation, getCurrentLocation, isTracking, startNavigation, startTracking, requestLocate],
   )
 
   // 🎯 Cluster control functions
-  const toggleGroupSelection = useCallback((groupKey: string) => {
-    setSelectedGroups((prev) => {
-      const newSet = new Set(prev)
-      if (newSet.has(groupKey)) {
-        newSet.delete(groupKey)
-      } else {
-        newSet.add(groupKey)
-      }
-      setClusterViewMode(newSet.size > 0 ? 'selective' : 'all')
-      return newSet
-    })
-  }, [])
+  const toggleGroupSelection = useCallback((groupKey: string) => dispatch({ type: 'TOGGLE_GROUP', group: groupKey }), [])
 
-  const resetGroupSelection = useCallback(() => {
-    setSelectedGroups(new Set())
-    setClusterViewMode('all')
-  }, [])
+  const resetGroupSelection = useCallback(() => dispatch({ type: 'RESET_GROUPS' }), [])
 
   // 🎯 Handle cluster click - select single group
-  const handleClusterClick = useCallback((groupKey: string) => {
-    setSelectedGroups(new Set([groupKey]))
-    setClusterViewMode('selective')
-  }, [])
+  const handleClusterClick = useCallback((groupKey: string) => dispatch({ type: 'SELECT_GROUPS', groups: new Set([groupKey]) }), [])
 
   // 🔍 Search functions
   const searchLot = useCallback(
@@ -313,14 +384,11 @@ export default function MapPage() {
         toast.error('Please enter a lot ID')
         return
       }
-
-      setIsSearching(true)
-      setSearchResult(null)
-      setHighlightedNiche(null)
+      dispatch({ type: 'SEARCH_START' })
 
       try {
         const result = await searchLotById(lotId.trim())
-        setSearchResult(result)
+        dispatch({ type: 'SEARCH_SUCCESS', result })
 
         if (result.success && result.data) {
           const { plot_id, niche_number, coordinates } = result.data
@@ -344,16 +412,13 @@ export default function MapPage() {
             const groupKey = matchedMarker.block ? `block:${matchedMarker.block}` : `category:${matchedMarker.category}`
 
             // Switch to selective mode and select only this plot's group
-            setSelectedGroups(new Set([groupKey]))
-            setClusterViewMode('selective')
+            dispatch({ type: 'SELECT_GROUPS', groups: new Set([groupKey]) })
 
             // If there's a niche number, highlight it
-            if (niche_number) {
-              setHighlightedNiche(niche_number)
-            }
+            if (niche_number) dispatch({ type: 'SET_HIGHLIGHTED_NICHE', niche: niche_number })
 
             // 🎯 Set auto popup for this plot and center map
-            setAutoOpenPopupFor(plot_id)
+            dispatch({ type: 'SET_AUTO_POPUP', plotId: String(plot_id) })
 
             // Use coordinates from search result or fallback to marker position
             const centerCoords = plotCoords || matchedMarker.position
@@ -372,36 +437,25 @@ export default function MapPage() {
         console.error('🔍 Search error:', error)
         toast.error('Failed to search lot. Please try again.')
       } finally {
-        setIsSearching(false)
+        dispatch({ type: 'SEARCH_END' })
       }
     },
     [markers, mapInstance],
   )
 
   const clearSearch = useCallback(() => {
-    setSearchQuery('')
-    setSearchResult(null)
-    setHighlightedNiche(null)
-    setAutoOpenPopupFor(null)
-    setSelectedGroups(new Set())
-    setClusterViewMode('all')
+    dispatch({ type: 'SET_SEARCH_QUERY', query: '' })
+    dispatch({ type: 'SEARCH_SUCCESS', result: null })
+    dispatch({ type: 'SET_HIGHLIGHTED_NICHE', niche: null })
+    dispatch({ type: 'SET_AUTO_POPUP', plotId: null })
+    dispatch({ type: 'RESET_GROUPS' })
   }, [])
 
   // 🚀 Request popup close - either immediately or after route completion
   const requestPopupClose = useCallback(() => {
-    if (isDirectionLoading || (!route && !routeCoordinates.length)) {
-      // If route is being calculated or no route exists, schedule for later
-      setPendingPopupClose(true)
-    } else {
-      // Close immediately if route is already complete
-      try {
-        const popups = document.querySelectorAll('.leaflet-popup')
-        popups.forEach((p) => p.parentElement?.removeChild(p))
-      } catch {
-        // ignore DOM errors
-      }
-    }
-  }, [isDirectionLoading, route, routeCoordinates])
+    // declarative: dispatch token increment
+    dispatch({ type: 'REQUEST_POPUP_CLOSE' })
+  }, [])
 
   // 🎯 Grouped markers (memoized) & available groups for dropdown
   const markersByGroup = useMemo(() => groupMarkersByKey(markers), [markers])
@@ -425,60 +479,34 @@ export default function MapPage() {
       const centerLng = (bounds[0][1] + bounds[1][1]) / 2
       mapInstance.flyTo([centerLat, centerLng], targetZoom, { animate: true })
     }
-    // 🔁 Reset related UI state
-    resetGroupSelection()
-    setSearchQuery('')
-    setSearchResult(null)
-    setHighlightedNiche(null)
-    setAutoOpenPopupFor(null)
-  }, [mapInstance, bounds, resetGroupSelection])
+    dispatch({ type: 'RESET_VIEW' })
+  }, [mapInstance, bounds])
 
   const contextValue = useMemo(
     () => ({
+      // direct state (for backward compat; prefer useMapState selectors moving forward)
+      ...state,
       requestLocate,
       clearRoute,
       resetView,
-      selectedGroups,
+      selectedGroups: state.selectedGroups,
       toggleGroupSelection,
       resetGroupSelection,
-      clusterViewMode,
+      clusterViewMode: state.clusterViewMode,
       availableGroups,
       handleClusterClick,
-      // 🔍 Search properties
-      searchQuery,
-      setSearchQuery,
-      searchResult,
-      isSearching,
+      searchQuery: state.searchQuery,
+      setSearchQuery: (query: string) => dispatch({ type: 'SET_SEARCH_QUERY', query }),
+      searchResult: state.searchResult,
+      isSearching: state.isSearching,
       searchLot,
       clearSearch,
-      highlightedNiche,
-      // 🎯 Auto popup properties
-      autoOpenPopupFor,
-      setAutoOpenPopupFor,
-      // 🚀 Route completion properties
+      highlightedNiche: state.highlightedNiche,
+      autoOpenPopupFor: state.autoOpenPopupFor,
+      setAutoOpenPopupFor: (plotId: string | null) => dispatch({ type: 'SET_AUTO_POPUP', plotId }),
       requestPopupClose,
     }),
-    [
-      requestLocate,
-      clearRoute,
-      resetView,
-      selectedGroups,
-      toggleGroupSelection,
-      resetGroupSelection,
-      clusterViewMode,
-      availableGroups,
-      handleClusterClick,
-      searchQuery,
-      setSearchQuery,
-      searchResult,
-      isSearching,
-      searchLot,
-      clearSearch,
-      highlightedNiche,
-      autoOpenPopupFor,
-      setAutoOpenPopupFor,
-      requestPopupClose,
-    ],
+    [state, requestLocate, clearRoute, resetView, toggleGroupSelection, resetGroupSelection, availableGroups, handleClusterClick, searchLot, clearSearch, requestPopupClose],
   )
 
   if (isLoading) {
@@ -490,73 +518,75 @@ export default function MapPage() {
   }
 
   return (
-    <LocateContext.Provider value={contextValue}>
-      <div className="relative h-screen w-full">
-        <WebMapNavs />
-
-        <NavigationInstructions
-          isOpen={isNavigationInstructionsOpen}
-          onClose={clearRoute}
-          navigationState={navigation}
-          allManeuvers={route?.trip.legs[0]?.maneuvers || []}
-          isNavigating={isNavigating}
-          isRerouting={isRerouting}
-          totalDistance={totalDistance || undefined}
-          totalTime={totalTime || undefined}
-          rerouteCount={rerouteCount}
-        />
-
-        {(locationError || routingError) && (
-          <div className="absolute top-4 right-4 z-[999] max-w-sm">
-            <div className="rounded-md border border-red-200 bg-red-50 p-4">
-              <p className="text-sm text-red-800">{locationError?.message || routingError || 'Unknown error'}</p>
-            </div>
-          </div>
-        )}
-
-        <MapContainer className="h-full w-full" scrollWheelZoom={true} zoomControl={false} bounds={bounds} maxZoom={25} zoom={18}>
-          <MapInstanceBinder onMapReady={setMapInstance} />
-          <TileLayer url="https://services.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}" maxNativeZoom={18} maxZoom={25} />
-
-          <Suspense fallback={null}>
-            {route && routeCoordinates.length > 0 && (
-              <ValhallaRoute
-                key={route.trip.summary.length}
-                route={route}
-                routeCoordinates={routeCoordinates}
-                remainingCoordinates={remainingCoordinates}
-                originalStart={originalStart || undefined}
-                originalEnd={originalEnd || undefined}
-                userLocation={currentLocation}
-                isNavigating={isNavigating}
-                showMarkers={true}
-                fitBounds={!isNavigating}
-              />
+    <MapStateContext.Provider value={state}>
+      <MapDispatchContext.Provider value={dispatch}>
+        <LocateContext.Provider value={contextValue}>
+          <div className="relative h-screen w-full">
+            <WebMapNavs />
+            {(locationError || routingError) && (
+              <div className="absolute top-4 right-4 z-[999] max-w-sm">
+                <div className="rounded-md border border-red-200 bg-red-50 p-4">
+                  <p className="text-sm text-red-800">{locationError?.message || routingError || 'Unknown error'}</p>
+                </div>
+              </div>
             )}
 
-            <MemoizedComfortRoomMarker onDirectionClick={handleDirectionClick} isDirectionLoading={isDirectionLoading} />
-            <MemoizedParkingMarkers onDirectionClick={handleDirectionClick} isDirectionLoading={isDirectionLoading} />
-            <MemoizedPlaygroundMarkers onDirectionClick={handleDirectionClick} isDirectionLoading={isDirectionLoading} />
-            <MemoizedCenterSerenityMarkers onDirectionClick={handleDirectionClick} isDirectionLoading={isDirectionLoading} />
-            <MemoizedMainEntranceMarkers onDirectionClick={handleDirectionClick} isDirectionLoading={isDirectionLoading} />
-            <MemoizedChapelMarkers onDirectionClick={handleDirectionClick} isDirectionLoading={isDirectionLoading} />
-            <CustomClusterManager
-              markersByGroup={markersByGroup}
-              onDirectionClick={handleDirectionClick}
-              isDirectionLoading={isDirectionLoading}
-              selectedGroups={selectedGroups}
-              clusterViewMode={clusterViewMode}
-              onClusterClick={handleClusterClick}
-              PlotMarkersComponent={MemoizedPlotMarkers}
-              searchResult={searchResult}
-              highlightedNiche={highlightedNiche}
-            />
-          </Suspense>
-          {!(route && routeCoordinates.length > 0) && (
-            <UserLocationMarker userLocation={currentLocation} centerOnFirst={shouldCenterOnUser} enableAnimation={true} showAccuracyCircle={true} />
-          )}
-        </MapContainer>
-      </div>
-    </LocateContext.Provider>
+            <MapContainer className="h-full w-full" scrollWheelZoom={true} zoomControl={false} bounds={bounds} maxZoom={25} zoom={18}>
+              <MapInstanceBinder onMapReady={setMapInstance} />
+              <TileLayer url="https://services.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}" maxNativeZoom={18} maxZoom={25} />
+
+              <MemoizedComfortRoomMarker onDirectionClick={handleDirectionClick} isDirectionLoading={state.isDirectionLoading} />
+              <MemoizedParkingMarkers onDirectionClick={handleDirectionClick} isDirectionLoading={state.isDirectionLoading} />
+              <MemoizedPlaygroundMarkers onDirectionClick={handleDirectionClick} isDirectionLoading={state.isDirectionLoading} />
+              <MemoizedCenterSerenityMarkers onDirectionClick={handleDirectionClick} isDirectionLoading={state.isDirectionLoading} />
+              <MemoizedMainEntranceMarkers onDirectionClick={handleDirectionClick} isDirectionLoading={state.isDirectionLoading} />
+              <MemoizedChapelMarkers onDirectionClick={handleDirectionClick} isDirectionLoading={state.isDirectionLoading} />
+              <CustomClusterManager
+                markersByGroup={markersByGroup}
+                onDirectionClick={handleDirectionClick}
+                isDirectionLoading={state.isDirectionLoading}
+                selectedGroups={state.selectedGroups}
+                clusterViewMode={state.clusterViewMode}
+                onClusterClick={handleClusterClick}
+                PlotMarkersComponent={MemoizedPlotMarkers}
+                searchResult={state.searchResult}
+                highlightedNiche={state.highlightedNiche}
+              />
+
+              <Suspense fallback={null}>
+                {route && routeCoordinates.length > 0 && (
+                  <ValhallaRoute
+                    key={route.trip.summary.length}
+                    route={route}
+                    routeCoordinates={routeCoordinates}
+                    remainingCoordinates={remainingCoordinates}
+                    originalStart={originalStart || undefined}
+                    originalEnd={originalEnd || undefined}
+                    userLocation={currentLocation}
+                    isNavigating={isNavigating}
+                    showMarkers={true}
+                    fitBounds={!isNavigating}
+                  />
+                )}
+                <MemoizedNavigationInstructions
+                  isOpen={state.isNavigationInstructionsOpen}
+                  onClose={clearRoute}
+                  navigationState={navigation}
+                  allManeuvers={route?.trip.legs[0]?.maneuvers || []}
+                  isNavigating={isNavigating}
+                  isRerouting={isRerouting}
+                  totalDistance={totalDistance || undefined}
+                  totalTime={totalTime || undefined}
+                  rerouteCount={rerouteCount}
+                />
+                {!(route && routeCoordinates.length > 0) && (
+                  <UserLocationMarker userLocation={currentLocation} centerOnFirst={state.shouldCenterOnUser} enableAnimation={true} showAccuracyCircle={true} />
+                )}
+              </Suspense>
+            </MapContainer>
+          </div>
+        </LocateContext.Provider>
+      </MapDispatchContext.Provider>
+    </MapStateContext.Provider>
   )
 }

@@ -120,33 +120,61 @@ export default function WebMapNavs() {
 
   return (
     <nav
-      className={cn('absolute top-4 left-4 z-[990] flex flex-col gap-2', {
-        'sm:top-6 sm:left-4 sm:flex-col sm:gap-3': true,
-        'md:top-8 md:left-4 md:flex-col md:gap-4': true,
-        'lg:left-1/2 lg:-translate-x-1/2 lg:flex-row lg:items-center lg:justify-center': true,
-      })}
-      aria-label="Map Navigation Buttons"
+      className={cn(
+        // Positioning: full width at top similar to mobile map apps
+        'absolute top-2 right-0 left-0 z-[990] mx-auto flex w-full max-w-full flex-col gap-2 px-3 sm:top-3 sm:px-4 md:top-4 md:px-2 lg:max-w-2xl',
+      )}
+      aria-label="Map navigation"
     >
-      {/* 🏠 Home Button */}
-      {location.pathname === '/map' ? (
-        <Link to="/">
-          <Button variant={'secondary'} className="bg-background shrink-0 rounded-full text-xs sm:text-sm" size="sm">
-            <Home className="text-accent-foreground h-3 w-3 sm:h-4 sm:w-4" />
-            <span className="ml-1 hidden lg:inline">Home</span>
-          </Button>
-        </Link>
-      ) : null}
+      {/* 🔍 Full-width search bar (only on /map) */}
+      {location.pathname === '/map' && isWebMapContext(locateCtx) && (
+        <div className="flex w-full items-center gap-2">
+          <div className="flex-1">
+            {/* Limit max width on large screens while staying fluid */}
+            <div className="mx-auto w-full max-w-3xl xl:max-w-4xl">
+              <SearchToggle context={locateCtx} className="w-full" />
+            </div>
+          </div>
+          {/* 👤 Auth controls aligned right of search with matched height */}
+          {!isAuthenticated() ? (
+            <Link to="/login" className="shrink-0">
+              <Button variant="secondary" size="sm" className="bg-background h-9 rounded-full text-xs sm:text-sm md:h-10">
+                <RiLoginBoxLine className="h-4 w-4" />
+                <span>Login</span>
+              </Button>
+            </Link>
+          ) : meUser && !isUserLoading ? (
+            <div className="shrink-0">
+              {/* Force trigger to match search bar height via descendant selector override if needed */}
+              <ProfileMenu user={meUser} />
+            </div>
+          ) : null}
+        </div>
+      )}
 
-      {/* 🔍 Search functionality - only on map page */}
-      {location.pathname === '/map' && isWebMapContext(locateCtx) && <SearchToggle context={locateCtx} />}
-      <div className="bg-background flex shrink-0 flex-col gap-1 rounded-full sm:flex-col sm:gap-2 lg:flex-row">
+      {/* 🎛️ Controls row: horizontally scrollable on small screens, center on large */}
+      <div
+        className={cn('no-scrollbar flex w-full flex-nowrap items-center gap-2 overflow-x-auto pt-0 pb-1 md:mx-auto', 'lg:justify-center')}
+        role="group"
+        aria-label="Map controls"
+      >
+        {/* 🏠 Home Button */}
+        {location.pathname === '/map' && (
+          <Link to="/" className="shrink-0">
+            <Button variant="secondary" size="sm" className="bg-background rounded-full text-xs sm:text-sm">
+              <Home className="text-accent-foreground h-3 w-3 sm:h-4 sm:w-4" />
+              <span>Home</span>
+            </Button>
+          </Link>
+        )}
+
         {/* 🎯 Cluster Control Dropdown */}
         {location.pathname === '/map' && isWebMapContext(locateCtx) && (
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant={'secondary'} className="bg-background shrink-0 rounded-full text-xs sm:text-sm" size="sm">
+              <Button variant="secondary" size="sm" className="bg-background shrink-0 rounded-full text-xs sm:text-sm">
                 <Filter className="text-accent-foreground h-3 w-3 sm:h-4 sm:w-4" />
-                <span className="hidden lg:inline">Filter</span>
+                <span>Filter</span>
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="center" className="w-56">
@@ -196,9 +224,9 @@ export default function WebMapNavs() {
         {/* 🔙 Back to Clusters Button */}
         {location.pathname === '/map' && isWebMapContext(locateCtx) && locateCtx.clusterViewMode === 'selective' && (
           <Button
-            variant={'secondary'}
-            className="bg-background shrink-0 rounded-full"
+            variant="secondary"
             size="sm"
+            className="bg-background shrink-0 rounded-full"
             onClick={() => {
               if (isWebMapContext(locateCtx)) {
                 locateCtx.clearSearch()
@@ -210,33 +238,36 @@ export default function WebMapNavs() {
             <ArrowLeft className="text-accent-foreground h-3 w-3 sm:h-4 sm:w-4" />
           </Button>
         )}
-      </div>
-      {/* Locate user Button */}
-      {location.pathname === '/map' && (
-        <Button
-          variant={'secondary'}
-          className="bg-background shrink-0 rounded-full text-xs sm:text-sm"
-          onClick={() => locateCtx?.requestLocate()}
-          aria-label="Locate me"
-          size="sm"
-        >
-          <Locate className="text-accent-foreground h-3 w-3 sm:h-4 sm:w-4" />
-          <span className="hidden lg:inline">Where am I?</span>
-        </Button>
-      )}
 
-      {/* 🔄 Reset Map View Button (reusable) */}
-      <ResetMapViewButton context={locateCtx as AdminContext | WebMapContext | null | undefined} />
+        {/* 📍 Locate user */}
+        {location.pathname === '/map' && (
+          <Button
+            variant="secondary"
+            size="sm"
+            className="bg-background shrink-0 rounded-full text-xs sm:text-sm"
+            onClick={() => locateCtx?.requestLocate()}
+            aria-label="Locate me"
+          >
+            <Locate className="text-accent-foreground h-3 w-3 sm:h-4 sm:w-4" />
+            <span>Where am I?</span>
+          </Button>
+        )}
 
-      {/* ➕ Add Marker Button for Admin */}
-      {isAdmin() && location.pathname === '/admin/map' && (
-        <>
-          {/* Dropdown for Add Marker Options */}
+        {/* 🔄 Reset Map View */}
+        <div className="shrink-0">
+          <ResetMapViewButton context={locateCtx as AdminContext | WebMapContext | null | undefined} />
+        </div>
+
+        {/* ➕ Admin marker controls */}
+        {isAdmin() && location.pathname === '/admin/map' && (
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="secondary" className="bg-background shrink-0 rounded-full" size="sm">
+              <Button variant="secondary" size="sm" className="bg-background shrink-0 rounded-full">
                 <RiMapPinAddLine
-                  className={`h-3 w-3 sm:h-4 sm:w-4 ${isAdminContext(locateCtx) && locateCtx.isAddingMarker ? 'text-primary-foreground' : 'text-accent-foreground'}`}
+                  className={cn('h-3 w-3 sm:h-4 sm:w-4', {
+                    'text-primary-foreground': isAdminContext(locateCtx) && locateCtx.isAddingMarker,
+                    'text-accent-foreground': !(isAdminContext(locateCtx) && locateCtx.isAddingMarker),
+                  })}
                 />
               </Button>
             </DropdownMenuTrigger>
@@ -245,18 +276,10 @@ export default function WebMapNavs() {
               <DropdownMenuItem onClick={onEditMarkerClick}>{isAdminContext(locateCtx) && locateCtx.isEditingMarker ? 'Cancel Edit' : 'Edit Marker'}</DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
-        </>
-      )}
-      {!isAuthenticated() ? (
-        <Link to="/login">
-          <Button variant="secondary" size="sm" className="bg-background z-0 shrink-0 rounded-full text-xs transition-all duration-200 sm:text-sm">
-            <RiLoginBoxLine className="h-3 w-3 sm:h-4 sm:w-4" />
-            <span className="ml-1 hidden lg:inline">Login</span>
-          </Button>
-        </Link>
-      ) : meUser && !isUserLoading && location.pathname === '/map' ? (
-        <ProfileMenu user={meUser} />
-      ) : null}
+        )}
+
+        {/* Auth controls moved to search bar row */}
+      </div>
     </nav>
   )
 }

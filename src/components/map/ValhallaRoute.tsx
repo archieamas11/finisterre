@@ -1,6 +1,6 @@
 import L from 'leaflet'
 import React from 'react'
-import { Polyline, Marker, useMap, Pane } from 'react-leaflet'
+import { Polyline, Marker, useMap } from 'react-leaflet'
 
 import { type ValhallaRouteResponse } from '@/api/valhalla.api'
 import { UserLocationMarker } from '@/components/map/UserLocationMarker'
@@ -42,6 +42,23 @@ export function ValhallaRoute({
   if (!route || routeCoordinates.length === 0) {
     return null
   }
+
+  // 🛡️ Defensive: ensure custom panes exist (should be pre-created in MapInstanceBinder)
+  // If not present (unlikely), create them silently to avoid appendChild errors.
+  React.useEffect(() => {
+    const ensurePane = (name: string, z: number) => {
+      if (!map.getPane(name)) {
+        try {
+          const pane = map.createPane(name)
+          pane.style.zIndex = String(z)
+        } catch {
+          // ignore
+        }
+      }
+    }
+    ensurePane('route-pane', 600)
+    ensurePane('end-icon', 1000)
+  }, [map])
 
   // 🎯 Use original coordinates for markers if provided, otherwise fallback to route coordinates
   // Start point is represented by the UserLocationMarker when provided
@@ -115,25 +132,21 @@ export function ValhallaRoute({
 
   return (
     <>
-      <Pane name="route-pane" style={{ zIndex: 600 }}>
-        {isNavigating && (
-          <Polyline
-            positions={completePolylineCoordinates}
-            pathOptions={{
-              color: '#3b82f6',
-              opacity: 1,
-              weight: 6,
-              lineCap: 'round',
-              lineJoin: 'round',
-            }}
-          />
-        )}
-      </Pane>
-      {/* 🎯 Start (user location) and end markers */}
+      {isNavigating && (
+        <Polyline
+          pane="route-pane"
+          positions={completePolylineCoordinates}
+          pathOptions={{
+            color: '#3b82f6',
+            opacity: 1,
+            weight: 6,
+            lineCap: 'round',
+            lineJoin: 'round',
+          }}
+        />
+      )}
       {showMarkers && userLocation && <UserLocationMarker userLocation={userLocation} centerOnFirst={false} showAccuracyCircle={isNavigating} enableAnimation />}
-      <Pane name="end-icon" style={{ zIndex: 1000 }}>
-        {showMarkers && endPoint && <Marker position={endPoint} icon={endIcon} zIndexOffset={1000} interactive={false}></Marker>}
-      </Pane>
+      {showMarkers && endPoint && <Marker pane="end-icon" position={endPoint} icon={endIcon} zIndexOffset={1000} interactive={false} />}
     </>
   )
 }

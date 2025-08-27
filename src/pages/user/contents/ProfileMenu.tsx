@@ -1,4 +1,4 @@
-import { BoltIcon, BookOpenIcon, ChevronDownIcon, Layers2Icon, LogOutIcon, PinIcon, MoonIcon, SunIcon, LayoutDashboard } from 'lucide-react'
+import { LogOutIcon, MoonIcon, SunIcon, LayoutDashboard } from 'lucide-react'
 import { useTheme } from 'next-themes'
 import { useEffect, useState, useMemo } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
@@ -49,12 +49,11 @@ export default function ProfileMenu({ user }: { user: ProfileUser }) {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="ghost" className="h-auto p-0 outline-0 hover:bg-transparent dark:hover:bg-transparent" aria-label="User menu">
-          <Avatar>
-            <AvatarImage src={user.avatar} alt={user.name} className="bg-background rounded-full p-0" />
+        <Button variant="ghost" size={'icon'} className="flex rounded-full p-0 ring-0 outline-none focus:ring-0 focus:outline-none focus-visible:ring-0 focus-visible:outline-none">
+          <Avatar className="h-9 w-9">
+            <AvatarImage src={user.avatar} alt={user.name} className="bg-background rounded-full" />
             <AvatarFallback className="bg-background">{getInitials(user.name)}</AvatarFallback>
           </Avatar>
-          <ChevronDownIcon size={16} className="opacity-60" aria-hidden="true" />
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="max-w-64">
@@ -70,33 +69,15 @@ export default function ProfileMenu({ user }: { user: ProfileUser }) {
               <span>Dashboard</span>
             </DropdownMenuItem>
           )}
-          <DropdownMenuItem>
-            <BoltIcon size={16} className="opacity-60" aria-hidden="true" />
-            <span>Option 1</span>
-          </DropdownMenuItem>
-          <DropdownMenuItem>
-            <Layers2Icon size={16} className="opacity-60" aria-hidden="true" />
-            <span>Option 2</span>
-          </DropdownMenuItem>
-          <DropdownMenuItem>
-            <BookOpenIcon size={16} className="opacity-60" aria-hidden="true" />
-            <span>Option 3</span>
-          </DropdownMenuItem>
-        </DropdownMenuGroup>
-        <DropdownMenuSeparator />
-        <DropdownMenuGroup>
-          <DropdownMenuItem>
-            <PinIcon size={16} className="opacity-60" aria-hidden="true" />
-            <span>Option 4</span>
-          </DropdownMenuItem>
+
           <DropdownMenuItem onClick={onToggleTheme} disabled={!isMounted} aria-label="Toggle theme">
             {isMounted && isDark ? <SunIcon size={16} className="opacity-60" aria-hidden="true" /> : <MoonIcon size={16} className="opacity-60" aria-hidden="true" />}
             <span>{isMounted ? (isDark ? 'Light Mode' : 'Dark Mode') : 'Change Theme'}</span>
           </DropdownMenuItem>
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
-        <DropdownMenuItem onClick={() => performLogout()} disabled={isPending} aria-label="Logout">
-          <LogOutIcon />
+        <DropdownMenuItem className="text-destructive" onClick={() => performLogout()} disabled={isPending} aria-label="Logout">
+          <LogOutIcon className="text-destructive" />
           <span>Logout</span>
         </DropdownMenuItem>
       </DropdownMenuContent>

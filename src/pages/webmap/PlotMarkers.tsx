@@ -7,6 +7,7 @@ import type { ConvertedMarker } from '@/types/map.types'
 import { LocateContext } from '@/components/layout/WebMapLayout'
 import { Drawer, DrawerContent, DrawerDescription, DrawerTitle } from '@/components/ui/drawer'
 import { useIsMobile } from '@/hooks/use-mobile'
+// import { usePopupState } from '@/hooks/useMapContext'
 import ColumbariumPopup from '@/pages/admin/map4admin/ColumbariumPopup'
 import PlotLocations from '@/pages/webmap/WebMapPopup'
 import { getCategoryBackgroundColor, getStatusColor } from '@/types/map.types'
@@ -32,45 +33,69 @@ interface PlotMarkersProps {
 }
 
 const PlotMarkers: React.FC<PlotMarkersProps> = memo(({ markers, isDirectionLoading, onDirectionClick }) => {
-  const [openDrawerPlotId, setOpenDrawerPlotId] = useState<string | number | null>(null)
+  const [openDrawerPlotId, setOpenDrawerPlotId] = useState<string | null>(null)
   const isSmallScreen = useIsMobile()
 
   // 🎯 Get search context for auto popup functionality
   const locateContext = useContext(LocateContext)
+  // const { autoOpenPopupFor, forceClosePopupsToken } = usePopupState()
+  const autoOpenPopupFor = locateContext?.autoOpenPopupFor
+  const forceClosePopupsToken = locateContext?.forceClosePopupsToken
   const markerRefs = useRef<{ [key: string]: L.Marker | null }>({})
+
+  const idToKey = useCallback((id: string | number) => String(id), [])
 
   const handleMarkerClick = useCallback(
     (plotId: string | number) => {
       if (!isSmallScreen) return
       requestAnimationFrame(() => {
-        setOpenDrawerPlotId(plotId)
+        setOpenDrawerPlotId(idToKey(plotId))
       })
     },
-    [isSmallScreen],
+    [isSmallScreen, idToKey],
   )
 
-  const handleDrawerOpenChange = useCallback((open: boolean, plotId: string | number) => {
-    requestAnimationFrame(() => {
-      setOpenDrawerPlotId(open ? plotId : null)
-    })
-  }, [])
+  const handleDrawerOpenChange = useCallback(
+    (open: boolean, plotId: string | number) => {
+      requestAnimationFrame(() => {
+        setOpenDrawerPlotId(open ? idToKey(plotId) : null)
+      })
+    },
+    [idToKey],
+  )
 
-  // 🎯 Auto-open popup when search result is found
+  // 🎯 Auto-open popup OR drawer when search result is found
   useEffect(() => {
-    if (locateContext?.autoOpenPopupFor) {
-      const plotId = locateContext.autoOpenPopupFor
-      const marker = markerRefs.current[plotId]
+    if (!autoOpenPopupFor) return
 
-      if (marker) {
-        // Open the popup programmatically
-        setTimeout(() => {
-          marker.openPopup()
-          // Clear the auto open flag after opening
-          locateContext.setAutoOpenPopupFor(null)
-        }, 200) // Small delay to ensure marker is fully rendered
-      }
+    const targetIdKey = idToKey(autoOpenPopupFor)
+    const targetMarker = markers.find((m) => idToKey(m.plot_id) === targetIdKey)
+    if (!targetMarker) return
+
+    // Mobile + columbarium (rows/columns) => open drawer instead of (hidden) popup
+    if (isSmallScreen && targetMarker.rows && targetMarker.columns) {
+      // Open drawer immediately (frame deferred for safety)
+      requestAnimationFrame(() => {
+        setOpenDrawerPlotId(targetIdKey)
+        locateContext?.setAutoOpenPopupFor?.(null)
+      })
+      return
     }
-  }, [locateContext?.autoOpenPopupFor, locateContext])
+
+    // Otherwise open the Leaflet popup (desktop or non-columbarium plots)
+    const leafletMarker = markerRefs.current[targetIdKey]
+    if (leafletMarker) {
+      setTimeout(() => {
+        leafletMarker.openPopup()
+        locateContext?.setAutoOpenPopupFor?.(null)
+      }, 200) // Allow render/layout settle before opening popup
+    }
+  }, [autoOpenPopupFor, isSmallScreen, markers, locateContext, idToKey])
+
+  // Declarative close: when forceClosePopupsToken changes, close any open drawer
+  useEffect(() => {
+    setOpenDrawerPlotId(null)
+  }, [forceClosePopupsToken])
 
   return (
     <>
@@ -99,7 +124,7 @@ const PlotMarkers: React.FC<PlotMarkersProps> = memo(({ markers, isDirectionLoad
             icon={circleIcon}
             ref={(ref) => {
               if (ref) {
-                markerRefs.current[marker.plot_id] = ref
+                markerRefs.current[idToKey(marker.plot_id)] = ref
               }
             }}
             eventHandlers={{
@@ -123,7 +148,7 @@ const PlotMarkers: React.FC<PlotMarkersProps> = memo(({ markers, isDirectionLoad
             )}
 
             {marker.rows && marker.columns && isSmallScreen ? (
-              <Drawer open={openDrawerPlotId === marker.plot_id} onOpenChange={(open) => handleDrawerOpenChange(open, marker.plot_id)}>
+              <Drawer open={openDrawerPlotId === idToKey(marker.plot_id)} onOpenChange={(open) => handleDrawerOpenChange(open, marker.plot_id)}>
                 <DrawerContent className="z-9999 max-h-[85vh] overflow-hidden rounded-t-xl md:hidden">
                   <DrawerTitle>
                     <span className="sr-only">Columbarium plot details</span>

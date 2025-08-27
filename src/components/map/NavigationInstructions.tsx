@@ -89,7 +89,7 @@ function formatDistance(kilometers: number): string {
   return `${km < 10 ? km.toFixed(1) : Math.round(km)}km`
 }
 
-export function NavigationInstructions({
+export default function NavigationInstructions({
   isOpen,
   onClose,
   navigationState,

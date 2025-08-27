@@ -208,7 +208,6 @@ function FinisterreMarkers({ items, onDirectionClick, isDirectionLoading = false
                 e.stopPropagation()
                 // Start the navigation process
                 onDirectionClick?.([itemData.lat, itemData.lng])
-
                 // Use the new context method to request popup close
                 // This will close the popup only after route is loaded and flyTo animation completes
                 if (locateContext?.requestPopupClose) {
