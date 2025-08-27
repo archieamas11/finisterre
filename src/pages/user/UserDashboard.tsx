@@ -12,7 +12,6 @@ export default function UserDashboard() {
         <div className="absolute inset-0 bg-gradient-to-r from-blue-600/20 to-purple-600/20"></div>
         <div className="relative z-10">
           <h1 className="text-3xl font-bold tracking-tight sm:text-4xl lg:text-5xl">Welcome to Finisterre Memorial Park</h1>
-          <p className="mt-4 text-lg text-slate-300 sm:text-xl">A modern dashboard to manage memorial services and stay connected with your loved ones</p>
           <div className="mt-6 flex justify-center">
             <div className="flex items-center space-x-2 rounded-full bg-white/10 px-4 py-2 backdrop-blur-sm">
               <div className="h-2 w-2 rounded-full bg-green-400"></div>
