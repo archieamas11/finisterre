@@ -17,7 +17,7 @@ import DeceasedSelectAllCheckbox from '@/pages/admin/interment/columns/DeceasedS
 export const deceasedRecordsColumns: ColumnDef<DeceasedRecords>[] = [
   {
     id: 'select',
-    size: 40,
+    size: 10,
     enableHiding: false,
     enableSorting: false,
     header: ({ table }) => <DeceasedSelectAllCheckbox table={table} />,
@@ -37,7 +37,7 @@ export const deceasedRecordsColumns: ColumnDef<DeceasedRecords>[] = [
   },
   {
     header: 'ID',
-    size: 40,
+    size: 10,
     accessorKey: 'deceased_id',
   },
   {
@@ -102,6 +102,7 @@ export const deceasedRecordsColumns: ColumnDef<DeceasedRecords>[] = [
   },
   {
     header: 'Status',
+    size: 10,
     id: 'years_buried',
     cell: ({ row }) => {
       const buriedDateStr = row.original.dead_interment
@@ -122,7 +123,7 @@ export const deceasedRecordsColumns: ColumnDef<DeceasedRecords>[] = [
   },
   {
     id: 'actions',
-    size: 40,
+    size: 10,
     enableHiding: false,
     cell: ({ row }) => {
       if (!row?.original) return null

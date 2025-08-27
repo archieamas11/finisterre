@@ -39,10 +39,10 @@ export const lotOwnerColumns: ColumnDef<LotOwners>[] = [
     cell: ({ row }) => (
       <IndeterminateCheckbox aria-label={`Select row ${row.index + 1}`} checked={row.getIsSelected()} disabled={!row.getCanSelect?.()} onChange={row.getToggleSelectedHandler()} />
     ),
-    size: 40,
+    size: 10,
   },
   {
-    size: 40,
+    size: 10,
     accessorKey: 'lot_id',
     header: ({ column }) => <DataTableColumnHeader column={column} title="ID" />,
     meta: { label: 'ID' },
@@ -141,7 +141,7 @@ export const lotOwnerColumns: ColumnDef<LotOwners>[] = [
   },
   {
     id: 'actions',
-    size: 40,
+    size: 10,
     enableHiding: false,
     cell: ({ row }) => {
       if (!row?.original) return null

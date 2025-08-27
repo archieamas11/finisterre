@@ -37,10 +37,10 @@ export const customerColumns: ColumnDef<Customer>[] = [
     cell: ({ row }) => (
       <IndeterminateCheckbox aria-label={`Select row ${row.index + 1}`} checked={row.getIsSelected()} disabled={!row.getCanSelect?.()} onChange={row.getToggleSelectedHandler()} />
     ),
-    size: 40,
+    size: 10,
   },
   {
-    size: 40,
+    size: 10,
     accessorKey: 'customer_id',
     header: ({ column }) => <DataTableColumnHeader column={column} title="ID" />,
     meta: { label: 'ID' },
@@ -112,9 +112,10 @@ export const customerColumns: ColumnDef<Customer>[] = [
   },
   {
     id: 'lot_count',
+    size: 10,
     header: ({ column }) => (
       <div className="flex justify-center">
-        <DataTableColumnHeader column={column} title="Lot Owned" />
+        <DataTableColumnHeader column={column} title="Lot" />
       </div>
     ),
     enableSorting: true,
@@ -146,6 +147,7 @@ export const customerColumns: ColumnDef<Customer>[] = [
   },
   {
     id: 'deceased_count',
+    size: 10,
     header: ({ column }) => (
       <div className="flex justify-center">
         <DataTableColumnHeader column={column} title="Deceased" />
@@ -193,7 +195,7 @@ export const customerColumns: ColumnDef<Customer>[] = [
   },
   {
     id: 'actions',
-    size: 40,
+    size: 10,
     enableHiding: false,
     cell: ({ row }) => <CustomerActionsCell row={row} />,
   },
