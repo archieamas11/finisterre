@@ -1,4 +1,5 @@
 import { QueryClientProvider, QueryClient } from '@tanstack/react-query'
+import { Analytics } from '@vercel/analytics/next'
 import { NuqsAdapter } from 'nuqs/adapters/react'
 
 import './index.css'
@@ -24,6 +25,7 @@ createRoot(document.getElementById('root')!).render(
         <NuqsAdapter>
           <App />
           <SpeedInsights />
+          <Analytics />
           <Suspense fallback={null}>
             <LazyReactQueryDevtools initialIsOpen={false} />
           </Suspense>

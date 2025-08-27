@@ -29,9 +29,7 @@ import { BrowserRouter } from 'react-router-dom'
 
 import DashboardLayout from '@/components/layout/DashboardLayout'
 import LandingLayout from '@/components/layout/LandingLayout'
-// const MapPage = React.lazy(() => import("@/components/layout/WebMapLayout"));
 import MapPage from '@/components/layout/WebMapLayout'
-// Type for ErrorFallback props
 interface ErrorFallbackProps {
   error: Error
   resetErrorBoundary: () => void
