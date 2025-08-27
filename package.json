@@ -3,6 +3,12 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
+  "lint-staged": {
+    "*.{js,jsx,ts,tsx,json,css,md}": [
+      "eslint --fix",
+      "prettier --write"
+    ]
+  },
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
@@ -10,7 +16,8 @@
     "preview": "vite preview",
     "write": "prettier . --write",
     "prepare": "husky",
-    "knip": "knip"
+    "knip": "knip",
+    "lint-staged": "lint-staged"
   },
   "dependencies": {
     "@dnd-kit/core": "^6.3.1",
