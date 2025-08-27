@@ -6,6 +6,7 @@ import { RiMapPinAddLine } from 'react-icons/ri'
 import { RiLoginBoxLine } from 'react-icons/ri'
 import { Link, useLocation } from 'react-router-dom'
 
+import ProfileMenu from '@/components/ProfileMenu'
 import { Button } from '@/components/ui/button'
 import {
   DropdownMenu,
@@ -23,7 +24,6 @@ import { LocateContext as WebMapLocateContext } from '@/contexts/MapContext'
 import { useMe } from '@/hooks/useMe'
 import { cn } from '@/lib/utils'
 import { LocateContext } from '@/pages/admin/map4admin/LocateContext'
-import ProfileMenu from '@/pages/user/ProfileMenu'
 import { isAdmin, isAuthenticated } from '@/utils/auth.utils'
 
 export default function WebMapNavs() {

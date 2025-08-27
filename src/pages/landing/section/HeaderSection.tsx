@@ -2,10 +2,10 @@ import { MapPin } from 'lucide-react'
 import { type FC, useEffect, useState } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 
+import ProfileMenu from '@/components/ProfileMenu'
 import { Button } from '@/components/ui/button'
 import { useMe } from '@/hooks/useMe'
 import { cn } from '@/lib/utils'
-import ProfileMenu from '@/pages/user/ProfileMenu'
 
 // Removed isAuthenticated in favor of hook-driven state to avoid stale token based UI desync
 import { NavigationMenuSection } from './NavigationMenu'
