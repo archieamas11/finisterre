@@ -27,8 +27,9 @@ const AdminIntermentLotOwnersPage = React.lazy(() => import('@/pages/admin/inter
 const AdminIntermentCustomerPage = React.lazy(() => import('./pages/admin/interment/customer/CustomersLayout'))
 import { BrowserRouter } from 'react-router-dom'
 
-import DashboardLayout from '@/components/layout/DashboardLayout'
+import AdminLayout from '@/components/layout/AdminLayout'
 import LandingLayout from '@/components/layout/LandingLayout'
+import UserLayout from '@/components/layout/UserLayout'
 import MapPage from '@/components/layout/WebMapLayout'
 interface ErrorFallbackProps {
   error: Error
@@ -71,7 +72,7 @@ export default function App() {
               element={
                 <RequireAuth>
                   <RequireUser>
-                    <DashboardLayout role="user" />
+                    <UserLayout />
                   </RequireUser>
                 </RequireAuth>
               }
@@ -88,7 +89,7 @@ export default function App() {
               element={
                 <RequireAuth>
                   <RequireAdmin>
-                    <DashboardLayout role="admin" />
+                    <AdminLayout />
                   </RequireAdmin>
                 </RequireAuth>
               }

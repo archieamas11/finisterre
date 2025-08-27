@@ -1,23 +1,34 @@
-import { HouseIcon, InboxIcon, MapPin, ZapIcon } from 'lucide-react'
+import { HouseIcon, MapPin, User, Settings } from 'lucide-react'
+import { Link, useLocation } from 'react-router-dom'
 import ProfileMenu from '@/pages/user/contents/ProfileMenu'
 
 import { Button } from '@/components/ui/button'
-import { NavigationMenu, NavigationMenuItem, NavigationMenuLink, NavigationMenuList } from '@/components/ui/navigation-menu'
+import { NavigationMenu, NavigationMenuItem, NavigationMenuList } from '@/components/ui/navigation-menu'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 import { useMe } from '@/hooks/useMe'
+import InfoMenu from '@/components/info-menu'
+import NotificationMenu from '@/components/notification-menu'
 
 // Navigation links array to be used in both desktop and mobile menus
 const navigationLinks = [
-  { href: '#', label: 'Home', icon: HouseIcon, active: true },
-  { href: '#', label: 'Inbox', icon: InboxIcon },
-  { href: '#', label: 'Insights', icon: ZapIcon },
+  { href: '/user', label: 'Home', icon: HouseIcon, active: true },
+  { href: '/user/map', label: 'Map', icon: MapPin },
+  { href: '/user/services', label: 'Services', icon: Settings },
+  { href: '/user/profile', label: 'Profile', icon: User },
 ]
 
-export default function Component() {
+export default function UserDashboardNavbar() {
   const { user: meUser } = useMe()
+  const location = useLocation()
+
+  // Update navigation links to be dynamic based on current location
+  const dynamicNavigationLinks = navigationLinks.map((link) => ({
+    ...link,
+    active: location.pathname === link.href,
+  }))
 
   return (
-    <header className="border-b px-4 md:px-6">
+    <header className="bg-background/95 supports-[backdrop-filter]:bg-background/60 scrollbar-gutter-stable fixed top-0 right-0 left-0 z-50 w-full border-b px-4 backdrop-blur md:px-6">
       <div className="flex h-16 items-center justify-between gap-4">
         {/* Left side */}
         <div className="flex flex-1 items-center gap-2">
@@ -52,14 +63,14 @@ export default function Component() {
             <PopoverContent align="start" className="w-36 p-1 md:hidden">
               <NavigationMenu className="max-w-none *:w-full">
                 <NavigationMenuList className="flex-col items-start gap-0 md:gap-2">
-                  {navigationLinks.map((link, index) => {
+                  {dynamicNavigationLinks.map((link, index) => {
                     const Icon = link.icon
                     return (
                       <NavigationMenuItem key={index} className="w-full">
-                        <NavigationMenuLink href={link.href} className="flex-row items-center gap-2 py-1.5" active={link.active}>
+                        <Link to={link.href} className="flex-row items-center gap-2 py-1.5">
                           <Icon size={16} className="text-muted-foreground/80" aria-hidden="true" />
                           <span>{link.label}</span>
-                        </NavigationMenuLink>
+                        </Link>
                       </NavigationMenuItem>
                     )
                   })}
@@ -69,22 +80,22 @@ export default function Component() {
           </Popover>
           {/* Logo */}
           <div className="flex items-center">
-            <a href="#" className="text-primary hover:text-primary/90">
+            <Link to="/user" className="text-primary hover:text-primary/90">
               <MapPin />
-            </a>
+            </Link>
           </div>
         </div>
         {/* Middle area */}
         <NavigationMenu className="max-md:hidden">
           <NavigationMenuList className="gap-2">
-            {navigationLinks.map((link, index) => {
+            {dynamicNavigationLinks.map((link, index) => {
               const Icon = link.icon
               return (
                 <NavigationMenuItem key={index}>
-                  <NavigationMenuLink active={link.active} href={link.href} className="text-foreground hover:text-primary flex-row items-center gap-2 py-1.5 font-medium">
+                  <Link to={link.href} className="text-foreground hover:text-primary flex-row items-center gap-2 py-1.5 font-medium">
                     <Icon size={16} className="text-muted-foreground/80" aria-hidden="true" />
                     <span>{link.label}</span>
-                  </NavigationMenuLink>
+                  </Link>
                 </NavigationMenuItem>
               )
             })}
@@ -92,8 +103,10 @@ export default function Component() {
         </NavigationMenu>
         {/* Right side */}
         <div className="flex flex-1 items-center justify-end gap-2">
-          <div className="relative">
-            <div>{meUser && <ProfileMenu user={meUser} />}</div>
+          <div className="flex items-center gap-2">
+            <InfoMenu />
+            <NotificationMenu />
+            {meUser && <ProfileMenu user={meUser} />}
           </div>
         </div>
       </div>
