@@ -272,13 +272,28 @@ export default function AdminMapLayout() {
             className="h-full w-full rounded-lg"
             markerZoomAnimation={true}
             scrollWheelZoom={true}
-            fadeAnimation={false}
+            fadeAnimation={true}
             zoomControl={false}
             bounds={bounds}
             maxZoom={25}
             zoom={18}
+            transform3DLimit={0}
+            inertia={true}
+            inertiaDeceleration={3000}
+            inertiaMaxSpeed={1000}
+            easeLinearity={0.25}
+            worldCopyJump={false}
+            maxBoundsViscosity={1.0}
           >
-            <TileLayer url="https://services.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}" maxNativeZoom={18} maxZoom={25} />
+            <TileLayer
+              url="https://services.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"
+              maxNativeZoom={18}
+              maxZoom={25}
+              updateWhenIdle={true}
+              updateWhenZooming={false}
+              keepBuffer={12}
+              detectRetina={false}
+            />
 
             {/* GeoJSON overlay: Guide 4 Block C */}
             {showGuide4 && guide4Data && (

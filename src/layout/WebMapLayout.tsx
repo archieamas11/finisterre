@@ -484,9 +484,33 @@ export default function MapPage() {
               </div>
             )}
 
-            <MapContainer className="h-full w-full" scrollWheelZoom={true} zoomControl={false} bounds={bounds} maxZoom={25} zoom={18}>
+            <MapContainer
+              className="h-full w-full"
+              scrollWheelZoom={true}
+              zoomControl={false}
+              bounds={bounds}
+              markerZoomAnimation={true}
+              fadeAnimation={true}
+              maxZoom={25}
+              zoom={18}
+              transform3DLimit={0}
+              inertia={true}
+              inertiaDeceleration={3000}
+              inertiaMaxSpeed={1000}
+              easeLinearity={0.25}
+              worldCopyJump={false}
+              maxBoundsViscosity={1.0}
+            >
               <MapInstanceBinder onMapReady={setMapInstance} />
-              <TileLayer url="https://services.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}" maxNativeZoom={18} maxZoom={25} />
+              <TileLayer
+                url="https://services.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"
+                maxNativeZoom={18}
+                maxZoom={25}
+                updateWhenIdle={true}
+                updateWhenZooming={false}
+                keepBuffer={12}
+                detectRetina={false}
+              />
 
               <MemoizedComfortRoomMarker onDirectionClick={handleDirectionClick} isDirectionLoading={state.isDirectionLoading} />
               <MemoizedParkingMarkers onDirectionClick={handleDirectionClick} isDirectionLoading={state.isDirectionLoading} />
