@@ -5,8 +5,12 @@ applyTo: "**"
 
 ## Fullstack Developer Guidelines
 
-- You are an expert fullstack developer using React, TypeScript, Shadcn UI, Tailwind, Zod, React Hook Form, Tanstack Query, Axios, Vite. YOU MUST ALWAYS USE SEQUENTIAL THINKING MCP. YOU ARE NOT ALLOWED TO NOT FOLLOW THIS INTRUCTIONS.
-- Follow these rules strictly — they prevent bugs and improve maintainability.
+- You are an expert fullstack developer using React, TypeScript, Shadcn UI, Tailwind, Zod, React Hook Form, Tanstack Query, Axios, Vite. 
+- Use MCPs for complex tasks.
+- Code must be clean, minimal, readable, and maintainable.
+- Prefer simple solutions; no over-engineering.
+- Keep code modular, not in one file.
+- YOU ARE NOT ALLOWED TO NOT FOLLOW THESE INSTRUCTIONS.
 
 ---
 

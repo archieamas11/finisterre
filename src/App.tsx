@@ -1,13 +1,12 @@
 import { Suspense } from 'react'
 import React from 'react'
 import { ErrorBoundary } from 'react-error-boundary'
+import { BrowserRouter } from 'react-router-dom'
 
 import { RequireAdmin, RequireAuth, RequireUser } from '@/authRoutes'
 import Spinner from '@/components/ui/spinner'
 
 import { Button } from './components/ui/button'
-
-// Lazy imports
 const LoginPage = React.lazy(() => import('@/auth/LoginPage'))
 const Logout = React.lazy(() => import('@/auth/Logout'))
 const UserMap = React.lazy(() => import('@/pages/user/Map'))
@@ -25,11 +24,10 @@ const AdminControlPanel = React.lazy(() => import('@/pages/admin/control/AdminCo
 const AdminIntermentDeceasedPage = React.lazy(() => import('@/pages/admin/interment/deceased-records/deceased'))
 const AdminIntermentLotOwnersPage = React.lazy(() => import('@/pages/admin/interment/lot-owners/lot-owners'))
 const AdminIntermentCustomerPage = React.lazy(() => import('./pages/admin/interment/customer/CustomersLayout'))
-import { BrowserRouter } from 'react-router-dom'
 const AdminLayout = React.lazy(() => import('@/layout/AdminLayout'))
 const UserLayout = React.lazy(() => import('@/layout/UserLayout'))
 import LandingLayout from '@/layout/LandingLayout'
-import MapPage from '@/layout/WebMapLayout'
+const MapPage = React.lazy(() => import('@/layout/WebMapLayout'))
 interface ErrorFallbackProps {
   error: Error
   resetErrorBoundary: () => void
