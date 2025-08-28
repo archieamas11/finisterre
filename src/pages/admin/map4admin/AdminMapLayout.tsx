@@ -17,13 +17,13 @@ import EditableMarker from '@/components/map/EditableMarker'
 import EditMarkerInstructions from '@/components/map/EditMarkerInstructions'
 import MapClickHandler from '@/components/map/MapClickHandler'
 import Spinner from '@/components/ui/spinner'
-// 💡 Naming: underlying asset is *block-b*, align variable name for clarity
 import guide4BlockBUrl from '@/data/geojson/guide-4-block-b.geojson?url'
 import { usePlots } from '@/hooks/plots-hooks/plot.hooks'
 import { useAuthQuery } from '@/hooks/useAuthQuery'
 import { groupMarkersByKey, getLabelFromGroupKey, createClusterIconFactory } from '@/lib/clusterUtils'
 import { ucwords } from '@/lib/format'
 import ColumbariumPopup from '@/pages/admin/map4admin/ColumbariumPopup'
+import MapStats from '@/pages/admin/map4admin/MapStats'
 import SinglePlotLocations from '@/pages/admin/map4admin/SinglePlotPopup'
 import CenterSerenityMarkers from '@/pages/webmap/CenterSerenityMarkers'
 import ChapelMarkers from '@/pages/webmap/ChapelMarkers'
@@ -35,7 +35,6 @@ import WebMapNavs from '@/pages/webmap/WebMapNavs'
 import { getCategoryBackgroundColor, convertPlotToMarker, getStatusColor } from '@/types/map.types'
 
 import { LocateContext } from './LocateContext'
-import MapStats from './MapStats'
 
 // 💡 Set a default Leaflet marker icon globally (Leaflet otherwise requires manual asset wiring)
 const DefaultIcon = L.icon({ iconUrl, shadowUrl, iconRetinaUrl })
