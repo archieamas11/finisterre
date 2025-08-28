@@ -1,3 +1,4 @@
+// import { Searchbar } from 'konsta/react'
 import { Filter, Locate, Home, ArrowLeft } from 'lucide-react'
 import { useContext, useCallback, useEffect } from 'react'
 import { BiBorderAll } from 'react-icons/bi'
@@ -25,6 +26,7 @@ import { useMe } from '@/hooks/useMe'
 import { cn } from '@/lib/utils'
 import { LocateContext } from '@/pages/admin/map4admin/LocateContext'
 import { isAdmin, isAuthenticated } from '@/utils/auth.utils'
+// import { isAndroid } from '@/utils/platform.utils'
 
 export default function WebMapNavs() {
   const webMapCtx = useContext(WebMapLocateContext)
@@ -84,6 +86,19 @@ export default function WebMapNavs() {
   const location = useLocation()
 
   const { user: meUser, isLoading: isUserLoading } = useMe()
+
+  // Detect if running on Android
+  // const isAndroidPlatform = isAndroid()
+
+  // const [searchQuery, setSearchQuery] = useState('')
+
+  // const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
+  //   setSearchQuery(e.target.value)
+  // }
+
+  // const handleClear = () => {
+  //   setSearchQuery('')
+  // }
 
   const onAddMarkerClick = () => {
     if (isAdminContext(locateCtx)) {
@@ -177,6 +192,13 @@ export default function WebMapNavs() {
             </Button>
           </Link>
         )}
+
+        {/* 📱 Android-specific search bar */}
+        {/* {!isAndroidPlatform && (
+          <div className="w-full max-w-sm flex-1">
+            <Searchbar onInput={handleSearch} value={searchQuery} onClear={handleClear} className="flex-1" placeholder="Search plots..." />
+          </div>
+        )} */}
 
         {/* 🎯 Cluster Control Dropdown */}
         {location.pathname !== '/admin/map' && isWebMapContext(locateCtx) && (
