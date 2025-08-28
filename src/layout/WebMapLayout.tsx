@@ -485,12 +485,12 @@ export default function MapPage() {
             )}
 
             <MapContainer
-              className="h-full w-full"
+              className="h-full w-full rounded-lg"
+              markerZoomAnimation={true}
               scrollWheelZoom={true}
+              fadeAnimation={true}
               zoomControl={false}
               bounds={bounds}
-              markerZoomAnimation={true}
-              fadeAnimation={true}
               maxZoom={25}
               zoom={18}
               transform3DLimit={0}
@@ -506,10 +506,17 @@ export default function MapPage() {
                 url="https://services.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"
                 maxNativeZoom={18}
                 maxZoom={25}
-                updateWhenIdle={true}
-                updateWhenZooming={false}
-                keepBuffer={12}
+                tileSize={256}
+                updateWhenIdle={false}
+                updateWhenZooming={true}
+                updateInterval={200}
+                keepBuffer={16}
                 detectRetina={false}
+                crossOrigin={true}
+                zoomOffset={0}
+                zoomReverse={false}
+                opacity={1}
+                zIndex={1}
               />
 
               <MemoizedComfortRoomMarker onDirectionClick={handleDirectionClick} isDirectionLoading={state.isDirectionLoading} />

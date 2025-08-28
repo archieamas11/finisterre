@@ -287,7 +287,6 @@ export default function AdminMapLayout() {
           >
             <TileLayer
               url="https://services.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"
-              attribution='&copy; <a href="https://www.arcgis.com/">Esri</a> &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community'
               maxNativeZoom={18}
               maxZoom={25}
               minZoom={15}
@@ -298,7 +297,6 @@ export default function AdminMapLayout() {
               keepBuffer={16}
               detectRetina={false}
               crossOrigin={true}
-              errorTileUrl="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChwGA60e6kgAAAABJRU5ErkJggg=="
               zoomOffset={0}
               zoomReverse={false}
               opacity={1}
