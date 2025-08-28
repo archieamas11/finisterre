@@ -315,3 +315,9 @@
   display: none;
   /* Chrome/Safari */
 }
+
+/* 🐛 Fix Konsta UI Tabbar highlight movement */
+.k-toolbar-highlight {
+  transition: none !important;
+  transform: none !important;
+}

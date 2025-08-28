@@ -101,6 +101,8 @@ export function useValhalla(options: UseValhallaOptions = {}) {
 
   // 🗺️ Calculate route to destination
   const calculateRoute = useCallback(async (from: { latitude: number; longitude: number }, to: RouteDestination, forceRecalculate: boolean = false) => {
+    console.log('🧭 Starting route calculation:', { from, to, forceRecalculate, costingType: optionsRef.current.costingType })
+
     try {
       // 🎯 Store original coordinates before API call
       const originalStart: [number, number] = [from.latitude, from.longitude]
@@ -125,7 +127,13 @@ export function useValhalla(options: UseValhallaOptions = {}) {
         request = createPedestrianRouteRequest({ lat: from.latitude, lon: from.longitude }, { lat: to.latitude, lon: to.longitude })
       }
 
+      console.log('🚀 Sending Valhalla request:', request)
       const response = await getValhallaRoute(request)
+      console.log('✅ Valhalla response received:', {
+        legs: response.trip.legs.length,
+        totalDistance: response.trip.summary.length,
+        totalTime: response.trip.summary.time,
+      })
 
       // 📍 Decode route coordinates from the first leg
       let coordinates: [number, number][] = []
@@ -166,7 +174,13 @@ export function useValhalla(options: UseValhallaOptions = {}) {
       return response
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Failed to calculate route'
-      console.error('🚫 Route calculation failed:', error)
+      console.error('🚫 Route calculation failed:', {
+        error,
+        from: { latitude: from.latitude, longitude: from.longitude },
+        to: { latitude: to.latitude, longitude: to.longitude },
+        costingType: optionsRef.current.costingType,
+        errorMessage,
+      })
 
       setRouteState((prev) => ({
         ...prev,

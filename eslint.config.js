@@ -7,7 +7,7 @@ import { globalIgnores } from 'eslint/config'
 import perfectionist from 'eslint-plugin-perfectionist'
 
 export default tseslint.config([
-  globalIgnores(['dist', 'src/components/**', 'dev-dist', 'src/auto-imports.d.ts']),
+  globalIgnores(['dist', 'src/components/**', 'dev-dist', 'src/auto-imports.d.ts', 'android', 'ios']),
   {
     files: ['**/*.{ts,tsx}'],
     extends: [js.configs.recommended, ...tseslint.configs.recommended, reactHooks.configs['recommended-latest'], reactRefresh.configs.vite],

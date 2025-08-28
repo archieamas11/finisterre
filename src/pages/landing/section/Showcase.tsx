@@ -289,39 +289,50 @@ export default function CemeteryShowcase() {
             <div ref={mapContainerRef} className="relative z-10 h-[320px] w-full sm:h-[420px] md:h-[480px] lg:h-[480px]">
               <MapContainer
                 center={[10.249306880563585, 123.797848311330114]}
-                maxZoom={25}
-                zoom={18}
+                zoom={16}
+                maxZoom={20}
+                minZoom={10}
                 scrollWheelZoom={true}
-                zoomControl={false}
+                zoomControl={true}
                 className="h-full w-full rounded-lg"
+                style={{ height: '100%', width: '100%' }}
               >
                 <MapInitializer onMap={(m) => setLeafletMap(m)} />
-                <TileLayer url="https://services.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}" maxNativeZoom={18} maxZoom={25} />
+                <TileLayer
+                  url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                  attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                  maxNativeZoom={19}
+                  maxZoom={20}
+                />
                 <Marker position={[10.249306880563585, 123.797848311330114]}>
                   <Popup>
-                    Cemetery Location
-                    <br /> Explore the grounds.
+                    <div className="text-center">
+                      <h3 className="font-semibold text-gray-900">Finisterre Gardenz</h3>
+                      <p className="mt-1 text-sm text-gray-600">6QXX+C4 Minglanilla, Cebu</p>
+                      <p className="mt-2 text-xs text-gray-500">Memorial Park & Cemetery</p>
+                    </div>
                   </Popup>
                 </Marker>
               </MapContainer>
               {/* Floating location card */}
-              <div className="pointer-events-none absolute bottom-2 left-1 z-400">
-                <div className="pointer-events-auto ml-1 inline-block max-w-xs rounded-lg bg-white/80 p-4 shadow-lg backdrop-blur-sm">
-                  <h4 className="text-lg font-semibold text-black">Finisterre Gardenz</h4>
+              <div className="pointer-events-none absolute bottom-2 left-1 z-20">
+                <div className="pointer-events-auto ml-1 inline-block max-w-xs rounded-lg border border-gray-200 bg-white/95 p-4 shadow-lg backdrop-blur-sm">
+                  <h4 className="text-lg font-semibold text-gray-900">Finisterre Gardenz</h4>
                   <p className="mt-1 text-sm text-gray-700">6QXX+C4 Minglanilla, Cebu</p>
                   <div className="mt-3 flex items-center gap-2">
                     <Button
                       variant="neon"
+                      size="sm"
                       onClick={() => {
                         if (leafletMap) {
-                          leafletMap.flyTo([10.249306880563585, 123.797848311330114], 18, { duration: 1.0 })
-                          leafletMap.invalidateSize()
+                          leafletMap.flyTo([10.249306880563585, 123.797848311330114], 18, { duration: 1.5 })
                         }
                       }}
+                      className="text-xs"
                     >
                       Explore Map
                     </Button>
-                    <Button variant="default" onClick={() => setIsExpanded((s) => !s)} className="border border-gray-300 bg-white text-black hover:bg-gray-100">
+                    <Button variant="outline" size="sm" onClick={() => setIsExpanded((s) => !s)} className="border border-gray-300 bg-white text-xs text-gray-700 hover:bg-gray-50">
                       View Gallery
                     </Button>
                   </div>

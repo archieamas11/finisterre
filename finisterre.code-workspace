@@ -6,9 +6,6 @@
     {
       "path": "../finisterre_backend",
     },
-    {
-      "path": "../react-native",
-    },
   ],
   "settings": {
     "hide-files.files": [],

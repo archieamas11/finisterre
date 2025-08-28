@@ -275,24 +275,36 @@ export default function MapPage() {
   const handleDirectionClick = useCallback(
     async (to: [number, number]) => {
       const [toLatitude, toLongitude] = to
+      console.log('🧭 Direction click triggered:', { to, toLatitude, toLongitude })
+
       if (!toLatitude || !toLongitude) {
         console.warn('⚠️ Invalid destination coordinates:', to)
         dispatch({ type: 'SET_DIRECTION_LOADING', value: false })
         return
       }
+
       dispatch({ type: 'SET_DIRECTION_LOADING', value: true })
       dispatch({ type: 'SET_NAV_OPEN', value: false })
 
       try {
         // Get user location: use current if available, otherwise fetch
         let userLocation = currentLocation
+        console.log('📍 Current location available:', !!userLocation, userLocation)
+
         if (!userLocation) {
+          console.log('📍 Fetching fresh user location...')
           userLocation = await getCurrentLocation()
+          console.log('📍 Fresh location obtained:', userLocation)
         }
 
         if (!userLocation || !userLocation.latitude || !userLocation.longitude) {
           throw new Error('Could not determine current location')
         }
+
+        console.log('🚀 Starting navigation with locations:', {
+          from: { latitude: userLocation.latitude, longitude: userLocation.longitude },
+          to: { latitude: toLatitude, longitude: toLongitude },
+        })
 
         // Start navigation with proper typed coordinates
         await startNavigation(
@@ -303,6 +315,8 @@ export default function MapPage() {
           { latitude: toLatitude, longitude: toLongitude },
         )
 
+        console.log('✅ Navigation started successfully')
+
         // Trigger map recentering or location update
         requestLocate()
 
@@ -310,10 +324,18 @@ export default function MapPage() {
         dispatch({ type: 'SET_NAV_OPEN', value: true })
       } catch (error) {
         console.error('🚫 Failed to start navigation:', error)
+        console.error('🚫 Error details:', {
+          name: error instanceof Error ? error.name : 'Unknown',
+          message: error instanceof Error ? error.message : String(error),
+          stack: error instanceof Error ? error.stack : undefined,
+        })
+
         // Fallback: resume tracking if not already doing so
         if (!isTracking) {
+          console.log('🔄 Starting fallback tracking...')
           startTracking()
         }
+
         toast.error('Failed to start navigation. Using fallback tracking.')
       } finally {
         dispatch({ type: 'SET_DIRECTION_LOADING', value: false })
