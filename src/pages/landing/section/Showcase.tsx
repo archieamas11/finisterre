@@ -298,12 +298,7 @@ export default function CemeteryShowcase() {
                 style={{ height: '100%', width: '100%' }}
               >
                 <MapInitializer onMap={(m) => setLeafletMap(m)} />
-                <TileLayer
-                  url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-                  attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-                  maxNativeZoom={19}
-                  maxZoom={20}
-                />
+                <TileLayer url="https://services.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}" maxNativeZoom={19} maxZoom={20} />
                 <Marker position={[10.249306880563585, 123.797848311330114]}>
                   <Popup>
                     <div className="text-center">
