@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<network-security-config>
+    <!-- Allow cleartext traffic globally for development and HTTP API calls -->
+    <base-config cleartextTrafficPermitted="true" />
+    
+    <!-- Allow specific domains for HTTPS API calls -->
+    <domain-config cleartextTrafficPermitted="false">
+        <!-- Production backend -->
+        <domain includeSubdomains="true">finisterre.x10.bz</domain>
+        <!-- Valhalla routing API -->
+        <domain includeSubdomains="true">valhalla1.openstreetmap.de</domain>
+        <!-- OpenStreetMap tiles and APIs -->
+        <domain includeSubdomains="true">openstreetmap.de</domain>
+        <domain includeSubdomains="true">tile.openstreetmap.org</domain>
+    </domain-config>
+    
+    <!-- Development domains (localhost variants) -->
+    <domain-config cleartextTrafficPermitted="true">
+        <domain includeSubdomains="true">localhost</domain>
+        <domain includeSubdomains="true">127.0.0.1</domain>
+        <domain includeSubdomains="true">10.0.2.2</domain>
+        <domain includeSubdomains="true">192.168.1.1</domain>
+    </domain-config>
+</network-security-config>
