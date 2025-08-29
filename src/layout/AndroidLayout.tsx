@@ -1,12 +1,12 @@
 import { App, KonstaProvider } from 'konsta/react'
 
-import TabbarPage from '../components/mobile/AndroidTabbar'
+import AndroidHomepage from '@/components/mobile/AndroidHomepage'
 
 export function AndroidLayout() {
   return (
-    <KonstaProvider theme="ios" dark={false}>
-      <App theme="ios">
-        <TabbarPage />
+    <KonstaProvider theme="ios">
+      <App theme="ios" className="k-ios">
+        <AndroidHomepage />
       </App>
     </KonstaProvider>
   )

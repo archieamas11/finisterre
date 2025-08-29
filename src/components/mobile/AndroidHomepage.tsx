@@ -4,9 +4,15 @@ import { MapPin, UserIcon, HomeIcon, Settings2Icon } from 'lucide-react'
 import AndroidMapPage from './AndroidMapPage'
 import UserDashboard from '@/pages/user/UserDashboard'
 
-export default function TabbarPage() {
+export default function AndroidHomepage() {
   const [activeTab, setActiveTab] = useState('home')
   const [showMapPage, setShowMapPage] = useState(false)
+
+  // If showing map page, render it as the main page
+  if (showMapPage) {
+    return <AndroidMapPage onBack={() => setShowMapPage(false)} />
+  }
+
   return (
     <Page>
       <Navbar
@@ -25,14 +31,12 @@ export default function TabbarPage() {
           </Link>
         }
       />
-      {!showMapPage && (
-        <Tabbar className="fixed bottom-0 left-0">
-          <ToolbarPane>
-            <TabbarLink active={activeTab === 'home'} onClick={() => setActiveTab('home')} icon={<HomeIcon className="h-6 w-6" />} label={'Home'} />
-            <TabbarLink active={activeTab === 'settings'} onClick={() => setActiveTab('settings')} icon={<Settings2Icon className="h-6 w-6" />} label={'Settings'} />
-          </ToolbarPane>
-        </Tabbar>
-      )}
+      <Tabbar className="fixed bottom-0 left-0">
+        <ToolbarPane>
+          <TabbarLink active={activeTab === 'home'} onClick={() => setActiveTab('home')} icon={<HomeIcon className="h-6 w-6" />} label={'Home'} />
+          <TabbarLink active={activeTab === 'settings'} onClick={() => setActiveTab('settings')} icon={<Settings2Icon className="h-6 w-6" />} label={'Settings'} />
+        </ToolbarPane>
+      </Tabbar>
       {activeTab === 'home' && (
         <Block strong inset className="space-y-4">
           <UserDashboard />
@@ -49,7 +53,6 @@ export default function TabbarPage() {
           <Card>This is a simple card with plain text, but cards can also contain their own header, footer, list view, image, or any other element.</Card>
         </Block>
       )}
-      {showMapPage && <AndroidMapPage onBack={() => setShowMapPage(false)} />}
     </Page>
   )
 }

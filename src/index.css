@@ -1,7 +1,7 @@
 @import 'tailwindcss';
 @import 'tw-animate-css';
 @import 'konsta/react/theme.css';
-
+@import url('https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,400;0,500;0,700;1,400;1,500;1,700&display=swap');
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
@@ -155,7 +155,23 @@
   }
 }
 
-/* global.css or tailwind.css */
+/* 🎨 Aurora Dream Corner Whispers - Theme-immune background */
+.aurora-background {
+  /* ⚡️ Use !important to override any theme styles */
+  background:
+    radial-gradient(ellipse 85% 65% at 8% 8%, rgba(175, 109, 255, 0.42), transparent 60%), radial-gradient(ellipse 75% 60% at 75% 35%, rgba(255, 235, 170, 0.55), transparent 62%),
+    radial-gradient(ellipse 70% 60% at 15% 80%, rgba(255, 100, 180, 0.4), transparent 62%), radial-gradient(ellipse 70% 60% at 92% 92%, rgba(120, 190, 255, 0.45), transparent 62%),
+    linear-gradient(180deg, #f7eaff 0%, #fde2ea 100%) !important;
+
+  /* ⚡️ Isolate from theme inheritance */
+  isolation: isolate;
+
+  /* ⚡️ Prevent theme styles from affecting this element */
+  all: initial;
+  background-repeat: no-repeat !important;
+  background-size: cover !important;
+}
+
 .leaflet-theme-popup .leaflet-popup-content-wrapper,
 .leaflet-theme-popup .leaflet-popup-tip {
   @apply bg-background/90 supports-[backdrop-filter]:bg-background/60 backdrop-blur;

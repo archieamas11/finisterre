@@ -1,0 +1,113 @@
+import { useLocation } from 'react-router-dom'
+import { Locate, Home, ArrowLeft } from 'lucide-react'
+import { isAndroid } from '@/utils/platform.utils'
+
+import { Button } from '@/components/ui/button'
+import AdminControls from '@/components/webmap/AdminControls'
+import ClusterFilterDropdown from '@/components/webmap/ClusterFilterDropdown'
+import ResetMapViewButton from '@/components/webmap/ResetMapViewButton'
+import { cn } from '@/lib/utils'
+import { isAdmin } from '@/utils/auth.utils'
+import type { AdminContext, WebMapContext } from '@/hooks/useNavigationContext'
+import { Fab } from 'konsta/react'
+
+interface WebMapControlsRowProps {
+  context: WebMapContext | AdminContext | null | undefined
+  onBack?: () => void
+}
+
+export default function WebMapControlsRow({ context, onBack }: WebMapControlsRowProps) {
+  const location = useLocation()
+  const ArrowLeftIcon = <ArrowLeft className="h-6 w-6" />
+  const LocateIcon = <Locate className="h-6 w-6" />
+  const homeIcon = <Home className="h-6 w-6" />
+  return (
+    <div className={cn('no-scrollbar flex w-full flex-nowrap items-center gap-2 overflow-x-auto pt-0 pb-1 md:mx-auto', 'lg:justify-center')} role="group" aria-label="Map controls">
+      {/* Home Button */}
+      {location.pathname !== '/admin/map' && (
+        <>
+          {isAndroid() ? (
+            <button onClick={onBack} className="shrink-0">
+              <Fab className="k-color-brand-green h-10" icon={homeIcon} />
+            </button>
+          ) : (
+            <Link to="/" className="shrink-0">
+              <Button variant="secondary" size="sm" className="bg-background rounded-full text-xs sm:text-sm">
+                <Home className="text-accent-foreground h-3 w-3 sm:h-4 sm:w-4" />
+                <span>Home</span>
+              </Button>
+            </Link>
+          )}
+        </>
+      )}
+
+      {/* 🎯 Cluster Control Dropdown */}
+      {location.pathname !== '/admin/map' && context && 'selectedGroups' in context && <ClusterFilterDropdown context={context as WebMapContext} />}
+
+      {/* 🔙 Back to Clusters Button */}
+      {location.pathname !== '/admin/map' && context && 'clusterViewMode' in context && (context as WebMapContext).clusterViewMode === 'selective' && (
+        <>
+          {isAndroid() ? (
+            <button
+              onClick={() => {
+                if (context && 'clearSearch' in context && 'resetGroupSelection' in context) {
+                  const webMapCtx = context as WebMapContext
+                  webMapCtx.clearSearch()
+                  webMapCtx.resetGroupSelection()
+                }
+              }}
+            >
+              <Fab className="k-color-brand-green h-10" icon={ArrowLeftIcon} />
+            </button>
+          ) : (
+            <Button
+              variant="secondary"
+              size="sm"
+              className="bg-background shrink-0 rounded-full"
+              onClick={() => {
+                if (context && 'clearSearch' in context && 'resetGroupSelection' in context) {
+                  const webMapCtx = context as WebMapContext
+                  webMapCtx.clearSearch()
+                  webMapCtx.resetGroupSelection()
+                }
+              }}
+              aria-label="Back to all clusters"
+            >
+              <ArrowLeft className="text-accent-foreground h-3 w-3 sm:h-4 sm:w-4" />
+            </Button>
+          )}
+        </>
+      )}
+
+      {/* 📍 Locate user */}
+      {location.pathname !== '/admin/map' && (
+        <>
+          {isAndroid() ? (
+            <button className="bg-transparent" onClick={() => context?.requestLocate()}>
+              <Fab className="k-color-brand-green h-10" icon={LocateIcon} />
+            </button>
+          ) : (
+            <Button
+              variant="secondary"
+              size="sm"
+              className="bg-background shrink-0 rounded-full text-xs sm:text-sm"
+              onClick={() => context?.requestLocate()}
+              aria-label="Locate me"
+            >
+              <Locate className="text-accent-foreground h-3 w-3 sm:h-4 sm:w-4" />
+              <span>Where am I?</span>
+            </Button>
+          )}
+        </>
+      )}
+
+      {/* 🔄 Reset Map View */}
+      <div className="shrink-0">
+        <ResetMapViewButton context={context} />
+      </div>
+
+      {/* ➕ Admin add/edit marker controls */}
+      {isAdmin() && location.pathname === '/admin/map' && <AdminControls />}
+    </div>
+  )
+}

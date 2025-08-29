@@ -147,7 +147,7 @@ function mapReducer(state: MapState, action: MapAction): MapState {
   }
 }
 
-export default function MapPage() {
+export default function MapPage({ onBack }: { onBack?: () => void }) {
   const { isLoading, data: plotsData } = usePlots()
   const markers = useMemo(() => plotsData?.map(convertPlotToMarker) || [], [plotsData])
 
@@ -497,7 +497,7 @@ export default function MapPage() {
       <MapDispatchContext.Provider value={dispatch}>
         <LocateContext.Provider value={contextValue}>
           <div className="relative h-screen w-full">
-            <WebMapNavs />
+            <WebMapNavs onBack={onBack} />
             {(locationError || routingError) && (
               <div className="absolute top-4 right-4 z-[999] max-w-sm">
                 <div className="rounded-md border border-red-200 bg-red-50 p-4">
@@ -507,7 +507,7 @@ export default function MapPage() {
             )}
 
             <MapContainer
-              className="h-full w-full rounded-lg"
+              className="h-full w-full"
               markerZoomAnimation={true}
               scrollWheelZoom={true}
               fadeAnimation={true}
@@ -522,6 +522,7 @@ export default function MapPage() {
               easeLinearity={0.25}
               worldCopyJump={false}
               maxBoundsViscosity={1.0}
+              preferCanvas={true}
             >
               <MapInstanceBinder onMapReady={setMapInstance} />
               <TileLayer
