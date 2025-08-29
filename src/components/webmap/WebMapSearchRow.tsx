@@ -7,6 +7,7 @@ import AdminSearchBar from '@/components/webmap/AdminSearchBar'
 import SearchToggle from '@/components/webmap/SearchToggle'
 import { useMe } from '@/hooks/useMe'
 import { isAdmin, isAuthenticated } from '@/utils/auth.utils'
+import { isNativePlatform } from '@/utils/platform.utils'
 import type { WebMapContext } from '@/hooks/useNavigationContext'
 
 interface WebMapSearchRowProps {
@@ -29,7 +30,7 @@ export default function WebMapSearchRow({ context }: WebMapSearchRowProps) {
           </div>
         </div>
         {/* 👤 Auth controls aligned right of search with matched height */}
-        {!isAuthenticated() ? (
+        {!isAuthenticated() && !isNativePlatform() ? (
           <Link to="/login" className="shrink-0">
             <Button variant="secondary" size="sm" className="bg-background h-9 rounded-full text-xs sm:text-sm md:h-10">
               <RiLoginBoxLine className="h-4 w-4" />
