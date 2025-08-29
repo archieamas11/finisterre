@@ -1,12 +1,22 @@
 import { useState } from 'react'
 import { Page, Navbar, Tabbar, TabbarLink, Block, ToolbarPane, Fab, Link, Card, BlockTitle } from 'konsta/react'
-import { MapPin, UserIcon, HomeIcon, Settings2Icon } from 'lucide-react'
+import { MapPin, UserIcon, HomeIcon, Settings2Icon, LogIn } from 'lucide-react'
+import { useNavigate } from 'react-router-dom'
 import AndroidMapPage from './AndroidMapPage'
+import AndroidProfilePage from '@/pages/android/AndroidProfilePage'
 import UserDashboard from '@/pages/user/UserDashboard'
+import { isAuthenticated } from '@/utils/auth.utils'
 
 export default function AndroidHomepage() {
   const [activeTab, setActiveTab] = useState('home')
   const [showMapPage, setShowMapPage] = useState(false)
+  const [showProfilePage, setShowProfilePage] = useState(false)
+  const navigate = useNavigate()
+
+  // If showing profile page, render it as the main page
+  if (showProfilePage) {
+    return <AndroidProfilePage onBack={() => setShowProfilePage(false)} />
+  }
 
   // If showing map page, render it as the main page
   if (showMapPage) {
@@ -26,8 +36,16 @@ export default function AndroidHomepage() {
           </Link>
         }
         right={
-          <Link>
-            <UserIcon />
+          <Link
+            onClick={() => {
+              if (isAuthenticated()) {
+                setShowProfilePage(true)
+              } else {
+                navigate('/login')
+              }
+            }}
+          >
+            {isAuthenticated() ? <UserIcon /> : <LogIn />}
           </Link>
         }
       />
@@ -40,11 +58,6 @@ export default function AndroidHomepage() {
       {activeTab === 'home' && (
         <Block strong inset className="space-y-4">
           <UserDashboard />
-          <Fab
-            className="right-safe-4 ios:bottom-safe-19 material:bottom-safe-18 k-color-brand-red fixed z-20"
-            icon={<MapPin className="h-6 w-6" />}
-            onClick={() => setShowMapPage(true)}
-          />
         </Block>
       )}
       {activeTab === 'settings' && (
@@ -53,6 +66,11 @@ export default function AndroidHomepage() {
           <Card>This is a simple card with plain text, but cards can also contain their own header, footer, list view, image, or any other element.</Card>
         </Block>
       )}
+      <Fab
+        className="right-safe-4 ios:bottom-safe-19 material:bottom-safe-18 k-color-brand-red fixed z-20"
+        icon={<MapPin className="h-6 w-6" />}
+        onClick={() => setShowMapPage(true)}
+      />
     </Page>
   )
 }

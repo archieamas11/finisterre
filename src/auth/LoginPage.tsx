@@ -14,6 +14,7 @@ import { Input } from '@/components/ui/input'
 import Spinner from '@/components/ui/spinner'
 import { useAuthQuery } from '@/hooks/useAuthQuery'
 import { cn } from '@/lib/utils'
+import { isNativePlatform } from '@/utils/platform.utils'
 
 const FormSchema = z.object({
   remember: z.boolean().optional(),
@@ -40,7 +41,15 @@ export default function LoginPage() {
     const hasToken = !!localStorage.getItem('token')
     if (hasToken && isSuccess && data?.success) {
       const admin = !!data?.user?.isAdmin
-      navigate(admin ? '/admin' : '/user', { replace: true })
+
+      // Redirect based on platform and user role
+      if (isNativePlatform()) {
+        navigate('/landing-android', { replace: true })
+      } else if (admin) {
+        navigate('/admin', { replace: true })
+      } else {
+        navigate('/user', { replace: true })
+      }
     }
   }, [data, isSuccess, navigate])
 
@@ -60,7 +69,10 @@ export default function LoginPage() {
         // Show success toast then navigate
         toast.success(`Welcome back, ${formData.username}!`)
 
-        if (res.isAdmin) {
+        // Redirect based on platform and user role
+        if (isNativePlatform()) {
+          navigate('/landing-android')
+        } else if (res.isAdmin) {
           navigate('/admin')
         } else {
           navigate('/user')
