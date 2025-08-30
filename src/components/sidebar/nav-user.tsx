@@ -65,7 +65,7 @@ export function NavUser() {
               </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
-            <DropdownMenuItem onClick={() => performLogout()} disabled={isPending}>
+            <DropdownMenuItem onClick={() => performLogout()} disabled={isPending} aria-label="Logout">
               <LogOut />
               Log out
             </DropdownMenuItem>
