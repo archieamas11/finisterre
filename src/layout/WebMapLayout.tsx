@@ -150,7 +150,7 @@ function mapReducer(state: MapState, action: MapAction): MapState {
 export default function MapPage() {
   const { isLoading, data: plotsData } = usePlots()
   const markers = useMemo(() => plotsData?.map(convertPlotToMarker) || [], [plotsData])
-  const [searchParams] = useSearchParams()
+  const [searchParams, setSearchParams] = useSearchParams()
   const {
     currentLocation,
     startTracking,
@@ -404,8 +404,16 @@ export default function MapPage() {
     if (direction === 'true' && lat && lng) {
       const coords: [number, number] = [parseFloat(lat), parseFloat(lng)]
       handleDirectionClick(coords)
+      // Clear the params to prevent re-triggering
+      setSearchParams((prev) => {
+        const newParams = new URLSearchParams(prev)
+        newParams.delete('direction')
+        newParams.delete('lat')
+        newParams.delete('lng')
+        return newParams
+      })
     }
-  }, [searchParams, handleDirectionClick])
+  }, [searchParams, handleDirectionClick, setSearchParams])
 
   // 🚀 Request popup close - either immediately or after route completion
   const requestPopupClose = useCallback(() => {
