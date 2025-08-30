@@ -19,7 +19,7 @@ export default defineConfig({
     ViteImageOptimizer(),
     removeConsole(),
     VitePWA({
-      registerType: 'prompt',
+      registerType: 'autoUpdate',
       manifest: {
         name: 'Finisterre Gardenz',
         short_name: 'Finisterre',
@@ -41,6 +41,8 @@ export default defineConfig({
         ],
       },
       workbox: {
+        skipWaiting: true,
+        clientsClaim: true,
         runtimeCaching: [
           {
             urlPattern: ({ url }) => url.origin === 'https://finisterre.x10.bz' && url.pathname.startsWith('/api'),
