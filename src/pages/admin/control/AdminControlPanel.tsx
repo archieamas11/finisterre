@@ -12,7 +12,7 @@ export default function AdminControlPanel() {
   const [receiveNotifications, setReceiveNotifications] = useState(true)
 
   return (
-    <div className="min-h-screen p-6 md:p-8">
+    <div className="min-h-screen md:p-6">
       {/* Header */}
       <header className="mb-4">
         {/* Admin Controls */}
@@ -71,135 +71,133 @@ export default function AdminControlPanel() {
         </Card>
       </header>
 
-      <div className="mx-auto max-w-7xl">
-        {/* Stats Cards */}
-        <div className="mb-4 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          <Card className="bg-card text-card-foreground border-border shadow-sm transition-shadow duration-300 hover:shadow-lg">
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-muted-foreground text-sm font-medium">Total Users</p>
-                  <p className="mt-1 text-2xl font-bold">1,254</p>
-                  <p className="mt-1 text-xs text-green-500">+12% from last week</p>
-                </div>
-                <div className="bg-muted/10 rounded-lg p-3">
-                  <User className="text-primary h-6 w-6" />
-                </div>
+      {/* Stats Cards */}
+      <div className="mb-4 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <Card className="bg-card text-card-foreground border-border shadow-sm transition-shadow duration-300 hover:shadow-lg">
+          <CardContent className="p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-muted-foreground text-sm font-medium">Total Users</p>
+                <p className="mt-1 text-2xl font-bold">1,254</p>
+                <p className="mt-1 text-xs text-green-500">+12% from last week</p>
               </div>
-            </CardContent>
-          </Card>
-
-          <Card className="bg-card text-card-foreground border-border shadow-sm transition-shadow duration-300 hover:shadow-lg">
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-muted-foreground text-sm font-medium">Active Sessions</p>
-                  <p className="mt-1 text-2xl font-bold">321</p>
-                  <p className="mt-1 text-xs text-green-500">+5% from last week</p>
-                </div>
-                <div className="bg-muted/10 rounded-lg p-3">
-                  <Shield className="text-primary h-6 w-6" />
-                </div>
+              <div className="bg-muted/10 rounded-lg p-3">
+                <User className="text-primary h-6 w-6" />
               </div>
-            </CardContent>
-          </Card>
+            </div>
+          </CardContent>
+        </Card>
 
-          <Card className="bg-card text-card-foreground border-border shadow-sm transition-shadow duration-300 hover:shadow-lg">
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-muted-foreground text-sm font-medium">System Alerts</p>
-                  <p className="mt-1 text-2xl font-bold">8</p>
-                  <p className="mt-1 text-xs text-red-500">-3% from last week</p>
-                </div>
-                <div className="bg-muted/10 rounded-lg p-3">
-                  <Bell className="text-primary h-6 w-6" />
-                </div>
+        <Card className="bg-card text-card-foreground border-border shadow-sm transition-shadow duration-300 hover:shadow-lg">
+          <CardContent className="p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-muted-foreground text-sm font-medium">Active Sessions</p>
+                <p className="mt-1 text-2xl font-bold">321</p>
+                <p className="mt-1 text-xs text-green-500">+5% from last week</p>
               </div>
-            </CardContent>
-          </Card>
-
-          <Card className="bg-card text-card-foreground border-border shadow-sm transition-shadow duration-300 hover:shadow-lg">
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-muted-foreground text-sm font-medium">Storage Used</p>
-                  <p className="mt-1 text-2xl font-bold">78%</p>
-                  <p className="mt-1 text-xs text-green-500">+2% from last week</p>
-                </div>
-                <div className="bg-muted/10 rounded-lg p-3">
-                  <ArchiveIcon className="text-primary h-6 w-6" />
-                </div>
+              <div className="bg-muted/10 rounded-lg p-3">
+                <Shield className="text-primary h-6 w-6" />
               </div>
-            </CardContent>
-          </Card>
-        </div>
+            </div>
+          </CardContent>
+        </Card>
 
-        {/* Control Cards */}
-        <div className="mb-4 grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
-          <Card className="bg-card text-card-foreground border-border shadow-sm transition-shadow duration-300 hover:shadow-lg">
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">User Management</CardTitle>
-              <User className="h-4 w-4 text-emerald-500" />
-            </CardHeader>
-            <CardContent>
-              <p className="text-muted-foreground text-xs">Manage users, roles, and permissions.</p>
-            </CardContent>
-            <CardFooter>
-              <Button size="sm" className="w-full" variant="outline">
-                Go to Users
-              </Button>
-            </CardFooter>
-          </Card>
+        <Card className="bg-card text-card-foreground border-border shadow-sm transition-shadow duration-300 hover:shadow-lg">
+          <CardContent className="p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-muted-foreground text-sm font-medium">System Alerts</p>
+                <p className="mt-1 text-2xl font-bold">8</p>
+                <p className="mt-1 text-xs text-red-500">-3% from last week</p>
+              </div>
+              <div className="bg-muted/10 rounded-lg p-3">
+                <Bell className="text-primary h-6 w-6" />
+              </div>
+            </div>
+          </CardContent>
+        </Card>
 
-          <Card className="bg-card text-card-foreground border-border shadow-sm transition-shadow duration-300 hover:shadow-lg">
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Site Settings</CardTitle>
-              <Settings className="h-4 w-4 text-cyan-500" />
-            </CardHeader>
-            <CardContent>
-              <p className="text-muted-foreground text-xs">Configure site preferences and options.</p>
-            </CardContent>
-            <CardFooter>
-              <Button size="sm" className="w-full" variant={'outline'}>
-                Edit Settings
-              </Button>
-            </CardFooter>
-          </Card>
-
-          <Card className="bg-card text-card-foreground border-border shadow-sm transition-shadow duration-300 hover:shadow-lg">
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Logs</CardTitle>
-              <FileText className="h-4 w-4 text-blue-500" />
-            </CardHeader>
-            <CardContent>
-              <p className="text-muted-foreground text-xs">View system logs and activity reports.</p>
-            </CardContent>
-            <CardFooter>
-              <Button size="sm" className="w-full" variant={'outline'}>
-                View Logs
-              </Button>
-            </CardFooter>
-          </Card>
-
-          <Card className="bg-card text-card-foreground border-border shadow-sm transition-shadow duration-300 hover:shadow-lg">
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Archived</CardTitle>
-              <ArchiveIcon className="text-primary h-4 w-4" />
-            </CardHeader>
-            <CardContent>
-              <p className="text-muted-foreground text-xs">Manage and view archived data in all tables.</p>
-            </CardContent>
-            <CardFooter>
-              <Button size="sm" className="w-full" variant={'outline'}>
-                View archived data
-              </Button>
-            </CardFooter>
-          </Card>
-        </div>
-        {/* Admin Users Table */}
-        <AdminUsersTable />
+        <Card className="bg-card text-card-foreground border-border shadow-sm transition-shadow duration-300 hover:shadow-lg">
+          <CardContent className="p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-muted-foreground text-sm font-medium">Storage Used</p>
+                <p className="mt-1 text-2xl font-bold">78%</p>
+                <p className="mt-1 text-xs text-green-500">+2% from last week</p>
+              </div>
+              <div className="bg-muted/10 rounded-lg p-3">
+                <ArchiveIcon className="text-primary h-6 w-6" />
+              </div>
+            </div>
+          </CardContent>
+        </Card>
       </div>
+
+      {/* Control Cards */}
+      <div className="mb-4 grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
+        <Card className="bg-card text-card-foreground border-border shadow-sm transition-shadow duration-300 hover:shadow-lg">
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">User Management</CardTitle>
+            <User className="h-4 w-4 text-emerald-500" />
+          </CardHeader>
+          <CardContent>
+            <p className="text-muted-foreground text-xs">Manage users, roles, and permissions.</p>
+          </CardContent>
+          <CardFooter>
+            <Button size="sm" className="w-full" variant="outline">
+              Go to Users
+            </Button>
+          </CardFooter>
+        </Card>
+
+        <Card className="bg-card text-card-foreground border-border shadow-sm transition-shadow duration-300 hover:shadow-lg">
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Site Settings</CardTitle>
+            <Settings className="h-4 w-4 text-cyan-500" />
+          </CardHeader>
+          <CardContent>
+            <p className="text-muted-foreground text-xs">Configure site preferences and options.</p>
+          </CardContent>
+          <CardFooter>
+            <Button size="sm" className="w-full" variant={'outline'}>
+              Edit Settings
+            </Button>
+          </CardFooter>
+        </Card>
+
+        <Card className="bg-card text-card-foreground border-border shadow-sm transition-shadow duration-300 hover:shadow-lg">
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Logs</CardTitle>
+            <FileText className="h-4 w-4 text-blue-500" />
+          </CardHeader>
+          <CardContent>
+            <p className="text-muted-foreground text-xs">View system logs and activity reports.</p>
+          </CardContent>
+          <CardFooter>
+            <Button size="sm" className="w-full" variant={'outline'}>
+              View Logs
+            </Button>
+          </CardFooter>
+        </Card>
+
+        <Card className="bg-card text-card-foreground border-border shadow-sm transition-shadow duration-300 hover:shadow-lg">
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Archived</CardTitle>
+            <ArchiveIcon className="text-primary h-4 w-4" />
+          </CardHeader>
+          <CardContent>
+            <p className="text-muted-foreground text-xs">Manage and view archived data in all tables.</p>
+          </CardContent>
+          <CardFooter>
+            <Button size="sm" className="w-full" variant={'outline'}>
+              View archived data
+            </Button>
+          </CardFooter>
+        </Card>
+      </div>
+      {/* Admin Users Table */}
+      <AdminUsersTable />
     </div>
   )
 }
