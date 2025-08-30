@@ -44,7 +44,7 @@ export default function ClusterFilterDropdown({ context, className }: ClusterFil
     setActionsOpened(false)
   }
 
-  if (!isAndroid()) {
+  if (isAndroid()) {
     return (
       <>
         <button className="bg-transparent" onClick={() => setActionsOpened(true)}>
