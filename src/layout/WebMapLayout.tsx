@@ -5,6 +5,7 @@ import iconUrl from 'leaflet/dist/images/marker-icon.png'
 import shadowUrl from 'leaflet/dist/images/marker-shadow.png'
 import { useEffect, useMemo, useCallback, memo, useState, Suspense, lazy, useReducer, useRef } from 'react'
 import { MapContainer, TileLayer, useMap } from 'react-leaflet'
+import { useSearchParams } from 'react-router-dom'
 import { toast } from 'sonner'
 
 import type { ConvertedMarker } from '@/types/map.types'
@@ -189,6 +190,8 @@ export default function MapPage({ onBack }: { onBack?: () => void }) {
   const stateRef = useRef(state)
   stateRef.current = state
 
+  const [searchParams] = useSearchParams()
+
   // 🛠️ Backward-compat bridge (TEMP): map former individual state variables to reducer state fields.
   // FIXME: Remove once all references are updated.
 
@@ -343,6 +346,17 @@ export default function MapPage({ onBack }: { onBack?: () => void }) {
     },
     [currentLocation, getCurrentLocation, isTracking, startNavigation, startTracking, requestLocate],
   )
+
+  // Check for direction query params and trigger navigation
+  useEffect(() => {
+    const direction = searchParams.get('direction')
+    const lat = searchParams.get('lat')
+    const lng = searchParams.get('lng')
+    if (direction === 'true' && lat && lng) {
+      const coords: [number, number] = [parseFloat(lat), parseFloat(lng)]
+      handleDirectionClick(coords)
+    }
+  }, [searchParams, handleDirectionClick])
 
   // 🎯 Cluster control functions
   const toggleGroupSelection = useCallback((groupKey: string) => dispatch({ type: 'TOGGLE_GROUP', group: groupKey }), [])

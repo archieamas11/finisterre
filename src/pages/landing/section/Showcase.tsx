@@ -1,8 +1,12 @@
 import type { Map as LeafletMap } from 'leaflet'
 
 import { motion } from 'framer-motion'
+import 'leaflet/dist/leaflet.css'
+import L from 'leaflet'
 import { ChevronLeft, ChevronRight, Maximize2, Car, Plug, CloudRain, ShieldCheck, Wrench } from 'lucide-react'
 import { useEffect, useMemo, useRef, useState, useCallback } from 'react'
+import { FaDirections } from 'react-icons/fa'
+import { MdTravelExplore } from 'react-icons/md'
 import { MapContainer, TileLayer, Marker, Popup, useMap } from 'react-leaflet'
 
 import { Button } from '@/components/ui/button'
@@ -95,6 +99,109 @@ export default function CemeteryShowcase() {
   const [isExpanded, setIsExpanded] = useState(false)
   const [leafletMap, setLeafletMap] = useState<LeafletMap | null>(null)
   const mapContainerRef = useRef<HTMLDivElement | null>(null)
+
+  // Create custom cemetery marker icon
+  const cemeteryIcon = useMemo(() => {
+    return L.divIcon({
+      html: `
+        <div class="cemetery-marker">
+          <div class="marker-pin">
+            <div class="marker-shadow"></div>
+            <div class="marker-body">
+              <div class="marker-icon">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M12 2L13.09 8.26L20 9L13.09 9.74L12 16L10.91 9.74L4 9L10.91 8.26L12 2Z" fill="white"/>
+                  <rect x="8" y="18" width="8" height="4" fill="white"/>
+                  <rect x="10" y="16" width="4" height="2" fill="white"/>
+                </svg>
+              </div>
+            </div>
+          </div>
+        </div>
+      `,
+      className: 'custom-cemetery-marker',
+      iconSize: [40, 40],
+      iconAnchor: [20, 40],
+      popupAnchor: [0, -40],
+    })
+  }, [])
+
+  // Add custom marker styles
+  useEffect(() => {
+    const style = document.createElement('style')
+    style.textContent = `
+      .custom-cemetery-marker {
+        background: none !important;
+        border: none !important;
+      }
+      
+      .cemetery-marker {
+        position: relative;
+        width: 40px;
+        height: 40px;
+      }
+      
+      .marker-pin {
+        position: relative;
+        width: 100%;
+        height: 100%;
+      }
+      
+      .marker-shadow {
+        position: absolute;
+        bottom: -2px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 20px;
+        height: 8px;
+        background: rgba(0, 0, 0, 0.2);
+        border-radius: 50%;
+        filter: blur(1px);
+      }
+      
+      .marker-body {
+        position: absolute;
+        top: 0;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 32px;
+        height: 32px;
+        background: linear-gradient(135deg, #059669 0%, #0d9488 100%);
+        border: 3px solid white;
+        border-radius: 50% 50% 50% 0;
+        transform: translateX(-50%) rotate(-45deg);
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+        transition: all 0.3s ease;
+      }
+      
+      .marker-body:hover {
+        transform: translateX(-50%) rotate(-45deg) scale(1.1);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+      }
+      
+      .marker-icon {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%) rotate(45deg);
+        width: 20px;
+        height: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      
+      .marker-icon svg {
+        width: 16px;
+        height: 16px;
+      }
+    `
+    document.head.appendChild(style)
+
+    return () => {
+      document.head.removeChild(style)
+    }
+  }, [])
 
   const categories = [
     { id: 'all', label: 'All Views' },
@@ -285,7 +392,7 @@ export default function CemeteryShowcase() {
           </div>
 
           {/* Display cemetery map */}
-          <div className="w-full rounded-lg border p-2">
+          <div className="w-full rounded-lg border border-gray-600 p-1">
             <div ref={mapContainerRef} className="relative z-10 h-[320px] w-full sm:h-[420px] md:h-[480px] lg:h-[480px]">
               <MapContainer
                 center={[10.249306880563585, 123.797848311330114]}
@@ -293,18 +400,47 @@ export default function CemeteryShowcase() {
                 maxZoom={20}
                 minZoom={10}
                 scrollWheelZoom={true}
-                zoomControl={true}
+                zoomControl={false}
+                maxBounds={[
+                  [10.247, 123.795],
+                  [10.252, 123.8],
+                ]}
+                maxBoundsViscosity={1.0}
                 className="h-full w-full rounded-lg"
                 style={{ height: '100%', width: '100%' }}
               >
                 <MapInitializer onMap={(m) => setLeafletMap(m)} />
                 <TileLayer url="https://services.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}" maxNativeZoom={19} maxZoom={20} />
-                <Marker position={[10.249306880563585, 123.797848311330114]}>
-                  <Popup>
-                    <div className="text-center">
-                      <h3 className="font-semibold text-gray-900">Finisterre Gardenz</h3>
-                      <p className="mt-1 text-sm text-gray-600">6QXX+C4 Minglanilla, Cebu</p>
-                      <p className="mt-2 text-xs text-gray-500">Memorial Park & Cemetery</p>
+                <Marker position={[10.249306880563585, 123.797848311330114]} icon={cemeteryIcon}>
+                  <Popup minWidth={280} maxWidth={360}>
+                    <div className="w-full max-w-[360px]">
+                      <div className="flex gap-3">
+                        {/* Thumbnail */}
+                        <div className="w-20 shrink-0">
+                          <img src={galleryImages[0].src} alt="Finisterre Gardenz aerial" className="h-20 w-20 rounded-md object-cover" />
+                        </div>
+
+                        {/* Main content */}
+                        <div className="flex-1">
+                          <h3 className="text-sm font-semibold text-gray-900">Finisterre Gardenz</h3>
+                          <p className="mt-1 text-xs text-emerald-600">Memorial Park & Cemetery</p>
+
+                          <div className="mt-2 flex flex-wrap items-center gap-2 text-xs text-gray-500">
+                            <div className="inline-flex items-center gap-1">
+                              <ShieldCheck className="h-3 w-3" />
+                              <span>24/7 Security</span>
+                            </div>
+                            <span className="text-gray-300">•</span>
+                            <span>150+ acres</span>
+                          </div>
+
+                          <p className="mt-3 text-xs text-gray-600">A peaceful, thoughtfully landscaped memorial park set within rolling grounds and native plantings.</p>
+                        </div>
+                      </div>
+
+                      <div className="mt-3 border-t pt-2">
+                        <p className="text-xs text-gray-500">6QXX+C4 Minglanilla, Cebu</p>
+                      </div>
                     </div>
                   </Popup>
                 </Marker>
@@ -315,21 +451,26 @@ export default function CemeteryShowcase() {
                   <h4 className="text-lg font-semibold text-gray-900">Finisterre Gardenz</h4>
                   <p className="mt-1 text-sm text-gray-700">6QXX+C4 Minglanilla, Cebu</p>
                   <div className="mt-3 flex items-center gap-2">
-                    <Button
-                      variant="neon"
-                      size="sm"
-                      onClick={() => {
-                        if (leafletMap) {
-                          leafletMap.flyTo([10.249306880563585, 123.797848311330114], 18, { duration: 1.5 })
-                        }
-                      }}
-                      className="text-xs"
-                    >
-                      Explore Map
-                    </Button>
-                    <Button variant="outline" size="sm" onClick={() => setIsExpanded((s) => !s)} className="border border-gray-300 bg-white text-xs text-gray-700 hover:bg-gray-50">
-                      View Gallery
-                    </Button>
+                    <Link to="/map">
+                      <Button
+                        size="sm"
+                        onClick={() => {
+                          if (leafletMap) {
+                            leafletMap.flyTo([10.249306880563585, 123.797848311330114], 18, { duration: 1.5 })
+                          }
+                        }}
+                        className="text-xs"
+                      >
+                        <MdTravelExplore />
+                        Explore Map
+                      </Button>
+                    </Link>
+                    <Link to={`/map?direction=true&lat=10.248166481872728&lng=123.79754558858059`}>
+                      <Button size={'sm'} variant="neon" className="text-xs">
+                        <FaDirections />
+                        Get Direction
+                      </Button>
+                    </Link>
                   </div>
                 </div>
               </div>
