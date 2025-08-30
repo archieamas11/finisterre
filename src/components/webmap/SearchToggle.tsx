@@ -53,7 +53,6 @@ export default function SearchToggle({ context, className }: SearchToggleProps) 
               value={context.searchQuery}
               onChange={(e) => context.setSearchQuery(e.target.value)}
               onKeyDown={handleSearchInputKeyDown}
-              autoFocus
               disabled={context.isSearching}
               aria-label="Search lot"
             />
