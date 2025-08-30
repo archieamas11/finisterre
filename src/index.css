@@ -155,21 +155,35 @@
   }
 }
 
-/* 🎨 Aurora Dream Corner Whispers - Theme-immune background */
+/* 🌟 Aurora background protection - ensures it's never overridden by theme changes */
 .aurora-background {
-  /* ⚡️ Use !important to override any theme styles */
   background:
     radial-gradient(ellipse 85% 65% at 8% 8%, rgba(175, 109, 255, 0.42), transparent 60%), radial-gradient(ellipse 75% 60% at 75% 35%, rgba(255, 235, 170, 0.55), transparent 62%),
     radial-gradient(ellipse 70% 60% at 15% 80%, rgba(255, 100, 180, 0.4), transparent 62%), radial-gradient(ellipse 70% 60% at 92% 92%, rgba(120, 190, 255, 0.45), transparent 62%),
     linear-gradient(180deg, #f7eaff 0%, #fde2ea 100%) !important;
+}
 
-  /* ⚡️ Isolate from theme inheritance */
-  isolation: isolate;
+/* 🛡️ Protect aurora background from theme overrides */
+html.dark .aurora-background,
+html:not(.dark) .aurora-background,
+.ios.dark .aurora-background,
+.ios:not(.dark) .aurora-background,
+.md.dark .aurora-background,
+.md:not(.dark) .aurora-background {
+  background:
+    radial-gradient(ellipse 85% 65% at 8% 8%, rgba(175, 109, 255, 0.42), transparent 60%), radial-gradient(ellipse 75% 60% at 75% 35%, rgba(255, 235, 170, 0.55), transparent 62%),
+    radial-gradient(ellipse 70% 60% at 15% 80%, rgba(255, 100, 180, 0.4), transparent 62%), radial-gradient(ellipse 70% 60% at 92% 92%, rgba(120, 190, 255, 0.45), transparent 62%),
+    radial-gradient(180deg, #f7eaff 0%, #fde2ea 100%) !important;
+}
 
-  /* ⚡️ Prevent theme styles from affecting this element */
-  all: initial;
-  background-repeat: no-repeat !important;
-  background-size: cover !important;
+/* 🌟 Ensure landing page container is always transparent */
+.landing-page-root {
+  background: transparent !important;
+}
+
+/* 🛡️ Override any Konsta body background for landing page */
+body:has(.landing-page-root) {
+  background: transparent !important;
 }
 
 .leaflet-theme-popup .leaflet-popup-content-wrapper,
@@ -331,10 +345,4 @@
 .no-scrollbar::-webkit-scrollbar {
   display: none;
   /* Chrome/Safari */
-}
-
-/* 🐛 Fix Konsta UI Tabbar highlight movement */
-.k-toolbar-highlight {
-  transition: none !important;
-  transform: none !important;
 }

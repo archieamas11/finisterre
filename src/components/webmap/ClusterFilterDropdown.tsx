@@ -44,15 +44,15 @@ export default function ClusterFilterDropdown({ context, className }: ClusterFil
     setActionsOpened(false)
   }
 
-  if (isAndroid()) {
+  if (!isAndroid()) {
     return (
       <>
         <button className="bg-transparent" onClick={() => setActionsOpened(true)}>
           <Fab className="k-color-brand-green h-10" text="Filter" icon={FilterIcon} />
         </button>
 
-        <Actions opened={actionsOpened} onBackdropClick={() => setActionsOpened(false)}>
-          <ActionsGroup>
+        <Actions opened={actionsOpened} onBackdropClick={() => setActionsOpened(false)} className="transition-none">
+          <ActionsGroup className="transition-none">
             <ActionsLabel>Filter Options</ActionsLabel>
             {availableGroups.map((group) => (
               <ActionsButton
@@ -66,17 +66,19 @@ export default function ClusterFilterDropdown({ context, className }: ClusterFil
                 {group.label} ({group.count})
               </ActionsButton>
             ))}
-            <ActionsButton onClick={handleShowAll}>
+            <ActionsButton onClick={handleShowAll} className="active:scale-100 active:duration-0" colors={{ activeBgIos: '', activeBgMaterial: '' }}>
               <BiBorderAll className="mr-2 inline" />
               Show All
             </ActionsButton>
-            <ActionsButton onClick={handleReset}>
+            <ActionsButton onClick={handleReset} className="active:scale-100 active:duration-0" colors={{ activeBgIos: '', activeBgMaterial: '' }}>
               <FaRedo className="mr-2 inline" />
               Reset
             </ActionsButton>
           </ActionsGroup>
-          <ActionsGroup>
-            <ActionsButton onClick={() => setActionsOpened(false)}>Cancel</ActionsButton>
+          <ActionsGroup className="transition-none">
+            <ActionsButton onClick={() => setActionsOpened(false)} className="active:scale-100 active:duration-0" colors={{ activeBgIos: '', activeBgMaterial: '' }}>
+              Cancel
+            </ActionsButton>
           </ActionsGroup>
         </Actions>
       </>

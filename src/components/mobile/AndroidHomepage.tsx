@@ -29,7 +29,7 @@ export default function AndroidHomepage() {
         title="Home"
         subtitle="Finisterre Gardenz"
         className="sticky top-0"
-        transparent={true}
+        transparent={false}
         left={
           <Link>
             <MapPin />
