@@ -15,7 +15,6 @@ const ResetPassword = React.lazy(() => import('@/auth/ResetPassword'))
 const ForgotPassword = React.lazy(() => import('@/auth/ForgotPassword'))
 const UnauthorizedPage = React.lazy(() => import('@/pages/UnauthorizedPage'))
 const UserProfile = React.lazy(() => import('@/pages/user/Profile'))
-const UserServices = React.lazy(() => import('@/pages/user/Services'))
 const Bookings = React.lazy(() => import('@/pages/admin/bookings/ManageBookings'))
 const AdminDashboard = React.lazy(() => import('@/pages/admin/home/AdminDashboard'))
 const UserDashboard = React.lazy(() => import('@/pages/user/UserDashboard'))
@@ -59,6 +58,8 @@ function AppRoutes() {
         navigate('/landing-android', { replace: true })
       } else if (platform === 'ios') {
         navigate('/landing-ios', { replace: true })
+      } else {
+        navigate('/', { replace: true })
       }
     }
     // Web users can navigate freely between all routes
@@ -98,7 +99,6 @@ function AppRoutes() {
           >
             <Route element={<UserDashboard />} index />
             <Route element={<UserProfile />} path="profile" />
-            <Route element={<UserServices />} path="services" />
             <Route element={<UserMap />} path="map" />
           </Route>
 

@@ -1,4 +1,4 @@
-import { HouseIcon, MapPin, User, Settings } from 'lucide-react'
+import { HouseIcon, MapPin, User } from 'lucide-react'
 import { Link, useLocation } from 'react-router-dom'
 
 import InfoMenu from '@/components/info-menu'
@@ -14,7 +14,6 @@ import { cn } from '@/lib/utils'
 const navigationLinks = [
   { href: '/user', label: 'Home', icon: HouseIcon, active: true },
   { href: '/user/map', label: 'Map', icon: MapPin },
-  { href: '/user/services', label: 'Services', icon: Settings },
   { href: '/user/profile', label: 'Profile', icon: User },
 ]
 
