@@ -37,8 +37,8 @@ api.interceptors.response.use(
       // Clear any stored auth, then redirect to login
       localStorage.removeItem('token')
       localStorage.removeItem('isAdmin')
-      if (typeof window !== 'undefined' && window.location.pathname !== '/login') {
-        window.location.assign('/login')
+      if (typeof window !== 'undefined' && window.location.pathname !== '/') {
+        window.location.assign('/')
       }
     }
     return Promise.reject(error)
