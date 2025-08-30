@@ -9,3 +9,4 @@ pnpm-lock.yaml
 .gitignore
 dev-dist
 src/auto-imports.d.ts
+android

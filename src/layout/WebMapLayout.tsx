@@ -150,7 +150,7 @@ function mapReducer(state: MapState, action: MapAction): MapState {
 export default function MapPage() {
   const { isLoading, data: plotsData } = usePlots()
   const markers = useMemo(() => plotsData?.map(convertPlotToMarker) || [], [plotsData])
-
+  const [searchParams] = useSearchParams()
   const {
     currentLocation,
     startTracking,
@@ -244,9 +244,7 @@ export default function MapPage() {
 
   // Memoize callback functions to prevent them from being recreated on every render.
   const requestLocate = useCallback(async () => {
-    // Start tracking if not already active
     if (!isTracking) startTracking()
-    // center will be handled inline; reset flag if needed
 
     // Try to obtain a fresh location if we don't have one yet
     let loc = currentLocation
@@ -254,14 +252,10 @@ export default function MapPage() {
       try {
         loc = await getCurrentLocation()
       } catch (err) {
-        // 💡 Silent fail: toast not needed; user just won't see fly animation
         console.warn('Could not get current location for flyTo:', err)
       }
     }
-
-    // Perform animated fly to the user's position
     if (loc && mapInstance) {
-      // Using flyTo for smoother animated transition similar to resetView animation semantics
       mapInstance.flyTo([loc.latitude, loc.longitude], 18, { animate: true })
     }
   }, [isTracking, startTracking, currentLocation, getCurrentLocation, mapInstance])
@@ -314,7 +308,6 @@ export default function MapPage() {
         if (!isTracking) {
           startTracking()
         }
-        toast.error('Failed to start navigation. Using fallback tracking.')
       } finally {
         dispatch({ type: 'SET_DIRECTION_LOADING', value: false })
       }
@@ -403,6 +396,16 @@ export default function MapPage() {
     dispatch({ type: 'SET_AUTO_POPUP', plotId: null })
     dispatch({ type: 'RESET_GROUPS' })
   }, [])
+
+  useEffect(() => {
+    const direction = searchParams.get('direction')
+    const lat = searchParams.get('lat')
+    const lng = searchParams.get('lng')
+    if (direction === 'true' && lat && lng) {
+      const coords: [number, number] = [parseFloat(lat), parseFloat(lng)]
+      handleDirectionClick(coords)
+    }
+  }, [searchParams, handleDirectionClick])
 
   // 🚀 Request popup close - either immediately or after route completion
   const requestPopupClose = useCallback(() => {
