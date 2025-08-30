@@ -8,7 +8,6 @@ import { toast } from 'sonner'
 import { registerSW } from 'virtual:pwa-register'
 
 import { ThemeProvider } from '@/components/provider/theme-provider.tsx'
-import { Toaster } from '@/components/ui/sonner.tsx'
 
 import './index.css'
 import App from './App.tsx'
@@ -27,12 +26,9 @@ registerSW({
     toast.info('New version available! Reloading in 5 seconds...', {
       duration: 5000,
       onAutoClose: () => {
-        window.location.reload() // Force reload after toast
+        window.location.reload()
       },
     })
-  },
-  onOfflineReady() {
-    toast.success('App is ready for offline use!', { duration: 3000 })
   },
   onRegisterError(error: Error) {
     console.error('Service Worker registration error:', error)
@@ -50,7 +46,6 @@ createRoot(document.getElementById('root')!).render(
           <Suspense fallback={null}>
             <LazyReactQueryDevtools initialIsOpen={false} />
           </Suspense>
-          <Toaster position="top-right" richColors />
         </NuqsAdapter>
       </QueryClientProvider>
     </ThemeProvider>
