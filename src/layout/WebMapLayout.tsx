@@ -496,7 +496,7 @@ export default function MapPage() {
             )}
 
             <MapContainer
-              className="h-full w-full rounded-lg"
+              className="h-full w-full"
               markerZoomAnimation={true}
               scrollWheelZoom={true}
               fadeAnimation={true}
@@ -511,6 +511,7 @@ export default function MapPage() {
               easeLinearity={0.25}
               worldCopyJump={false}
               maxBoundsViscosity={1.0}
+              preferCanvas={true}
             >
               <MapInstanceBinder onMapReady={setMapInstance} />
               <TileLayer
