@@ -335,11 +335,8 @@ export default function MapPage({ onBack }: { onBack?: () => void }) {
 
         // Fallback: resume tracking if not already doing so
         if (!isTracking) {
-          console.log('🔄 Starting fallback tracking...')
           startTracking()
         }
-
-        toast.error('Failed to start navigation. Using fallback tracking.')
       } finally {
         dispatch({ type: 'SET_DIRECTION_LOADING', value: false })
       }
