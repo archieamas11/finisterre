@@ -16,6 +16,7 @@ export default function WebmapLegend() {
     { key: 'available', label: 'Available', color: getStatusColor('available') },
     { key: 'occupied', label: 'Occupied', color: getStatusColor('occupied') },
     { key: 'reserved', label: 'Reserved', color: getStatusColor('reserved') },
+    { key: 'your-plot', label: 'Your Plot', color: '#2563EB' },
   ]
 
   const facilities = [
