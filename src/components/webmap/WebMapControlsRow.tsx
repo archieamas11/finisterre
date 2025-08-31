@@ -69,7 +69,7 @@ export default function WebMapControlsRow({ context, onBack, onLegendClick }: We
       {/* Show only all the owned plots of the user */}
       {location.pathname !== '/admin/map' && (
         <>
-          {!isAndroid() ? (
+          {isAndroid() ? (
             <button className="bg-transparent" onClick={handleMyPlotsClick}>
               <Fab className="k-color-brand-green h-10" icon={HiOutlineLocationMarkerIcon} />
             </button>
