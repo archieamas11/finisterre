@@ -34,20 +34,32 @@ export default function UserDashboard() {
   }
 
   if (error) {
-    return <ErrorMessage message={error instanceof Error ? error.message : 'An unexpected error occurred'} />
+    // ⚠️ Handle different error scenarios gracefully
+    const errorMessage = error instanceof Error ? error.message : 'Unable to load dashboard data. Please try refreshing the page.'
+
+    return (
+      <div className="flex h-screen w-full items-center justify-center">
+        <div className="space-y-4 text-center">
+          <ErrorMessage message={errorMessage} />
+          <Button variant="outline" onClick={() => window.location.reload()} className="mt-4">
+            Refresh Page
+          </Button>
+        </div>
+      </div>
+    )
   }
 
-  // Use real data or defaults
+  // ⚡️ Use real data with proper fallbacks to prevent errors
   const stats = {
-    connectedMemorials: dashboardData?.connected_memorials || 0,
-    upcomingEvents: dashboardData?.upcoming_events || 0,
-    activeLots: dashboardData?.active_lots || 0,
-    notifications: dashboardData?.notifications || 0,
+    connectedMemorials: dashboardData?.connected_memorials ?? 0,
+    upcomingEvents: dashboardData?.upcoming_events ?? 0,
+    activeLots: dashboardData?.active_lots ?? 0,
+    notifications: dashboardData?.notifications ?? 0,
   }
 
-  const lots = dashboardData?.lots || []
-  const deceasedRecords = dashboardData?.deceased_records || []
-  const upcomingAnniversaries = dashboardData?.upcoming_anniversaries || []
+  const lots = dashboardData?.lots ?? []
+  const deceasedRecords = dashboardData?.deceased_records ?? []
+  const upcomingAnniversaries = dashboardData?.upcoming_anniversaries ?? []
 
   return (
     <div className="mt-6 space-y-6">

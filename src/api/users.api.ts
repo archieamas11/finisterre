@@ -66,7 +66,7 @@ export interface UserDashboardData {
   lots: LotRecord[]
   deceased_records: DeceasedRecord[]
   upcoming_anniversaries: UpcomingAnniversary[]
-  customer_id?: number
+  customer_id?: number | null
 }
 
 export async function getUsers(params: { isAdmin?: number } = {}) {
