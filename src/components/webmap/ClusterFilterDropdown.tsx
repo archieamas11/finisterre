@@ -24,7 +24,7 @@ interface ClusterFilterDropdownProps {
 
 export default function ClusterFilterDropdown({ context, className }: ClusterFilterDropdownProps) {
   if (!context) return null
-  const FilterIcon = <Filter className="h-6 w-6" />
+  const FilterIcon = <Filter className="h-4 w-4" />
 
   const { availableGroups, selectedGroups, toggleGroupSelection, clearSearch, resetGroupSelection } = context
   const [actionsOpened, setActionsOpened] = useState(false)
@@ -44,15 +44,15 @@ export default function ClusterFilterDropdown({ context, className }: ClusterFil
     setActionsOpened(false)
   }
 
-  if (isAndroid()) {
+  if (!isAndroid()) {
     return (
       <>
         <button className="bg-transparent" onClick={() => setActionsOpened(true)}>
           <Fab className="k-color-brand-green h-10" text="Filter" icon={FilterIcon} />
         </button>
 
-        <Actions opened={actionsOpened} onBackdropClick={() => setActionsOpened(false)} className="transition-none">
-          <ActionsGroup className="transition-none">
+        <Actions opened={actionsOpened} onBackdropClick={() => setActionsOpened(false)}>
+          <ActionsGroup>
             <ActionsLabel>Filter Options</ActionsLabel>
             {availableGroups.map((group) => (
               <ActionsButton
@@ -66,19 +66,17 @@ export default function ClusterFilterDropdown({ context, className }: ClusterFil
                 {group.label} ({group.count})
               </ActionsButton>
             ))}
-            <ActionsButton onClick={handleShowAll} className="active:scale-100 active:duration-0" colors={{ activeBgIos: '', activeBgMaterial: '' }}>
+            <ActionsButton onClick={handleShowAll}>
               <BiBorderAll className="mr-2 inline" />
               Show All
             </ActionsButton>
-            <ActionsButton onClick={handleReset} className="active:scale-100 active:duration-0" colors={{ activeBgIos: '', activeBgMaterial: '' }}>
+            <ActionsButton onClick={handleReset}>
               <FaRedo className="mr-2 inline" />
               Reset
             </ActionsButton>
           </ActionsGroup>
-          <ActionsGroup className="transition-none">
-            <ActionsButton onClick={() => setActionsOpened(false)} className="active:scale-100 active:duration-0" colors={{ activeBgIos: '', activeBgMaterial: '' }}>
-              Cancel
-            </ActionsButton>
+          <ActionsGroup>
+            <ActionsButton onClick={() => setActionsOpened(false)}>Cancel</ActionsButton>
           </ActionsGroup>
         </Actions>
       </>
