@@ -61,6 +61,23 @@ export default function WebMapControlsRow({ context, onBack, onLegendClick }: We
         </>
       )}
 
+      {/* Should only display this if the user is authenticated */}
+      {/* Show only all the owned plots of the user */}
+      {location.pathname !== '/admin/map' && (
+        <>
+          {isAndroid() ? (
+            <button className="bg-transparent" onClick={handleMyPlotsClick}>
+              <Fab className="k-color-brand-green h-10 w-35" text="My Plots" icon={HiOutlineLocationMarkerIcon} />
+            </button>
+          ) : (
+            <Button variant="secondary" size="sm" className="bg-background shrink-0 rounded-full text-xs sm:text-sm" onClick={handleMyPlotsClick} aria-label="My Plots">
+              <HiOutlineLocationMarker className="text-accent-foreground h-3 w-3 sm:h-4 sm:w-4" />
+              <span>My Plots</span>
+            </Button>
+          )}
+        </>
+      )}
+
       {/* 🎯 Cluster Control Dropdown */}
       {location.pathname !== '/admin/map' && context && 'selectedGroups' in context && <ClusterFilterDropdown context={context as WebMapContext} />}
 
@@ -94,23 +111,6 @@ export default function WebMapControlsRow({ context, onBack, onLegendClick }: We
               aria-label="Back to all clusters"
             >
               <ArrowLeft className="text-accent-foreground h-3 w-3 sm:h-4 sm:w-4" />
-            </Button>
-          )}
-        </>
-      )}
-
-      {/* Should only display this if the user is authenticated */}
-      {/* Show only all the owned plots of the user */}
-      {location.pathname !== '/admin/map' && (
-        <>
-          {isAndroid() ? (
-            <button className="bg-transparent" onClick={handleMyPlotsClick}>
-              <Fab className="k-color-brand-green h-10 w-35" text="My Plots" icon={HiOutlineLocationMarkerIcon} />
-            </button>
-          ) : (
-            <Button variant="secondary" size="sm" className="bg-background shrink-0 rounded-full text-xs sm:text-sm" onClick={handleMyPlotsClick} aria-label="My Plots">
-              <HiOutlineLocationMarker className="text-accent-foreground h-3 w-3 sm:h-4 sm:w-4" />
-              <span>My Plots</span>
             </Button>
           )}
         </>
