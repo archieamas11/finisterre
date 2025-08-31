@@ -42,9 +42,13 @@ export default function WebMapControlsRow({ context, onBack, onLegendClick }: We
   const homeIcon = <Home className="h-6 w-6" />
   const HiOutlineLocationMarkerIcon = <HiOutlineLocationMarker />
   return (
-    <div className={cn('no-scrollbar flex w-full flex-nowrap items-center gap-2 overflow-x-auto pt-0 pb-1 md:mx-auto', 'lg:justify-center')} role="group" aria-label="Map controls">
+    <div
+      className={cn('flex w-full flex-nowrap items-center gap-2 overflow-x-auto pt-0 pb-1 md:mx-auto', 'lg:justify-center', !isAndroid() && 'no-scrollbar')}
+      role="group"
+      aria-label="Map controls"
+    >
       {/* Home Button */}
-      {location.pathname === '/map' && (
+      {location.pathname !== '/admin/map' && (
         <>
           {isAndroid() ? (
             <button onClick={onBack} className="shrink-0">
