@@ -2,7 +2,7 @@ import { MdFamilyRestroom } from 'react-icons/md'
 import { useLocation } from 'react-router-dom'
 import { Locate, Home, ArrowLeft, Info } from 'lucide-react'
 import { useState } from 'react'
-import { isAndroid } from '@/utils/platform.utils'
+import { isNativePlatform } from '@/utils/platform.utils'
 
 import { Button } from '@/components/ui/button'
 import AdminControls from '@/components/webmap/AdminControls'
@@ -43,15 +43,15 @@ export default function WebMapControlsRow({ context, onBack, onLegendClick }: We
   const HiOutlineLocationMarkerIcon = <MdFamilyRestroom />
   return (
     <div
-      className={cn('flex w-full flex-nowrap items-center gap-2 overflow-x-auto pt-0 pb-1 md:mx-auto', 'lg:justify-center', !isAndroid() && 'no-scrollbar')}
+      className={cn('flex w-full flex-nowrap items-center gap-2 overflow-x-auto pt-0 pb-1 md:mx-auto', 'lg:justify-center', !isNativePlatform() && 'no-scrollbar')}
       role="group"
       aria-label="Map controls"
       style={{ touchAction: 'pan-x', overscrollBehavior: 'contain' }}
     >
       {/* Home Button */}
-      {location.pathname !== '/admin/map' && (
+      {location.pathname !== '/admin/map' && isNativePlatform() && (
         <>
-          {isAndroid() ? (
+          {isNativePlatform() ? (
             <button onClick={onBack} className="no-long-press shrink-0 touch-manipulation">
               <Fab className="k-color-brand-green h-10" icon={homeIcon} style={{ transform: 'none !important', transition: 'none !important' }} />
             </button>
@@ -70,7 +70,7 @@ export default function WebMapControlsRow({ context, onBack, onLegendClick }: We
       {/* Show only all the owned plots of the user */}
       {location.pathname !== '/admin/map' && (
         <>
-          {isAndroid() ? (
+          {isNativePlatform() ? (
             <button className="no-long-press touch-manipulation bg-transparent" onClick={handleMyPlotsClick}>
               <Fab className="k-color-brand-green h-10" icon={HiOutlineLocationMarkerIcon} style={{ transform: 'none !important', transition: 'none !important' }} />
             </button>
@@ -95,7 +95,7 @@ export default function WebMapControlsRow({ context, onBack, onLegendClick }: We
       {/* 🔙 Back to Clusters Button */}
       {location.pathname !== '/admin/map' && context && 'clusterViewMode' in context && (context as WebMapContext).clusterViewMode === 'selective' && (
         <>
-          {isAndroid() ? (
+          {isNativePlatform() ? (
             <button
               onClick={() => {
                 if (context && 'clearSearch' in context && 'resetGroupSelection' in context) {
@@ -131,7 +131,7 @@ export default function WebMapControlsRow({ context, onBack, onLegendClick }: We
       {/* 📍 Locate user */}
       {location.pathname !== '/admin/map' && (
         <>
-          {isAndroid() ? (
+          {isNativePlatform() ? (
             <button className="no-long-press touch-manipulation bg-transparent" onClick={() => context?.requestLocate()}>
               <Fab className="k-color-brand-green h-10" icon={LocateIcon} style={{ transform: 'none !important', transition: 'none !important' }} />
             </button>
@@ -158,7 +158,7 @@ export default function WebMapControlsRow({ context, onBack, onLegendClick }: We
       {/* 📊 Legend Button - only on small/medium screens */}
       {onLegendClick && (
         <>
-          {isAndroid() ? (
+          {isNativePlatform() ? (
             <button onClick={onLegendClick} className="no-long-press shrink-0 touch-manipulation lg:hidden">
               <Fab className="k-color-brand-green h-10" icon={<Info className="h-6 w-6" />} style={{ transform: 'none !important', transition: 'none !important' }} />
             </button>

@@ -1,7 +1,8 @@
-import { CalendarDays, Bell, Heart, MapPin } from 'lucide-react'
+import { CalendarDays, Heart, MapPin, Megaphone } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 
 import { parseCoordinates } from '@/api/users.api'
+import { ErrorMessage } from '@/components/ErrorMessage'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
@@ -9,7 +10,7 @@ import Spinner from '@/components/ui/spinner'
 import { useUserDashboard } from '@/hooks/useUserDashboard'
 
 export default function UserDashboard() {
-  const { data: dashboardData, isLoading } = useUserDashboard()
+  const { data: dashboardData, isLoading, error } = useUserDashboard()
   const navigate = useNavigate()
 
   // Navigation handler for plots
@@ -32,12 +33,15 @@ export default function UserDashboard() {
     )
   }
 
+  if (error) {
+    return <ErrorMessage message={error.message} showRetryButton />
+  }
+
   // ⚡️ Use real data with proper fallbacks to prevent errors
   const stats = {
     connectedMemorials: dashboardData?.connected_memorials ?? 0,
     upcomingEvents: dashboardData?.upcoming_events ?? 0,
     activeLots: dashboardData?.active_lots ?? 0,
-    notifications: dashboardData?.notifications ?? 0,
   }
 
   const lots = dashboardData?.lots ?? []
@@ -46,22 +50,53 @@ export default function UserDashboard() {
 
   return (
     <div className="mt-6 space-y-6">
-      {/* Welcome Section */}
-      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 p-8 text-center text-white shadow-2xl">
-        <div className="absolute inset-0 bg-gradient-to-r from-blue-600/20 to-purple-600/20"></div>
-        <div className="relative z-10">
-          <h1 className="text-3xl font-bold tracking-tight sm:text-4xl lg:text-5xl">Welcome to Finisterre Memorial Park</h1>
-          <div className="mt-6 flex justify-center">
-            <div className="flex items-center space-x-2 rounded-full bg-white/10 px-4 py-2 backdrop-blur-sm">
-              <div className="h-2 w-2 rounded-full bg-green-400"></div>
-              <span className="text-sm text-slate-300">All systems operational</span>
+      {/* Promotional / News Banner */}
+      <section
+        aria-label="Latest announcement"
+        className="relative overflow-hidden rounded-2xl border border-slate-200 bg-gradient-to-br from-indigo-600 via-violet-600 to-fuchsia-600 p-0 text-white shadow-2xl dark:border-slate-700"
+      >
+        <div className="absolute inset-0 opacity-30 mix-blend-overlay" style={{ backgroundImage: 'radial-gradient(circle at 25% 25%, rgba(255,255,255,0.4), transparent 60%)' }} />
+        <div className="relative z-10 flex flex-col items-start gap-6 px-8 py-10 md:flex-row md:items-center md:justify-between">
+          <div className="max-w-2xl">
+            <div className="mb-4 inline-flex items-center gap-2 rounded-full bg-white/10 px-4 py-1.5 text-xs font-medium tracking-wide backdrop-blur-sm">
+              <Megaphone className="h-4 w-4" aria-hidden="true" />
+              <span>Announcement</span>
+            </div>
+            <h1 className="text-2xl leading-tight font-bold tracking-tight sm:text-3xl lg:text-4xl">Grand Opening: New Memorial Garden & Reflection Pathway</h1>
+            <p className="mt-4 text-sm leading-relaxed text-indigo-50/90 md:text-base">
+              Experience a renewed space for remembrance. Explore landscaped pathways, quiet seating alcoves, and enhanced wayfinding now available to all families.
+            </p>
+            <div className="mt-6 flex flex-wrap gap-3">
+              <Button
+                type="button"
+                onClick={() => {
+                  const el = document.getElementById('announcements-section')
+                  if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' })
+                }}
+                className="inline-flex items-center rounded-md bg-white/90 px-5 py-2.5 text-sm font-semibold text-indigo-700 shadow-lg shadow-indigo-900/20 transition-colors hover:bg-white focus:outline-none focus-visible:ring-2 focus-visible:ring-white/70"
+              >
+                Learn More
+              </Button>
+            </div>
+          </div>
+          <div className="relative w-full max-w-sm self-stretch md:w-auto md:self-center">
+            <div className="pointer-events-none absolute -top-12 -right-12 hidden h-56 w-56 rounded-full bg-white/10 blur-2xl md:block" />
+            <div className="relative mx-auto flex h-48 w-full max-w-xs items-center justify-center overflow-hidden rounded-xl bg-white/10 backdrop-blur-md md:h-52">
+              <img
+                src="https://picsum.photos/seed/memorial-garden/600/400"
+                alt="New memorial garden pathway with landscaped greenery"
+                width={600}
+                height={400}
+                loading="lazy"
+                className="h-full w-full object-cover"
+              />
             </div>
           </div>
         </div>
-      </div>
+      </section>
 
       {/* Quick Stats - mobile-first responsive grid */}
-      <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
+      <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
         <Card className="group relative overflow-hidden border-0 bg-gradient-to-br from-blue-50 to-indigo-50 shadow-lg transition-all duration-300 hover:-translate-y-1 hover:shadow-xl dark:from-blue-950/50 dark:to-indigo-950/50">
           <div className="absolute inset-0 bg-gradient-to-r from-blue-500/5 to-indigo-500/5 opacity-0 transition-opacity group-hover:opacity-100"></div>
           <CardHeader className="flex items-center justify-between pb-3">
@@ -103,24 +138,10 @@ export default function UserDashboard() {
             <p className="text-sm text-slate-500 dark:text-slate-400">{stats.activeLots === 1 ? 'Owned lot' : 'Owned lots'}</p>
           </CardContent>
         </Card>
-
-        <Card className="group relative overflow-hidden border-0 bg-gradient-to-br from-rose-50 to-pink-50 shadow-lg transition-all duration-300 hover:-translate-y-1 hover:shadow-xl dark:from-rose-950/50 dark:to-pink-950/50">
-          <div className="absolute inset-0 bg-gradient-to-r from-rose-500/5 to-pink-500/5 opacity-0 transition-opacity group-hover:opacity-100"></div>
-          <CardHeader className="flex items-center justify-between pb-3">
-            <CardTitle className="text-sm font-semibold text-slate-600 dark:text-slate-300">Notifications</CardTitle>
-            <div className="rounded-full bg-rose-100 p-2 dark:bg-rose-900/30">
-              <Bell className="h-5 w-5 text-rose-600 dark:text-rose-400" />
-            </div>
-          </CardHeader>
-          <CardContent className="relative z-10">
-            <div className="text-3xl font-bold text-slate-900 dark:text-white">{stats.notifications}</div>
-            <p className="text-sm text-slate-500 dark:text-slate-400">{stats.notifications === 1 ? 'Unread announcement' : 'Unread announcements'}</p>
-          </CardContent>
-        </Card>
       </div>
 
       {/* Upcoming Memorial Events (Death Anniversaries) */}
-      <Card className="border-0 bg-gradient-to-br from-white to-slate-50/50 shadow-xl dark:from-slate-900 dark:to-slate-800/50">
+      <Card id="announcements-section" className="border-0 bg-gradient-to-br from-white to-slate-50/50 shadow-xl dark:from-slate-900 dark:to-slate-800/50">
         <CardHeader className="pb-6">
           <CardTitle className="text-2xl font-bold text-slate-900 dark:text-white">Upcoming Memorial Events</CardTitle>
           <CardDescription className="text-slate-600 dark:text-slate-400">

@@ -23,6 +23,7 @@ export function useMe() {
           email: user.username ? `${user.username}@example.com` : 'unknown@example.com',
           avatar: dicebearAdventurerUrl(user.username || String(user.user_id || 'guest')),
           isAdmin: user.isAdmin,
+          customerId: user.customer_id ?? null,
         }
       : null,
     isLoading: query.isLoading,

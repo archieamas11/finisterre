@@ -1,12 +1,16 @@
-import { User, Mail, Phone, MapPin, Calendar } from 'lucide-react'
+import { User, Mail, Phone, Calendar } from 'lucide-react'
 
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { useMe } from '@/hooks/useMe'
+import { useMyCustomer } from '@/hooks/useMyCustomer'
 
 export default function UserProfile() {
   const { user: meUser } = useMe()
+  const { customer, isLoading } = useMyCustomer()
+
+  const fullName = customer ? [customer.first_name, customer.middle_name, customer.last_name].filter(Boolean).join(' ') : meUser?.name || 'User'
 
   return (
     <div className="space-y-6">
@@ -31,28 +35,28 @@ export default function UserProfile() {
               <User className="text-muted-foreground h-5 w-5" />
               <div>
                 <p className="text-muted-foreground text-sm">Name</p>
-                <p className="font-medium">{meUser?.name || 'John Doe'}</p>
+                <p className="font-medium">{isLoading ? 'Loading...' : fullName}</p>
               </div>
             </div>
             <div className="flex items-center gap-3">
               <Mail className="text-muted-foreground h-5 w-5" />
               <div>
                 <p className="text-muted-foreground text-sm">Email</p>
-                <p className="font-medium">{meUser?.email || 'john.doe@example.com'}</p>
+                <p className="font-medium">{customer?.email || meUser?.email || '—'}</p>
               </div>
             </div>
             <div className="flex items-center gap-3">
               <Phone className="text-muted-foreground h-5 w-5" />
               <div>
                 <p className="text-muted-foreground text-sm">Phone</p>
-                <p className="font-medium">+1 (555) 123-4567</p>
+                <p className="font-medium">{customer?.contact_number || '—'}</p>
               </div>
             </div>
             <div className="flex items-center gap-3">
               <Calendar className="text-muted-foreground h-5 w-5" />
               <div>
                 <p className="text-muted-foreground text-sm">Member Since</p>
-                <p className="font-medium">January 2024</p>
+                <p className="font-medium">{customer?.created_at ? new Date(customer.created_at).toLocaleDateString() : '—'}</p>
               </div>
             </div>
           </CardContent>
@@ -74,57 +78,15 @@ export default function UserProfile() {
             </div>
             <div className="flex items-center justify-between">
               <span className="text-muted-foreground text-sm">Connected Memorials</span>
-              <span className="font-medium">3</span>
+              <span className="font-medium">{customer?.lot_info?.length ?? 0}</span>
             </div>
             <div className="flex items-center justify-between">
               <span className="text-muted-foreground text-sm">Last Login</span>
-              <span className="font-medium">Today</span>
+              <span className="font-medium">—</span>
             </div>
           </CardContent>
         </Card>
       </div>
-
-      {/* Connected Memorials */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Connected Memorials</CardTitle>
-          <CardDescription>Memorials you have access to manage</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-4">
-            <div className="flex items-center justify-between rounded-lg border p-4">
-              <div className="flex items-center gap-3">
-                <MapPin className="text-muted-foreground h-5 w-5" />
-                <div>
-                  <h3 className="font-semibold">Mary Johnson</h3>
-                  <p className="text-muted-foreground text-sm">Plot 456, Section B</p>
-                </div>
-              </div>
-              <Badge variant="default">Active</Badge>
-            </div>
-            <div className="flex items-center justify-between rounded-lg border p-4">
-              <div className="flex items-center gap-3">
-                <MapPin className="text-muted-foreground h-5 w-5" />
-                <div>
-                  <h3 className="font-semibold">Robert Smith</h3>
-                  <p className="text-muted-foreground text-sm">Plot 789, Section C</p>
-                </div>
-              </div>
-              <Badge variant="secondary">Pending</Badge>
-            </div>
-            <div className="flex items-center justify-between rounded-lg border p-4">
-              <div className="flex items-center gap-3">
-                <MapPin className="text-muted-foreground h-5 w-5" />
-                <div>
-                  <h3 className="font-semibold">Elizabeth Davis</h3>
-                  <p className="text-muted-foreground text-sm">Plot 321, Section A</p>
-                </div>
-              </div>
-              <Badge variant="destructive">Attention Needed</Badge>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
     </div>
   )
 }
