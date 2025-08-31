@@ -1,5 +1,6 @@
-import L from 'leaflet'
+import { Notification } from 'konsta/react'
 import 'leaflet/dist/leaflet.css'
+import L from 'leaflet'
 import iconRetinaUrl from 'leaflet/dist/images/marker-icon-2x.png'
 import iconUrl from 'leaflet/dist/images/marker-icon.png'
 import shadowUrl from 'leaflet/dist/images/marker-shadow.png'
@@ -30,6 +31,7 @@ import PlotMarkers from '@/pages/webmap/PlotMarkers'
 import WebmapLegend from '@/pages/webmap/WebmapLegend'
 import WebMapNavs from '@/pages/webmap/WebMapNavs'
 import { convertPlotToMarker } from '@/types/map.types'
+import { isNativePlatform } from '@/utils/platform.utils'
 const UserLocationMarker = lazy(() =>
   import('@/components/map/UserLocationMarker').then((module) => ({
     default: module.UserLocationMarker,
@@ -204,6 +206,22 @@ export default function MapPage({ onBack }: { onBack?: () => void }) {
   const [state, dispatch] = useReducer(mapReducer, initialMapState)
   const stateRef = useRef(state)
   stateRef.current = state
+
+  // Konsta Notification state for native platforms
+  const [konstaNotificationOpen, setKonstaNotificationOpen] = useState(false)
+  const [konstaNotificationProps, setKonstaNotificationProps] = useState<{
+    title?: string
+    subtitle?: string
+    text?: string
+    titleRightText?: string
+  }>({})
+
+  // Auto-close Konsta notification after 3s
+  useEffect(() => {
+    if (!konstaNotificationOpen) return
+    const t = setTimeout(() => setKonstaNotificationOpen(false), 3000)
+    return () => clearTimeout(t)
+  }, [konstaNotificationOpen])
 
   const [searchParams] = useSearchParams()
 
@@ -430,7 +448,18 @@ export default function MapPage({ onBack }: { onBack?: () => void }) {
             }
           }
 
-          toast.success(`Lot found in ${result.data.category} - ${result.data.block ? `Block ${result.data.block}` : 'Chamber'}`)
+          if (isNativePlatform()) {
+            // Use Konsta Notification on native
+            setKonstaNotificationProps({
+              title: 'Lot found',
+              subtitle: `${result.data.category} ${result.data.block ? `- Block ${result.data.block}` : '- Chamber'}`,
+              text: `Plot ${result.data.plot_id}`,
+              titleRightText: 'now',
+            })
+            setKonstaNotificationOpen(true)
+          } else {
+            toast.success(`Lot found in ${result.data.category} - ${result.data.block ? `Block ${result.data.block}` : 'Chamber'}`)
+          }
         } else {
           toast.error(result.message || 'Lot not found')
         }
@@ -546,6 +575,17 @@ export default function MapPage({ onBack }: { onBack?: () => void }) {
           <div className="relative h-screen w-full">
             <WebMapNavs onBack={onBack} />
             <WebmapLegend />
+
+            {/* Konsta Notification for native platforms */}
+            <Notification
+              opened={konstaNotificationOpen}
+              title={konstaNotificationProps.title}
+              subtitle={konstaNotificationProps.subtitle}
+              text={konstaNotificationProps.text}
+              titleRightText={konstaNotificationProps.titleRightText}
+              button
+              onClick={() => setKonstaNotificationOpen(false)}
+            />
             {(locationError || routingError) && (
               <div className="absolute top-4 right-4 z-[999] max-w-sm">
                 <div className="rounded-md border border-red-200 bg-red-50 p-4">

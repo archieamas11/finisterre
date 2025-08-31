@@ -7,7 +7,6 @@ export const isAdmin = (): boolean => {
 }
 
 export const logout = (): void => {
-  // Clear all authentication data
   localStorage.removeItem('token')
   localStorage.removeItem('isAdmin')
 }
