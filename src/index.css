@@ -347,3 +347,9 @@ body:has(.landing-page-root) {
   display: none;
   /* Chrome/Safari */
 }
+
+button {
+  -webkit-tap-highlight-color: transparent;
+  -webkit-touch-callout: none;
+  user-select: none;
+}

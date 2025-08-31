@@ -24,7 +24,7 @@ interface ClusterFilterDropdownProps {
 
 export default function ClusterFilterDropdown({ context, className }: ClusterFilterDropdownProps) {
   if (!context) return null
-  const FilterIcon = <Filter className="h-4 w-4" />
+  const FilterIcon = <Filter className="h-5 w-5" />
 
   const { availableGroups, selectedGroups, toggleGroupSelection, clearSearch, resetGroupSelection } = context
   const [actionsOpened, setActionsOpened] = useState(false)
@@ -44,10 +44,10 @@ export default function ClusterFilterDropdown({ context, className }: ClusterFil
     setActionsOpened(false)
   }
 
-  if (!isAndroid()) {
+  if (isAndroid()) {
     return (
       <>
-        <button className="bg-transparent" onClick={() => setActionsOpened(true)}>
+        <button className="no-long-press touch-manipulation" onClick={() => setActionsOpened(true)}>
           <Fab className="k-color-brand-green h-10" text="Filter" icon={FilterIcon} />
         </button>
 

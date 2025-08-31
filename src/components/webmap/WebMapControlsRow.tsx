@@ -52,12 +52,12 @@ export default function WebMapControlsRow({ context, onBack, onLegendClick }: We
       {location.pathname !== '/admin/map' && (
         <>
           {isAndroid() ? (
-            <button onClick={onBack} className="shrink-0" style={{ touchAction: 'manipulation' }}>
+            <button onClick={onBack} className="no-long-press shrink-0 touch-manipulation">
               <Fab className="k-color-brand-green h-10" icon={homeIcon} style={{ transform: 'none !important', transition: 'none !important' }} />
             </button>
           ) : (
             <Link to="/" className="shrink-0">
-              <Button variant="secondary" size="sm" className="bg-background rounded-full text-xs sm:text-sm">
+              <Button variant="secondary" size="sm" className="bg-background no-long-press touch-manipulation rounded-full text-xs sm:text-sm">
                 <Home className="text-accent-foreground h-3 w-3 sm:h-4 sm:w-4" />
                 <span>Home</span>
               </Button>
@@ -71,11 +71,17 @@ export default function WebMapControlsRow({ context, onBack, onLegendClick }: We
       {location.pathname !== '/admin/map' && (
         <>
           {isAndroid() ? (
-            <button className="bg-transparent" onClick={handleMyPlotsClick} style={{ touchAction: 'manipulation' }}>
+            <button className="no-long-press touch-manipulation bg-transparent" onClick={handleMyPlotsClick}>
               <Fab className="k-color-brand-green h-10" icon={HiOutlineLocationMarkerIcon} style={{ transform: 'none !important', transition: 'none !important' }} />
             </button>
           ) : (
-            <Button variant="secondary" size="sm" className="bg-background shrink-0 rounded-full text-xs sm:text-sm" onClick={handleMyPlotsClick} aria-label="My Plots">
+            <Button
+              variant="secondary"
+              size="sm"
+              className="bg-background no-long-press shrink-0 touch-manipulation rounded-full text-xs sm:text-sm"
+              onClick={handleMyPlotsClick}
+              aria-label="My Plots"
+            >
               <MdFamilyRestroom className="text-accent-foreground h-3 w-3 sm:h-4 sm:w-4" />
               <span>My Plots</span>
             </Button>
@@ -98,7 +104,7 @@ export default function WebMapControlsRow({ context, onBack, onLegendClick }: We
                   webMapCtx.resetGroupSelection()
                 }
               }}
-              style={{ touchAction: 'manipulation' }}
+              className="no-long-press touch-manipulation"
             >
               <Fab className="k-color-brand-green h-10" icon={ArrowLeftIcon} style={{ transform: 'none !important', transition: 'none !important' }} />
             </button>
@@ -106,7 +112,7 @@ export default function WebMapControlsRow({ context, onBack, onLegendClick }: We
             <Button
               variant="secondary"
               size="sm"
-              className="bg-background shrink-0 rounded-full"
+              className="bg-background no-long-press shrink-0 touch-manipulation rounded-full"
               onClick={() => {
                 if (context && 'clearSearch' in context && 'resetGroupSelection' in context) {
                   const webMapCtx = context as WebMapContext
@@ -126,14 +132,14 @@ export default function WebMapControlsRow({ context, onBack, onLegendClick }: We
       {location.pathname !== '/admin/map' && (
         <>
           {isAndroid() ? (
-            <button className="bg-transparent" onClick={() => context?.requestLocate()} style={{ touchAction: 'manipulation' }}>
+            <button className="no-long-press touch-manipulation bg-transparent" onClick={() => context?.requestLocate()}>
               <Fab className="k-color-brand-green h-10" icon={LocateIcon} style={{ transform: 'none !important', transition: 'none !important' }} />
             </button>
           ) : (
             <Button
               variant="secondary"
               size="sm"
-              className="bg-background shrink-0 rounded-full text-xs sm:text-sm"
+              className="bg-background no-long-press shrink-0 touch-manipulation rounded-full text-xs sm:text-sm"
               onClick={() => context?.requestLocate()}
               aria-label="Locate me"
             >
@@ -153,11 +159,17 @@ export default function WebMapControlsRow({ context, onBack, onLegendClick }: We
       {onLegendClick && (
         <>
           {isAndroid() ? (
-            <button onClick={onLegendClick} className="shrink-0 lg:hidden" style={{ touchAction: 'manipulation' }}>
+            <button onClick={onLegendClick} className="no-long-press shrink-0 touch-manipulation lg:hidden">
               <Fab className="k-color-brand-green h-10" icon={<Info className="h-6 w-6" />} style={{ transform: 'none !important', transition: 'none !important' }} />
             </button>
           ) : (
-            <Button variant="secondary" size="sm" className="bg-background shrink-0 rounded-full text-xs sm:text-sm lg:hidden" onClick={onLegendClick} aria-label="Show legend">
+            <Button
+              variant="secondary"
+              size="sm"
+              className="bg-background no-long-press shrink-0 touch-manipulation rounded-full text-xs sm:text-sm lg:hidden"
+              onClick={onLegendClick}
+              aria-label="Show legend"
+            >
               <Info className="text-accent-foreground h-3 w-3 sm:h-4 sm:w-4" />
               <span>Legend</span>
             </Button>
