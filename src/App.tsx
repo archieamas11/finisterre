@@ -3,7 +3,7 @@ import { Suspense } from 'react'
 import React from 'react'
 import { useEffect } from 'react'
 import { ErrorBoundary } from 'react-error-boundary'
-import { BrowserRouter, Routes, Route, Navigate, useNavigate } from 'react-router-dom'
+import { BrowserRouter, Routes, Route, Navigate, useNavigate, useLocation } from 'react-router-dom'
 
 import { RequireAdmin, RequireAuth, RequireUser } from '@/authRoutes'
 import { Button } from '@/components/ui/button'
@@ -49,21 +49,21 @@ const ErrorFallback: React.FC<ErrorFallbackProps> = ({ error, resetErrorBoundary
 // Separate component for routing logic that can use useNavigate
 function AppRoutes() {
   const navigate = useNavigate()
+  const location = useLocation()
 
   useEffect(() => {
-    // Only redirect native platforms to their specific landing pages
-    if (Capacitor.isNativePlatform()) {
+    // Only redirect native platforms to their specific landing pages when on root path
+    // This prevents infinite loops when navigating to login or other routes
+    if (Capacitor.isNativePlatform() && location.pathname === '/') {
       const platform = Capacitor.getPlatform()
       if (platform === 'android') {
         navigate('/landing-android', { replace: true })
       } else if (platform === 'ios') {
         navigate('/landing-ios', { replace: true })
-      } else {
-        navigate('/', { replace: true })
       }
     }
     // Web users can navigate freely between all routes
-  }, [navigate])
+  }, [navigate, location.pathname])
 
   return (
     <ErrorBoundary FallbackComponent={ErrorFallback}>
