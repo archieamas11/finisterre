@@ -1,4 +1,4 @@
-import { HiOutlineLocationMarker } from 'react-icons/hi'
+import { MdFamilyRestroom } from 'react-icons/md'
 import { useLocation } from 'react-router-dom'
 import { Locate, Home, ArrowLeft, Info } from 'lucide-react'
 import { useState } from 'react'
@@ -40,7 +40,7 @@ export default function WebMapControlsRow({ context, onBack, onLegendClick }: We
   const ArrowLeftIcon = <ArrowLeft className="h-6 w-6" />
   const LocateIcon = <Locate className="h-6 w-6" />
   const homeIcon = <Home className="h-6 w-6" />
-  const HiOutlineLocationMarkerIcon = <HiOutlineLocationMarker />
+  const HiOutlineLocationMarkerIcon = <MdFamilyRestroom />
   return (
     <div
       className={cn('flex w-full flex-nowrap items-center gap-2 overflow-x-auto pt-0 pb-1 md:mx-auto', 'lg:justify-center', !isAndroid() && 'no-scrollbar')}
@@ -69,13 +69,13 @@ export default function WebMapControlsRow({ context, onBack, onLegendClick }: We
       {/* Show only all the owned plots of the user */}
       {location.pathname !== '/admin/map' && (
         <>
-          {isAndroid() ? (
+          {!isAndroid() ? (
             <button className="bg-transparent" onClick={handleMyPlotsClick}>
-              <Fab className="k-color-brand-green h-10 w-35 px-0 py-0" text="My Plots" icon={HiOutlineLocationMarkerIcon} />
+              <Fab className="k-color-brand-green h-10" icon={HiOutlineLocationMarkerIcon} />
             </button>
           ) : (
             <Button variant="secondary" size="sm" className="bg-background shrink-0 rounded-full text-xs sm:text-sm" onClick={handleMyPlotsClick} aria-label="My Plots">
-              <HiOutlineLocationMarker className="text-accent-foreground h-3 w-3 sm:h-4 sm:w-4" />
+              <MdFamilyRestroom className="text-accent-foreground h-3 w-3 sm:h-4 sm:w-4" />
               <span>My Plots</span>
             </Button>
           )}
