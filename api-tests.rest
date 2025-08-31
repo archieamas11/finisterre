@@ -1,0 +1,22 @@
+### Test login with admin
+POST http://localhost:8000/auth/login.php
+Content-Type: application/json
+
+{
+    "username": "admin",
+    "password": "admin"
+}
+
+### Test login with user 87 (linked to customer)
+POST http://localhost:8000/auth/login.php
+Content-Type: application/json
+
+{
+    "username": "87", 
+    "password": "password"
+}
+
+### Test user dashboard (need to set Authorization header with token from login response)
+POST http://localhost:8000/users/get_user_dashboard.php
+Authorization: Bearer YOUR_TOKEN_HERE
+Content-Type: application/json

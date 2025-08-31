@@ -1,5 +1,5 @@
 import { useLocation } from 'react-router-dom'
-import { Locate, Home, ArrowLeft } from 'lucide-react'
+import { Locate, Home, ArrowLeft, Info } from 'lucide-react'
 import { isAndroid } from '@/utils/platform.utils'
 
 import { Button } from '@/components/ui/button'
@@ -10,13 +10,15 @@ import { cn } from '@/lib/utils'
 import { isAdmin } from '@/utils/auth.utils'
 import type { AdminContext, WebMapContext } from '@/hooks/useNavigationContext'
 import { Fab } from 'konsta/react'
+import { Link } from 'react-router-dom'
 
 interface WebMapControlsRowProps {
   context: WebMapContext | AdminContext | null | undefined
   onBack?: () => void
+  onLegendClick?: () => void
 }
 
-export default function WebMapControlsRow({ context, onBack }: WebMapControlsRowProps) {
+export default function WebMapControlsRow({ context, onBack, onLegendClick }: WebMapControlsRowProps) {
   const location = useLocation()
   const ArrowLeftIcon = <ArrowLeft className="h-6 w-6" />
   const LocateIcon = <Locate className="h-6 w-6" />
@@ -105,6 +107,22 @@ export default function WebMapControlsRow({ context, onBack }: WebMapControlsRow
       <div className="shrink-0">
         <ResetMapViewButton context={context} />
       </div>
+
+      {/* 📊 Legend Button - only on small/medium screens */}
+      {onLegendClick && (
+        <>
+          {isAndroid() ? (
+            <button onClick={onLegendClick} className="shrink-0 lg:hidden">
+              <Fab className="k-color-brand-green h-10" icon={<Info className="h-6 w-6" />} />
+            </button>
+          ) : (
+            <Button variant="secondary" size="sm" className="bg-background shrink-0 rounded-full text-xs sm:text-sm lg:hidden" onClick={onLegendClick} aria-label="Show legend">
+              <Info className="text-accent-foreground h-3 w-3 sm:h-4 sm:w-4" />
+              <span>Legend</span>
+            </Button>
+          )}
+        </>
+      )}
 
       {/* ➕ Admin add/edit marker controls */}
       {isAdmin() && location.pathname === '/admin/map' && <AdminControls />}

@@ -26,6 +26,7 @@ import MainEntranceMarkers from '@/pages/webmap/MainEntranceMarkers'
 import ParkingMarkers from '@/pages/webmap/ParkingMarkers'
 import PlaygroundMarkers from '@/pages/webmap/PlaygroundMarkers'
 import PlotMarkers from '@/pages/webmap/PlotMarkers'
+import WebmapLegend from '@/pages/webmap/WebmapLegend'
 import WebMapNavs from '@/pages/webmap/WebMapNavs'
 import { convertPlotToMarker } from '@/types/map.types'
 const UserLocationMarker = lazy(() =>
@@ -509,6 +510,7 @@ export default function MapPage({ onBack }: { onBack?: () => void }) {
         <LocateContext.Provider value={contextValue}>
           <div className="relative h-screen w-full">
             <WebMapNavs onBack={onBack} />
+            <WebmapLegend />
             {(locationError || routingError) && (
               <div className="absolute top-4 right-4 z-[999] max-w-sm">
                 <div className="rounded-md border border-red-200 bg-red-50 p-4">

@@ -10,11 +10,11 @@ import { Button } from '@/components/ui/button'
 import Spinner from '@/components/ui/spinner'
 const LoginPage = React.lazy(() => import('@/auth/LoginPage'))
 const Logout = React.lazy(() => import('@/auth/Logout'))
-const UserMap = React.lazy(() => import('@/pages/user/Map'))
+const UserMap = React.lazy(() => import('@/pages/user/UserMap'))
 const ResetPassword = React.lazy(() => import('@/auth/ResetPassword'))
 const ForgotPassword = React.lazy(() => import('@/auth/ForgotPassword'))
 const UnauthorizedPage = React.lazy(() => import('@/pages/UnauthorizedPage'))
-const UserProfile = React.lazy(() => import('@/pages/user/Profile'))
+const UserProfile = React.lazy(() => import('@/pages/user/UserProfile'))
 const Bookings = React.lazy(() => import('@/pages/admin/bookings/ManageBookings'))
 const AdminDashboard = React.lazy(() => import('@/pages/admin/home/AdminDashboard'))
 const UserDashboard = React.lazy(() => import('@/pages/user/UserDashboard'))
