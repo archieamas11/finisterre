@@ -56,6 +56,7 @@ function createMarkerIcon(marker: CustomMarkerData['marker']) {
     }
     return L.divIcon({
       iconSize: [32, 32],
+      popupAnchor: [0, -17],
       className: 'destination-marker',
       html: renderToStaticMarkup(
         <div style={imageIconStyle}>
@@ -105,6 +106,7 @@ function createMarkerIcon(marker: CustomMarkerData['marker']) {
 
     return L.divIcon({
       iconSize: [32, 32],
+      popupAnchor: [0, -16],
       className: 'destination-marker',
       html: renderToStaticMarkup(
         <div className="marker-pop-in">
