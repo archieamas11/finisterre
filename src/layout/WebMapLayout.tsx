@@ -17,6 +17,7 @@ import Spinner from '@/components/ui/spinner'
 import { MapStateContext, MapDispatchContext, LocateContext, type MapState, type MapAction } from '@/contexts/MapContext'
 import { usePlots } from '@/hooks/plots-hooks/plot.hooks'
 import { useLocationTracking } from '@/hooks/useLocationTracking'
+import { useUserOwnedPlots, convertUserPlotToMarker } from '@/hooks/useUserOwnedPlots'
 import { useValhalla } from '@/hooks/useValhalla'
 import { groupMarkersByKey } from '@/lib/clusterUtils'
 import CenterSerenityMarkers from '@/pages/webmap/CenterSerenityMarkers'
@@ -117,6 +118,15 @@ function mapReducer(state: MapState, action: MapAction): MapState {
     }
     case 'RESET_GROUPS':
       return { ...state, selectedGroups: new Set(), clusterViewMode: 'all' }
+    case 'SHOW_USER_PLOTS':
+      return {
+        ...state,
+        selectedGroups: new Set(),
+        clusterViewMode: 'user-plots',
+        searchQuery: '',
+        searchResult: null,
+        highlightedNiche: null,
+      }
     case 'SET_SEARCH_QUERY':
       return { ...state, searchQuery: action.query }
     case 'SEARCH_START':
@@ -151,7 +161,13 @@ function mapReducer(state: MapState, action: MapAction): MapState {
 
 export default function MapPage({ onBack }: { onBack?: () => void }) {
   const { isLoading, data: plotsData } = usePlots()
+  const { data: userPlotsData } = useUserOwnedPlots()
+
   const markers = useMemo(() => plotsData?.map(convertPlotToMarker) || [], [plotsData])
+  const userMarkers = useMemo(() => {
+    if (!userPlotsData?.plots) return []
+    return userPlotsData.plots.map(convertUserPlotToMarker).filter((marker): marker is NonNullable<typeof marker> => marker !== null)
+  }, [userPlotsData])
 
   const {
     currentLocation,
@@ -469,6 +485,11 @@ export default function MapPage({ onBack }: { onBack?: () => void }) {
     dispatch({ type: 'RESET_VIEW' })
   }, [mapInstance, bounds])
 
+  // 👤 Show only user-owned plots
+  const showUserPlotsOnly = useCallback(() => {
+    dispatch({ type: 'SHOW_USER_PLOTS' })
+  }, [])
+
   const contextValue = useMemo(
     () => ({
       // direct state (for backward compat; prefer useMapState selectors moving forward)
@@ -492,8 +513,22 @@ export default function MapPage({ onBack }: { onBack?: () => void }) {
       autoOpenPopupFor: state.autoOpenPopupFor,
       setAutoOpenPopupFor: (plotId: string | null) => dispatch({ type: 'SET_AUTO_POPUP', plotId }),
       requestPopupClose,
+      showUserPlotsOnly,
     }),
-    [state, requestLocate, clearRoute, resetView, toggleGroupSelection, resetGroupSelection, availableGroups, handleClusterClick, searchLot, clearSearch, requestPopupClose],
+    [
+      state,
+      requestLocate,
+      clearRoute,
+      resetView,
+      toggleGroupSelection,
+      resetGroupSelection,
+      availableGroups,
+      handleClusterClick,
+      searchLot,
+      clearSearch,
+      requestPopupClose,
+      showUserPlotsOnly,
+    ],
   )
 
   if (isLoading) {
@@ -571,6 +606,7 @@ export default function MapPage({ onBack }: { onBack?: () => void }) {
                 PlotMarkersComponent={MemoizedPlotMarkers}
                 searchResult={state.searchResult}
                 highlightedNiche={state.highlightedNiche}
+                userMarkers={userMarkers}
               />
 
               <Suspense fallback={null}>

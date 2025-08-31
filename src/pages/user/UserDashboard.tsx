@@ -1,5 +1,7 @@
-import { CalendarDays, Bell, Heart, MapPin, Eye } from 'lucide-react'
+import { CalendarDays, Bell, Heart, MapPin } from 'lucide-react'
+import { useNavigate } from 'react-router-dom'
 
+import { parseCoordinates } from '@/api/users.api'
 import { ErrorMessage } from '@/components/ErrorMessage'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -9,6 +11,19 @@ import { useUserDashboard } from '@/hooks/useUserDashboard'
 
 export default function UserDashboard() {
   const { data: dashboardData, isLoading, error } = useUserDashboard()
+  const navigate = useNavigate()
+
+  // Navigation handler for plots
+  const handleNavigateToPlot = (coordinates?: string) => {
+    if (!coordinates) return
+
+    const coords = parseCoordinates(coordinates)
+    if (!coords) return
+
+    const [lat, lng] = coords
+    // Navigate to map with direction parameters
+    navigate(`/map?direction=true&lat=${lat}&lng=${lng}`)
+  }
 
   if (isLoading) {
     return (
@@ -280,16 +295,14 @@ export default function UserDashboard() {
                       </div>
                     </div>
                     <div className="flex flex-wrap gap-3 sm:flex-nowrap">
-                      <Button variant="ghost" size="sm" className="transition-colors hover:bg-blue-50 hover:text-blue-700 dark:hover:bg-blue-900/20">
-                        <MapPin className="mr-2 h-4 w-4" />
-                        Navigate
-                      </Button>
                       <Button
+                        variant="ghost"
                         size="sm"
                         className="bg-gradient-to-r from-blue-500 to-purple-500 text-white shadow-lg transition-all hover:from-blue-600 hover:to-purple-600 hover:shadow-xl"
+                        onClick={() => handleNavigateToPlot(lot.coordinates)}
                       >
-                        <Eye className="mr-2 h-4 w-4" />
-                        View Details
+                        <MapPin className="mr-2 h-4 w-4" />
+                        Navigate
                       </Button>
                       <Badge
                         variant="default"
@@ -359,16 +372,19 @@ export default function UserDashboard() {
                     </div>
                   </div>
                   <div className="flex flex-wrap gap-3 sm:flex-nowrap">
-                    <Button variant="ghost" size="sm" className="transition-colors hover:bg-blue-50 hover:text-blue-700 dark:hover:bg-blue-900/20">
-                      <MapPin className="mr-2 h-4 w-4" />
-                      Navigate
-                    </Button>
                     <Button
+                      variant="ghost"
                       size="sm"
                       className="bg-gradient-to-r from-blue-500 to-purple-500 text-white shadow-lg transition-all hover:from-blue-600 hover:to-purple-600 hover:shadow-xl"
+                      onClick={() => {
+                        const correspondingLot = lots.find((lot) => lot.lot_id === deceased.lot_id)
+                        if (correspondingLot?.coordinates) {
+                          handleNavigateToPlot(correspondingLot.coordinates)
+                        }
+                      }}
                     >
-                      <Eye className="mr-2 h-4 w-4" />
-                      View
+                      <MapPin className="mr-2 h-4 w-4" />
+                      Navigate
                     </Button>
                     <Badge variant="default" className="bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300">
                       Active

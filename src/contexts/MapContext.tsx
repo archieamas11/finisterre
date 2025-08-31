@@ -9,7 +9,7 @@ export interface MapState {
   shouldCenterOnUser: boolean
   // Cluster
   selectedGroups: Set<string>
-  clusterViewMode: 'all' | 'selective'
+  clusterViewMode: 'all' | 'selective' | 'user-plots'
   // Search
   searchQuery: string
   searchResult: LotSearchResult | null
@@ -30,6 +30,7 @@ export type MapAction =
   | { type: 'SELECT_GROUPS'; groups: Set<string> }
   | { type: 'TOGGLE_GROUP'; group: string }
   | { type: 'RESET_GROUPS' }
+  | { type: 'SHOW_USER_PLOTS' }
   | { type: 'SET_SEARCH_QUERY'; query: string }
   | { type: 'SEARCH_START' }
   | { type: 'SEARCH_SUCCESS'; result: LotSearchResult | null }
@@ -60,6 +61,7 @@ export interface LocateContextValue extends MapState {
   clearSearch: () => void
   setAutoOpenPopupFor: (plotId: string | null) => void
   requestPopupClose: () => void
+  showUserPlotsOnly: () => void
 }
 
 // ==== Contexts ====

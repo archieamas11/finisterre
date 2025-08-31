@@ -87,3 +87,16 @@ export async function getUserDashboard() {
     data: UserDashboardData
   }
 }
+
+// Utility function to parse coordinates string to [lat, lng] array
+export function parseCoordinates(coordinates?: string): [number, number] | null {
+  if (!coordinates) return null
+
+  const parts = coordinates.split(',').map((part) => parseFloat(part.trim()))
+  if (parts.length >= 2 && !isNaN(parts[0]) && !isNaN(parts[1])) {
+    // coordinates are stored as "lng, lat", return as [lat, lng]
+    return [parts[1], parts[0]]
+  }
+
+  return null
+}

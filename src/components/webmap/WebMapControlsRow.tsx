@@ -1,13 +1,16 @@
+import { HiOutlineLocationMarker } from 'react-icons/hi'
 import { useLocation } from 'react-router-dom'
 import { Locate, Home, ArrowLeft, Info } from 'lucide-react'
+import { useState } from 'react'
 import { isAndroid } from '@/utils/platform.utils'
 
 import { Button } from '@/components/ui/button'
 import AdminControls from '@/components/webmap/AdminControls'
 import ClusterFilterDropdown from '@/components/webmap/ClusterFilterDropdown'
 import ResetMapViewButton from '@/components/webmap/ResetMapViewButton'
+import LoginRequiredModal from '@/components/modals/LoginRequiredModal'
 import { cn } from '@/lib/utils'
-import { isAdmin } from '@/utils/auth.utils'
+import { isAdmin, isAuthenticated } from '@/utils/auth.utils'
 import type { AdminContext, WebMapContext } from '@/hooks/useNavigationContext'
 import { Fab } from 'konsta/react'
 import { Link } from 'react-router-dom'
@@ -20,13 +23,28 @@ interface WebMapControlsRowProps {
 
 export default function WebMapControlsRow({ context, onBack, onLegendClick }: WebMapControlsRowProps) {
   const location = useLocation()
+  const [showLoginModal, setShowLoginModal] = useState(false)
+
+  const handleMyPlotsClick = () => {
+    if (!isAuthenticated()) {
+      setShowLoginModal(true)
+    } else {
+      // Trigger user plots display if authenticated
+      if (context && 'showUserPlotsOnly' in context) {
+        const webMapCtx = context as WebMapContext
+        webMapCtx.showUserPlotsOnly()
+      }
+    }
+  }
+
   const ArrowLeftIcon = <ArrowLeft className="h-6 w-6" />
   const LocateIcon = <Locate className="h-6 w-6" />
   const homeIcon = <Home className="h-6 w-6" />
+  const HiOutlineLocationMarkerIcon = <HiOutlineLocationMarker />
   return (
     <div className={cn('no-scrollbar flex w-full flex-nowrap items-center gap-2 overflow-x-auto pt-0 pb-1 md:mx-auto', 'lg:justify-center')} role="group" aria-label="Map controls">
       {/* Home Button */}
-      {location.pathname !== '/admin/map' && (
+      {location.pathname === '/map' && (
         <>
           {isAndroid() ? (
             <button onClick={onBack} className="shrink-0">
@@ -81,6 +99,23 @@ export default function WebMapControlsRow({ context, onBack, onLegendClick }: We
         </>
       )}
 
+      {/* Should only display this if the user is authenticated */}
+      {/* Show only all the owned plots of the user */}
+      {location.pathname !== '/admin/map' && (
+        <>
+          {isAndroid() ? (
+            <button className="bg-transparent" onClick={handleMyPlotsClick}>
+              <Fab className="k-color-brand-green h-10 w-35" text="My Plots" icon={HiOutlineLocationMarkerIcon} />
+            </button>
+          ) : (
+            <Button variant="secondary" size="sm" className="bg-background shrink-0 rounded-full text-xs sm:text-sm" onClick={handleMyPlotsClick} aria-label="My Plots">
+              <HiOutlineLocationMarker className="text-accent-foreground h-3 w-3 sm:h-4 sm:w-4" />
+              <span>My Plots</span>
+            </Button>
+          )}
+        </>
+      )}
+
       {/* 📍 Locate user */}
       {location.pathname !== '/admin/map' && (
         <>
@@ -126,6 +161,9 @@ export default function WebMapControlsRow({ context, onBack, onLegendClick }: We
 
       {/* ➕ Admin add/edit marker controls */}
       {isAdmin() && location.pathname === '/admin/map' && <AdminControls />}
+
+      {/* Login Required Modal */}
+      <LoginRequiredModal isOpen={showLoginModal} onClose={() => setShowLoginModal(false)} feature="My Plots" />
     </div>
   )
 }

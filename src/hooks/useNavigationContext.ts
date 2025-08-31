@@ -18,7 +18,7 @@ export interface WebMapContext {
   selectedGroups: Set<string>
   toggleGroupSelection: (groupKey: string) => void
   resetGroupSelection: () => void
-  clusterViewMode: 'all' | 'selective'
+  clusterViewMode: 'all' | 'selective' | 'user-plots'
   availableGroups: Array<{ key: string; label: string; count: number }>
   handleClusterClick: (groupKey: string) => void
   // 🔍 Search functionality
@@ -32,6 +32,9 @@ export interface WebMapContext {
   // 🎯 Auto popup functionality
   autoOpenPopupFor: string | null
   setAutoOpenPopupFor: (plotId: string | null) => void
+  // 👤 User plots functionality
+  showUserPlotsOnly: () => void
+  resetView: () => void
 }
 
 export type MapContext = AdminContext | WebMapContext | null | undefined
@@ -48,6 +51,9 @@ export const isWebMapContext = (ctx: unknown): ctx is WebMapContext => {
     'selectedGroups' in ctx &&
     'toggleGroupSelection' in ctx &&
     'resetGroupSelection' in ctx &&
+    'clusterViewMode' in ctx &&
+    'showUserPlotsOnly' in ctx &&
+    'resetView' in ctx &&
     'handleClusterClick' in ctx &&
     'searchQuery' in ctx &&
     'searchLot' in ctx
