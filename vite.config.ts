@@ -4,7 +4,6 @@ import path from 'path'
 import AutoImport from 'unplugin-auto-import/vite'
 import { defineConfig } from 'vite'
 import checker from 'vite-plugin-checker'
-import viteCompression from 'vite-plugin-compression'
 import { ViteImageOptimizer } from 'vite-plugin-image-optimizer'
 import Inspect from 'vite-plugin-inspect'
 import removeConsole from 'vite-plugin-remove-console'
@@ -20,10 +19,6 @@ export default defineConfig({
     removeConsole(),
     checker({
       typescript: true,
-    }),
-    viteCompression({
-      algorithm: 'brotliCompress',
-      threshold: 1024,
     }),
     AutoImport({
       imports: [
