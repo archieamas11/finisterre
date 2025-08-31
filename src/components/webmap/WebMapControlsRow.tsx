@@ -46,13 +46,14 @@ export default function WebMapControlsRow({ context, onBack, onLegendClick }: We
       className={cn('flex w-full flex-nowrap items-center gap-2 overflow-x-auto pt-0 pb-1 md:mx-auto', 'lg:justify-center', !isAndroid() && 'no-scrollbar')}
       role="group"
       aria-label="Map controls"
+      style={{ touchAction: 'pan-x', overscrollBehavior: 'contain' }}
     >
       {/* Home Button */}
       {location.pathname !== '/admin/map' && (
         <>
           {isAndroid() ? (
-            <button onClick={onBack} className="shrink-0">
-              <Fab className="k-color-brand-green h-10" icon={homeIcon} />
+            <button onClick={onBack} className="shrink-0" style={{ touchAction: 'manipulation' }}>
+              <Fab className="k-color-brand-green h-10" icon={homeIcon} style={{ transform: 'none !important', transition: 'none !important' }} />
             </button>
           ) : (
             <Link to="/" className="shrink-0">
@@ -70,8 +71,8 @@ export default function WebMapControlsRow({ context, onBack, onLegendClick }: We
       {location.pathname !== '/admin/map' && (
         <>
           {isAndroid() ? (
-            <button className="bg-transparent" onClick={handleMyPlotsClick}>
-              <Fab className="k-color-brand-green h-10" icon={HiOutlineLocationMarkerIcon} />
+            <button className="bg-transparent" onClick={handleMyPlotsClick} style={{ touchAction: 'manipulation' }}>
+              <Fab className="k-color-brand-green h-10" icon={HiOutlineLocationMarkerIcon} style={{ transform: 'none !important', transition: 'none !important' }} />
             </button>
           ) : (
             <Button variant="secondary" size="sm" className="bg-background shrink-0 rounded-full text-xs sm:text-sm" onClick={handleMyPlotsClick} aria-label="My Plots">
@@ -97,8 +98,9 @@ export default function WebMapControlsRow({ context, onBack, onLegendClick }: We
                   webMapCtx.resetGroupSelection()
                 }
               }}
+              style={{ touchAction: 'manipulation' }}
             >
-              <Fab className="k-color-brand-green h-10" icon={ArrowLeftIcon} />
+              <Fab className="k-color-brand-green h-10" icon={ArrowLeftIcon} style={{ transform: 'none !important', transition: 'none !important' }} />
             </button>
           ) : (
             <Button
@@ -124,8 +126,8 @@ export default function WebMapControlsRow({ context, onBack, onLegendClick }: We
       {location.pathname !== '/admin/map' && (
         <>
           {isAndroid() ? (
-            <button className="bg-transparent" onClick={() => context?.requestLocate()}>
-              <Fab className="k-color-brand-green h-10" icon={LocateIcon} />
+            <button className="bg-transparent" onClick={() => context?.requestLocate()} style={{ touchAction: 'manipulation' }}>
+              <Fab className="k-color-brand-green h-10" icon={LocateIcon} style={{ transform: 'none !important', transition: 'none !important' }} />
             </button>
           ) : (
             <Button
@@ -151,8 +153,8 @@ export default function WebMapControlsRow({ context, onBack, onLegendClick }: We
       {onLegendClick && (
         <>
           {isAndroid() ? (
-            <button onClick={onLegendClick} className="shrink-0 lg:hidden">
-              <Fab className="k-color-brand-green h-10" icon={<Info className="h-6 w-6" />} />
+            <button onClick={onLegendClick} className="shrink-0 lg:hidden" style={{ touchAction: 'manipulation' }}>
+              <Fab className="k-color-brand-green h-10" icon={<Info className="h-6 w-6" />} style={{ transform: 'none !important', transition: 'none !important' }} />
             </button>
           ) : (
             <Button variant="secondary" size="sm" className="bg-background shrink-0 rounded-full text-xs sm:text-sm lg:hidden" onClick={onLegendClick} aria-label="Show legend">
