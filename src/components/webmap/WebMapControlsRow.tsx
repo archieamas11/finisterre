@@ -71,7 +71,7 @@ export default function WebMapControlsRow({ context, onBack, onLegendClick }: We
         <>
           {isAndroid() ? (
             <button className="bg-transparent" onClick={handleMyPlotsClick}>
-              <Fab className="k-color-brand-green h-10 w-35" text="My Plots" icon={HiOutlineLocationMarkerIcon} />
+              <Fab className="k-color-brand-green h-10 w-35 px-0 py-0" text="My Plots" icon={HiOutlineLocationMarkerIcon} />
             </button>
           ) : (
             <Button variant="secondary" size="sm" className="bg-background shrink-0 rounded-full text-xs sm:text-sm" onClick={handleMyPlotsClick} aria-label="My Plots">
