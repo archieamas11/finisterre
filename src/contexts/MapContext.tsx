@@ -62,6 +62,8 @@ export interface LocateContextValue extends MapState {
   setAutoOpenPopupFor: (plotId: string | null) => void
   requestPopupClose: () => void
   showUserPlotsOnly: () => void
+  // 👤 Count of user-owned plots (used to conditionally show My Plots entry in filters)
+  userOwnedPlotsCount: number
 }
 
 // ==== Contexts ====

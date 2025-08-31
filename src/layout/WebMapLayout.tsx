@@ -84,7 +84,6 @@ function MapInstanceBinder({ onMapReady }: { onMapReady: (map: L.Map) => void })
   return null
 }
 
-// ==== New reducer-based state management ====
 const initialMapState: MapState = {
   isNavigationInstructionsOpen: false,
   isDirectionLoading: false,
@@ -140,7 +139,6 @@ function mapReducer(state: MapState, action: MapAction): MapState {
     case 'SET_AUTO_POPUP':
       return { ...state, autoOpenPopupFor: action.plotId }
     case 'REQUEST_POPUP_CLOSE':
-      // Increment token to tell popups to close themselves
       return { ...state, pendingPopupClose: true, forceClosePopupsToken: state.forceClosePopupsToken + 1 }
     case 'POPUP_CLOSE_CONFIRMED':
       return { ...state, pendingPopupClose: false }
@@ -235,12 +233,12 @@ export default function MapPage({ onBack }: { onBack?: () => void }) {
 
   useEffect(() => {
     if (state.shouldCenterOnUser && currentLocation) {
-      const timeoutId = setTimeout(() => dispatch({ type: 'REQUEST_LOCATE' }), 1000) // reuse action to toggle flag
+      const timeoutId = setTimeout(() => dispatch({ type: 'REQUEST_LOCATE' }), 1000)
       return () => clearTimeout(timeoutId)
     }
   }, [state.shouldCenterOnUser, currentLocation])
 
-  // 🚀 Effect to detect when route is fully loaded and flyTo animation is complete
+  //  Effect to detect when route is fully loaded and flyTo animation is complete
   useEffect(() => {
     if (route && routeCoordinates.length > 0 && state.isDirectionLoading) {
       // Route is loaded, start flyTo animation and wait for it to complete
@@ -372,12 +370,12 @@ export default function MapPage({ onBack }: { onBack?: () => void }) {
     }
   }, [searchParams, handleDirectionClick])
 
-  // 🎯 Cluster control functions
+  //  Cluster control functions
   const toggleGroupSelection = useCallback((groupKey: string) => dispatch({ type: 'TOGGLE_GROUP', group: groupKey }), [])
 
   const resetGroupSelection = useCallback(() => dispatch({ type: 'RESET_GROUPS' }), [])
 
-  // 🎯 Handle cluster click - select single group
+  //  Handle cluster click - select single group
   const handleClusterClick = useCallback((groupKey: string) => dispatch({ type: 'SELECT_GROUPS', groups: new Set([groupKey]) }), [])
 
   // 🔍 Search functions
@@ -514,6 +512,7 @@ export default function MapPage({ onBack }: { onBack?: () => void }) {
       setAutoOpenPopupFor: (plotId: string | null) => dispatch({ type: 'SET_AUTO_POPUP', plotId }),
       requestPopupClose,
       showUserPlotsOnly,
+      userOwnedPlotsCount: userMarkers.length,
     }),
     [
       state,
@@ -528,6 +527,7 @@ export default function MapPage({ onBack }: { onBack?: () => void }) {
       clearSearch,
       requestPopupClose,
       showUserPlotsOnly,
+      userMarkers.length,
     ],
   )
 
@@ -570,7 +570,6 @@ export default function MapPage({ onBack }: { onBack?: () => void }) {
               easeLinearity={0.25}
               worldCopyJump={false}
               maxBoundsViscosity={1.0}
-              preferCanvas={true}
             >
               <MapInstanceBinder onMapReady={setMapInstance} />
               <TileLayer

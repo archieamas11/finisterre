@@ -2,6 +2,7 @@ import { MdFamilyRestroom } from 'react-icons/md'
 import { useLocation } from 'react-router-dom'
 import { Locate, Home, ArrowLeft, Info } from 'lucide-react'
 import { useState } from 'react'
+import { toast } from 'sonner'
 import { isNativePlatform } from '@/utils/platform.utils'
 
 import { Button } from '@/components/ui/button'
@@ -28,11 +29,14 @@ export default function WebMapControlsRow({ context, onBack, onLegendClick }: We
   const handleMyPlotsClick = () => {
     if (!isAuthenticated()) {
       setShowLoginModal(true)
-    } else {
-      // Trigger user plots display if authenticated
-      if (context && 'showUserPlotsOnly' in context) {
-        const webMapCtx = context as WebMapContext
+      return
+    }
+    if (context && 'showUserPlotsOnly' in context) {
+      const webMapCtx = context as WebMapContext
+      if (webMapCtx.userOwnedPlotsCount > 0) {
         webMapCtx.showUserPlotsOnly()
+      } else {
+        toast.info('No owned plots or records found')
       }
     }
   }
@@ -92,8 +96,8 @@ export default function WebMapControlsRow({ context, onBack, onLegendClick }: We
       {/* 🎯 Cluster Control Dropdown */}
       {location.pathname !== '/admin/map' && context && 'selectedGroups' in context && <ClusterFilterDropdown context={context as WebMapContext} />}
 
-      {/* 🔙 Back to Clusters Button */}
-      {location.pathname !== '/admin/map' && context && 'clusterViewMode' in context && (context as WebMapContext).clusterViewMode === 'selective' && (
+      {/* 🔙 Back to Clusters Button (visible in selective or user-plots modes) */}
+      {location.pathname !== '/admin/map' && context && 'clusterViewMode' in context && (context as WebMapContext).clusterViewMode !== 'all' && (
         <>
           {isNativePlatform() ? (
             <button
@@ -120,7 +124,7 @@ export default function WebMapControlsRow({ context, onBack, onLegendClick }: We
                   webMapCtx.resetGroupSelection()
                 }
               }}
-              aria-label="Back to all clusters"
+              aria-label="Back to clusters"
             >
               <ArrowLeft className="text-accent-foreground h-3 w-3 sm:h-4 sm:w-4" />
             </Button>

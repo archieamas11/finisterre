@@ -35,6 +35,7 @@ export interface WebMapContext {
   // 👤 User plots functionality
   showUserPlotsOnly: () => void
   resetView: () => void
+  userOwnedPlotsCount: number
 }
 
 export type MapContext = AdminContext | WebMapContext | null | undefined
@@ -56,7 +57,8 @@ export const isWebMapContext = (ctx: unknown): ctx is WebMapContext => {
     'resetView' in ctx &&
     'handleClusterClick' in ctx &&
     'searchQuery' in ctx &&
-    'searchLot' in ctx
+    'searchLot' in ctx &&
+    'userOwnedPlotsCount' in ctx
   )
 }
 
