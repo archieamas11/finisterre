@@ -2,7 +2,6 @@ import { CalendarDays, Bell, Heart, MapPin } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 
 import { parseCoordinates } from '@/api/users.api'
-import { ErrorMessage } from '@/components/ErrorMessage'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
@@ -10,7 +9,7 @@ import Spinner from '@/components/ui/spinner'
 import { useUserDashboard } from '@/hooks/useUserDashboard'
 
 export default function UserDashboard() {
-  const { data: dashboardData, isLoading, error } = useUserDashboard()
+  const { data: dashboardData, isLoading } = useUserDashboard()
   const navigate = useNavigate()
 
   // Navigation handler for plots
@@ -29,22 +28,6 @@ export default function UserDashboard() {
     return (
       <div className="flex h-screen w-full items-center justify-center">
         <Spinner />
-      </div>
-    )
-  }
-
-  if (error) {
-    // ⚠️ Handle different error scenarios gracefully
-    const errorMessage = error instanceof Error ? error.message : 'Unable to load dashboard data. Please try refreshing the page.'
-
-    return (
-      <div className="flex h-screen w-full items-center justify-center">
-        <div className="space-y-4 text-center">
-          <ErrorMessage message={errorMessage} />
-          <Button variant="outline" onClick={() => window.location.reload()} className="mt-4">
-            Refresh Page
-          </Button>
-        </div>
       </div>
     )
   }

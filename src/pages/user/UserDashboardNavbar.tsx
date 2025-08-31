@@ -28,7 +28,7 @@ export default function UserDashboardNavbar() {
   }))
 
   return (
-    <header className="bg-background/95 supports-[backdrop-filter]:bg-background/60 scrollbar-gutter-stable fixed top-0 right-0 left-0 z-50 w-full border-b px-4 backdrop-blur md:px-6">
+    <header className="bg-background/95 supports-[backdrop-filter]:bg-background/60 scrollbar-gutter-stable fixed top-0 right-0 left-0 z-999 w-full border-b px-4 backdrop-blur md:px-6">
       <div className="flex h-16 items-center justify-between gap-4">
         {/* Left side */}
         <div className="flex flex-1 items-center gap-2">
