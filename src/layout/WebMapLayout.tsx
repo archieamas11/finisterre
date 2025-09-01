@@ -159,7 +159,7 @@ function mapReducer(state: MapState, action: MapAction): MapState {
   }
 }
 
-export default function MapPage({ onBack }: { onBack?: () => void }) {
+export default function MapPage({ onBack, initialDirection }: { onBack?: () => void; initialDirection?: { lat: number; lng: number } | null }) {
   const { isLoading, data: plotsData } = usePlots()
   const { data: userPlotsData } = useUserOwnedPlots()
 
@@ -393,6 +393,15 @@ export default function MapPage({ onBack }: { onBack?: () => void }) {
     }
   }, [searchParams, handleDirectionClick])
 
+  // If initialDirection prop is provided (used by native Android wrapper), start navigation
+  useEffect(() => {
+    if (initialDirection && isNativePlatform()) {
+      const coords: [number, number] = [initialDirection.lat, initialDirection.lng]
+      handleDirectionClick(coords)
+    }
+    // Only run on mount / when initialDirection changes
+  }, [initialDirection, handleDirectionClick])
+
   //  Cluster control functions
   const toggleGroupSelection = useCallback((groupKey: string) => dispatch({ type: 'TOGGLE_GROUP', group: groupKey }), [])
 
@@ -590,6 +599,7 @@ export default function MapPage({ onBack }: { onBack?: () => void }) {
               titleRightText={konstaNotificationProps.titleRightText}
               button
               onClick={() => setKonstaNotificationOpen(false)}
+              className="z-[999]"
             />
             {(locationError || routingError) && (
               <div className="absolute top-4 right-4 z-[999] max-w-sm">

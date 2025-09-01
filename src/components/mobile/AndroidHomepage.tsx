@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Page, Navbar, Tabbar, TabbarLink, Block, ToolbarPane, Fab, Link, Card, BlockTitle } from 'konsta/react'
 import { MapPin, UserIcon, HomeIcon, Settings2Icon, LogIn } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
@@ -6,11 +6,13 @@ import AndroidMapPage from './AndroidMapPage'
 import AndroidProfilePage from '@/pages/android/AndroidProfilePage'
 import UserDashboard from '@/pages/user/UserDashboard'
 import { isAuthenticated } from '@/utils/auth.utils'
+import { BiRightArrowAlt } from 'react-icons/bi'
 
 export default function AndroidHomepage() {
   const [activeTab, setActiveTab] = useState('home')
   const [showMapPage, setShowMapPage] = useState(false)
   const [showProfilePage, setShowProfilePage] = useState(false)
+  const [initialDirection, setInitialDirection] = useState<{ lat: number; lng: number } | null>(null)
   const navigate = useNavigate()
 
   // If showing profile page, render it as the main page
@@ -20,8 +22,31 @@ export default function AndroidHomepage() {
 
   // If showing map page, render it as the main page
   if (showMapPage) {
-    return <AndroidMapPage onBack={() => setShowMapPage(false)} />
+    return (
+      <AndroidMapPage
+        onBack={() => {
+          setShowMapPage(false)
+          setInitialDirection(null)
+        }}
+        initialDirection={initialDirection}
+      />
+    )
   }
+
+  // Listen for native openNativeMap events (dispatched from web code when running inside Capacitor native)
+  // Use a mounted effect to add/remove listener
+  useEffect(() => {
+    const handler = (e: Event) => {
+      const detail = (e as CustomEvent)?.detail
+      if (detail && typeof detail.lat === 'number' && typeof detail.lng === 'number') {
+        setInitialDirection({ lat: detail.lat, lng: detail.lng })
+        setShowMapPage(true)
+      }
+    }
+
+    document.addEventListener('openNativeMap', handler as EventListener)
+    return () => document.removeEventListener('openNativeMap', handler as EventListener)
+  }, [])
 
   return (
     <Page>
@@ -32,7 +57,7 @@ export default function AndroidHomepage() {
         transparent={false}
         left={
           <Link>
-            <MapPin />
+            <BiRightArrowAlt />
           </Link>
         }
         right={
