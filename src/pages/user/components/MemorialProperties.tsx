@@ -13,11 +13,11 @@ type Props = {
   records: Deceased[]
   onNavigate: (coordinates?: Coordinates | null) => void
 }
-export const LotMemorialPanel: React.FC<Props> = ({ lot, records, onNavigate }) => {
+export const MemorialProperties: React.FC<Props> = ({ lot, records, onNavigate }) => {
   const plotTitle = `Block ${lot.block ?? '—'}`
   const graveInfo = lot.category ? lot.category : lot.niche_number ? `Niche ${lot.niche_number}` : '—'
   return (
-    <div className="rounded-xl border border-dashed bg-white/70 p-3 sm:p-5 dark:bg-slate-800/70">
+    <div className="lg:bg-accent/30 lg:rounded-xl lg:border lg:border-dashed lg:p-5">
       <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
         <div className="w-full sm:w-auto">
           <h4 className="flex items-center gap-2 text-sm font-semibold tracking-wide text-slate-500 dark:text-slate-400">

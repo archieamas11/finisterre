@@ -18,7 +18,7 @@ import Spinner from '@/components/ui/spinner'
 import { MapStateContext, MapDispatchContext, LocateContext, type MapState, type MapAction } from '@/contexts/MapContext'
 import { usePlots } from '@/hooks/plots-hooks/plot.hooks'
 import { useLocationTracking } from '@/hooks/useLocationTracking'
-import { useUserOwnedPlots, convertUserPlotToMarker } from '@/hooks/useUserOwnedPlots'
+import { useUserOwnedPlots, convertUserPlotToMarker } from '@/hooks/user-hooks/useUserOwnedPlots'
 import { useValhalla } from '@/hooks/useValhalla'
 import { groupMarkersByKey } from '@/lib/clusterUtils'
 import CenterSerenityMarkers from '@/pages/webmap/CenterSerenityMarkers'
@@ -589,7 +589,6 @@ export default function MapPage({ onBack, initialDirection }: { onBack?: () => v
           <div className="relative h-full w-full overflow-hidden">
             <WebMapNavs onBack={onBack} />
             <WebmapLegend />
-
             {/* Konsta Notification for native platforms */}
             <Notification
               opened={konstaNotificationOpen}

@@ -209,27 +209,9 @@ toast.promise(submitForm(data), {
 - Documenting public APIs (JSDoc)
 - Annotating: `TODO`, `FIXME`, `HACK`, `WARNING`, `PERF`, `SECURITY`
 
-### Emoji Convention
-
-Start every comment with a relevant emoji:
-
-- `// ⚡️` Performance
-- `// 🔐` Security
-- `// 🐛` Bug
-- `// 💡` Insight
-- `// ⚠️` Warning
-- `// 🛠️` Refactor
-- `// 🕳️` Edge case
-
 ### Examples
 
 ```ts
-// ⚡️ Optimized with memo to prevent re-render on every keystroke
-const suggestions = useMemo(() => filterSuggestions(input), [input]);
-
-// 🔐 Rate limit: 5000/hr for authenticated GitHub API
-await rateLimiter.wait();
-
 // FIXME: Memory leak in v2.1.0 — workaround until upgrade
 // HACK: Remove after updating library
 ```

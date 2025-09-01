@@ -13,7 +13,7 @@ export interface UserDashboardData {
   customer_id?: number | null
 }
 
-// 🔗 Raw backend response before transformation
+// Raw backend response before transformation
 export interface UserDashboardRawData {
   connected_memorials: number
   active_lots: number
@@ -30,50 +30,13 @@ export async function getUsers(params: { isAdmin?: number } = {}) {
   }
 }
 
-export async function testHealthCheck() {
-  try {
-    const res = await api.get('debug/health_check.php')
-    console.log('🏥 Health check response:', res.data)
-    return res.data
-  } catch (error) {
-    console.error('❌ Health check failed:', error)
-    throw error
-  }
-}
-
 export async function getUserDashboard() {
-  // 🐛 Debug: Check authentication state before making request
-  const token = localStorage.getItem('token')
-  console.log('🔐 Token exists:', !!token)
-  console.log('🔐 Token preview:', token ? `${token.substring(0, 20)}...` : 'No token')
+  const res = await api.post('users/get_user_dashboard.php', {})
 
-  try {
-    const res = await api.post('users/get_user_dashboard.php', {})
-
-    // 🐛 Debug: Log the raw response
-    console.log('📡 Raw API Response:', res)
-    console.log('📡 Response data:', res.data)
-    console.log('📡 Response status:', res.status)
-
-    return res.data as {
-      success: boolean
-      message: string
-      data: UserDashboardRawData
-    }
-  } catch (error) {
-    // 🐛 Enhanced error logging for debugging
-    console.error('❌ API Error Details:', {
-      error,
-      message: error instanceof Error ? error.message : 'Unknown error',
-      // @ts-expect-error - accessing axios error properties
-      status: error?.response?.status,
-      // @ts-expect-error - accessing axios error properties
-      statusText: error?.response?.statusText,
-      // @ts-expect-error - accessing axios error properties
-      responseData: error?.response?.data,
-    })
-
-    throw error
+  return res.data as {
+    success: boolean
+    message: string
+    data: UserDashboardRawData
   }
 }
 

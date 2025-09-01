@@ -29,7 +29,7 @@ export default function UserDashboardNavbar() {
   }))
 
   return (
-    <header className="bg-background/95 supports-[backdrop-filter]:bg-background/60 scrollbar-gutter-stable fixed top-0 right-0 left-0 z-999 w-full border-b px-4 backdrop-blur md:px-6">
+    <header className="bg-background/95 supports-[backdrop-filter]:bg-background/60 scrollbar-gutter-stable fixed top-0 right-0 left-0 z-50 w-full border-b px-4 backdrop-blur md:px-6">
       <div className="flex h-16 items-center justify-between gap-4">
         {/* Left side */}
         <div className="flex flex-1 items-center gap-2">
@@ -61,7 +61,7 @@ export default function UserDashboardNavbar() {
                 </svg>
               </Button>
             </PopoverTrigger>
-            <PopoverContent align="start" className="w-36 p-1 md:hidden">
+            <PopoverContent align="start" className="z-999 w-36 p-1 md:hidden">
               <NavigationMenu className="max-w-none *:w-full">
                 <NavigationMenuList className="flex-col items-start gap-0 md:gap-2">
                   {dynamicNavigationLinks.map((link, index) => {
@@ -88,7 +88,7 @@ export default function UserDashboardNavbar() {
           <Link to="/" className="text-primary hover:text-primary/90">
             <div className="flex items-center">
               <BiRightArrowAlt className="mr-2" size={'20'} />
-              <span className="font-medium">Finisterre Gardenz</span>
+              <span className="font-medium">Finisterre</span>
             </div>
           </Link>
         </div>

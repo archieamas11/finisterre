@@ -1,4 +1,4 @@
-import { CalendarDays, Heart, MapPin, Megaphone } from 'lucide-react'
+import { CalendarDays, Heart, MapPin } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 
 import { ErrorMessage } from '@/components/ErrorMessage'
@@ -6,12 +6,13 @@ import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import Spinner from '@/components/ui/spinner'
-import { useUserDashboard } from '@/hooks/useUserDashboard'
+import { useUserDashboard } from '@/hooks/user-hooks/useUserDashboard'
 
 import type { Lot, Deceased, Coordinates } from './components/types'
 
 import { AnnouncementCard } from './components/AnnouncementCard'
-import { LotMemorialPanel } from './components/LotMemorialPanel'
+import { MemorialProperties } from './components/MemorialProperties'
+import { PromotionalBanner } from './components/PromotionalBanner'
 import { StatCard } from './components/StatCard'
 
 export default function UserDashboard() {
@@ -55,50 +56,17 @@ export default function UserDashboard() {
 
   return (
     <div className="container mx-auto max-w-7xl px-4 py-8">
-      {/* Promotional / News Banner */}
-      <section
-        aria-label="Latest announcement"
-        className="relative mb-10 overflow-hidden rounded-2xl border border-slate-200 bg-gradient-to-br from-indigo-600 via-violet-600 to-fuchsia-600 p-0 text-white shadow-2xl dark:border-slate-700"
-      >
-        <div className="absolute inset-0 opacity-30 mix-blend-overlay" style={{ backgroundImage: 'radial-gradient(circle at 25% 25%, rgba(255,255,255,0.4), transparent 60%)' }} />
-        <div className="relative z-10 flex flex-col items-start gap-6 px-8 py-10 md:flex-row md:items-center md:justify-between">
-          <div className="max-w-2xl">
-            <div className="mb-4 inline-flex items-center gap-2 rounded-full bg-white/10 px-4 py-1.5 text-xs font-medium tracking-wide backdrop-blur-sm">
-              <Megaphone className="h-4 w-4" aria-hidden="true" />
-              <span>Announcement</span>
-            </div>
-            <h1 className="text-2xl leading-tight font-bold tracking-tight sm:text-3xl lg:text-4xl">Grand Opening: New Memorial Garden & Reflection Pathway</h1>
-            <p className="mt-4 text-sm leading-relaxed text-indigo-50/90 md:text-base">
-              Experience a renewed space for remembrance. Explore landscaped pathways, quiet seating alcoves, and enhanced wayfinding now available to all families.
-            </p>
-            <div className="mt-6 flex flex-wrap gap-3">
-              <Button
-                type="button"
-                onClick={() => {
-                  const el = document.getElementById('announcements-section')
-                  if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' })
-                }}
-                className="inline-flex items-center rounded-md bg-white/90 px-5 py-2.5 text-sm font-semibold text-indigo-700 shadow-lg shadow-indigo-900/20 transition-colors hover:bg-white focus:outline-none focus-visible:ring-2 focus-visible:ring-white/70"
-              >
-                Learn More
-              </Button>
-            </div>
-          </div>
-          <div className="relative w-full max-w-sm self-stretch md:w-auto md:self-center">
-            <div className="pointer-events-none absolute -top-12 -right-12 hidden h-56 w-56 rounded-full bg-white/10 blur-2xl md:block" />
-            <div className="relative mx-auto flex h-48 w-full max-w-xs items-center justify-center overflow-hidden rounded-xl bg-white/10 backdrop-blur-md md:h-52">
-              <img
-                src="https://picsum.photos/seed/memorial-garden/600/400"
-                alt="New memorial garden pathway with landscaped greenery"
-                width={600}
-                height={400}
-                loading="lazy"
-                className="h-full w-full object-cover"
-              />
-            </div>
-          </div>
-        </div>
-      </section>
+      {/* Promotional Banner */}
+      <PromotionalBanner
+        title="Grand Opening: New Memorial Garden & Reflection Pathway"
+        description="Experience a renewed space for remembrance. Explore landscaped pathways, quiet seating alcoves, and enhanced wayfinding now available to all families."
+        imageSrc="https://picsum.photos/seed/memorial-garden/600/400"
+        imageAlt="New memorial garden pathway with landscaped greenery"
+        badgeText="Announcement"
+        buttonText="Learn More"
+        variant="royal"
+        size="md"
+      />
 
       {/* Quick Stats Section */}
       <section className="mb-12">
@@ -154,7 +122,7 @@ export default function UserDashboard() {
               ) : (
                 <div className="space-y-6">
                   {lotsWithRecords.map(({ lot, records }) => (
-                    <LotMemorialPanel key={String(lot.lot_id)} lot={lot} records={records} onNavigate={handleNavigateToPlot} />
+                    <MemorialProperties key={String(lot.lot_id)} lot={lot} records={records} onNavigate={handleNavigateToPlot} />
                   ))}
                 </div>
               )}
@@ -163,7 +131,7 @@ export default function UserDashboard() {
         </div>
 
         {/* Right Column - Announcements (1/3 width) */}
-        <div className="lg:col-span-1">
+        <div id="announcements-section" className="lg:col-span-1">
           <Card className="border-0 bg-gradient-to-br from-white to-slate-50/50 shadow-xl dark:from-slate-900 dark:to-slate-800/50">
             <CardHeader className="pb-4">
               <CardTitle className="text-xl font-bold text-slate-900 dark:text-white">Recent Announcements</CardTitle>
@@ -173,21 +141,41 @@ export default function UserDashboard() {
               <AnnouncementCard
                 title="New Memorial Garden Opening"
                 description="We're excited to announce the opening of our new Memorial Garden. This serene space provides a beautiful setting for reflection and remembrance."
+                fullDescription="We're excited to announce the opening of our new Memorial Garden. This serene space provides a beautiful setting for reflection and remembrance. The garden features landscaped pathways, quiet seating alcoves, and enhanced wayfinding to help families find their loved ones more easily. The opening ceremony will be held this Saturday at 2 PM, and light refreshments will be served."
                 date="Posted 2 days ago"
                 isNew={true}
+                type="event"
               />
               <AnnouncementCard
                 title="Holiday Memorial Services Schedule"
                 description="View the complete schedule for our holiday memorial services and special commemorations."
+                fullDescription="View the complete schedule for our holiday memorial services and special commemorations. This year, we have special services planned for Memorial Day, Independence Day, Labor Day, and Veterans Day. Each service includes a brief ceremony, music, and time for personal reflection. The full schedule is available on our website and at the main office."
                 date="Posted 1 week ago"
                 isNew={false}
+                type="event"
               />
               <AnnouncementCard
                 title="Extended Visiting Hours"
                 description="We've extended our visiting hours for the summer season. The memorial park is now open until 8 PM on weekdays."
+                fullDescription="We've extended our visiting hours for the summer season. The memorial park is now open until 8 PM on weekdays and 9 PM on weekends. This change allows families more flexibility to visit during evenings when the lighting creates a beautiful ambiance. Please note that the main office hours remain unchanged."
                 date="Posted 2 weeks ago"
                 isNew={false}
+                type="general"
               />
+
+              {/* View All Button */}
+              <div className="border-t border-slate-200 pt-4 dark:border-slate-700">
+                <Button
+                  variant="outline"
+                  className="w-full justify-center"
+                  onClick={() => {
+                    // TODO: Navigate to full announcements page
+                    console.log('Navigate to all announcements')
+                  }}
+                >
+                  View All Announcements
+                </Button>
+              </div>
             </CardContent>
           </Card>
         </div>

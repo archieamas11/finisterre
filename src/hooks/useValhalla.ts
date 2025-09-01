@@ -23,10 +23,8 @@ export interface RouteState {
   isLoading: boolean
   route: ValhallaRouteResponse | null
   routeCoordinates: [number, number][]
-  // 📍 Store original coordinates (not snapped to roads)
   originalStart: [number, number] | null
   originalEnd: [number, number] | null
-  // 🎯 Progress tracking for dynamic polyline
   remainingCoordinates: [number, number][]
   progressIndex: number
   error: string | null
