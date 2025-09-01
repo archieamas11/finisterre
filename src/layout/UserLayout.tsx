@@ -6,7 +6,7 @@ export default function UserLayout() {
   return (
     <div className="bg-background scrollbar-gutter-stable min-h-screen">
       <UserDashboardNavbar />
-      <main className="container mx-auto px-4 py-6 pt-16">
+      <main className="mx-auto pt-12">
         <Outlet />
       </main>
     </div>

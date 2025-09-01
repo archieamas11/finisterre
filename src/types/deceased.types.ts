@@ -14,4 +14,9 @@ export interface DeceasedData {
   dead_date_death: string
   created_at: Date
   updated_at: Date
+
+  // Additional fields
+  block: string | null
+  category: string | null
+  niche_number: string | null
 }

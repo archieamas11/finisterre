@@ -1,8 +1,8 @@
 import MapPage from '@/layout/WebMapLayout'
 
-export default function UserMap() {
+export default function PublicMap() {
   return (
-    <div className="mx-auto h-[100vh] w-full py-3">
+    <div className="h-screen w-full">
       <MapPage />
     </div>
   )

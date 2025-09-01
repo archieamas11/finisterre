@@ -13,9 +13,9 @@ export default function UserProfile() {
   const fullName = customer ? [customer.first_name, customer.middle_name, customer.last_name].filter(Boolean).join(' ') : meUser?.name || 'User'
 
   return (
-    <div className="space-y-6">
+    <div className="container mx-auto max-w-7xl px-4 py-8">
       {/* Profile Header */}
-      <div className="flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-center">
+      <div className="flex flex-col items-start justify-between gap-4 space-y-6 sm:flex-row sm:items-center">
         <div>
           <h1 className="text-foreground text-3xl font-bold">My Profile</h1>
           <p className="text-muted-foreground">Manage your account information and preferences</p>

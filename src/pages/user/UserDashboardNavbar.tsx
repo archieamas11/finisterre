@@ -1,4 +1,5 @@
 import { HouseIcon, MapPin, User } from 'lucide-react'
+import { BiRightArrowAlt } from 'react-icons/bi'
 import { Link, useLocation } from 'react-router-dom'
 
 import InfoMenu from '@/components/info-menu'
@@ -84,11 +85,12 @@ export default function UserDashboardNavbar() {
             </PopoverContent>
           </Popover>
           {/* Logo */}
-          <div className="flex items-center">
-            <Link to="/" className="text-primary hover:text-primary/90">
-              <MapPin />
-            </Link>
-          </div>
+          <Link to="/" className="text-primary hover:text-primary/90">
+            <div className="flex items-center">
+              <BiRightArrowAlt className="mr-2" size={'20'} />
+              <span className="font-medium">Finisterre Gardenz</span>
+            </div>
+          </Link>
         </div>
         {/* Middle area */}
         <NavigationMenu className="max-md:hidden">

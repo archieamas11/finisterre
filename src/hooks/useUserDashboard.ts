@@ -21,10 +21,8 @@ export function useUserDashboard() {
           connected_memorials: data.connected_memorials || 0,
           active_lots: data.active_lots || 0,
           upcoming_events: data.upcoming_events || 0,
-          notifications: data.notifications || 0,
           lots: data.lots || [],
           deceased_records: data.deceased_records || [],
-          upcoming_anniversaries: data.upcoming_anniversaries || [],
           customer_id: data.customer_id || null,
         }
       } catch (error) {

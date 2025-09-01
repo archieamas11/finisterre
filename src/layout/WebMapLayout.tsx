@@ -572,7 +572,7 @@ export default function MapPage({ onBack }: { onBack?: () => void }) {
     <MapStateContext.Provider value={state}>
       <MapDispatchContext.Provider value={dispatch}>
         <LocateContext.Provider value={contextValue}>
-          <div className="relative h-screen w-full">
+          <div className="relative h-full w-full">
             <WebMapNavs onBack={onBack} />
             <WebmapLegend />
 

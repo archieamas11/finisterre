@@ -9,13 +9,12 @@ import {
   getCoreRowModel,
   useReactTable,
 } from '@tanstack/react-table'
-import { SearchIcon } from 'lucide-react'
-import { PrinterIcon } from 'lucide-react'
+import { SearchIcon, PrinterIcon } from 'lucide-react'
 import React from 'react'
 
-import type { UserRecord } from '@/api/users.api'
+import type { UserData } from '@/types/user.types'
 
-import { getUsers as fetchUsers } from '@/api/users.api'
+import { getUsers } from '@/api/users.api'
 import { DataTable } from '@/components/data-table/data-table'
 import { DataTableToolbar } from '@/components/data-table/data-table-toolbar'
 import { Button } from '@/components/ui/button'
@@ -25,7 +24,7 @@ import { Input } from '@/components/ui/input'
 import { adminUsersColumns } from './AdminUsersColumns'
 
 export default function AdminUsersTable() {
-  const [data, setData] = React.useState<UserRecord[]>([])
+  const [data, setData] = React.useState<UserData[]>([])
 
   const [sorting, setSorting] = React.useState<SortingState>([])
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([])
@@ -37,8 +36,8 @@ export default function AdminUsersTable() {
     let mounted = true
     async function load() {
       try {
-        const res = await fetchUsers({ isAdmin: 1 })
-        if (mounted && res && res.success) {
+        const res = await getUsers({ isAdmin: 1 })
+        if (mounted && res) {
           setData(res.users ?? [])
         }
       } catch (err) {
@@ -52,7 +51,7 @@ export default function AdminUsersTable() {
     }
   }, [])
 
-  const table = useReactTable<UserRecord>({
+  const table = useReactTable<UserData>({
     data,
     columns: adminUsersColumns,
     onSortingChange: setSorting,

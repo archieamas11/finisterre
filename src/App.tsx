@@ -28,8 +28,8 @@ const AdminLayout = React.lazy(() => import('@/layout/AdminLayout'))
 const UserLayout = React.lazy(() => import('@/layout/UserLayout'))
 const AndroidLandingPage = React.lazy(() => import('@/pages/android/AndroidLandingPage'))
 const IosLandingPage = React.lazy(() => import('@/pages/ios/iosLandingPage'))
+const PublicMap = React.lazy(() => import('@/pages/webmap/PublicWebMap'))
 import LandingLayout from '@/layout/LandingLayout'
-const MapPage = React.lazy(() => import('@/layout/WebMapLayout'))
 
 interface ErrorFallbackProps {
   error: Error
@@ -77,7 +77,7 @@ function AppRoutes() {
         <Routes>
           {/* Public Routes */}
           <Route path="/" element={<LandingLayout />} />
-          <Route path="/map" element={<MapPage />} />
+          <Route path="/map" element={<PublicMap />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/forgot-password" element={<ForgotPassword />} />
           <Route path="/reset-password" element={<ResetPassword />} />
