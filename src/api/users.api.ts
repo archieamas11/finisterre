@@ -13,6 +13,16 @@ export interface UserDashboardData {
   customer_id?: number | null
 }
 
+// 🔗 Raw backend response before transformation
+export interface UserDashboardRawData {
+  connected_memorials: number
+  active_lots: number
+  upcoming_events: number
+  lots: Array<Omit<LotOwnerData, 'coordinates'> & { coordinates: string }>
+  deceased_records: DeceasedData[]
+  customer_id?: number | null
+}
+
 export async function getUsers(params: { isAdmin?: number } = {}) {
   const res = await api.post('users/get_users.php', params)
   return res.data as {
@@ -25,7 +35,7 @@ export async function getUserDashboard() {
   return res.data as {
     success: boolean
     message: string
-    data: UserDashboardData
+    data: UserDashboardRawData
   }
 }
 

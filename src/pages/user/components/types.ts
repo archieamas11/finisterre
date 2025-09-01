@@ -6,7 +6,7 @@ export interface Lot {
   category?: string | null
   niche_number?: string | number | null
   lot_status?: string | null
-  coordinates?: Coordinates
+  coordinates?: Coordinates | null
 }
 
 export interface Deceased {

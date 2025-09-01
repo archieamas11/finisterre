@@ -53,7 +53,7 @@ export default function WebMapControlsRow({ context, onBack, onLegendClick }: We
       style={{ touchAction: 'pan-x', overscrollBehavior: 'contain' }}
     >
       {/* Home Button */}
-      {location.pathname !== '/admin/map' && isNativePlatform() && (
+      {location.pathname !== '/admin/map' && location.pathname !== '/user/map' && (
         <>
           {isNativePlatform() ? (
             <button onClick={onBack} className="no-long-press shrink-0 touch-manipulation">

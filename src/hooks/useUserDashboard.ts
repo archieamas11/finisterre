@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query'
 
-import { getUserDashboard } from '@/api/users.api'
+import { getUserDashboard, parseCoordinates } from '@/api/users.api'
 import { isAuthenticated } from '@/utils/auth.utils'
 
 export function useUserDashboard() {
@@ -17,11 +17,18 @@ export function useUserDashboard() {
 
         // ⚠️ Ensure data structure is complete with fallbacks
         const data = response.data || {}
+
+        // 🧮 Transform lots data with proper coordinate parsing
+        const transformedLots = (data.lots || []).map((lot) => ({
+          ...lot,
+          coordinates: parseCoordinates(lot.coordinates),
+        }))
+
         return {
           connected_memorials: data.connected_memorials || 0,
           active_lots: data.active_lots || 0,
           upcoming_events: data.upcoming_events || 0,
-          lots: data.lots || [],
+          lots: transformedLots,
           deceased_records: data.deceased_records || [],
           customer_id: data.customer_id || null,
         }
