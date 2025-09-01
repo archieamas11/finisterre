@@ -2,14 +2,19 @@ import { motion } from 'framer-motion'
 import { MapPin, Award, Ruler, Info } from 'lucide-react'
 import { BiXCircle } from 'react-icons/bi'
 import { BiCheckCircle } from 'react-icons/bi'
+import { BsPersonHeart } from 'react-icons/bs'
 import { FaDirections } from 'react-icons/fa'
 import { FaHourglassStart } from 'react-icons/fa'
 
 import { Button } from '@/components/ui/button'
 import { CardDescription, CardTitle } from '@/components/ui/card'
 import { Spinner } from '@/components/ui/spinner'
+import { useAuth } from '@/hooks/useAuth'
+import { useDeceasedForPlot } from '@/hooks/useDeceasedForPlot'
 import { cn } from '@/lib/utils'
+import { type DeceasedData } from '@/types/deceased.types'
 import { type ConvertedMarker } from '@/types/map.types'
+import { calculateYearsBuried } from '@/utils/date.utils'
 interface PlotLocationsProps {
   marker: ConvertedMarker
   backgroundColor?: string
@@ -18,6 +23,9 @@ interface PlotLocationsProps {
 }
 
 export default function PlotLocations({ marker, backgroundColor, onDirectionClick, isDirectionLoading = false }: PlotLocationsProps) {
+  const { isAuthenticated } = useAuth()
+  const { data: deceasedData, isLoading: isDeceasedLoading } = useDeceasedForPlot(marker.plot_id)
+
   return (
     <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3 }} className="mt-5">
       <div className="bg-background dark:bg-muted rounded-t-lg p-3 transition-colors" style={backgroundColor ? { background: backgroundColor } : {}}>
@@ -43,13 +51,54 @@ export default function PlotLocations({ marker, backgroundColor, onDirectionClic
           </Button>
         </div>
       </div>
+
+      {/* Deceased Information */}
+      {isAuthenticated && deceasedData && deceasedData.length > 0 && (
+        <div className="bg-accent/40 dark:bg-accent/60 mb-3 rounded-lg p-3 shadow-sm transition-colors">
+          <div className="mb-3 flex items-center gap-2">
+            <BsPersonHeart className="text-primary/80 dark:text-primary" size={18} />
+            <span className="text-foreground text-sm font-semibold">Deceased Information</span>
+          </div>
+          {isDeceasedLoading ? (
+            <div className="flex items-center justify-center py-4">
+              <Spinner className="h-5 w-5" />
+            </div>
+          ) : (
+            <div className="space-y-3">
+              {deceasedData.map((deceased: DeceasedData) => (
+                <div key={deceased.deceased_id} className="bg-background/70 dark:bg-background/50 border-border/50 rounded-lg border p-3">
+                  <div className="text-foreground mb-2 flex items-center gap-2 text-sm font-semibold">
+                    <BsPersonHeart size={14} className="text-muted-foreground" />
+                    {deceased.dead_fullname}
+                  </div>
+                  <div className="text-muted-foreground space-y-1 text-xs">
+                    <div className="flex items-center gap-2">
+                      <span className="font-medium">Death Date:</span>
+                      <span>{new Date(deceased.dead_date_death).toLocaleDateString()}</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <span className="font-medium">Interment Date:</span>
+                      <span>{new Date(deceased.dead_interment).toLocaleDateString()}</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <span className="font-medium">Burial Years:</span>
+                      <span>{calculateYearsBuried(deceased.dead_interment)}</span>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      )}
+
       {/* Plot Status */}
       <div className="bg-accent/40 dark:bg-accent/60 mb-3 flex items-center justify-between gap-2 rounded-lg p-2 shadow-sm transition-colors">
         <div className="flex items-center gap-1">
           <Info className="text-primary/80 dark:text-primary leading-none" size={16} />
           <span className="text-foreground text-sm leading-none">Plot Status</span>
         </div>
-        <span
+        <div
           className={cn(
             'flex items-center gap-1 rounded-full px-1.5 py-0.5 text-xs font-semibold',
             marker.plotStatus === 'reserved' && 'bg-yellow-100 text-yellow-800',
@@ -63,7 +112,7 @@ export default function PlotLocations({ marker, backgroundColor, onDirectionClic
           {marker.plotStatus === 'available' && <BiCheckCircle size={14} />}
           {!['reserved', 'occupied', 'available'].includes(marker.plotStatus)}
           <span className="text-xs capitalize">{marker.plotStatus}</span>
-        </span>
+        </div>
       </div>
       {/* Plot Dimension */}
       <div className="mb-3 flex gap-2">

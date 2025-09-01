@@ -1,6 +1,6 @@
 import { Dialog as KonstaDialog, DialogButton } from 'konsta/react'
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
-import { isAndroid } from '@/utils/platform.utils'
+import { isNativePlatform } from '@/utils/platform.utils'
 
 interface LegendDialogProps {
   isOpen: boolean
@@ -59,7 +59,7 @@ export default function LegendDialog({ isOpen, onClose, categories, statuses, fa
 
   return (
     <>
-      {isAndroid() ? (
+      {isNativePlatform() ? (
         <KonstaDialog
           opened={isOpen}
           onBackdropClick={onClose}

@@ -6,12 +6,11 @@ import { toast } from 'sonner'
 import { isNativePlatform } from '@/utils/platform.utils'
 
 import { Button } from '@/components/ui/button'
-import AdminControls from '@/components/webmap/AdminControls'
 import ClusterFilterDropdown from '@/components/webmap/ClusterFilterDropdown'
 import ResetMapViewButton from '@/components/webmap/ResetMapViewButton'
 import LoginRequiredModal from '@/components/modals/LoginRequiredModal'
 import { cn } from '@/lib/utils'
-import { isAdmin, isAuthenticated } from '@/utils/auth.utils'
+import { isAuthenticated } from '@/utils/auth.utils'
 import type { AdminContext, WebMapContext } from '@/hooks/useNavigationContext'
 import { Fab } from 'konsta/react'
 import { Link } from 'react-router-dom'
@@ -53,7 +52,7 @@ export default function WebMapControlsRow({ context, onBack, onLegendClick }: We
       style={{ touchAction: 'pan-x', overscrollBehavior: 'contain' }}
     >
       {/* Home Button */}
-      {location.pathname !== '/admin/map' && location.pathname !== '/user/map' && (
+      {location.pathname !== '/user/map' && (
         <>
           {isNativePlatform() ? (
             <button onClick={onBack} className="no-long-press shrink-0 touch-manipulation">
@@ -72,32 +71,28 @@ export default function WebMapControlsRow({ context, onBack, onLegendClick }: We
 
       {/* Should only display this if the user is authenticated */}
       {/* Show only all the owned plots of the user */}
-      {location.pathname !== '/admin/map' && (
-        <>
-          {isNativePlatform() ? (
-            <button className="no-long-press touch-manipulation bg-transparent" onClick={handleMyPlotsClick}>
-              <Fab className="k-color-brand-green h-10" icon={HiOutlineLocationMarkerIcon} style={{ transform: 'none !important', transition: 'none !important' }} />
-            </button>
-          ) : (
-            <Button
-              variant="secondary"
-              size="sm"
-              className="bg-background no-long-press shrink-0 touch-manipulation rounded-full text-xs sm:text-sm"
-              onClick={handleMyPlotsClick}
-              aria-label="My Plots"
-            >
-              <MdFamilyRestroom className="text-accent-foreground h-3 w-3 sm:h-4 sm:w-4" />
-              <span>My Plots</span>
-            </Button>
-          )}
-        </>
+      {isNativePlatform() ? (
+        <button className="no-long-press touch-manipulation bg-transparent" onClick={handleMyPlotsClick}>
+          <Fab className="k-color-brand-green h-10" icon={HiOutlineLocationMarkerIcon} style={{ transform: 'none !important', transition: 'none !important' }} />
+        </button>
+      ) : (
+        <Button
+          variant="secondary"
+          size="sm"
+          className="bg-background no-long-press shrink-0 touch-manipulation rounded-full text-xs sm:text-sm"
+          onClick={handleMyPlotsClick}
+          aria-label="My Plots"
+        >
+          <MdFamilyRestroom className="text-accent-foreground h-3 w-3 sm:h-4 sm:w-4" />
+          <span>My Plots</span>
+        </Button>
       )}
 
-      {/* 🎯 Cluster Control Dropdown */}
-      {location.pathname !== '/admin/map' && context && 'selectedGroups' in context && <ClusterFilterDropdown context={context as WebMapContext} />}
+      {/* Cluster Control Dropdown */}
+      {context && 'selectedGroups' in context && <ClusterFilterDropdown context={context as WebMapContext} />}
 
-      {/* 🔙 Back to Clusters Button (visible in selective or user-plots modes) */}
-      {location.pathname !== '/admin/map' && context && 'clusterViewMode' in context && (context as WebMapContext).clusterViewMode !== 'all' && (
+      {/* Back to Clusters Button (visible in selective or user-plots modes) */}
+      {context && 'clusterViewMode' in context && (context as WebMapContext).clusterViewMode !== 'all' && (
         <>
           {isNativePlatform() ? (
             <button
@@ -132,34 +127,30 @@ export default function WebMapControlsRow({ context, onBack, onLegendClick }: We
         </>
       )}
 
-      {/* 📍 Locate user */}
-      {location.pathname !== '/admin/map' && (
-        <>
-          {isNativePlatform() ? (
-            <button className="no-long-press touch-manipulation bg-transparent" onClick={() => context?.requestLocate()}>
-              <Fab className="k-color-brand-green h-10" icon={LocateIcon} style={{ transform: 'none !important', transition: 'none !important' }} />
-            </button>
-          ) : (
-            <Button
-              variant="secondary"
-              size="sm"
-              className="bg-background no-long-press shrink-0 touch-manipulation rounded-full text-xs sm:text-sm"
-              onClick={() => context?.requestLocate()}
-              aria-label="Locate me"
-            >
-              <Locate className="text-accent-foreground h-3 w-3 sm:h-4 sm:w-4" />
-              <span>Where am I?</span>
-            </Button>
-          )}
-        </>
+      {/* Locate user */}
+      {isNativePlatform() ? (
+        <button className="no-long-press touch-manipulation bg-transparent" onClick={() => context?.requestLocate()}>
+          <Fab className="k-color-brand-green h-10" icon={LocateIcon} style={{ transform: 'none !important', transition: 'none !important' }} />
+        </button>
+      ) : (
+        <Button
+          variant="secondary"
+          size="sm"
+          className="bg-background no-long-press shrink-0 touch-manipulation rounded-full text-xs sm:text-sm"
+          onClick={() => context?.requestLocate()}
+          aria-label="Locate me"
+        >
+          <Locate className="text-accent-foreground h-3 w-3 sm:h-4 sm:w-4" />
+          <span>Where am I?</span>
+        </Button>
       )}
 
-      {/* 🔄 Reset Map View */}
+      {/* Reset Map View */}
       <div className="shrink-0">
         <ResetMapViewButton context={context} />
       </div>
 
-      {/* 📊 Legend Button - only on small/medium screens */}
+      {/* Legend Button - only on small/medium screens */}
       {onLegendClick && (
         <>
           {isNativePlatform() ? (
@@ -180,9 +171,6 @@ export default function WebMapControlsRow({ context, onBack, onLegendClick }: We
           )}
         </>
       )}
-
-      {/* ➕ Admin add/edit marker controls */}
-      {isAdmin() && location.pathname === '/admin/map' && <AdminControls />}
 
       {/* Login Required Modal */}
       <LoginRequiredModal isOpen={showLoginModal} onClose={() => setShowLoginModal(false)} feature="My Plots" />

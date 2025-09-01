@@ -6,11 +6,13 @@ import iconUrl from 'leaflet/dist/images/marker-icon.png'
 import shadowUrl from 'leaflet/dist/images/marker-shadow.png'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useHotkeys } from 'react-hotkeys-hook'
+import { useMap } from 'react-leaflet'
 import { MapContainer, TileLayer, Popup, GeoJSON } from 'react-leaflet'
 import MarkerClusterGroup from 'react-leaflet-markercluster'
 
 import type { ConvertedMarker } from '@/types/map.types'
 
+import { searchLotById } from '@/api/plots.api'
 import { ErrorMessage } from '@/components/ErrorMessage'
 import AddMarkerInstructions from '@/components/map/AddMarkerInstructions'
 import AddPlotMarkerDialog from '@/components/map/AddPlotMarkerDialog'
@@ -32,9 +34,9 @@ import ComfortRoomMarker from '@/pages/webmap/ComfortRoomMarkers'
 import MainEntranceMarkers from '@/pages/webmap/MainEntranceMarkers'
 import ParkingMarkers from '@/pages/webmap/ParkingMarkers'
 import PlaygroundMarkers from '@/pages/webmap/PlaygroundMarkers'
-import WebMapNavs from '@/pages/webmap/WebMapNavs'
 import { getCategoryBackgroundColor, convertPlotToMarker, getStatusColor } from '@/types/map.types'
 
+import AdminMapNavs from './AdminMapNavs'
 import { LocateContext } from './LocateContext'
 
 const DefaultIcon = L.icon({ iconUrl, shadowUrl, iconRetinaUrl })
@@ -74,11 +76,42 @@ export default function AdminMapLayout() {
   const queryClient = useQueryClient()
   const markers = useMemo(() => (plotsData ? plotsData.map(convertPlotToMarker) : []), [plotsData])
 
+  const [mapInstance, setMapInstance] = useState<L.Map | null>(null)
+
+  const searchLot = useCallback(
+    async (lotId: string) => {
+      try {
+        const result = await searchLotById(lotId)
+        if (result.success && result.data) {
+          const marker = markers.find((m: ConvertedMarker) => m.plot_id === result.data.plot_id)
+          if (marker && mapInstance) {
+            mapInstance.flyTo(marker.position, 20)
+          }
+        }
+      } catch (error) {
+        console.error('Search error:', error)
+      }
+    },
+    [markers, mapInstance],
+  )
+
   const [guide4Data, setGuide4Data] = useState<GeoJSON.GeoJSON | null>(null)
-  const bounds: [[number, number], [number, number]] = [
-    [10.248073279164613, 123.79742173990627],
-    [10.249898252065757, 123.79838766292835],
-  ]
+  const bounds = useMemo(
+    () =>
+      [
+        [10.248073279164613, 123.79742173990627],
+        [10.249898252065757, 123.79838766292835],
+      ] as [[number, number], [number, number]],
+    [],
+  )
+
+  const resetView = useCallback(() => {
+    if (mapInstance) {
+      const centerLat = (bounds[0][0] + bounds[1][0]) / 2
+      const centerLng = (bounds[0][1] + bounds[1][1]) / 2
+      mapInstance.flyTo([centerLat, centerLng], 18)
+    }
+  }, [mapInstance, bounds])
   const [isAddingMarker, setIsAddingMarker] = useState(false)
   const [selectedCoordinates, setSelectedCoordinates] = useState<[number, number] | null>(null)
   const [showAddDialog, setShowAddDialog] = useState(false)
@@ -233,6 +266,14 @@ export default function AdminMapLayout() {
   }, [])
   const createClusterIcon = useMemo(() => createClusterIconFactory(labelLookup), [labelLookup])
 
+  function MapInstanceBinder({ onMapReady }: { onMapReady: (map: L.Map) => void }) {
+    const map = useMap()
+    useEffect(() => {
+      onMapReady(map)
+    }, [map, onMapReady])
+    return null
+  }
+
   if (isLoading) {
     return (
       <div className="flex h-screen w-full items-center justify-center">
@@ -257,7 +298,7 @@ export default function AdminMapLayout() {
         }}
       >
         <div className="relative z-1 h-full w-full">
-          <WebMapNavs />
+          <AdminMapNavs searchLot={searchLot} resetView={resetView} />
           <MapStats />
           <AddMarkerInstructions isVisible={isAddingMarker} />
           <EditMarkerInstructions isVisible={isEditingMarker} step={selectedPlotForEdit ? 'edit' : 'select'} />
@@ -295,6 +336,8 @@ export default function AdminMapLayout() {
               opacity={1}
               zIndex={1}
             />
+
+            <MapInstanceBinder onMapReady={setMapInstance} />
 
             {/* GeoJSON overlay: Guide 4 Block C */}
             {showGuide4 && guide4Data && (

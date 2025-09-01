@@ -2,7 +2,7 @@ import { SearchIcon, X, ArrowRightIcon } from 'lucide-react'
 import { useCallback, useRef } from 'react'
 import { Input } from '@/components/ui/input'
 import { cn } from '@/lib/utils'
-import { isAndroid } from '@/utils/platform.utils'
+import { isNativePlatform } from '@/utils/platform.utils'
 import { Searchbar } from 'konsta/react'
 
 interface WebMapContext {
@@ -48,8 +48,7 @@ export default function SearchToggle({ context, className }: SearchToggleProps) 
 
   return (
     <div ref={containerRef} className={cn('relative w-full', className)}>
-      {isAndroid() ? (
-        // Konsta Searchbar for Android native-like UI
+      {isNativePlatform() ? (
         <form onSubmit={handleSearchSubmit} role="search" aria-label="Lot search">
           <Searchbar
             value={context.searchQuery}
@@ -60,7 +59,6 @@ export default function SearchToggle({ context, className }: SearchToggleProps) 
           />
         </form>
       ) : (
-        // Default search UI for web and other platforms
         <div className="flex w-full items-center">
           <form onSubmit={handleSearchSubmit} className="flex w-full gap-1" role="search" aria-label="Lot search">
             <div className="relative flex-1">
@@ -74,12 +72,12 @@ export default function SearchToggle({ context, className }: SearchToggleProps) 
                 aria-label="Search lot"
               />
 
-              {/* 🔍 Search icon */}
+              {/* Search icon */}
               <div className="text-muted-foreground/80 pointer-events-none absolute inset-y-0 start-0 flex items-center justify-center ps-3 peer-disabled:opacity-50">
                 <SearchIcon size={16} />
               </div>
 
-              {/* ❌ Clear/Submit button */}
+              {/* Clear/Submit button */}
               {context.searchQuery.trim() ? (
                 <button
                   className="text-muted-foreground/80 hover:text-foreground focus-visible:border-ring focus-visible:ring-ring/50 absolute inset-y-0 end-0 flex h-full w-10 items-center justify-center rounded-e-full transition-[color,box-shadow] outline-none focus:z-10 focus-visible:ring-[3px] disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50"

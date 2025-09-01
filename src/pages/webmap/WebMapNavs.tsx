@@ -7,12 +7,12 @@ import { MdLocalParking } from 'react-icons/md'
 import LegendDialog from '@/components/webmap/LegendDialog'
 import WebMapControlsRow from '@/components/webmap/WebMapControlsRow'
 import WebMapSearchRow from '@/components/webmap/WebMapSearchRow'
-import { useMapContext } from '@/hooks/useNavigationContext'
+import { useWebMapContext } from '@/hooks/useNavigationContext'
 import { cn } from '@/lib/utils'
 import { getCategoryBackgroundColor, getStatusColor } from '@/types/map.types'
 
 export default function WebMapNavs({ onBack }: { onBack?: () => void }) {
-  const { context, isWebMap } = useMapContext()
+  const { context } = useWebMapContext()
   const [isLegendOpen, setIsLegendOpen] = useState(false)
 
   const categories = [
@@ -41,12 +41,10 @@ export default function WebMapNavs({ onBack }: { onBack?: () => void }) {
         aria-label="Map navigation"
       >
         {/* Search Row */}
-        {isWebMap && context && <WebMapSearchRow context={context as import('@/hooks/useNavigationContext').WebMapContext} />}
-
+        {context && <WebMapSearchRow context={context} />}
         {/* Controls Row */}
         <WebMapControlsRow context={context} onBack={onBack} onLegendClick={() => setIsLegendOpen(true)} />
       </nav>
-
       {/* Legend Dialog */}
       <LegendDialog isOpen={isLegendOpen} onClose={() => setIsLegendOpen(false)} categories={categories} statuses={statuses} facilities={facilities} />
     </>
