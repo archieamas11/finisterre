@@ -7,13 +7,13 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import Spinner from '@/components/ui/spinner'
 import { useUserDashboard } from '@/hooks/useUserDashboard'
-import { isNativePlatform } from '@/utils/platform.utils'
 
 import type { Lot, Deceased, Coordinates } from './components/types'
 
 import { AnnouncementCard } from './components/AnnouncementCard'
 import { LotMemorialPanel } from './components/LotMemorialPanel'
 import { StatCard } from './components/StatCard'
+
 export default function UserDashboard() {
   const { data: dashboardData, isLoading, error } = useUserDashboard()
   const navigate = useNavigate()
@@ -23,13 +23,6 @@ export default function UserDashboard() {
     // Reset scroll position before navigation
     window.scrollTo(0, 0)
     const [lat, lng] = coordinates
-    if (isNativePlatform()) {
-      // Inform native app shell to open the in-app map view and start navigation
-      const ev = new CustomEvent('openNativeMap', { detail: { lat, lng, direction: true } })
-      document.dispatchEvent(ev)
-      return
-    }
-
     navigate(`/user/map?direction=true&lat=${lat}&lng=${lng}`)
   }
 
