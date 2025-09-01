@@ -7,7 +7,7 @@ import { MdLocalParking } from 'react-icons/md'
 
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { getCategoryBackgroundColor, getStatusColor } from '@/types/map.types'
+import { getStatusColor } from '@/types/map.types'
 
 interface LegendItem {
   key: string
@@ -35,9 +35,9 @@ export default function WebmapLegend() {
   const [isCollapsed, setIsCollapsed] = useState(false)
 
   const categories: LegendItem[] = [
-    { key: 'serenity', label: 'Serenity Lawn', color: getCategoryBackgroundColor('Serenity Lawn'), shape: 'circle' },
-    { key: 'columbarium', label: 'Columbarium', color: getCategoryBackgroundColor('Columbarium'), shape: 'diamond' },
-    { key: 'chambers', label: 'Memorial Chambers', color: getCategoryBackgroundColor('Chambers'), shape: 'square' },
+    { key: 'serenity', label: 'Serenity Lawn', color: '#FFFF', shape: 'circle' },
+    { key: 'columbarium', label: 'Columbarium', color: '#F0F0F0', shape: 'diamond' },
+    { key: 'chambers', label: 'Memorial Chambers', color: '#F0F0F0', shape: 'square' },
   ]
 
   const statuses: LegendItem[] = [

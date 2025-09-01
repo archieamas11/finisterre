@@ -7,23 +7,35 @@ import type { ConvertedMarker } from '@/types/map.types'
 import { Drawer, DrawerContent, DrawerDescription, DrawerTitle } from '@/components/ui/drawer'
 import { LocateContext } from '@/contexts/MapContext'
 import { useIsMobile } from '@/hooks/use-mobile'
-// import { usePopupState } from '@/hooks/useMapContext'
+import { useMe } from '@/hooks/useMe'
 import ColumbariumPopup from '@/pages/admin/map4admin/ColumbariumPopup'
 import PlotLocations from '@/pages/webmap/WebMapPopup'
 import { getCategoryBackgroundColor, getStatusColor } from '@/types/map.types'
 
 // Icon caching
 const iconCache: Record<string, L.DivIcon> = {}
-const getIcon = (color: string) => {
-  if (!iconCache[color]) {
-    iconCache[color] = L.divIcon({
+const getIcon = (color: string, shape: string) => {
+  const cacheKey = `${color}-${shape}`
+  if (!iconCache[cacheKey]) {
+    let html = ''
+    switch (shape) {
+      case 'square':
+        html = `<div class="" style="width: 15px; height: 15px; border-radius: 0; background: ${color}; border: 2px solid #fff; box-shadow: 0 0 5px rgba(0,0,0,0.5);"></div>`
+        break
+      case 'diamond':
+        html = `<div class="" style="width: 15px; height: 15px; background: ${color}; border: 2px solid #fff; box-shadow: 0 0 5px rgba(0,0,0,0.5); transform: rotate(45deg);"></div>`
+        break
+      default: // circle
+        html = `<div class="" style="width: 15px; height: 15px; border-radius: 50%; background: ${color}; border: 2px solid #fff; box-shadow: 0 0 5px rgba(0,0,0,0.5);"></div>`
+    }
+    iconCache[cacheKey] = L.divIcon({
       className: 'plot-marker-icon',
       iconSize: [15, 15],
       popupAnchor: [0, -5],
-      html: `<div class="" style="width: 15px; height: 15px; border-radius: 50%; background: ${color}; border: 2px solid #fff; box-shadow: 0 0 5px rgba(0,0,0,0.5);"></div>`,
+      html,
     })
   }
-  return iconCache[color]
+  return iconCache[cacheKey]
 }
 
 interface PlotMarkersProps {
@@ -36,6 +48,9 @@ interface PlotMarkersProps {
 const PlotMarkers: React.FC<PlotMarkersProps> = memo(({ markers, isDirectionLoading, onDirectionClick }) => {
   const [openDrawerPlotId, setOpenDrawerPlotId] = useState<string | null>(null)
   const isSmallScreen = useIsMobile()
+
+  // Get current user information
+  const { user } = useMe()
 
   // 🎯 Get search context for auto popup functionality
   const locateContext = useContext(LocateContext)
@@ -101,11 +116,19 @@ const PlotMarkers: React.FC<PlotMarkersProps> = memo(({ markers, isDirectionLoad
   return (
     <>
       {markers.map((marker) => {
-        const statusColor = getStatusColor(marker.plotStatus)
-        const circleIcon = getIcon(statusColor)
+        // Determine marker color: blue for owned plots, otherwise use status color
+        const isOwnedByUser = user?.customerId && marker.owner?.customer_id && String(marker.owner.customer_id) === String(user.customerId)
+        const statusColor = isOwnedByUser ? '#2563EB' : getStatusColor(marker.plotStatus)
+
+        let shape = 'circle'
+        if (marker.category.toLowerCase() === 'chambers') {
+          shape = 'square'
+        } else if (marker.category.toLowerCase() === 'columbarium') {
+          shape = 'diamond'
+        }
+        const circleIcon = getIcon(statusColor, shape)
 
         const onDir = () => {
-          // Start the navigation process
           onDirectionClick(marker.position as [number, number])
 
           // Use the new context method to request popup close
