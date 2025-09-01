@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query'
 
-import { getUserDashboard, parseCoordinates } from '@/api/users.api'
+import { getUserDashboard, parseCoordinates, testHealthCheck } from '@/api/users.api'
 import { isAuthenticated } from '@/utils/auth.utils'
 
 export function useUserDashboard() {
@@ -9,6 +9,13 @@ export function useUserDashboard() {
   return useQuery({
     queryKey: ['user', 'dashboard'],
     queryFn: async () => {
+      // 🏥 Temporary health check for debugging
+      try {
+        await testHealthCheck()
+      } catch {
+        console.log('Health check failed, but continuing with dashboard request')
+      }
+
       try {
         const response = await getUserDashboard()
         if (!response.success) {
