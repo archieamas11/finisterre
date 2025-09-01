@@ -225,6 +225,11 @@ export default function MapPage({ onBack }: { onBack?: () => void }) {
 
   const [searchParams] = useSearchParams()
 
+  // Reset scroll position when map loads
+  useEffect(() => {
+    window.scrollTo(0, 0)
+  }, [])
+
   // 🛠️ Backward-compat bridge (TEMP): map former individual state variables to reducer state fields.
   // FIXME: Remove once all references are updated.
 
@@ -572,7 +577,7 @@ export default function MapPage({ onBack }: { onBack?: () => void }) {
     <MapStateContext.Provider value={state}>
       <MapDispatchContext.Provider value={dispatch}>
         <LocateContext.Provider value={contextValue}>
-          <div className="relative h-full w-full">
+          <div className="relative h-full w-full overflow-hidden">
             <WebMapNavs onBack={onBack} />
             <WebmapLegend />
 

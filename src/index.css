@@ -187,6 +187,16 @@ body:has(.landing-page-root) {
   background: transparent !important;
 }
 
+/* 🗺️ Prevent page-level scrolling on map pages but allow map interactions */
+body:has(.map-page-container) {
+  overflow: hidden;
+  height: 100vh;
+}
+
+.map-page-container {
+  height: 100vh;
+}
+
 .leaflet-theme-popup .leaflet-popup-content-wrapper,
 .leaflet-theme-popup .leaflet-popup-tip {
   @apply bg-background/90 supports-[backdrop-filter]:bg-background/60 backdrop-blur;
