@@ -105,7 +105,9 @@ export default memo(function UserProfile() {
                 size="sm"
                 variant="outline"
                 className="absolute -right-1 -bottom-1 h-7 w-7 rounded-full border-2 border-white p-0 shadow-sm sm:h-8 sm:w-8"
-                onClick={() => console.log('Upload avatar')}
+                onClick={() => {
+                  console.log('Upload avatar')
+                }}
                 aria-label="Upload profile picture"
                 title="Change profile picture"
               >
