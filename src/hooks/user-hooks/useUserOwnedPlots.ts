@@ -54,5 +54,6 @@ export function convertUserPlotToMarker(plot: UserOwnedPlot): ConvertedMarker | 
       width: plot.width || 0,
       area: plot.area || 0,
     },
+    is_owned: true, // User-owned plots are always owned
   }
 }

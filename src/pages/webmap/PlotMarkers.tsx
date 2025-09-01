@@ -7,7 +7,6 @@ import type { ConvertedMarker } from '@/types/map.types'
 import { Drawer, DrawerContent, DrawerDescription, DrawerTitle } from '@/components/ui/drawer'
 import { LocateContext } from '@/contexts/MapContext'
 import { useIsMobile } from '@/hooks/use-mobile'
-import { useMe } from '@/hooks/useMe'
 import ColumbariumPopup from '@/pages/admin/map4admin/ColumbariumPopup'
 import PlotLocations from '@/pages/webmap/WebMapPopup'
 import { getCategoryBackgroundColor, getStatusColor } from '@/types/map.types'
@@ -48,9 +47,6 @@ interface PlotMarkersProps {
 const PlotMarkers: React.FC<PlotMarkersProps> = memo(({ markers, isDirectionLoading, onDirectionClick }) => {
   const [openDrawerPlotId, setOpenDrawerPlotId] = useState<string | null>(null)
   const isSmallScreen = useIsMobile()
-
-  // Get current user information
-  const { user } = useMe()
 
   // 🎯 Get search context for auto popup functionality
   const locateContext = useContext(LocateContext)
@@ -117,8 +113,7 @@ const PlotMarkers: React.FC<PlotMarkersProps> = memo(({ markers, isDirectionLoad
     <>
       {markers.map((marker) => {
         // Determine marker color: blue for owned plots, otherwise use status color
-        const isOwnedByUser = user?.customerId && marker.owner?.customer_id && String(marker.owner.customer_id) === String(user.customerId)
-        const statusColor = isOwnedByUser ? '#2563EB' : getStatusColor(marker.plotStatus)
+        const statusColor = marker.is_owned ? '#2563EB' : getStatusColor(marker.plotStatus)
 
         let shape = 'circle'
         if (marker.category.toLowerCase() === 'chambers') {
