@@ -55,7 +55,7 @@ export default function UserDashboard() {
   }))
 
   return (
-    <div className="px-4 py-8 lg:container lg:mx-auto lg:max-w-7xl">
+    <div className="sm:py-8 md:px-4 md:py-8 lg:container lg:mx-auto lg:max-w-7xl lg:px-4 lg:py-8">
       {/* Promotional Banner */}
       <PromotionalBanner
         title="Grand Opening: New Memorial Garden & Reflection Pathway"
