@@ -6,8 +6,8 @@ import { ErrorBoundary } from 'react-error-boundary'
 import { BrowserRouter, Routes, Route, Navigate, useNavigate, useLocation } from 'react-router-dom'
 
 import { RequireAdmin, RequireAuth, RequireUser } from '@/authRoutes'
-import { Button } from '@/components/ui/button'
 import Spinner from '@/components/ui/spinner'
+const ErrorFallback = React.lazy(() => import('@/components/ErrorFallback'))
 const LoginPage = React.lazy(() => import('@/auth/LoginPage'))
 const Logout = React.lazy(() => import('@/auth/Logout'))
 const UserMap = React.lazy(() => import('@/pages/user/UserMap'))
@@ -31,29 +31,12 @@ const IosLandingPage = React.lazy(() => import('@/pages/ios/iosLandingPage'))
 const PublicMap = React.lazy(() => import('@/pages/webmap/PublicWebMap'))
 import LandingLayout from '@/layout/LandingLayout'
 
-interface ErrorFallbackProps {
-  error: Error
-  resetErrorBoundary: () => void
-}
-
-const ErrorFallback: React.FC<ErrorFallbackProps> = ({ error, resetErrorBoundary }) => (
-  <div className="bg-background flex min-h-screen items-center justify-center">
-    <div className="max-w-md p-6 text-center">
-      <h2 className="text-destructive mb-2 text-xl font-bold">Something went wrong</h2>
-      <p className="text-muted-foreground mb-4">{error.message}</p>
-      <Button onClick={resetErrorBoundary}>Try again</Button>
-    </div>
-  </div>
-)
-
-// Separate component for routing logic that can use useNavigate
 function AppRoutes() {
   const navigate = useNavigate()
   const location = useLocation()
 
   useEffect(() => {
     // Only redirect native platforms to their specific landing pages when on root path
-    // This prevents infinite loops when navigating to login or other routes
     if (Capacitor.isNativePlatform() && location.pathname === '/') {
       const platform = Capacitor.getPlatform()
       if (platform === 'android') {
@@ -66,14 +49,14 @@ function AppRoutes() {
   }, [navigate, location.pathname])
 
   return (
-    <ErrorBoundary FallbackComponent={ErrorFallback}>
-      <Suspense
-        fallback={
-          <div className="relative flex h-screen w-full items-center justify-center">
-            <Spinner />
-          </div>
-        }
-      >
+    <Suspense
+      fallback={
+        <div className="relative flex h-screen w-full items-center justify-center">
+          <Spinner />
+        </div>
+      }
+    >
+      <ErrorBoundary FallbackComponent={ErrorFallback}>
         <Routes>
           {/* Public Routes */}
           <Route path="/" element={<LandingLayout />} />
@@ -127,8 +110,8 @@ function AppRoutes() {
           {/* Catch all unmatched routes */}
           <Route element={<Navigate to="/" />} path="*" />
         </Routes>
-      </Suspense>
-    </ErrorBoundary>
+      </ErrorBoundary>
+    </Suspense>
   )
 }
 

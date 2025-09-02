@@ -16,10 +16,7 @@ export default function AndroidProfilePage({ onBack }: { onBack: () => void }) {
           </Link>
         }
       />
-
-    <div className="py-4">
         <UserProfile />
-      </div>
     </Page>
   )
 }

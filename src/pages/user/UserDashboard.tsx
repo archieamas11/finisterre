@@ -7,6 +7,8 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import Spinner from '@/components/ui/spinner'
 import { useUserDashboard } from '@/hooks/user-hooks/useUserDashboard'
+import { cn } from '@/lib/utils'
+import { isNativePlatform } from '@/utils/platform.utils'
 
 import type { Lot, Deceased, Coordinates } from './components/types'
 
@@ -55,7 +57,7 @@ export default function UserDashboard() {
   }))
 
   return (
-    <div className="sm:py-8 md:px-4 md:py-8 lg:container lg:mx-auto lg:max-w-7xl lg:px-4 lg:py-8">
+    <div className={cn('px-4 py-8 md:py-8 lg:container lg:mx-auto lg:max-w-7xl lg:px-4 lg:py-8', isNativePlatform() && 'px-0 py-0')}>
       {/* Promotional Banner */}
       <PromotionalBanner
         title="Grand Opening: New Memorial Garden & Reflection Pathway"

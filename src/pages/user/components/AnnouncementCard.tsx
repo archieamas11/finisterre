@@ -63,9 +63,9 @@ export const AnnouncementCard: React.FC<AnnouncementCardProps> = ({ title, descr
   return (
     <div
       className={cn(
-        'group flex gap-4 rounded-xl border border-slate-200 bg-white p-4 shadow-sm transition-all duration-300 hover:border-slate-300 hover:shadow-md dark:border-slate-700 dark:bg-slate-800/50',
+        'group lg:bg-accent/30 flex gap-4 rounded-xl border-slate-200 transition-all duration-300 lg:border lg:p-4 lg:shadow-sm dark:border-slate-700',
         fullDescription && 'cursor-pointer',
-        isExpanded && 'ring-2 ring-blue-500/20',
+        isExpanded && 'lg:ring-2 lg:ring-blue-500/20',
         className,
       )}
       onClick={handleClick}
@@ -76,14 +76,14 @@ export const AnnouncementCard: React.FC<AnnouncementCardProps> = ({ title, descr
       aria-label={fullDescription ? `${title} - ${isExpanded ? 'Collapse' : 'Expand'} details` : title}
     >
       {/* Icon */}
-      <div className={'flex-shrink-0 rounded-lg p-2'}>
+      <div className={'hidden flex-shrink-0 rounded-lg p-2 lg:block'}>
         <Icon className="h-5 w-5 text-slate-600 dark:text-slate-400" aria-hidden="true" />
       </div>
 
       {/* Content */}
       <div className="flex-1 space-y-2">
         <div className="flex items-start justify-between">
-          <h3 className="text-lg leading-tight font-semibold text-slate-900 dark:text-white">{title}</h3>
+          <h3 className="text-md leading-tight font-semibold text-slate-900 lg:text-lg dark:text-white">{title}</h3>
           <div className="ml-2 flex items-center gap-2">
             {isNew && (
               <Badge variant="default" className={cn('bg-gradient-to-r px-2 py-0.5 text-xs text-white shadow-lg', config.color)}>

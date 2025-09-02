@@ -1,16 +1,38 @@
 import { Dialog as KonstaDialog, DialogButton } from 'konsta/react'
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import { isNativePlatform } from '@/utils/platform.utils'
+import { getStatusColor } from '@/types/map.types'
+import { MdLocalParking } from 'react-icons/md'
+import { FaToilet } from 'react-icons/fa'
+import { BiSolidChurch } from 'react-icons/bi'
+import { GiOpenGate } from 'react-icons/gi'
 
 interface LegendDialogProps {
   isOpen: boolean
   onClose: () => void
-  categories: Array<{ key: string; label: string; color: string }>
-  statuses: Array<{ key: string; label: string; color: string }>
-  facilities: Array<{ key: string; label: string; color: string; icon?: React.ReactNode }>
 }
 
-export default function LegendDialog({ isOpen, onClose, categories, statuses, facilities }: LegendDialogProps) {
+const categories = [
+  { key: 'serenity', label: 'Serenity Lawn', color: '#90EE90', shape: 'circle' },
+  { key: 'columbarium', label: 'Columbarium', color: '#FFD700', shape: 'diamond' },
+  { key: 'chambers', label: 'Memorial Chambers', color: '#87CEEB', shape: 'square' },
+]
+
+const statuses = [
+  { key: 'available', label: 'Available', color: getStatusColor('available') },
+  { key: 'occupied', label: 'Occupied', color: getStatusColor('occupied') },
+  { key: 'reserved', label: 'Reserved', color: getStatusColor('reserved') },
+  { key: 'my-plots', label: 'Your Plots', color: '#2563EB' },
+]
+
+const facilities = [
+  { key: 'comfort-room', label: 'Comfort Room', color: '#059669', icon: <FaToilet className="h-4 w-4" /> },
+  { key: 'parking', label: 'Parking', color: '#2563EB', icon: <MdLocalParking className="h-4 w-4" /> },
+  { key: 'main-entrance', label: 'Main Entrance', color: '#000000', icon: <GiOpenGate className="h-4 w-4" /> },
+  { key: 'chapel', label: 'Chapel', color: '#FF9800', icon: <BiSolidChurch className="h-4 w-4" /> },
+]
+
+export default function LegendDialog({ isOpen, onClose }: LegendDialogProps) {
   const legendContent = (
     <div className="space-y-4">
       <div>
@@ -18,7 +40,11 @@ export default function LegendDialog({ isOpen, onClose, categories, statuses, fa
         <div className="space-y-2">
           {categories.map((c) => (
             <div key={c.key} className="flex items-center">
-              <span className="mr-3 inline-block h-4 w-4 rounded-sm" style={{ background: c.color }} />
+              <div className="mr-3 flex h-4 w-4 items-center justify-center">
+                {c.shape === 'circle' && <div className="bg-primary h-3 w-3 rounded-full shadow-sm" />}
+                {c.shape === 'diamond' && <div className="bg-primary h-3 w-3 rotate-45 shadow-sm" />}
+                {c.shape === 'square' && <div className="bg-primary h-3 w-3 shadow-sm" />}
+              </div>
               <span className="text-sm">{c.label}</span>
             </div>
           ))}
