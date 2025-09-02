@@ -2,27 +2,27 @@ import type { plots, CreatePlotRequest, CreateSerenityLawnRequest, CreateMemoria
 
 import { api } from './axiosInstance'
 
-// // Chambers api
-// 🏛️ Get niches for specific plot/columbarium
+// Chambers api
+// Get niches for specific plot/columbarium
 export async function getNichesByPlot(plot_id: string) {
   const res = await api.post('plots/get_niche_data.php', { plot_id })
   return res.data
 }
 
-// 🏗️ Get all plots with valid rows and columns for grid generation
+// Get all plots with valid rows and columns for grid generation
 export async function getPlotsWithGrids() {
   const res = await api.post('plots/get_plots_with_grids.php')
   return res.data
 }
 
 export async function editPlots(data: plots) {
-  // 🛠️ Accepts plot data to update plot details
+  // Accepts plot data to update plot details
   const res = await api.post('plots/update_plot.php', data)
   return res.data
 }
 
 export async function updatePlotCoordinates(plot_id: string, coordinates: string) {
-  // 📍 Update only the coordinates of a specific plot
+  // Update only the coordinates of a specific plot
   const res = await api.post('plots/update_plot_coordinates.php', {
     plot_id,
     coordinates,
@@ -35,7 +35,7 @@ export async function getPlots() {
   return res.data
 }
 
-// 🏛️ Get detailed niches with owner and deceased info for specific plot
+// Get detailed niches with owner and deceased info for specific plot
 export async function generateNicheGrid() {
   const res = await api.post('plots/make_niche_grids.php')
   return res.data
@@ -57,19 +57,19 @@ export async function createPlots(data: CreatePlotRequest | CreateSerenityLawnRe
   return res.data
 }
 
-// 🌿 Create Serenity Lawn plot
+// Create Serenity Lawn plot
 export async function createSerenityLawnPlot(data: CreateSerenityLawnRequest) {
   const res = await api.post('plots/create_plot.php', data)
   return res.data
 }
 
-// 🏛️ Create Memorial Chambers plot
+// Create Memorial Chambers plot
 export async function createMemorialChambersPlot(data: CreateMemorialChambersRequest) {
   const res = await api.post('plots/create_chambers_plot.php', data)
   return res.data
 }
 
-// 🏺 Create Columbarium plot
+// Create Columbarium plot
 export async function createColumbariumPlot(data: CreateColumbariumRequest) {
   const res = await api.post('plots/create_columbarium_plot.php', data)
   return res.data
@@ -86,25 +86,25 @@ export async function getSerenityByPlot(plot_id: string) {
   return res.data
 }
 
-// 🏠 Get plot owner and deceased details
+// Get plot owner and deceased details
 export async function getPlotDetails(plot_id: string) {
   const res = await api.post('plots/get_plot_details.php', { plot_id })
   return res.data
 }
 
-// 🔍 Search for lot by lot_id
+// Search for lot by lot_id
 export async function searchLotById(lot_id: string) {
   const res = await api.post('plots/search_lot.php', { lot_id })
   return res.data
 }
 
-// 🏠 User-owned plots interface
+// User-owned plots interface
 export interface UserOwnedPlot {
   plot_id: number
   lot_id: number
   block?: string
   category: string
-  coordinates: [number, number] | null // [lat, lng] format
+  coordinates: [number, number] | null
   plot_status?: string
   plot_label?: string
   length?: number
@@ -128,7 +128,7 @@ export interface UserPlotsResponse {
   total: number
 }
 
-// 👤 Get plots owned by the authenticated user
+// Get plots owned by the authenticated user
 export async function getUserOwnedPlots(): Promise<UserPlotsResponse> {
   const res = await api.post<UserPlotsResponse>('plots/get_user_plots.php')
   return res.data

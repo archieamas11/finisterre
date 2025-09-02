@@ -25,7 +25,7 @@ export interface ConvertedMarker {
     width: number
     area: number
   }
-  is_owned?: boolean // Whether the current user owns this plot
+  is_owned?: boolean
 }
 
 export interface plots {

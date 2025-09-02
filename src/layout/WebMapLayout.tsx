@@ -18,6 +18,7 @@ import Spinner from '@/components/ui/spinner'
 import { MapStateContext, MapDispatchContext, LocateContext, type MapState, type MapAction } from '@/contexts/MapContext'
 import { usePlots } from '@/hooks/plots-hooks/plot.hooks'
 import { useLocationTracking } from '@/hooks/useLocationTracking'
+import { useMarkersOffline } from '@/hooks/useMarkersOffline'
 import { useUserOwnedPlots, convertUserPlotToMarker } from '@/hooks/user-hooks/useUserOwnedPlots'
 import { useValhalla } from '@/hooks/useValhalla'
 import { groupMarkersByKey } from '@/lib/clusterUtils'
@@ -160,7 +161,11 @@ function mapReducer(state: MapState, action: MapAction): MapState {
 }
 
 export default function MapPage({ onBack, initialDirection }: { onBack?: () => void; initialDirection?: { lat: number; lng: number } | null }) {
-  const { isLoading, data: plotsData } = usePlots()
+  // Existing React Query (kept for consistency) & new offline-aware hook
+  const { isLoading: rqLoading, data: plotsDataRQ } = usePlots()
+  const { data: offlinePlots, isLoading: offlineLoading } = useMarkersOffline()
+  const isLoading = rqLoading || offlineLoading
+  const plotsData = offlinePlots && offlinePlots.length > 0 ? offlinePlots : plotsDataRQ
   const { data: userPlotsData } = useUserOwnedPlots()
 
   const markers = useMemo(() => plotsData?.map(convertPlotToMarker) || [], [plotsData])
