@@ -7,6 +7,7 @@ import { MdLocalParking } from 'react-icons/md'
 
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { cn } from '@/lib/utils'
 import { getStatusColor } from '@/types/map.types'
 
 interface LegendItem {
@@ -35,9 +36,9 @@ export default function WebmapLegend() {
   const [isCollapsed, setIsCollapsed] = useState(false)
 
   const categories: LegendItem[] = [
-    { key: 'serenity', label: 'Serenity Lawn', color: '#2563EB', shape: 'circle' },
-    { key: 'columbarium', label: 'Columbarium', color: '#2563EB', shape: 'diamond' },
-    { key: 'chambers', label: 'Memorial Chambers', color: '#2563EB', shape: 'square' },
+    { key: 'serenity', label: 'Serenity Lawn', color: '#FFFF', shape: 'circle' },
+    { key: 'columbarium', label: 'Columbarium', color: '#FFFF', shape: 'diamond' },
+    { key: 'chambers', label: 'Memorial Chambers', color: '#FFFF', shape: 'square' },
   ]
 
   const statuses: LegendItem[] = [
@@ -48,10 +49,10 @@ export default function WebmapLegend() {
   ]
 
   const facilities: LegendItem[] = [
-    { key: 'comfort-room', label: 'Comfort Room', color: '#059669', icon: <FaToilet className="h-3 w-3" /> },
-    { key: 'parking', label: 'Parking', color: '#2563EB', icon: <MdLocalParking className="h-3 w-3" /> },
-    { key: 'main-entrance', label: 'Main Entrance', color: '#000000', icon: <GiOpenGate className="h-3 w-3" /> },
-    { key: 'chapel', label: 'Chapel', color: '#FF9800', icon: <BiSolidChurch className="h-3 w-3" /> },
+    { key: 'comfort-room', label: 'Comfort Room', color: '#059669', icon: <FaToilet className="h-3.5 w-3.5" /> },
+    { key: 'parking', label: 'Parking', color: '#2563EB', icon: <MdLocalParking className="h-3.5 w-3.5" /> },
+    { key: 'main-entrance', label: 'Main Entrance', color: '#000000', icon: <GiOpenGate className="h-3.5 w-3.5" /> },
+    { key: 'chapel', label: 'Chapel', color: '#FF9800', icon: <BiSolidChurch className="h-3.5 w-3.5" /> },
   ]
 
   const sections: LegendSection[] = [
@@ -103,7 +104,7 @@ export default function WebmapLegend() {
         {!isMinimized && (
           <CardContent className="p-0">
             {sections.map((section, index) => (
-              <div key={section.key} className={`border-border ${index < sections.length - 1 ? 'border-b' : ''}`}>
+              <div key={section.key} className={cn('border-border', { 'border-b': index < sections.length - 1 })}>
                 <Button
                   variant="ghost"
                   className="hover:bg-muted/50 flex h-auto w-full items-center justify-between px-4 py-3 text-xs font-medium transition-colors duration-150"
@@ -112,45 +113,44 @@ export default function WebmapLegend() {
                   aria-controls={`${section.key}-content`}
                 >
                   <span className="text-foreground">{section.title}</span>
-                  <ChevronUp className={`text-muted-foreground h-4 w-4 transition-transform duration-200 ${openSections[section.key] ? 'rotate-0' : 'rotate-180'}`} />
+                  <ChevronUp
+                    className={cn('text-muted-foreground h-4 w-4 transition-transform duration-200', {
+                      'rotate-0': openSections[section.key],
+                      'rotate-180': !openSections[section.key],
+                    })}
+                  />
                 </Button>
 
                 <div
                   id={`${section.key}-content`}
-                  className={`overflow-hidden transition-all duration-300 ease-in-out ${openSections[section.key] ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'}`}
+                  className={cn('overflow-hidden transition-all duration-300 ease-in-out', {
+                    'max-h-96 opacity-100': openSections[section.key],
+                    'max-h-0 opacity-0': !openSections[section.key],
+                  })}
                 >
                   <div className="space-y-2 px-4 pb-4">
                     {section.items.map((item) => (
-                      <div key={item.key} className="group hover:bg-muted/30 -m-1 flex items-center rounded-md p-1 transition-colors duration-150" title={item.label}>
+                      <div key={item.key} className="-m-1 flex items-center rounded-md p-1" title={item.label}>
                         {item.icon ? (
-                          <div
-                            className="mr-3 flex h-6 w-6 items-center justify-center rounded-md text-white shadow-sm transition-transform duration-150 group-hover:scale-105"
-                            style={{ background: item.color }}
-                          >
+                          <div className="mr-3 flex h-6 w-6 items-center justify-center rounded-md text-white shadow-sm" style={{ background: item.color }}>
                             {item.icon}
                           </div>
                         ) : section.key === 'categories' && item.shape ? (
                           <div className="mr-3 flex h-6 w-6 items-center justify-center">
-                            {item.shape === 'circle' && (
-                              <div className="h-3 w-3 rounded-full shadow-sm transition-transform duration-150 group-hover:scale-105" style={{ background: item.color }} />
-                            )}
-                            {item.shape === 'square' && (
-                              <div className="h-3 w-3 rounded-none shadow-sm transition-transform duration-150 group-hover:scale-105" style={{ background: item.color }} />
-                            )}
-                            {item.shape === 'diamond' && (
-                              <div
-                                className="h-3 w-3 shadow-sm transition-transform duration-150 group-hover:scale-105"
-                                style={{ background: item.color, transform: 'rotate(45deg)' }}
-                              />
-                            )}
+                            {item.shape === 'circle' && <div className="bg-primary h-3 w-3 rounded-full shadow-sm" />}
+                            {item.shape === 'diamond' && <div className="bg-primary h-3 w-3 rotate-45 shadow-sm" />}
+                            {item.shape === 'square' && <div className="bg-primary h-3 w-3 shadow-sm" />}
                           </div>
                         ) : (
                           <div
-                            className={`mr-3 h-3 w-6 rounded-md shadow-sm transition-transform duration-150 group-hover:scale-105 ${section.key === 'status' ? 'w-6' : 'w-3'}`}
+                            className={cn('mr-3 h-3 rounded-md shadow-sm', {
+                              'w-6': section.key === 'status',
+                              'w-3': section.key !== 'status',
+                            })}
                             style={{ background: item.color }}
                           />
                         )}
-                        <span className="text-muted-foreground group-hover:text-foreground text-xs font-medium transition-colors duration-150">{item.label}</span>
+                        <span className="text-muted-foreground text-xs font-medium">{item.label}</span>
                       </div>
                     ))}
                   </div>
