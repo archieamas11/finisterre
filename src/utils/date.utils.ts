@@ -3,7 +3,7 @@
  * @param intermentDate - The interment date string (e.g., "2023-08-15")
  * @returns String representation of years buried
  */
-export const calculateYearsBuried = (intermentDate: string): string => {
+export const calculateYearsBuried = (intermentDate: string | null | undefined): string => {
   if (!intermentDate) return 'N/A'
 
   try {
@@ -31,7 +31,7 @@ export const calculateYearsBuried = (intermentDate: string): string => {
  * @param dateString - ISO date string
  * @returns Formatted date string
  */
-export const formatDate = (dateString: string): string => {
+export const formatDate = (dateString: string | null | undefined): string => {
   if (!dateString) return 'N/A'
 
   try {

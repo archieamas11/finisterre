@@ -10,3 +10,5 @@ pnpm-lock.yaml
 dev-dist
 src/auto-imports.d.ts
 android
+ios
+testsprite_tests

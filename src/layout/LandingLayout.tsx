@@ -12,10 +12,10 @@ const Testimonials = lazy(() => import('@/components/mvpblocks/Testimonials'))
 
 export default function LandingLayout() {
   return (
-    <div className="relative min-h-screen w-full">
+    <div className="landing-page-root relative min-h-screen w-full bg-transparent">
       {/* Aurora Dream Corner Whispers - decorative background (non-interactive, behind content) */}
       <div
-        className="pointer-events-none fixed inset-0 -z-10"
+        className="aurora-background pointer-events-none fixed inset-0 -z-10"
         aria-hidden="true"
         style={{
           background: `
@@ -24,7 +24,7 @@ export default function LandingLayout() {
             radial-gradient(ellipse 70% 60% at 15% 80%, rgba(255, 100, 180, 0.40), transparent 62%),
             radial-gradient(ellipse 70% 60% at 92% 92%, rgba(120, 190, 255, 0.45), transparent 62%),
             linear-gradient(180deg, #f7eaff 0%, #fde2ea 100%)
-      `,
+      ` as const,
         }}
       />
 

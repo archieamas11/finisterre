@@ -28,7 +28,9 @@ export function useLogoutMutation() {
       localStorage.removeItem('isAdmin')
     },
     onSuccess: async () => {
+      // Invalidate both query keys to ensure UI updates immediately
       await qc.invalidateQueries({ queryKey: ['auth', 'me'] })
+      await qc.invalidateQueries({ queryKey: ['me'] })
     },
   })
 }

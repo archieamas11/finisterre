@@ -97,3 +97,39 @@ export async function searchLotById(lot_id: string) {
   const res = await api.post('plots/search_lot.php', { lot_id })
   return res.data
 }
+
+// 🏠 User-owned plots interface
+export interface UserOwnedPlot {
+  plot_id: number
+  lot_id: number
+  block?: string
+  category: string
+  coordinates: [number, number] | null // [lat, lng] format
+  plot_status?: string
+  plot_label?: string
+  length?: number
+  width?: number
+  area?: number
+  rows?: number
+  columns?: number
+  niche_number?: string
+  niche_status?: string
+  lot_status: string
+  lot_created_at: string
+  lot_updated_at: string
+  owner_name: string
+  customer_id: number
+}
+
+export interface UserPlotsResponse {
+  success: boolean
+  message: string
+  plots: UserOwnedPlot[]
+  total: number
+}
+
+// 👤 Get plots owned by the authenticated user
+export async function getUserOwnedPlots(): Promise<UserPlotsResponse> {
+  const res = await api.post<UserPlotsResponse>('plots/get_user_plots.php')
+  return res.data
+}

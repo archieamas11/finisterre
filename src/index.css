@@ -1,5 +1,7 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,400;0,500;0,700;1,400;1,500;1,700&display=swap');
 @import 'tailwindcss';
 @import 'tw-animate-css';
+@import 'konsta/react/theme.css';
 
 @custom-variant dark (&:is(.dark *));
 
@@ -154,7 +156,47 @@
   }
 }
 
-/* global.css or tailwind.css */
+/* 🌟 Aurora background protection - ensures it's never overridden by theme changes */
+.aurora-background {
+  background:
+    radial-gradient(ellipse 85% 65% at 8% 8%, rgba(175, 109, 255, 0.42), transparent 60%), radial-gradient(ellipse 75% 60% at 75% 35%, rgba(255, 235, 170, 0.55), transparent 62%),
+    radial-gradient(ellipse 70% 60% at 15% 80%, rgba(255, 100, 180, 0.4), transparent 62%), radial-gradient(ellipse 70% 60% at 92% 92%, rgba(120, 190, 255, 0.45), transparent 62%),
+    linear-gradient(180deg, #f7eaff 0%, #fde2ea 100%) !important;
+}
+
+/* 🛡️ Protect aurora background from theme overrides */
+html.dark .aurora-background,
+html:not(.dark) .aurora-background,
+.ios.dark .aurora-background,
+.ios:not(.dark) .aurora-background,
+.md.dark .aurora-background,
+.md:not(.dark) .aurora-background {
+  background:
+    radial-gradient(ellipse 85% 65% at 8% 8%, rgba(175, 109, 255, 0.42), transparent 60%), radial-gradient(ellipse 75% 60% at 75% 35%, rgba(255, 235, 170, 0.55), transparent 62%),
+    radial-gradient(ellipse 70% 60% at 15% 80%, rgba(255, 100, 180, 0.4), transparent 62%), radial-gradient(ellipse 70% 60% at 92% 92%, rgba(120, 190, 255, 0.45), transparent 62%),
+    radial-gradient(180deg, #f7eaff 0%, #fde2ea 100%) !important;
+}
+
+/* 🌟 Ensure landing page container is always transparent */
+.landing-page-root {
+  background: transparent !important;
+}
+
+/* 🛡️ Override any Konsta body background for landing page */
+body:has(.landing-page-root) {
+  background: transparent !important;
+}
+
+/* 🗺️ Prevent page-level scrolling on map pages but allow map interactions */
+body:has(.map-page-container) {
+  overflow: hidden;
+  height: 100vh;
+}
+
+.map-page-container {
+  height: 100vh;
+}
+
 .leaflet-theme-popup .leaflet-popup-content-wrapper,
 .leaflet-theme-popup .leaflet-popup-tip {
   @apply bg-background/90 supports-[backdrop-filter]:bg-background/60 backdrop-blur;
@@ -314,4 +356,10 @@
 .no-scrollbar::-webkit-scrollbar {
   display: none;
   /* Chrome/Safari */
+}
+
+button {
+  -webkit-tap-highlight-color: transparent;
+  -webkit-touch-callout: none;
+  user-select: none;
 }

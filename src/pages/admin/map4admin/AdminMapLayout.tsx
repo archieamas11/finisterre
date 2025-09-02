@@ -5,11 +5,14 @@ import iconRetinaUrl from 'leaflet/dist/images/marker-icon-2x.png'
 import iconUrl from 'leaflet/dist/images/marker-icon.png'
 import shadowUrl from 'leaflet/dist/images/marker-shadow.png'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { useHotkeys } from 'react-hotkeys-hook'
+import { useMap } from 'react-leaflet'
 import { MapContainer, TileLayer, Popup, GeoJSON } from 'react-leaflet'
 import MarkerClusterGroup from 'react-leaflet-markercluster'
 
 import type { ConvertedMarker } from '@/types/map.types'
 
+import { searchLotById } from '@/api/plots.api'
 import { ErrorMessage } from '@/components/ErrorMessage'
 import AddMarkerInstructions from '@/components/map/AddMarkerInstructions'
 import AddPlotMarkerDialog from '@/components/map/AddPlotMarkerDialog'
@@ -31,17 +34,15 @@ import ComfortRoomMarker from '@/pages/webmap/ComfortRoomMarkers'
 import MainEntranceMarkers from '@/pages/webmap/MainEntranceMarkers'
 import ParkingMarkers from '@/pages/webmap/ParkingMarkers'
 import PlaygroundMarkers from '@/pages/webmap/PlaygroundMarkers'
-import WebMapNavs from '@/pages/webmap/WebMapNavs'
 import { getCategoryBackgroundColor, convertPlotToMarker, getStatusColor } from '@/types/map.types'
 
+import AdminMapNavs from './AdminMapNavs'
 import { LocateContext } from './LocateContext'
 
-// 💡 Set a default Leaflet marker icon globally (Leaflet otherwise requires manual asset wiring)
 const DefaultIcon = L.icon({ iconUrl, shadowUrl, iconRetinaUrl })
-// 💡 Leaflet prototype mutation (safe in app init scope) to apply default marker icon globally.
 ;(L.Marker.prototype as unknown as { options: { icon: L.Icon } }).options.icon = DefaultIcon
 
-// 🛠 Helper: build tiny colored status dot icon (kept outside component to avoid re-creation)
+// Helper: build tiny colored status dot icon (kept outside component to avoid re-creation)
 function buildStatusCircleIcon(color: string) {
   return L.divIcon({
     className: '',
@@ -49,7 +50,7 @@ function buildStatusCircleIcon(color: string) {
   })
 }
 
-// 🛠 Helper: popup content chooser (columbarium vs single plot)
+//  Helper: popup content for columbarium vs single plot
 function renderPopupContent(marker: ConvertedMarker, backgroundColor: string, popupCloseTick: number) {
   const isColumbarium = !!(marker.rows && marker.columns)
   if (isColumbarium) {
@@ -70,19 +71,47 @@ function renderPopupContent(marker: ConvertedMarker, backgroundColor: string, po
 
 export default function AdminMapLayout() {
   const { data: authData } = useAuthQuery()
-  // 💡 Simplify redundant condition – previous OR duplicated the same username string.
   const showGuide4 = Boolean(authData?.user?.isAdmin && authData?.user?.username === 'test')
   const { isError, refetch, isLoading, data: plotsData } = usePlots()
   const queryClient = useQueryClient()
-
-  // ⚡️ Memoize expensive conversion to avoid re-creating marker objects every render when unchanged
   const markers = useMemo(() => (plotsData ? plotsData.map(convertPlotToMarker) : []), [plotsData])
 
+  const [mapInstance, setMapInstance] = useState<L.Map | null>(null)
+
+  const searchLot = useCallback(
+    async (lotId: string) => {
+      try {
+        const result = await searchLotById(lotId)
+        if (result.success && result.data) {
+          const marker = markers.find((m: ConvertedMarker) => m.plot_id === result.data.plot_id)
+          if (marker && mapInstance) {
+            mapInstance.flyTo(marker.position, 20)
+          }
+        }
+      } catch (error) {
+        console.error('Search error:', error)
+      }
+    },
+    [markers, mapInstance],
+  )
+
   const [guide4Data, setGuide4Data] = useState<GeoJSON.GeoJSON | null>(null)
-  const bounds: [[number, number], [number, number]] = [
-    [10.248073279164613, 123.79742173990627],
-    [10.249898252065757, 123.79838766292835],
-  ]
+  const bounds = useMemo(
+    () =>
+      [
+        [10.248073279164613, 123.79742173990627],
+        [10.249898252065757, 123.79838766292835],
+      ] as [[number, number], [number, number]],
+    [],
+  )
+
+  const resetView = useCallback(() => {
+    if (mapInstance) {
+      const centerLat = (bounds[0][0] + bounds[1][0]) / 2
+      const centerLng = (bounds[0][1] + bounds[1][1]) / 2
+      mapInstance.flyTo([centerLat, centerLng], 18)
+    }
+  }, [mapInstance, bounds])
   const [isAddingMarker, setIsAddingMarker] = useState(false)
   const [selectedCoordinates, setSelectedCoordinates] = useState<[number, number] | null>(null)
   const [showAddDialog, setShowAddDialog] = useState(false)
@@ -116,14 +145,14 @@ export default function AdminMapLayout() {
     }
   }
 
-  // ✅ Handle edit completion (save or cancel)
+  // Handle edit completion (save or cancel)
   const onEditComplete = useCallback(() => {
     setSelectedPlotForEdit(null)
     setIsEditingMarker(false)
     document.body.classList.remove('edit-marker-mode')
   }, [])
 
-  // 📍 Handle map click when adding marker
+  // Handle map click when adding marker
   const onMapClick = (coordinates: [number, number]) => {
     setSelectedCoordinates(coordinates)
     setShowAddDialog(true)
@@ -132,7 +161,7 @@ export default function AdminMapLayout() {
     document.body.classList.remove('add-marker-mode')
   }
 
-  // 🚫 Handle dialog close
+  // Handle dialog close
   const onDialogClose = (open: boolean) => {
     setShowAddDialog(open)
     if (!open) {
@@ -140,7 +169,7 @@ export default function AdminMapLayout() {
     }
   }
 
-  // ✅ After a successful add, immediately return to add mode for rapid entry
+  // After a successful add, immediately return to add mode for rapid entry
   const onAddDone = () => {
     setSelectedCoordinates(null)
     setShowAddDialog(false)
@@ -148,7 +177,7 @@ export default function AdminMapLayout() {
     document.body.classList.add('add-marker-mode')
   }
 
-  // 🧹 Cleanup effect to remove cursor class on unmount
+  // Cleanup effect to remove cursor class on unmount
   useEffect(() => {
     return () => {
       document.body.classList.remove('add-marker-mode')
@@ -156,10 +185,10 @@ export default function AdminMapLayout() {
     }
   }, [])
 
-  // ⎋ Unified Escape handler: cancel add/edit flows and close dialog reliably
-  useEffect(() => {
-    function onKeyDown(e: KeyboardEvent) {
-      if (e.key !== 'Escape') return
+  // Unified Escape handler: cancel add/edit flows and close dialog reliably
+  useHotkeys(
+    'escape',
+    (e) => {
       e.preventDefault()
 
       // If add dialog is open, close it and reset coordinates
@@ -192,16 +221,15 @@ export default function AdminMapLayout() {
         document.body.classList.remove('edit-marker-mode')
         return
       }
-    }
+    },
+    {
+      enableOnFormTags: true,
+      enableOnContentEditable: true,
+    },
+    [isAddingMarker, isEditingMarker, showAddDialog, selectedPlotForEdit, onEditComplete],
+  )
 
-    // Attach listener only when relevant states are active to avoid global interception
-    if (!(isAddingMarker || isEditingMarker || showAddDialog || selectedPlotForEdit)) return
-
-    window.addEventListener('keydown', onKeyDown)
-    return () => window.removeEventListener('keydown', onKeyDown)
-  }, [isAddingMarker, isEditingMarker, showAddDialog, selectedPlotForEdit, onEditComplete])
-
-  // 📦 Load local GeoJSON asset at runtime (avoids bundler parsing issues)
+  // Load local GeoJSON asset at runtime (avoids bundler parsing issues)
   useEffect(() => {
     let mounted = true
     async function load() {
@@ -238,6 +266,14 @@ export default function AdminMapLayout() {
   }, [])
   const createClusterIcon = useMemo(() => createClusterIconFactory(labelLookup), [labelLookup])
 
+  function MapInstanceBinder({ onMapReady }: { onMapReady: (map: L.Map) => void }) {
+    const map = useMap()
+    useEffect(() => {
+      onMapReady(map)
+    }, [map, onMapReady])
+    return null
+  }
+
   if (isLoading) {
     return (
       <div className="flex h-screen w-full items-center justify-center">
@@ -262,11 +298,9 @@ export default function AdminMapLayout() {
         }}
       >
         <div className="relative z-1 h-full w-full">
-          <WebMapNavs />
+          <AdminMapNavs searchLot={searchLot} resetView={resetView} />
           <MapStats />
-          {/* 🎯 Instructions for add marker mode */}
           <AddMarkerInstructions isVisible={isAddingMarker} />
-          {/* ✏️ Instructions for edit marker mode */}
           <EditMarkerInstructions isVisible={isEditingMarker} step={selectedPlotForEdit ? 'edit' : 'select'} />
           <MapContainer
             className="h-full w-full rounded-lg"
@@ -303,6 +337,8 @@ export default function AdminMapLayout() {
               zIndex={1}
             />
 
+            <MapInstanceBinder onMapReady={setMapInstance} />
+
             {/* GeoJSON overlay: Guide 4 Block C */}
             {showGuide4 && guide4Data && (
               <GeoJSON
@@ -330,9 +366,8 @@ export default function AdminMapLayout() {
             <ParkingMarkers />
             <CenterSerenityMarkers />
             <ComfortRoomMarker />
-            {/* Plot Markers grouped into clusters by block or category */}
+            {/* Display all clustered markers */}
             {Object.entries(markersByGroup).map(([groupKey, groupMarkers]) => {
-              // When editing markers or adding a new marker, disable clustering so markers are individually clickable/draggable
               if (isEditingMarker || isAddingMarker) {
                 return (
                   <div key={`cluster-${groupKey}`}>

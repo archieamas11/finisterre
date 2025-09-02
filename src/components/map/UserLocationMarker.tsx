@@ -101,7 +101,7 @@ export function UserLocationMarker({
       {showAccuracyCircle && accuracy && (
         <Circle
           center={position}
-          radius={accuracy}
+          radius={Math.min(accuracy, 100)}
           pathOptions={{
             fillColor: accuracyColor,
             color: accuracyColor,

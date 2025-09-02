@@ -1,6 +1,6 @@
-import { MapPin } from 'lucide-react'
 import { type FC, useEffect, useState } from 'react'
-import { Link, useLocation } from 'react-router-dom'
+import { BiRightArrowAlt } from 'react-icons/bi'
+import { Link } from 'react-router-dom'
 
 import ProfileMenu from '@/components/ProfileMenu'
 import { Button } from '@/components/ui/button'
@@ -13,7 +13,6 @@ import { NavigationMenuSection } from './NavigationMenu'
 export const HeaderSection: FC = () => {
   const [scrolled, setScrolled] = useState<boolean>(false)
   const { user: meUser, isLoading: isUserLoading } = useMe()
-  const location = useLocation()
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 10)
@@ -38,13 +37,13 @@ export const HeaderSection: FC = () => {
         })}
         aria-label="Go to homepage"
       >
-        <MapPin className="h-5 w-5" aria-hidden="true" />
-        <span className="hidden md:inline">Finisterre</span>
+        <BiRightArrowAlt className="mr-2" size={'20'} />
+        <span className="hidden md:inline">Finisterre Gardenz</span>
       </Link>
       <NavigationMenuSection />
       {/* Show profile when user loaded; otherwise show Login */}
       {!isUserLoading && meUser ? (
-        location.pathname === '/' && <ProfileMenu user={meUser} />
+        <ProfileMenu user={meUser} />
       ) : (
         <div className="flex items-center gap-2 sm:gap-4">
           <Button

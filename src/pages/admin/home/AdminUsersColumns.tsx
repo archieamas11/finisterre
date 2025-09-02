@@ -2,13 +2,13 @@ import type { ColumnDef } from '@tanstack/react-table'
 
 import { AiOutlineUser } from 'react-icons/ai'
 
-import type { UserRecord } from '@/api/users.api'
+import type { UserData } from '@/types/user.types'
 
 import { DataTableColumnHeader } from '@/components/data-table/data-table-column-header'
 import { Badge } from '@/components/ui/badge'
 import { ucwords } from '@/lib/format'
 
-export const adminUsersColumns: ColumnDef<UserRecord>[] = [
+export const adminUsersColumns: ColumnDef<UserData>[] = [
   {
     accessorKey: 'user_id',
     header: ({ column }) => <DataTableColumnHeader column={column} title="ID" />,
@@ -40,9 +40,10 @@ export const adminUsersColumns: ColumnDef<UserRecord>[] = [
     header: ({ column }) => <DataTableColumnHeader column={column} title="Created" />,
     accessorFn: (row) => (row.created_at ? new Date(row.created_at).getTime() : 0),
     cell: ({ row }) => {
-      const d = row.original.created_at ? new Date(row.original.created_at) : null
-      const fmt = d && !isNaN(d.getTime()) ? d.toLocaleString() : (row.original.created_at ?? '-')
-      return <span title={String(row.original.created_at ?? '-')}>{fmt}</span>
+      const raw = row.original.created_at
+      const d = raw ? new Date(raw) : null
+      const fmt = d && !isNaN(d.getTime()) ? d.toLocaleString() : String(raw ?? '-')
+      return <span title={String(raw ?? '-')}>{fmt}</span>
     },
     enableSorting: true,
     meta: { label: 'Created' },

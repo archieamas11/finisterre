@@ -2,6 +2,8 @@ import { FiRefreshCcw } from 'react-icons/fi'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 import { memo, useCallback } from 'react'
+import { isAndroid } from '@/utils/platform.utils'
+import { Fab } from 'konsta/react'
 
 interface GenericMapContext {
   requestLocate?: () => void
@@ -17,6 +19,7 @@ interface ResetMapViewButtonProps {
 }
 
 export function ResetMapViewButton({ context, onReset, className, size = 'sm', children }: ResetMapViewButtonProps) {
+  const FiRefreshCcwIcon = <FiRefreshCcw className="h-6 w-6" />
   const handleReset = useCallback(() => {
     // Attempt functions in order of priority
     if (onReset) {
@@ -33,10 +36,24 @@ export function ResetMapViewButton({ context, onReset, className, size = 'sm', c
   }, [onReset, context])
 
   return (
-    <Button variant="secondary" size={size} aria-label="Reset map view" onClick={handleReset} className={cn('bg-background shrink-0 rounded-full text-xs sm:text-sm', className)}>
-      <FiRefreshCcw className="text-accent-foreground h-3 w-3 sm:h-4 sm:w-4" />
-      {children ? <span>{children}</span> : <span>Reset View</span>}
-    </Button>
+    <>
+      {isAndroid() ? (
+        <button className="bg-transparent" onClick={handleReset}>
+          <Fab className="k-color-brand-green h-10" icon={FiRefreshCcwIcon} />
+        </button>
+      ) : (
+        <Button
+          variant="secondary"
+          size={size}
+          aria-label="Reset map view"
+          onClick={handleReset}
+          className={cn('bg-background shrink-0 rounded-full text-xs sm:text-sm', className)}
+        >
+          <FiRefreshCcw className="text-accent-foreground h-3 w-3 sm:h-4 sm:w-4" />
+          {children ? <span>{children}</span> : <span>Reset View</span>}
+        </Button>
+      )}
+    </>
   )
 }
 

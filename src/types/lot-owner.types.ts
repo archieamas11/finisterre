@@ -7,4 +7,11 @@ export interface LotOwnerData {
   lot_status: 'active' | 'completed' | 'cancelled'
   created_at: Date
   updated_at: Date
+
+  // Additional fields
+  block: string | null
+  category: string | null
+  coordinates: [number, number]
+  plot_status: string | null
+  customer_name: string
 }

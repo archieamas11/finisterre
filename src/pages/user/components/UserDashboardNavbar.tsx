@@ -1,4 +1,5 @@
-import { HouseIcon, MapPin, User, Settings } from 'lucide-react'
+import { HouseIcon, MapPin, User } from 'lucide-react'
+import { BiRightArrowAlt } from 'react-icons/bi'
 import { Link, useLocation } from 'react-router-dom'
 
 import InfoMenu from '@/components/info-menu'
@@ -14,7 +15,6 @@ import { cn } from '@/lib/utils'
 const navigationLinks = [
   { href: '/user', label: 'Home', icon: HouseIcon, active: true },
   { href: '/user/map', label: 'Map', icon: MapPin },
-  { href: '/user/services', label: 'Services', icon: Settings },
   { href: '/user/profile', label: 'Profile', icon: User },
 ]
 
@@ -61,7 +61,7 @@ export default function UserDashboardNavbar() {
                 </svg>
               </Button>
             </PopoverTrigger>
-            <PopoverContent align="start" className="w-36 p-1 md:hidden">
+            <PopoverContent align="start" className="z-999 w-36 p-1 md:hidden">
               <NavigationMenu className="max-w-none *:w-full">
                 <NavigationMenuList className="flex-col items-start gap-0 md:gap-2">
                   {dynamicNavigationLinks.map((link, index) => {
@@ -85,11 +85,12 @@ export default function UserDashboardNavbar() {
             </PopoverContent>
           </Popover>
           {/* Logo */}
-          <div className="flex items-center">
-            <Link to="/" className="text-primary hover:text-primary/90">
-              <MapPin />
-            </Link>
-          </div>
+          <Link to="/" className="text-primary hover:text-primary/90">
+            <div className="flex items-center">
+              <BiRightArrowAlt className="mr-2" size={'20'} />
+              <span className="font-medium">Finisterre</span>
+            </div>
+          </Link>
         </div>
         {/* Middle area */}
         <NavigationMenu className="max-md:hidden">

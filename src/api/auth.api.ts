@@ -59,6 +59,7 @@ export interface MeResponse {
   message: string
   user?: {
     user_id: number | null
+    customer_id?: number | null
     username: string | null
     isAdmin: boolean
     iat: number | null

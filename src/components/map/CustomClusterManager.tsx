@@ -11,7 +11,7 @@ interface CustomClusterManagerProps {
   onDirectionClick: (coordinates: [number, number]) => void
   isDirectionLoading: boolean
   selectedGroups: Set<string>
-  clusterViewMode: 'all' | 'selective'
+  clusterViewMode: 'all' | 'selective' | 'user-plots'
   onClusterClick: (groupKey: string) => void
   PlotMarkersComponent: React.ComponentType<{
     markers: ConvertedMarker[]
@@ -22,6 +22,8 @@ interface CustomClusterManagerProps {
   // 🔍 Search related props
   searchResult: any | null
   highlightedNiche: string | null
+  // 👤 User plots
+  userMarkers?: ConvertedMarker[]
 }
 
 // ⚡️ Calculate centroid of marker group for cluster positioning
@@ -170,6 +172,7 @@ const CustomClusterManager = memo(
     PlotMarkersComponent,
     searchResult,
     highlightedNiche: _highlightedNiche,
+    userMarkers,
   }: CustomClusterManagerProps) => {
     // 🔍 Check if we're in search mode with results
     const isSearchActive = searchResult?.success && searchResult.data
@@ -184,8 +187,8 @@ const CustomClusterManager = memo(
 
     // 🎯 Render cluster icons based on view mode and selection
     const renderClusters = useMemo(() => {
-      // 🔍 If search is active, don't show clusters
-      if (isSearchActive) {
+      // 🔍 If search is active or in user-plots mode, don't show clusters
+      if (isSearchActive || clusterViewMode === 'user-plots') {
         return null
       }
 
@@ -203,9 +206,23 @@ const CustomClusterManager = memo(
       return null
     }, [markersByGroup, clusterViewMode, selectedGroups, handleClusterClick, isSearchActive])
 
-    // 🎯 Render markers for selected groups or search results
+    // 🎯 Render markers for selected groups, search results, or user plots
     const renderSelectedGroups = useMemo(() => {
-      // 🔍 If search is active, render only the search result
+      // � If in user-plots mode, show user-owned plots without clustering
+      if (clusterViewMode === 'user-plots' && userMarkers && userMarkers.length > 0) {
+        return (
+          <SelectiveGroupMarkers
+            key="user-plots"
+            groupKey="user-plots"
+            markers={userMarkers}
+            onDirectionClick={onDirectionClick}
+            isDirectionLoading={isDirectionLoading}
+            PlotMarkersComponent={PlotMarkersComponent}
+          />
+        )
+      }
+
+      // �🔍 If search is active, render only the search result
       if (isSearchActive && searchResult.data) {
         const { plot_id } = searchResult.data
 
@@ -248,7 +265,7 @@ const CustomClusterManager = memo(
           />
         )
       })
-    }, [clusterViewMode, selectedGroups, markersByGroup, onDirectionClick, isDirectionLoading, PlotMarkersComponent, isSearchActive, searchResult])
+    }, [clusterViewMode, selectedGroups, markersByGroup, onDirectionClick, isDirectionLoading, PlotMarkersComponent, isSearchActive, searchResult, userMarkers])
 
     return (
       <>

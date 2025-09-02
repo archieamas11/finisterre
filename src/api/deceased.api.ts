@@ -49,3 +49,15 @@ export async function getDeceasedRecordsById(id: string) {
     throw error
   }
 }
+
+export async function getDeceasedRecordsForPlot(plotId: string) {
+  try {
+    console.log('📋 Fetching deceased records for plot:', plotId)
+    const res = await api.post('deceased-records/get_deceased_by_plot.php', { plot_id: plotId })
+    console.log('✅ Deceased records fetched for plot:', res.data)
+    return res.data
+  } catch (error) {
+    console.error('❌ Failed to fetch deceased records for plot:', error)
+    throw error
+  }
+}

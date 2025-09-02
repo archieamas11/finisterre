@@ -2,6 +2,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { MapPin, Eye, EyeOff } from 'lucide-react'
 import React from 'react'
 import { useForm } from 'react-hook-form'
+import { Link, useNavigate } from 'react-router-dom'
 import { toast } from 'sonner'
 import { z } from 'zod'
 
@@ -14,6 +15,7 @@ import { Input } from '@/components/ui/input'
 import Spinner from '@/components/ui/spinner'
 import { useAuthQuery } from '@/hooks/useAuthQuery'
 import { cn } from '@/lib/utils'
+import { isNativePlatform, isAndroid, isIOS } from '@/utils/platform.utils'
 
 const FormSchema = z.object({
   remember: z.boolean().optional(),
@@ -40,7 +42,12 @@ export default function LoginPage() {
     const hasToken = !!localStorage.getItem('token')
     if (hasToken && isSuccess && data?.success) {
       const admin = !!data?.user?.isAdmin
-      navigate(admin ? '/admin' : '/user', { replace: true })
+
+      if (isNativePlatform()) {
+        navigate(isIOS() ? '/landing-ios' : '/landing-android', { replace: true })
+      } else {
+        navigate(admin ? '/admin' : '/user', { replace: true })
+      }
     }
   }, [data, isSuccess, navigate])
 
@@ -60,7 +67,17 @@ export default function LoginPage() {
         // Show success toast then navigate
         toast.success(`Welcome back, ${formData.username}!`)
 
-        if (res.isAdmin) {
+        // Redirect based on platform and user role
+        if (isNativePlatform()) {
+          if (isAndroid()) {
+            navigate('/landing-android')
+          } else if (isIOS()) {
+            navigate('/landing-ios')
+          } else {
+            // Fallback for other native platforms
+            navigate('/landing-android')
+          }
+        } else if (res.isAdmin) {
           navigate('/admin')
         } else {
           navigate('/user')

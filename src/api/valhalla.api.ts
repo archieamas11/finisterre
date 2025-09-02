@@ -1,6 +1,10 @@
+import { CapacitorHttp } from '@capacitor/core'
+import { Capacitor } from '@capacitor/core'
 import polyline from '@mapbox/polyline'
+import axios from 'axios'
 
-import { api } from './axiosInstance'
+// Note: We use Capacitor HTTP for native platforms and axios for web
+// to ensure better compatibility with Android network security policies
 
 // 🗺️ Valhalla routing types
 export interface ValhallaLocation {
@@ -139,15 +143,42 @@ const VALHALLA_BASE_URL = import.meta.env.VITE_VALHALLA_URL || 'https://valhalla
  */
 export async function getValhallaRoute(request: ValhallaRouteRequest): Promise<ValhallaRouteResponse> {
   try {
-    const response = await api.post(`${VALHALLA_BASE_URL}/route`, request, {
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      // 🕐 Extended timeout for routing calculations
-      timeout: 30000,
-    })
+    const url = `${VALHALLA_BASE_URL}/route`
 
-    return response.data
+    // � Use Capacitor HTTP for native platforms, axios for web
+    if (Capacitor.isNativePlatform()) {
+      console.log('🚀 Using Capacitor HTTP for Valhalla request on native platform')
+
+      const response = await CapacitorHttp.request({
+        method: 'POST',
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        data: request,
+        connectTimeout: 30000,
+        readTimeout: 30000,
+      })
+
+      if (response.status !== 200) {
+        throw new Error(`HTTP ${response.status}: ${response.data?.error_message || 'Unknown error'}`)
+      }
+
+      return response.data
+    } else {
+      console.log('🌐 Using axios for Valhalla request on web platform')
+
+      // 🌐 Use axios directly for web platform to avoid baseURL conflicts
+      const response = await axios.post(url, request, {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        // 🕐 Extended timeout for routing calculations
+        timeout: 30000,
+      })
+
+      return response.data
+    }
   } catch (error: unknown) {
     const err = error as {
       response?: { data?: Record<string, unknown> }
@@ -178,24 +209,9 @@ export function decodePolyline(encodedPolyline: string, precision: number = 6): 
     // ⚠️ Polyline library returns [lat, lng], Leaflet expects [lat, lng] - no swap needed
     return decoded
   } catch (error: unknown) {
-    // Narrow unknown for safer handling
-    const err = error as {
-      response?: { data?: Record<string, unknown> }
-      code?: string
-      message?: string
-    }
-    console.error('\ud83d\udeab Valhalla route request failed:', err)
-
-    if (err.response?.data) {
-      const msg = String(err.response.data.error_message ?? err.response.data.message ?? 'Unknown error')
-      throw new Error(`Valhalla API error: ${msg}`)
-    }
-
-    if (err.code === 'ECONNABORTED') {
-      throw new Error('Route request timed out. Please try again.')
-    }
-
-    throw new Error(`Failed to get route: ${String(err.message ?? 'Unknown error')}`)
+    const err = error as Error
+    console.error('🚫 Failed to decode polyline:', err.message)
+    throw new Error(`Failed to decode route polyline: ${err.message}`)
   }
 }
 

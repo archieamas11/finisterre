@@ -1,286 +1,185 @@
-import { CalendarDays, Bell, Heart, MapPin, Eye } from 'lucide-react'
+import { CalendarDays, Heart, MapPin } from 'lucide-react'
+import { useNavigate } from 'react-router-dom'
 
+import { ErrorMessage } from '@/components/ErrorMessage'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import Spinner from '@/components/ui/spinner'
+import { useUserDashboard } from '@/hooks/user-hooks/useUserDashboard'
+
+import type { Lot, Deceased, Coordinates } from './components/types'
+
+import { AnnouncementCard } from './components/AnnouncementCard'
+import { MemorialProperties } from './components/MemorialProperties'
+import { PromotionalBanner } from './components/PromotionalBanner'
+import { StatCard } from './components/StatCard'
 
 export default function UserDashboard() {
+  const { data: dashboardData, isLoading, error } = useUserDashboard()
+  const navigate = useNavigate()
+
+  const handleNavigateToPlot = (coordinates?: Coordinates | null) => {
+    if (!coordinates) return
+    // Reset scroll position before navigation
+    window.scrollTo(0, 0)
+    const [lat, lng] = coordinates
+    navigate(`/user/map?direction=true&lat=${lat}&lng=${lng}`)
+  }
+
+  if (isLoading) {
+    return (
+      <div className="flex h-screen w-full items-center justify-center">
+        <Spinner />
+      </div>
+    )
+  }
+
+  if (error) {
+    return <ErrorMessage message={error.message} showRetryButton />
+  }
+
+  const stats = {
+    connectedMemorials: dashboardData?.connected_memorials ?? 0,
+    upcomingEvents: dashboardData?.upcoming_events ?? 0,
+    activeLots: dashboardData?.active_lots ?? 0,
+  }
+
+  const lots: Lot[] = dashboardData?.lots ?? []
+  const deceasedRecords: Deceased[] = dashboardData?.deceased_records ?? []
+
+  // Map each lot to its occupying deceased records (if any)
+  const lotsWithRecords: Array<{ lot: Lot; records: Deceased[] }> = lots.map((lot) => ({
+    lot,
+    records: deceasedRecords.filter((d) => String(d.lot_id) === String(lot.lot_id)),
+  }))
+
   return (
-    <div className="mt-6 space-y-6">
-      {/* Welcome Section */}
-      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 p-8 text-center text-white shadow-2xl">
-        <div className="absolute inset-0 bg-gradient-to-r from-blue-600/20 to-purple-600/20"></div>
-        <div className="relative z-10">
-          <h1 className="text-3xl font-bold tracking-tight sm:text-4xl lg:text-5xl">Welcome to Finisterre Memorial Park</h1>
-          <div className="mt-6 flex justify-center">
-            <div className="flex items-center space-x-2 rounded-full bg-white/10 px-4 py-2 backdrop-blur-sm">
-              <div className="h-2 w-2 rounded-full bg-green-400"></div>
-              <span className="text-sm text-slate-300">All systems operational</span>
-            </div>
-          </div>
+    <div className="sm:py-8 md:px-4 md:py-8 lg:container lg:mx-auto lg:max-w-7xl lg:px-4 lg:py-8">
+      {/* Promotional Banner */}
+      <PromotionalBanner
+        title="Grand Opening: New Memorial Garden & Reflection Pathway"
+        description="Experience a renewed space for remembrance. Explore landscaped pathways, quiet seating alcoves, and enhanced wayfinding now available to all families."
+        imageSrc="https://picsum.photos/seed/memorial-garden/600/400"
+        imageAlt="New memorial garden pathway with landscaped greenery"
+        badgeText="Announcement"
+        buttonText="Learn More"
+        variant="royal"
+        size="md"
+      />
+
+      {/* Quick Stats Section */}
+      <section className="mb-12">
+        <h2 className="mb-6 text-2xl font-bold text-slate-900 dark:text-white">Your Memorial Overview</h2>
+        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          <StatCard
+            title="Connected Memorials"
+            value={stats.connectedMemorials}
+            description={stats.connectedMemorials === 1 ? 'Family member memorialized' : 'Family members memorialized'}
+            icon={Heart}
+            colorClass="from-blue-50 to-indigo-50 dark:from-blue-950/50 dark:to-indigo-950/50"
+          />
+          <StatCard
+            title="Upcoming Events"
+            value={stats.upcomingEvents}
+            description={stats.upcomingEvents === 1 ? 'Scheduled memorial service' : 'Scheduled memorial services'}
+            icon={CalendarDays}
+            colorClass="from-emerald-50 to-green-50 dark:from-emerald-950/50 dark:to-green-950/50"
+          />
+          <StatCard
+            title="Active Lots"
+            value={stats.activeLots}
+            description={stats.activeLots === 1 ? 'Owned lot' : 'Owned lots'}
+            icon={MapPin}
+            colorClass="from-amber-50 to-orange-50 dark:from-amber-950/50 dark:to-orange-950/50"
+          />
         </div>
-      </div>
+      </section>
 
-      {/* Quick Stats - mobile-first responsive grid */}
-      <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
-        <Card className="group relative overflow-hidden border-0 bg-gradient-to-br from-blue-50 to-indigo-50 shadow-lg transition-all duration-300 hover:-translate-y-1 hover:shadow-xl dark:from-blue-950/50 dark:to-indigo-950/50">
-          <div className="absolute inset-0 bg-gradient-to-r from-blue-500/5 to-indigo-500/5 opacity-0 transition-opacity group-hover:opacity-100"></div>
-          <CardHeader className="flex items-center justify-between pb-3">
-            <CardTitle className="text-sm font-semibold text-slate-600 dark:text-slate-300">Connected Memorials</CardTitle>
-            <div className="rounded-full bg-blue-100 p-2 dark:bg-blue-900/30">
-              <Heart className="h-5 w-5 text-blue-600 dark:text-blue-400" />
-            </div>
-          </CardHeader>
-          <CardContent className="relative z-10">
-            <div className="text-3xl font-bold text-slate-900 dark:text-white">3</div>
-            <p className="text-sm text-slate-500 dark:text-slate-400">Family members memorialized</p>
-          </CardContent>
-        </Card>
-
-        <Card className="group relative overflow-hidden border-0 bg-gradient-to-br from-emerald-50 to-green-50 shadow-lg transition-all duration-300 hover:-translate-y-1 hover:shadow-xl dark:from-emerald-950/50 dark:to-green-950/50">
-          <div className="absolute inset-0 bg-gradient-to-r from-emerald-500/5 to-green-500/5 opacity-0 transition-opacity group-hover:opacity-100"></div>
-          <CardHeader className="flex items-center justify-between pb-3">
-            <CardTitle className="text-sm font-semibold text-slate-600 dark:text-slate-300">Upcoming Events</CardTitle>
-            <div className="rounded-full bg-emerald-100 p-2 dark:bg-emerald-900/30">
-              <CalendarDays className="h-5 w-5 text-emerald-600 dark:text-emerald-400" />
-            </div>
-          </CardHeader>
-          <CardContent className="relative z-10">
-            <div className="text-3xl font-bold text-slate-900 dark:text-white">2</div>
-            <p className="text-sm text-slate-500 dark:text-slate-400">Scheduled memorial services</p>
-          </CardContent>
-        </Card>
-
-        <Card className="group relative overflow-hidden border-0 bg-gradient-to-br from-amber-50 to-orange-50 shadow-lg transition-all duration-300 hover:-translate-y-1 hover:shadow-xl dark:from-amber-950/50 dark:to-orange-950/50">
-          <div className="absolute inset-0 bg-gradient-to-r from-amber-500/5 to-orange-500/5 opacity-0 transition-opacity group-hover:opacity-100"></div>
-          <CardHeader className="flex items-center justify-between pb-3">
-            <CardTitle className="text-sm font-semibold text-slate-600 dark:text-slate-300">Active Services</CardTitle>
-            <div className="rounded-full bg-amber-100 p-2 dark:bg-amber-900/30">
-              <MapPin className="h-5 w-5 text-amber-600 dark:text-amber-400" />
-            </div>
-          </CardHeader>
-          <CardContent className="relative z-10">
-            <div className="text-3xl font-bold text-slate-900 dark:text-white">1</div>
-            <p className="text-sm text-slate-500 dark:text-slate-400">Ongoing memorial services</p>
-          </CardContent>
-        </Card>
-
-        <Card className="group relative overflow-hidden border-0 bg-gradient-to-br from-rose-50 to-pink-50 shadow-lg transition-all duration-300 hover:-translate-y-1 hover:shadow-xl dark:from-rose-950/50 dark:to-pink-950/50">
-          <div className="absolute inset-0 bg-gradient-to-r from-rose-500/5 to-pink-500/5 opacity-0 transition-opacity group-hover:opacity-100"></div>
-          <CardHeader className="flex items-center justify-between pb-3">
-            <CardTitle className="text-sm font-semibold text-slate-600 dark:text-slate-300">Notifications</CardTitle>
-            <div className="rounded-full bg-rose-100 p-2 dark:bg-rose-900/30">
-              <Bell className="h-5 w-5 text-rose-600 dark:text-rose-400" />
-            </div>
-          </CardHeader>
-          <CardContent className="relative z-10">
-            <div className="text-3xl font-bold text-slate-900 dark:text-white">5</div>
-            <p className="text-sm text-slate-500 dark:text-slate-400">Unread announcements</p>
-          </CardContent>
-        </Card>
-      </div>
-
-      {/* Upcoming Events (with sample images) */}
-      <Card className="border-0 bg-gradient-to-br from-white to-slate-50/50 shadow-xl dark:from-slate-900 dark:to-slate-800/50">
-        <CardHeader className="pb-6">
-          <CardTitle className="text-2xl font-bold text-slate-900 dark:text-white">Upcoming Memorial Events</CardTitle>
-          <CardDescription className="text-slate-600 dark:text-slate-400">Scheduled services and commemorations</CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-6">
-          <div className="group flex flex-col items-start gap-6 rounded-xl border border-slate-200 bg-white p-6 shadow-sm transition-all duration-300 hover:border-slate-300 hover:shadow-lg sm:flex-row sm:items-center dark:border-slate-700 dark:bg-slate-800/50">
-            <div className="relative overflow-hidden rounded-lg">
-              <img
-                src="https://picsum.photos/seed/event1/400/250"
-                alt="Memorial service"
-                className="h-32 w-full rounded-lg object-cover transition-transform duration-300 group-hover:scale-105 sm:h-32 sm:w-48"
-                loading="lazy"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 transition-opacity group-hover:opacity-100"></div>
-            </div>
-            <div className="flex-1 space-y-2">
-              <h3 className="text-xl font-semibold text-slate-900 dark:text-white">Death Anniversary - John Doe</h3>
-              <p className="text-slate-600 dark:text-slate-400">October 15, 2025</p>
-              <p className="text-sm text-slate-500 dark:text-slate-500">A special commemoration service honoring John's life and legacy</p>
-            </div>
-            <div className="flex flex-col items-end gap-3 sm:items-center">
-              <Badge variant="secondary" className="bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300">
-                In 3 days
-              </Badge>
-              <Button variant="ghost" size="sm" className="transition-colors hover:bg-blue-50 hover:text-blue-700 dark:hover:bg-blue-900/20">
-                View Details
-              </Button>
-            </div>
-          </div>
-
-          <div className="group flex flex-col items-start gap-6 rounded-xl border border-slate-200 bg-white p-6 shadow-sm transition-all duration-300 hover:border-slate-300 hover:shadow-lg sm:flex-row sm:items-center dark:border-slate-700 dark:bg-slate-800/50">
-            <div className="relative overflow-hidden rounded-lg">
-              <img
-                src="https://picsum.photos/seed/event2/400/250"
-                alt="Annual commemoration"
-                className="h-32 w-full rounded-lg object-cover transition-transform duration-300 group-hover:scale-105 sm:h-32 sm:w-48"
-                loading="lazy"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 transition-opacity group-hover:opacity-100"></div>
-            </div>
-            <div className="flex-1 space-y-2">
-              <h3 className="text-xl font-semibold text-slate-900 dark:text-white">Annual Commemoration</h3>
-              <p className="text-slate-600 dark:text-slate-400">All Saints Chapel • November 1, 2025</p>
-              <p className="text-sm text-slate-500 dark:text-slate-500">Join us for our annual commemoration of all loved ones</p>
-            </div>
-            <div className="flex flex-col items-end gap-3 sm:items-center">
-              <Badge variant="outline" className="border-slate-300 text-slate-600 dark:border-slate-600 dark:text-slate-400">
-                In 1 month
-              </Badge>
-              <Button variant="ghost" size="sm" className="transition-colors hover:bg-slate-50 hover:text-slate-700 dark:hover:bg-slate-900/20">
-                View Details
-              </Button>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Recent Announcements (with sample images) */}
-      <Card className="border-0 bg-gradient-to-br from-white to-slate-50/50 shadow-xl dark:from-slate-900 dark:to-slate-800/50">
-        <CardHeader className="pb-6">
-          <CardTitle className="text-2xl font-bold text-slate-900 dark:text-white">Recent Announcements</CardTitle>
-          <CardDescription className="text-slate-600 dark:text-slate-400">Latest news and updates from the memorial park</CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-6">
-          <div className="group flex flex-col gap-6 rounded-xl border border-slate-200 bg-white p-6 shadow-sm transition-all duration-300 hover:border-slate-300 hover:shadow-lg sm:flex-row dark:border-slate-700 dark:bg-slate-800/50">
-            <div className="relative overflow-hidden rounded-lg">
-              <img
-                src="https://picsum.photos/seed/announce1/400/250"
-                alt="Garden opening"
-                className="h-32 w-full rounded-lg object-cover transition-transform duration-300 group-hover:scale-105 sm:h-32 sm:w-48"
-                loading="lazy"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 transition-opacity group-hover:opacity-100"></div>
-            </div>
-            <div className="flex-1 space-y-3">
-              <div className="flex items-start justify-between">
-                <div className="space-y-2">
-                  <h3 className="text-xl font-semibold text-slate-900 dark:text-white">New Memorial Garden Opening</h3>
-                  <p className="leading-relaxed text-slate-600 dark:text-slate-400">
-                    We're excited to announce the opening of our new Memorial Garden. This serene space provides a beautiful setting for reflection and remembrance.
-                  </p>
-                </div>
-                <Badge variant="default" className="ml-4 bg-gradient-to-r from-blue-500 to-purple-500 text-white shadow-lg">
-                  New
+      {/* Main Content Grid */}
+      <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
+        {/* Left Column - Combined Lots and Memorials (2/3 width) */}
+        <div className="lg:col-span-2">
+          <Card className="border-0 bg-gradient-to-br from-white to-slate-50/50 shadow-xl dark:from-slate-900 dark:to-slate-800/50">
+            <CardHeader className="pb-6">
+              <CardTitle className="text-2xl font-bold text-slate-900 dark:text-white">Your Memorial Properties</CardTitle>
+              <CardDescription className="text-slate-600 dark:text-slate-400">Your owned plots and connected memorials</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-8">
+              {/* Owned Lots Section */}
+              <div className="mb-4 flex items-center justify-between">
+                <h3 className="text-lg font-semibold text-slate-900 dark:text-white">Your Owned Plots</h3>
+                <Badge variant="outline" className="text-xs">
+                  {lots.length} {lots.length === 1 ? 'plot' : 'plots'}
                 </Badge>
               </div>
-              <p className="text-sm text-slate-500 dark:text-slate-500">Posted 2 days ago</p>
-            </div>
-          </div>
+              {lotsWithRecords.length === 0 ? (
+                <div className="rounded-lg border border-dashed border-slate-300 bg-slate-50 p-6 text-center dark:border-slate-700 dark:bg-slate-800/30">
+                  <MapPin className="mx-auto h-10 w-10 text-slate-400" />
+                  <h3 className="mt-2 text-sm font-medium text-slate-900 dark:text-white">No owned plots</h3>
+                  <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">You don't own any plots yet.</p>
+                </div>
+              ) : (
+                <div className="space-y-6">
+                  {lotsWithRecords.map(({ lot, records }) => (
+                    <MemorialProperties key={String(lot.lot_id)} lot={lot} records={records} onNavigate={handleNavigateToPlot} />
+                  ))}
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        </div>
 
-          <div className="group flex flex-col gap-6 rounded-xl border border-slate-200 bg-white p-6 shadow-sm transition-all duration-300 hover:border-slate-300 hover:shadow-lg sm:flex-row dark:border-slate-700 dark:bg-slate-800/50">
-            <div className="relative overflow-hidden rounded-lg">
-              <img
-                src="https://picsum.photos/seed/announce2/400/250"
-                alt="Holiday schedule"
-                className="h-32 w-full rounded-lg object-cover transition-transform duration-300 group-hover:scale-105 sm:h-32 sm:w-48"
-                loading="lazy"
+        {/* Right Column - Announcements (1/3 width) */}
+        <div id="announcements-section" className="lg:col-span-1">
+          <Card className="border-0 bg-gradient-to-br from-white to-slate-50/50 shadow-xl dark:from-slate-900 dark:to-slate-800/50">
+            <CardHeader className="pb-4">
+              <CardTitle className="text-xl font-bold text-slate-900 dark:text-white">Recent Announcements</CardTitle>
+              <CardDescription className="text-slate-600 dark:text-slate-400">Latest news and updates</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <AnnouncementCard
+                title="New Memorial Garden Opening"
+                description="We're excited to announce the opening of our new Memorial Garden. This serene space provides a beautiful setting for reflection and remembrance."
+                fullDescription="We're excited to announce the opening of our new Memorial Garden. This serene space provides a beautiful setting for reflection and remembrance. The garden features landscaped pathways, quiet seating alcoves, and enhanced wayfinding to help families find their loved ones more easily. The opening ceremony will be held this Saturday at 2 PM, and light refreshments will be served."
+                date="Posted 2 days ago"
+                isNew={true}
+                type="event"
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 transition-opacity group-hover:opacity-100"></div>
-            </div>
-            <div className="flex-1 space-y-3">
-              <h3 className="text-xl font-semibold text-slate-900 dark:text-white">Holiday Memorial Services Schedule</h3>
-              <p className="leading-relaxed text-slate-600 dark:text-slate-400">View the complete schedule for our holiday memorial services and special commemorations.</p>
-              <p className="text-sm text-slate-500 dark:text-slate-500">Posted 1 week ago</p>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
+              <AnnouncementCard
+                title="Holiday Memorial Services Schedule"
+                description="View the complete schedule for our holiday memorial services and special commemorations."
+                fullDescription="View the complete schedule for our holiday memorial services and special commemorations. This year, we have special services planned for Memorial Day, Independence Day, Labor Day, and Veterans Day. Each service includes a brief ceremony, music, and time for personal reflection. The full schedule is available on our website and at the main office."
+                date="Posted 1 week ago"
+                isNew={false}
+                type="event"
+              />
+              <AnnouncementCard
+                title="Extended Visiting Hours"
+                description="We've extended our visiting hours for the summer season. The memorial park is now open until 8 PM on weekdays."
+                fullDescription="We've extended our visiting hours for the summer season. The memorial park is now open until 8 PM on weekdays and 9 PM on weekends. This change allows families more flexibility to visit during evenings when the lighting creates a beautiful ambiance. Please note that the main office hours remain unchanged."
+                date="Posted 2 weeks ago"
+                isNew={false}
+                type="general"
+              />
 
-      {/* Connected Memorials with actions */}
-      <Card className="border-0 bg-gradient-to-br from-white to-slate-50/50 shadow-xl dark:from-slate-900 dark:to-slate-800/50">
-        <CardHeader className="pb-6">
-          <CardTitle className="text-2xl font-bold text-slate-900 dark:text-white">Connected Memorials</CardTitle>
-          <CardDescription className="text-slate-600 dark:text-slate-400">Status of memorials for your connected loved ones</CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-6">
-          <div className="group flex flex-col items-start gap-6 rounded-xl border border-slate-200 bg-white p-6 shadow-sm transition-all duration-300 hover:border-slate-300 hover:shadow-lg sm:flex-row sm:items-center dark:border-slate-700 dark:bg-slate-800/50">
-            <div className="flex-1 space-y-2">
-              <h3 className="text-xl font-semibold text-slate-900 dark:text-white">Mary Johnson</h3>
-              <p className="text-slate-600 dark:text-slate-400">Plot 456, Section B • Memorial maintained</p>
-              <div className="flex items-center gap-2 pt-2">
-                <div className="h-2 w-2 rounded-full bg-green-500"></div>
-                <span className="text-sm text-green-600 dark:text-green-400">Active</span>
+              {/* View All Button */}
+              <div className="border-t border-slate-200 pt-4 dark:border-slate-700">
+                <Button
+                  variant="outline"
+                  className="w-full justify-center"
+                  onClick={() => {
+                    // TODO: Navigate to full announcements page
+                    console.log('Navigate to all announcements')
+                  }}
+                >
+                  View All Announcements
+                </Button>
               </div>
-            </div>
-            <div className="flex flex-wrap gap-3 sm:flex-nowrap">
-              <Button variant="ghost" size="sm" className="transition-colors hover:bg-blue-50 hover:text-blue-700 dark:hover:bg-blue-900/20">
-                <MapPin className="mr-2 h-4 w-4" />
-                Navigate
-              </Button>
-              <Button
-                size="sm"
-                className="bg-gradient-to-r from-blue-500 to-purple-500 text-white shadow-lg transition-all hover:from-blue-600 hover:to-purple-600 hover:shadow-xl"
-              >
-                <Eye className="mr-2 h-4 w-4" />
-                View
-              </Button>
-              <Badge variant="default" className="bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300">
-                Active
-              </Badge>
-            </div>
-          </div>
-
-          <div className="group flex flex-col items-start gap-6 rounded-xl border border-slate-200 bg-white p-6 shadow-sm transition-all duration-300 hover:border-slate-300 hover:shadow-lg sm:flex-row sm:items-center dark:border-slate-700 dark:bg-slate-800/50">
-            <div className="flex-1 space-y-2">
-              <h3 className="text-xl font-semibold text-slate-900 dark:text-white">Robert Smith</h3>
-              <p className="text-slate-600 dark:text-slate-400">Plot 789, Section C • Service scheduled</p>
-              <div className="flex items-center gap-2 pt-2">
-                <div className="h-2 w-2 rounded-full bg-yellow-500"></div>
-                <span className="text-sm text-yellow-600 dark:text-yellow-400">Pending</span>
-              </div>
-            </div>
-            <div className="flex flex-wrap gap-3 sm:flex-nowrap">
-              <Button variant="ghost" size="sm" className="transition-colors hover:bg-blue-50 hover:text-blue-700 dark:hover:bg-blue-900/20">
-                <MapPin className="mr-2 h-4 w-4" />
-                Navigate
-              </Button>
-              <Button
-                size="sm"
-                className="bg-gradient-to-r from-blue-500 to-purple-500 text-white shadow-lg transition-all hover:from-blue-600 hover:to-purple-600 hover:shadow-xl"
-              >
-                <Eye className="mr-2 h-4 w-4" />
-                View
-              </Button>
-              <Badge variant="secondary" className="bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-300">
-                Pending
-              </Badge>
-            </div>
-          </div>
-
-          <div className="group flex flex-col items-start gap-6 rounded-xl border border-slate-200 bg-white p-6 shadow-sm transition-all duration-300 hover:border-slate-300 hover:shadow-lg sm:flex-row sm:items-center dark:border-slate-700 dark:bg-slate-800/50">
-            <div className="flex-1 space-y-2">
-              <h3 className="text-xl font-semibold text-slate-900 dark:text-white">Elizabeth Davis</h3>
-              <p className="text-slate-600 dark:text-slate-400">Plot 321, Section A • Maintenance due</p>
-              <div className="flex items-center gap-2 pt-2">
-                <div className="h-2 w-2 rounded-full bg-red-500"></div>
-                <span className="text-sm text-red-600 dark:text-red-400">Attention Needed</span>
-              </div>
-            </div>
-            <div className="flex flex-wrap gap-3 sm:flex-nowrap">
-              <Button variant="ghost" size="sm" className="transition-colors hover:bg-blue-50 hover:text-blue-700 dark:hover:bg-blue-900/20">
-                <MapPin className="mr-2 h-4 w-4" />
-                Navigate
-              </Button>
-              <Button
-                variant="destructive"
-                size="sm"
-                className="bg-gradient-to-r from-red-500 to-pink-500 text-white shadow-lg transition-all hover:from-red-600 hover:to-pink-600 hover:shadow-xl"
-              >
-                <Eye className="mr-2 h-4 w-4" />
-                View
-              </Button>
-              <Badge variant="destructive" className="bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300">
-                Attention Needed
-              </Badge>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
     </div>
   )
 }

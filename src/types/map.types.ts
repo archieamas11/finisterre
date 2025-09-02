@@ -25,6 +25,7 @@ export interface ConvertedMarker {
     width: number
     area: number
   }
+  is_owned?: boolean // Whether the current user owns this plot
 }
 
 export interface plots {
@@ -99,6 +100,7 @@ export const convertPlotToMarker = (plot: {
   width: string
   area: string
   rows: string
+  is_owned?: boolean
 }): ConvertedMarker => {
   // 📍 Parse coordinates from database format "lng, lat" to [lat, lng]
   const [lng, lat] = plot.coordinates.split(', ').map(Number)
@@ -154,6 +156,7 @@ export const convertPlotToMarker = (plot: {
       email: plot.email,
       contact: plot.contact,
     },
+    is_owned: plot.is_owned || false,
   }
 }
 

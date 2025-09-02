@@ -1,35 +1,133 @@
-import axios from 'axios'
+import axios, { type InternalAxiosRequestConfig, type AxiosInstance, type AxiosError, type AxiosRequestConfig, type AxiosResponse } from 'axios'
 
-export const api = axios.create({
-  baseURL: import.meta.env.VITE_API_URL,
+// Constants
+const DEFAULT_API_URL = 'http://localhost/finisterre_backend/'
+const TOKEN_KEY = 'token'
+const MAX_RETRIES = 1
+const TIMEOUT = 10000
+
+// Error interface type safety
+interface ApiError extends Error {
+  status?: number | null
+  originalError?: AxiosError
+}
+
+// Check if we're in a browser environment
+const isBrowser = typeof window !== 'undefined'
+
+export const api: AxiosInstance = axios.create({
+  baseURL: (import.meta.env.VITE_API_URL as string) || DEFAULT_API_URL,
   headers: { 'Content-Type': 'application/json' },
   withCredentials: false,
+  timeout: TIMEOUT,
 })
 
-// Add Authorization header if token exists
-api.interceptors.request.use((config) => {
-  const token = localStorage.getItem('token')
-  if (token) {
-    config.headers = config.headers ?? {}
-    // Avoid explicit role property that's the same as implicit/default role
-    config.headers.Authorization = `Bearer ${token}`
+// Store token in memory as fallback when localStorage isn't available
+let inMemoryToken: string | null = null
+
+// Callback management
+let onUnauthorized: (() => void) | null = null
+
+export function registerOnUnauthorized(cb: () => void): void {
+  onUnauthorized = cb
+}
+
+// Token management
+export function setToken(token: string): void {
+  inMemoryToken = token
+
+  if (isBrowser) {
+    try {
+      localStorage.setItem(TOKEN_KEY, token)
+    } catch (e) {
+      console.warn('Could not persist token to localStorage', e)
+    }
   }
+
+  api.defaults.headers.common.Authorization = `Bearer ${token}`
+}
+
+export function clearToken(): void {
+  inMemoryToken = null
+
+  if (isBrowser) {
+    try {
+      localStorage.removeItem(TOKEN_KEY)
+    } catch (e) {
+      console.warn('Could not remove token from localStorage', e)
+    }
+  }
+
+  delete api.defaults.headers.common.Authorization
+}
+
+export function getToken(): string | null {
+  if (isBrowser) {
+    try {
+      return localStorage.getItem(TOKEN_KEY) || inMemoryToken
+    } catch {
+      return inMemoryToken
+    }
+  }
+  return inMemoryToken
+}
+
+// Request interceptor
+api.interceptors.request.use((config: InternalAxiosRequestConfig) => {
+  // Add authorization header if token exists and not already set
+  if (!config.headers.Authorization) {
+    const token = getToken()
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`
+    }
+  }
+
+  if (import.meta.env.DEV) {
+    console.debug('API →', (config.method ?? 'GET').toUpperCase(), config.url)
+  }
+
   return config
 })
 
-// Handle 401 responses globally
+// Response interceptor
 api.interceptors.response.use(
-  (response) => response,
-  (error) => {
-    const status = error?.response?.status
-    if (status === 401) {
-      // Clear any stored auth, then redirect to login
-      localStorage.removeItem('token')
-      localStorage.removeItem('isAdmin')
-      if (typeof window !== 'undefined' && window.location.pathname !== '/login') {
-        window.location.assign('/login')
+  (response: AxiosResponse) => response,
+  async (error: AxiosError) => {
+    const config = error.config as (AxiosRequestConfig & { __retryCount?: number }) | undefined
+
+    // Handle timeout with retry
+    if (config && (error.code === 'ECONNABORTED' || error.message?.toLowerCase().includes('timeout'))) {
+      config.__retryCount = config.__retryCount ?? 0
+
+      if (config.__retryCount < MAX_RETRIES) {
+        config.__retryCount += 1
+        return api(config)
       }
     }
-    return Promise.reject(error)
+
+    // Handle 401 Unauthorized
+    if (error.response?.status === 401) {
+      clearToken()
+      onUnauthorized?.()
+    }
+
+    // Extract error message from response
+    const responseData = error.response?.data
+    let message = error.message
+
+    if (typeof responseData === 'object' && responseData !== null) {
+      if ('message' in responseData && typeof responseData.message === 'string') {
+        message = responseData.message
+      } else if ('error' in responseData && typeof responseData.error === 'string') {
+        message = responseData.error
+      }
+    }
+
+    // Create and throw enhanced error
+    const enhancedError = new Error(message) as ApiError
+    enhancedError.status = error.response?.status ?? null
+    enhancedError.originalError = error
+
+    throw enhancedError
   },
 )

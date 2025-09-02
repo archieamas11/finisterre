@@ -1,10 +1,12 @@
-import L from 'leaflet'
+import { Notification } from 'konsta/react'
 import 'leaflet/dist/leaflet.css'
+import L from 'leaflet'
 import iconRetinaUrl from 'leaflet/dist/images/marker-icon-2x.png'
 import iconUrl from 'leaflet/dist/images/marker-icon.png'
 import shadowUrl from 'leaflet/dist/images/marker-shadow.png'
 import { useEffect, useMemo, useCallback, memo, useState, Suspense, lazy, useReducer, useRef } from 'react'
 import { MapContainer, TileLayer, useMap } from 'react-leaflet'
+import { useSearchParams } from 'react-router-dom'
 import { toast } from 'sonner'
 
 import type { ConvertedMarker } from '@/types/map.types'
@@ -16,6 +18,7 @@ import Spinner from '@/components/ui/spinner'
 import { MapStateContext, MapDispatchContext, LocateContext, type MapState, type MapAction } from '@/contexts/MapContext'
 import { usePlots } from '@/hooks/plots-hooks/plot.hooks'
 import { useLocationTracking } from '@/hooks/useLocationTracking'
+import { useUserOwnedPlots, convertUserPlotToMarker } from '@/hooks/user-hooks/useUserOwnedPlots'
 import { useValhalla } from '@/hooks/useValhalla'
 import { groupMarkersByKey } from '@/lib/clusterUtils'
 import CenterSerenityMarkers from '@/pages/webmap/CenterSerenityMarkers'
@@ -25,8 +28,10 @@ import MainEntranceMarkers from '@/pages/webmap/MainEntranceMarkers'
 import ParkingMarkers from '@/pages/webmap/ParkingMarkers'
 import PlaygroundMarkers from '@/pages/webmap/PlaygroundMarkers'
 import PlotMarkers from '@/pages/webmap/PlotMarkers'
+import WebmapLegend from '@/pages/webmap/WebmapLegend'
 import WebMapNavs from '@/pages/webmap/WebMapNavs'
 import { convertPlotToMarker } from '@/types/map.types'
+import { isNativePlatform } from '@/utils/platform.utils'
 const UserLocationMarker = lazy(() =>
   import('@/components/map/UserLocationMarker').then((module) => ({
     default: module.UserLocationMarker,
@@ -81,7 +86,6 @@ function MapInstanceBinder({ onMapReady }: { onMapReady: (map: L.Map) => void })
   return null
 }
 
-// ==== New reducer-based state management ====
 const initialMapState: MapState = {
   isNavigationInstructionsOpen: false,
   isDirectionLoading: false,
@@ -115,6 +119,15 @@ function mapReducer(state: MapState, action: MapAction): MapState {
     }
     case 'RESET_GROUPS':
       return { ...state, selectedGroups: new Set(), clusterViewMode: 'all' }
+    case 'SHOW_USER_PLOTS':
+      return {
+        ...state,
+        selectedGroups: new Set(),
+        clusterViewMode: 'user-plots',
+        searchQuery: '',
+        searchResult: null,
+        highlightedNiche: null,
+      }
     case 'SET_SEARCH_QUERY':
       return { ...state, searchQuery: action.query }
     case 'SEARCH_START':
@@ -128,7 +141,6 @@ function mapReducer(state: MapState, action: MapAction): MapState {
     case 'SET_AUTO_POPUP':
       return { ...state, autoOpenPopupFor: action.plotId }
     case 'REQUEST_POPUP_CLOSE':
-      // Increment token to tell popups to close themselves
       return { ...state, pendingPopupClose: true, forceClosePopupsToken: state.forceClosePopupsToken + 1 }
     case 'POPUP_CLOSE_CONFIRMED':
       return { ...state, pendingPopupClose: false }
@@ -147,10 +159,16 @@ function mapReducer(state: MapState, action: MapAction): MapState {
   }
 }
 
-export default function MapPage() {
+export default function MapPage({ onBack, initialDirection }: { onBack?: () => void; initialDirection?: { lat: number; lng: number } | null }) {
   const { isLoading, data: plotsData } = usePlots()
+  const { data: userPlotsData } = useUserOwnedPlots()
+
   const markers = useMemo(() => plotsData?.map(convertPlotToMarker) || [], [plotsData])
-  const [searchParams, setSearchParams] = useSearchParams()
+  const userMarkers = useMemo(() => {
+    if (!userPlotsData?.plots) return []
+    return userPlotsData.plots.map(convertUserPlotToMarker).filter((marker): marker is NonNullable<typeof marker> => marker !== null)
+  }, [userPlotsData])
+
   const {
     currentLocation,
     startTracking,
@@ -189,6 +207,29 @@ export default function MapPage() {
   const stateRef = useRef(state)
   stateRef.current = state
 
+  // Konsta Notification state for native platforms
+  const [konstaNotificationOpen, setKonstaNotificationOpen] = useState(false)
+  const [konstaNotificationProps, setKonstaNotificationProps] = useState<{
+    title?: string
+    subtitle?: string
+    text?: string
+    titleRightText?: string
+  }>({})
+
+  // Auto-close Konsta notification after 3s
+  useEffect(() => {
+    if (!konstaNotificationOpen) return
+    const t = setTimeout(() => setKonstaNotificationOpen(false), 3000)
+    return () => clearTimeout(t)
+  }, [konstaNotificationOpen])
+
+  const [searchParams] = useSearchParams()
+
+  // Reset scroll position when map loads
+  useEffect(() => {
+    window.scrollTo(0, 0)
+  }, [])
+
   // 🛠️ Backward-compat bridge (TEMP): map former individual state variables to reducer state fields.
   // FIXME: Remove once all references are updated.
 
@@ -215,12 +256,12 @@ export default function MapPage() {
 
   useEffect(() => {
     if (state.shouldCenterOnUser && currentLocation) {
-      const timeoutId = setTimeout(() => dispatch({ type: 'REQUEST_LOCATE' }), 1000) // reuse action to toggle flag
+      const timeoutId = setTimeout(() => dispatch({ type: 'REQUEST_LOCATE' }), 1000)
       return () => clearTimeout(timeoutId)
     }
   }, [state.shouldCenterOnUser, currentLocation])
 
-  // 🚀 Effect to detect when route is fully loaded and flyTo animation is complete
+  //  Effect to detect when route is fully loaded and flyTo animation is complete
   useEffect(() => {
     if (route && routeCoordinates.length > 0 && state.isDirectionLoading) {
       // Route is loaded, start flyTo animation and wait for it to complete
@@ -244,7 +285,9 @@ export default function MapPage() {
 
   // Memoize callback functions to prevent them from being recreated on every render.
   const requestLocate = useCallback(async () => {
+    // Start tracking if not already active
     if (!isTracking) startTracking()
+    // center will be handled inline; reset flag if needed
 
     // Try to obtain a fresh location if we don't have one yet
     let loc = currentLocation
@@ -252,10 +295,14 @@ export default function MapPage() {
       try {
         loc = await getCurrentLocation()
       } catch (err) {
+        // 💡 Silent fail: toast not needed; user just won't see fly animation
         console.warn('Could not get current location for flyTo:', err)
       }
     }
+
+    // Perform animated fly to the user's position
     if (loc && mapInstance) {
+      // Using flyTo for smoother animated transition similar to resetView animation semantics
       mapInstance.flyTo([loc.latitude, loc.longitude], 18, { animate: true })
     }
   }, [isTracking, startTracking, currentLocation, getCurrentLocation, mapInstance])
@@ -269,24 +316,36 @@ export default function MapPage() {
   const handleDirectionClick = useCallback(
     async (to: [number, number]) => {
       const [toLatitude, toLongitude] = to
+      console.log('🧭 Direction click triggered:', { to, toLatitude, toLongitude })
+
       if (!toLatitude || !toLongitude) {
         console.warn('⚠️ Invalid destination coordinates:', to)
         dispatch({ type: 'SET_DIRECTION_LOADING', value: false })
         return
       }
+
       dispatch({ type: 'SET_DIRECTION_LOADING', value: true })
       dispatch({ type: 'SET_NAV_OPEN', value: false })
 
       try {
         // Get user location: use current if available, otherwise fetch
         let userLocation = currentLocation
+        console.log('📍 Current location available:', !!userLocation, userLocation)
+
         if (!userLocation) {
+          console.log('📍 Fetching fresh user location...')
           userLocation = await getCurrentLocation()
+          console.log('📍 Fresh location obtained:', userLocation)
         }
 
         if (!userLocation || !userLocation.latitude || !userLocation.longitude) {
           throw new Error('Could not determine current location')
         }
+
+        console.log('🚀 Starting navigation with locations:', {
+          from: { latitude: userLocation.latitude, longitude: userLocation.longitude },
+          to: { latitude: toLatitude, longitude: toLongitude },
+        })
 
         // Start navigation with proper typed coordinates
         await startNavigation(
@@ -297,6 +356,8 @@ export default function MapPage() {
           { latitude: toLatitude, longitude: toLongitude },
         )
 
+        console.log('✅ Navigation started successfully')
+
         // Trigger map recentering or location update
         requestLocate()
 
@@ -304,6 +365,12 @@ export default function MapPage() {
         dispatch({ type: 'SET_NAV_OPEN', value: true })
       } catch (error) {
         console.error('🚫 Failed to start navigation:', error)
+        console.error('🚫 Error details:', {
+          name: error instanceof Error ? error.name : 'Unknown',
+          message: error instanceof Error ? error.message : String(error),
+          stack: error instanceof Error ? error.stack : undefined,
+        })
+
         // Fallback: resume tracking if not already doing so
         if (!isTracking) {
           startTracking()
@@ -315,12 +382,32 @@ export default function MapPage() {
     [currentLocation, getCurrentLocation, isTracking, startNavigation, startTracking, requestLocate],
   )
 
-  // 🎯 Cluster control functions
+  // Check for direction query params and trigger navigation
+  useEffect(() => {
+    const direction = searchParams.get('direction')
+    const lat = searchParams.get('lat')
+    const lng = searchParams.get('lng')
+    if (direction === 'true' && lat && lng) {
+      const coords: [number, number] = [parseFloat(lat), parseFloat(lng)]
+      handleDirectionClick(coords)
+    }
+  }, [searchParams, handleDirectionClick])
+
+  // If initialDirection prop is provided (used by native Android wrapper), start navigation
+  useEffect(() => {
+    if (initialDirection && isNativePlatform()) {
+      const coords: [number, number] = [initialDirection.lat, initialDirection.lng]
+      handleDirectionClick(coords)
+    }
+    // Only run on mount / when initialDirection changes
+  }, [initialDirection, handleDirectionClick])
+
+  //  Cluster control functions
   const toggleGroupSelection = useCallback((groupKey: string) => dispatch({ type: 'TOGGLE_GROUP', group: groupKey }), [])
 
   const resetGroupSelection = useCallback(() => dispatch({ type: 'RESET_GROUPS' }), [])
 
-  // 🎯 Handle cluster click - select single group
+  //  Handle cluster click - select single group
   const handleClusterClick = useCallback((groupKey: string) => dispatch({ type: 'SELECT_GROUPS', groups: new Set([groupKey]) }), [])
 
   // 🔍 Search functions
@@ -375,7 +462,18 @@ export default function MapPage() {
             }
           }
 
-          toast.success(`Lot found in ${result.data.category} - ${result.data.block ? `Block ${result.data.block}` : 'Chamber'}`)
+          if (isNativePlatform()) {
+            // Use Konsta Notification on native
+            setKonstaNotificationProps({
+              title: 'Lot found',
+              subtitle: `${result.data.category} ${result.data.block ? `- Block ${result.data.block}` : '- Chamber'}`,
+              text: `Plot ${result.data.plot_id}`,
+              titleRightText: 'now',
+            })
+            setKonstaNotificationOpen(true)
+          } else {
+            toast.success(`Lot found in ${result.data.category} - ${result.data.block ? `Block ${result.data.block}` : 'Chamber'}`)
+          }
         } else {
           toast.error(result.message || 'Lot not found')
         }
@@ -396,24 +494,6 @@ export default function MapPage() {
     dispatch({ type: 'SET_AUTO_POPUP', plotId: null })
     dispatch({ type: 'RESET_GROUPS' })
   }, [])
-
-  useEffect(() => {
-    const direction = searchParams.get('direction')
-    const lat = searchParams.get('lat')
-    const lng = searchParams.get('lng')
-    if (direction === 'true' && lat && lng) {
-      const coords: [number, number] = [parseFloat(lat), parseFloat(lng)]
-      handleDirectionClick(coords)
-      // Clear the params to prevent re-triggering
-      setSearchParams((prev) => {
-        const newParams = new URLSearchParams(prev)
-        newParams.delete('direction')
-        newParams.delete('lat')
-        newParams.delete('lng')
-        return newParams
-      })
-    }
-  }, [searchParams, handleDirectionClick, setSearchParams])
 
   // 🚀 Request popup close - either immediately or after route completion
   const requestPopupClose = useCallback(() => {
@@ -446,6 +526,11 @@ export default function MapPage() {
     dispatch({ type: 'RESET_VIEW' })
   }, [mapInstance, bounds])
 
+  // 👤 Show only user-owned plots
+  const showUserPlotsOnly = useCallback(() => {
+    dispatch({ type: 'SHOW_USER_PLOTS' })
+  }, [])
+
   const contextValue = useMemo(
     () => ({
       // direct state (for backward compat; prefer useMapState selectors moving forward)
@@ -469,8 +554,24 @@ export default function MapPage() {
       autoOpenPopupFor: state.autoOpenPopupFor,
       setAutoOpenPopupFor: (plotId: string | null) => dispatch({ type: 'SET_AUTO_POPUP', plotId }),
       requestPopupClose,
+      showUserPlotsOnly,
+      userOwnedPlotsCount: userMarkers.length,
     }),
-    [state, requestLocate, clearRoute, resetView, toggleGroupSelection, resetGroupSelection, availableGroups, handleClusterClick, searchLot, clearSearch, requestPopupClose],
+    [
+      state,
+      requestLocate,
+      clearRoute,
+      resetView,
+      toggleGroupSelection,
+      resetGroupSelection,
+      availableGroups,
+      handleClusterClick,
+      searchLot,
+      clearSearch,
+      requestPopupClose,
+      showUserPlotsOnly,
+      userMarkers.length,
+    ],
   )
 
   if (isLoading) {
@@ -485,8 +586,20 @@ export default function MapPage() {
     <MapStateContext.Provider value={state}>
       <MapDispatchContext.Provider value={dispatch}>
         <LocateContext.Provider value={contextValue}>
-          <div className="relative h-screen w-full">
-            <WebMapNavs />
+          <div className="relative h-full w-full overflow-hidden">
+            <WebMapNavs onBack={onBack} />
+            <WebmapLegend />
+            {/* Konsta Notification for native platforms */}
+            <Notification
+              opened={konstaNotificationOpen}
+              title={konstaNotificationProps.title}
+              subtitle={konstaNotificationProps.subtitle}
+              text={konstaNotificationProps.text}
+              titleRightText={konstaNotificationProps.titleRightText}
+              button
+              onClick={() => setKonstaNotificationOpen(false)}
+              className="z-[999]"
+            />
             {(locationError || routingError) && (
               <div className="absolute top-4 right-4 z-[999] max-w-sm">
                 <div className="rounded-md border border-red-200 bg-red-50 p-4">
@@ -511,7 +624,6 @@ export default function MapPage() {
               easeLinearity={0.25}
               worldCopyJump={false}
               maxBoundsViscosity={1.0}
-              preferCanvas={true}
             >
               <MapInstanceBinder onMapReady={setMapInstance} />
               <TileLayer
@@ -547,6 +659,7 @@ export default function MapPage() {
                 PlotMarkersComponent={MemoizedPlotMarkers}
                 searchResult={state.searchResult}
                 highlightedNiche={state.highlightedNiche}
+                userMarkers={userMarkers}
               />
 
               <Suspense fallback={null}>
