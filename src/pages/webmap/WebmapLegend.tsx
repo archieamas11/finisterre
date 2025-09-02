@@ -35,9 +35,9 @@ export default function WebmapLegend() {
   const [isCollapsed, setIsCollapsed] = useState(false)
 
   const categories: LegendItem[] = [
-    { key: 'serenity', label: 'Serenity Lawn', color: '#FFFF', shape: 'circle' },
-    { key: 'columbarium', label: 'Columbarium', color: '#F0F0F0', shape: 'diamond' },
-    { key: 'chambers', label: 'Memorial Chambers', color: '#F0F0F0', shape: 'square' },
+    { key: 'serenity', label: 'Serenity Lawn', color: '#2563EB', shape: 'circle' },
+    { key: 'columbarium', label: 'Columbarium', color: '#2563EB', shape: 'diamond' },
+    { key: 'chambers', label: 'Memorial Chambers', color: '#2563EB', shape: 'square' },
   ]
 
   const statuses: LegendItem[] = [
