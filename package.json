@@ -12,7 +12,7 @@
     "prepare": "husky",
     "knip": "knip",
     "cap:build": "npm run build && npx cap sync android",
-    "run-android": "npx cap run android",
+    "sync": "npx cap sync android",
     "android": "npx cap open android"
   },
   "dependencies": {
