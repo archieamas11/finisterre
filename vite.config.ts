@@ -33,6 +33,8 @@ export default defineConfig({
   ],
   build: {
     target: 'esnext',
+    assetsDir: 'assets',
+    rollupOptions: {},
   },
   resolve: {
     alias: {
