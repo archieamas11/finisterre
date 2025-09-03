@@ -133,7 +133,7 @@ export default function UserDashboard() {
         </div>
 
         {/* Right Column - Announcements (1/3 width) */}
-        <div id="announcements-section" className="lg:col-span-1">
+        <div id="announcements-section" className={cn('lg:col-span-1', isNativePlatform() && 'hidden')}>
           <Card className="border-0 bg-gradient-to-br from-white to-slate-50/50 shadow-xl dark:from-slate-900 dark:to-slate-800/50">
             <CardHeader className="pb-4">
               <CardTitle className="text-xl font-bold text-slate-900 dark:text-white">Recent Announcements</CardTitle>
