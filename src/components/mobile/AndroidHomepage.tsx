@@ -72,7 +72,7 @@ export default function AndroidHomepage() {
         </ToolbarPane>
       </Tabbar>
       {activeTab === 'home' && (
-        <Block strong inset className="space-y-4">
+        <Block strong inset className="mb-20 space-y-4">
           <UserDashboard />
         </Block>
       )}
