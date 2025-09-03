@@ -1,5 +1,4 @@
 import { zodResolver } from '@hookform/resolvers/zod'
-import { MapPin } from 'lucide-react'
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
@@ -62,7 +61,7 @@ export default function ResetPassword() {
         <div className="mb-8 flex flex-col items-center">
           <Link className="mb-4" to="/">
             <div className="border-primary bg-accent rounded-lg border p-2">
-              <MapPin size={30} />
+              <img src="/favicon.svg" className="h-8 w-8" alt="Home Logo" />
             </div>
           </Link>
           <h1 className="text-2xl font-bold tracking-tight">Reset Password</h1>

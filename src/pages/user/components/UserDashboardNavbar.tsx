@@ -1,5 +1,4 @@
 import { HouseIcon, MapPin, User } from 'lucide-react'
-import { BiRightArrowAlt } from 'react-icons/bi'
 import { Link, useLocation } from 'react-router-dom'
 
 import InfoMenu from '@/components/info-menu'
@@ -87,7 +86,7 @@ export default function UserDashboardNavbar() {
           {/* Logo */}
           <Link to="/" className="text-primary hover:text-primary/90">
             <div className="flex items-center">
-              <BiRightArrowAlt className="mr-2" size={'20'} />
+              <img src="/favicon.svg" className="mr-2 h-5 w-5" alt="Logo" />
               <span className="font-medium">Finisterre</span>
             </div>
           </Link>

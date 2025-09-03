@@ -1,5 +1,5 @@
 import { zodResolver } from '@hookform/resolvers/zod'
-import { MapPin, Eye, EyeOff } from 'lucide-react'
+import { Eye, EyeOff } from 'lucide-react'
 import React from 'react'
 import { useForm } from 'react-hook-form'
 import { Link, useNavigate } from 'react-router-dom'
@@ -112,7 +112,7 @@ export default function LoginPage() {
   return (
     <main className="bg-background flex min-h-screen items-center justify-center" aria-label="Login page">
       <Card className="mx-auto w-full max-w-sm p-8 shadow-lg">
-        <div className="mb-8 flex flex-col items-center">
+        <div className="mb-2 flex flex-col items-center">
           <Link
             className="mb-4"
             to="/"
@@ -133,7 +133,7 @@ export default function LoginPage() {
             style={{ touchAction: 'manipulation' }}
           >
             <div className="border-primary bg-accent relative z-20 rounded-lg border p-2">
-              <MapPin size={30} />
+              <img src="/favicon.svg" className="h-8 w-8" alt="Home Logo" />
             </div>
           </Link>
           <h1 className="text-2xl font-bold tracking-tight">Sign in to your account</h1>

@@ -1,5 +1,6 @@
 import { motion, useReducedMotion } from 'framer-motion'
-import { ArrowRight, Sparkles, MapPin, Heart } from 'lucide-react'
+import { ArrowRight, MapPin, Heart } from 'lucide-react'
+import { FaPhoneAlt } from 'react-icons/fa'
 import { Link } from 'react-router-dom'
 
 import { AnimatedGradientText } from '@/components/magicui/animated-gradient-text'
@@ -37,7 +38,16 @@ export default function HeroSection() {
   return (
     <section className="relative flex min-h-screen items-center justify-center overflow-hidden">
       <div className="absolute inset-0 z-0 [mask-image:linear-gradient(to_bottom,transparent,black_0%,black_30%,transparent)]">
-        <img className="h-full w-full object-cover" src="/hero-bg.webp" alt="Background" width={1920} height={1280} loading="eager" fetchPriority="high" decoding="async" />
+        <img
+          className="h-full w-full object-cover"
+          src="/hero-bg.webp"
+          alt="Scenic landscape of Finisterre Gardenz memorial park, evoking peace and remembrance"
+          width={1920}
+          height={1280}
+          loading="eager"
+          fetchPriority="high"
+          decoding="async"
+        />
         <div className="absolute inset-0 bg-gradient-to-br from-black/70 via-black/50 to-transparent" />
       </div>
       {/* Main Content Container */}
@@ -51,7 +61,14 @@ export default function HeroSection() {
         {/* Premium badge */}
         <motion.div className="mb-6 flex justify-center" variants={shouldReduceMotion ? undefined : subtleBadge}>
           <div className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-4 py-2 text-sm font-medium text-white/90 backdrop-blur-md">
-            <Sparkles className="h-4 w-4 text-yellow-300" />A Sacred Journey Awaits
+            <FaPhoneAlt />
+            <a href="tel:09988411173" className="tracking-wider hover:underline">
+              09988411173
+            </a>
+            <hr className="h-4 w-px shrink-0 bg-neutral-400" />
+            <a href="tel:09176216823" className="tracking-wider hover:underline">
+              09176216823
+            </a>
           </div>
         </motion.div>
         {/* Main heading with modern typography */}
@@ -76,8 +93,8 @@ export default function HeroSection() {
             variants={shouldReduceMotion ? undefined : subtleItem}
             transition={{ delay: shouldReduceMotion ? 0 : 0.12 }}
           >
-            Inspired by Spain's <span className="font-semibold text-blue-200">El Camino de Santiago</span>, Finisterre Gardenz celebrates the pilgrimage of a life lived to the
-            fullest.
+            Inspired by Spain's <span className="font-semibold text-blue-200">El Camino de Santiago</span>, Finisterre Gardenz honors the journey of life, celebrating every step
+            with dignity and peace.
           </motion.p>
         </motion.div>
         {/* CTA Section */}

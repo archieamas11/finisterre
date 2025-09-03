@@ -1,5 +1,3 @@
-import { MapPin } from 'lucide-react'
-// src/components/sidebar/app-sidebar.tsx
 import * as React from 'react'
 
 import { NavMain } from '@/components/sidebar/nav-main'
@@ -26,13 +24,12 @@ export function AppSidebar({ items, ...props }: React.ComponentProps<typeof Side
         <SidebarMenu>
           <SidebarMenuItem>
             <SidebarMenuButton size="lg" asChild>
-              <div className="flex items-center gap-2">
-                <div className="bg-sidebar-primary text-sidebar-primary-foreground mr-2 flex aspect-square size-8 items-center justify-center rounded-lg">
-                  <MapPin />
+              <div className="flex items-center">
+                <div className="bg-sidebar-border mr-2 flex aspect-square size-8 items-center justify-center rounded-lg p-1.5">
+                  <img src="/favicon.svg" className="h-8 w-8" alt="Logo" />
                 </div>
                 <div className="grid flex-1 text-left text-sm leading-tight">
-                  <span className="truncate font-semibold">Finisterre</span>
-                  <span className="truncate text-xs">Dashboard</span>
+                  <span className="truncate font-semibold">Finisterre Gardenz</span>
                 </div>
               </div>
             </SidebarMenuButton>

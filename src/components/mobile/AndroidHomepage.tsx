@@ -6,7 +6,6 @@ import AndroidMapPage from './AndroidMapPage'
 import AndroidProfilePage from '@/pages/android/AndroidProfilePage'
 import UserDashboard from '@/pages/user/UserDashboard'
 import { isAuthenticated } from '@/utils/auth.utils'
-import { BiRightArrowAlt } from 'react-icons/bi'
 
 export default function AndroidHomepage() {
   const [activeTab, setActiveTab] = useState('home')
@@ -33,7 +32,7 @@ export default function AndroidHomepage() {
         transparent={false}
         left={
           <Link>
-            <BiRightArrowAlt />
+            <img src="/favicon.svg" className="h-5 w-5" alt="Logo" />
           </Link>
         }
         right={
