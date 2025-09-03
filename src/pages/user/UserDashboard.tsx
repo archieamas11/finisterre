@@ -57,7 +57,7 @@ export default function UserDashboard() {
   }))
 
   return (
-    <div className={cn('px-4 py-8 md:py-8 lg:container lg:mx-auto lg:max-w-7xl lg:px-4 lg:py-8', isNativePlatform() && 'px-0 py-0')}>
+    <div className="px-4 py-8 md:py-8 lg:container lg:mx-auto lg:max-w-7xl lg:px-4 lg:py-8">
       {/* Promotional Banner */}
       <PromotionalBanner
         title="Grand Opening: New Memorial Garden & Reflection Pathway"
