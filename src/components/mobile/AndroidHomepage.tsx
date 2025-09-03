@@ -1,6 +1,6 @@
 import { HiNewspaper } from 'react-icons/hi'
 import { useState } from 'react'
-import { Page, Navbar, Tabbar, TabbarLink, Block, ToolbarPane, Fab, Link, Card } from 'konsta/react'
+import { Page, Navbar, Tabbar, TabbarLink, ToolbarPane, Fab, Link, Card } from 'konsta/react'
 import { MapPin, UserIcon, HomeIcon, LogIn } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 import AndroidMapPage from './AndroidMapPage'
