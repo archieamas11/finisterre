@@ -6,7 +6,6 @@ import { defineConfig } from 'vite'
 import checker from 'vite-plugin-checker'
 import { ViteImageOptimizer } from 'vite-plugin-image-optimizer'
 import Inspect from 'vite-plugin-inspect'
-import removeConsole from 'vite-plugin-remove-console'
 
 // https://vite.dev/config/
 export default defineConfig({
@@ -16,7 +15,6 @@ export default defineConfig({
     tailwindcss(),
     Inspect(),
     ViteImageOptimizer(),
-    removeConsole(),
     checker({
       typescript: true,
     }),
@@ -34,9 +32,7 @@ export default defineConfig({
   build: {
     target: 'esnext',
     assetsDir: 'assets',
-  },
-  esbuild: {
-    drop: ['console', 'debugger'],
+    minify: 'esbuild',
   },
   resolve: {
     alias: {
