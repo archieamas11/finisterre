@@ -128,6 +128,7 @@
     "vite-plugin-checker": "^0.10.2",
     "vite-plugin-image-optimizer": "^2.0.2",
     "vite-plugin-inspect": "^11.3.2",
+    "vite-plugin-remove-console": "^2.2.0",
     "vitest": "^3.2.4"
   }
 }
