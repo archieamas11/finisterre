@@ -313,6 +313,16 @@ export default function MapPage({ onBack, initialDirection }: { onBack?: () => v
     dispatch({ type: 'SET_DIRECTION_LOADING', value: false })
   }, [stopNavigation])
 
+  // Custom onBack handler that clears route if navigation is active
+  const handleBack = useCallback(() => {
+    if (isNavigating) {
+      clearRoute()
+    }
+    if (onBack) {
+      onBack()
+    }
+  }, [isNavigating, clearRoute, onBack])
+
   const handleDirectionClick = useCallback(
     async (to: [number, number]) => {
       const [toLatitude, toLongitude] = to
@@ -590,7 +600,7 @@ export default function MapPage({ onBack, initialDirection }: { onBack?: () => v
       <MapDispatchContext.Provider value={dispatch}>
         <LocateContext.Provider value={contextValue}>
           <div className="relative h-full w-full overflow-hidden">
-            <WebMapNavs onBack={onBack} />
+            <WebMapNavs onBack={handleBack} />
             <WebmapLegend />
             {/* Konsta Notification for native platforms */}
             <Notification
