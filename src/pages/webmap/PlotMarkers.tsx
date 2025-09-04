@@ -162,7 +162,12 @@ const PlotMarkers: React.FC<PlotMarkersProps> = memo(({ markers, isDirectionLoad
               </Popup>
             ) : (
               <Popup className="leaflet-theme-popup" minWidth={250} closeButton={false}>
-                <PlotLocations backgroundColor={getCategoryBackgroundColor(marker.category)} onDirectionClick={onDir} isDirectionLoading={isDirectionLoading} marker={marker} />
+                <PlotLocations
+                  backgroundColor={getCategoryBackgroundColor(marker.category)}
+                  onDirectionClick={onDir}
+                  isDirectionLoading={isDirectionLoading}
+                  marker={marker}
+                />
               </Popup>
             )}
 

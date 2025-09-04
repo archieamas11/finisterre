@@ -70,7 +70,12 @@ export default function LotForm({ mode, open, onSubmit, isPending, onOpenChange,
                     <FormLabel>
                       Customer<span className="text-red-500">*</span>
                     </FormLabel>
-                    <CustomerSelect customers={customers} value={String(field.value ?? '')} onChange={(v) => field.onChange(v)} disabled={mode === 'edit'} />
+                    <CustomerSelect
+                      customers={customers}
+                      value={String(field.value ?? '')}
+                      onChange={(v) => field.onChange(v)}
+                      disabled={mode === 'edit'}
+                    />
                     <FormMessage />
                   </FormItem>
                 )}

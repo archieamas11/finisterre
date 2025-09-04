@@ -120,7 +120,11 @@ export default function ColumbariumPopup({ marker, onDirectionClick, isDirection
   if (error) {
     return (
       <>
-        <ErrorMessage message="Failed to load niche data. Please check your connection and try again." onRetry={() => refetch()} showRetryButton={true} />
+        <ErrorMessage
+          message="Failed to load niche data. Please check your connection and try again."
+          onRetry={() => refetch()}
+          showRetryButton={true}
+        />
       </>
     )
   }
@@ -413,11 +417,19 @@ export default function ColumbariumPopup({ marker, onDirectionClick, isDirection
                       {!isReservationStep ? (
                         <Popover onOpenChange={setComboOpen} open={comboOpen}>
                           <PopoverTrigger asChild>
-                            <Button className="w-full justify-between" disabled={isLoadingCustomers} aria-expanded={comboOpen} variant="outline" role="combobox">
+                            <Button
+                              className="w-full justify-between"
+                              disabled={isLoadingCustomers}
+                              aria-expanded={comboOpen}
+                              variant="outline"
+                              role="combobox"
+                            >
                               {selectedCustomer
                                 ? (() => {
                                     const customer = customers.find((c: Customer) => c.customer_id === selectedCustomer)
-                                    return customer ? `${customer.first_name} ${customer.last_name} | ID: ${customer.customer_id}` : 'Select a customer'
+                                    return customer
+                                      ? `${customer.first_name} ${customer.last_name} | ID: ${customer.customer_id}`
+                                      : 'Select a customer'
                                   })()
                                 : isLoadingCustomers
                                   ? 'Loading customers...'
@@ -440,7 +452,9 @@ export default function ColumbariumPopup({ marker, onDirectionClick, isDirection
                                       key={customer.customer_id}
                                     >
                                       {customer.first_name} {customer.last_name} | ID: {customer.customer_id}
-                                      <Check className={cn('ml-auto h-4 w-4', selectedCustomer === customer.customer_id ? 'opacity-100' : 'opacity-0')} />
+                                      <Check
+                                        className={cn('ml-auto h-4 w-4', selectedCustomer === customer.customer_id ? 'opacity-100' : 'opacity-0')}
+                                      />
                                     </CommandItem>
                                   ))}
                                 </CommandGroup>

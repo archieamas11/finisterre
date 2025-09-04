@@ -9,18 +9,20 @@ import { DataTableColumnHeader } from '@/components/data-table/data-table-column
 import { Badge } from '@/components/ui/badge'
 import CustomerActionsCell from '@/pages/admin/interment/columns/CustomerActionsCell'
 
-const IndeterminateCheckbox = React.forwardRef<HTMLInputElement, React.InputHTMLAttributes<HTMLInputElement> & { indeterminate?: boolean }>(({ indeterminate, ...props }, ref) => {
-  const localRef = React.useRef<HTMLInputElement>(null)
-  const resolvedRef = (ref as React.RefObject<HTMLInputElement>) ?? localRef
+const IndeterminateCheckbox = React.forwardRef<HTMLInputElement, React.InputHTMLAttributes<HTMLInputElement> & { indeterminate?: boolean }>(
+  ({ indeterminate, ...props }, ref) => {
+    const localRef = React.useRef<HTMLInputElement>(null)
+    const resolvedRef = (ref as React.RefObject<HTMLInputElement>) ?? localRef
 
-  React.useEffect(() => {
-    if (resolvedRef.current) {
-      resolvedRef.current.indeterminate = Boolean(indeterminate) && !props.checked
-    }
-  }, [indeterminate, props.checked, resolvedRef])
+    React.useEffect(() => {
+      if (resolvedRef.current) {
+        resolvedRef.current.indeterminate = Boolean(indeterminate) && !props.checked
+      }
+    }, [indeterminate, props.checked, resolvedRef])
 
-  return <input ref={resolvedRef} type="checkbox" {...props} />
-})
+    return <input ref={resolvedRef} type="checkbox" {...props} />
+  },
+)
 IndeterminateCheckbox.displayName = 'IndeterminateCheckbox'
 
 export const customerColumns: ColumnDef<Customer>[] = [
@@ -35,7 +37,12 @@ export const customerColumns: ColumnDef<Customer>[] = [
       />
     ),
     cell: ({ row }) => (
-      <IndeterminateCheckbox aria-label={`Select row ${row.index + 1}`} checked={row.getIsSelected()} disabled={!row.getCanSelect?.()} onChange={row.getToggleSelectedHandler()} />
+      <IndeterminateCheckbox
+        aria-label={`Select row ${row.index + 1}`}
+        checked={row.getIsSelected()}
+        disabled={!row.getCanSelect?.()}
+        onChange={row.getToggleSelectedHandler()}
+      />
     ),
     size: 10,
   },

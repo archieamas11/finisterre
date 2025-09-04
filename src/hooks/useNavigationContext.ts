@@ -42,7 +42,14 @@ export type MapContext = AdminContext | WebMapContext | null | undefined
 
 // 🔧 Type guards
 export const isAdminContext = (ctx: unknown): ctx is AdminContext => {
-  return typeof ctx === 'object' && ctx !== null && 'isAddingMarker' in ctx && 'toggleAddMarker' in ctx && 'isEditingMarker' in ctx && 'toggleEditMarker' in ctx
+  return (
+    typeof ctx === 'object' &&
+    ctx !== null &&
+    'isAddingMarker' in ctx &&
+    'toggleAddMarker' in ctx &&
+    'isEditingMarker' in ctx &&
+    'toggleEditMarker' in ctx
+  )
 }
 
 export const isWebMapContext = (ctx: unknown): ctx is WebMapContext => {

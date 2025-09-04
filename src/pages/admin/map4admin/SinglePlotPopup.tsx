@@ -180,7 +180,12 @@ export default function SinglePlotLocations({ marker, popupCloseTick }: PlotLoca
   return (
     <div className="max-w-full">
       <div className="mb-3 grid grid-cols-1 gap-2">
-        <Button variant="secondary" size="lg" onClick={handleAdd} className="bg-card text-accent-foreground hover:bg-accent/90 flex items-center gap-1 border px-2 py-1 text-xs">
+        <Button
+          variant="secondary"
+          size="lg"
+          onClick={handleAdd}
+          className="bg-card text-accent-foreground hover:bg-accent/90 flex items-center gap-1 border px-2 py-1 text-xs"
+        >
           <Plus className="h-3 w-3" />
           Add
         </Button>
@@ -211,7 +216,11 @@ export default function SinglePlotLocations({ marker, popupCloseTick }: PlotLoca
                   <CommandEmpty>{isLoadingCustomers ? 'Loading customers...' : 'No customer found.'}</CommandEmpty>
                   <CommandGroup>
                     {(customers as Customer[]).map((c: Customer) => (
-                      <CommandItem value={`${c.first_name} ${c.last_name} ${c.customer_id}`} onSelect={() => handleCustomerSelect(String(c.customer_id))} key={c.customer_id}>
+                      <CommandItem
+                        value={`${c.first_name} ${c.last_name} ${c.customer_id}`}
+                        onSelect={() => handleCustomerSelect(String(c.customer_id))}
+                        key={c.customer_id}
+                      >
                         {c.first_name} {c.last_name} | ID: {c.customer_id}
                         <Check className={cn('ml-auto h-4 w-4', String(selectedCustomer) === String(c.customer_id) ? 'opacity-100' : 'opacity-0')} />
                       </CommandItem>
@@ -280,7 +289,11 @@ export default function SinglePlotLocations({ marker, popupCloseTick }: PlotLoca
                 <div className="grid grid-cols-3 gap-2">
                   {images.slice(0, 3).map((imageUrl, idx) => (
                     <div key={idx} className="aspect-square overflow-hidden rounded border">
-                      <img className="h-full w-full object-cover transition-transform duration-200 hover:scale-105" alt={`Plot image ${idx + 1}`} src={imageUrl} />
+                      <img
+                        className="h-full w-full object-cover transition-transform duration-200 hover:scale-105"
+                        alt={`Plot image ${idx + 1}`}
+                        src={imageUrl}
+                      />
                     </div>
                   ))}
                 </div>

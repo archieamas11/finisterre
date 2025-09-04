@@ -15,7 +15,10 @@ export const customerSchema = z.object({
   contact_number: z.string().regex(/^09\d{9}$/, {
     message: 'Contact number must be a valid PH mobile number (e.g., 09XXXXXXXXX).',
   }),
-  first_name: z.string().nonempty({ message: 'First name must be at least 3 characters.' }).min(3, { message: 'First name must be at least 3 characters.' }),
+  first_name: z
+    .string()
+    .nonempty({ message: 'First name must be at least 3 characters.' })
+    .min(3, { message: 'First name must be at least 3 characters.' }),
   status: z.enum(['Single', 'Married', 'Widowed', 'Divorced', 'Separated'], {
     message: 'Please select a status.',
   }),

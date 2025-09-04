@@ -8,7 +8,17 @@ import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, Command
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 import { cn } from '@/lib/utils'
 
-export default function CustomerSelect({ customers, value, onChange, disabled }: { customers: Customer[]; value: string; onChange: (v: string) => void; disabled?: boolean }) {
+export default function CustomerSelect({
+  customers,
+  value,
+  onChange,
+  disabled,
+}: {
+  customers: Customer[]
+  value: string
+  onChange: (v: string) => void
+  disabled?: boolean
+}) {
   const [comboOpen, setComboOpen] = React.useState(false)
   const [comboValue, setComboValue] = React.useState<string>(String(value ?? ''))
 

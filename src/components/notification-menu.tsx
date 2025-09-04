@@ -83,7 +83,12 @@ export default function NotificationMenu() {
   return (
     <Popover>
       <PopoverTrigger asChild>
-        <Button size="icon" variant="ghost" className="text-muted-foreground relative size-8 rounded-full shadow-none" aria-label="Open notifications">
+        <Button
+          size="icon"
+          variant="ghost"
+          className="text-muted-foreground relative size-8 rounded-full shadow-none"
+          aria-label="Open notifications"
+        >
           <BellIcon size={16} aria-hidden="true" />
           {unreadCount > 0 && <div aria-hidden="true" className="bg-primary absolute top-0.5 right-0.5 size-1 rounded-full" />}
         </Button>
@@ -102,7 +107,10 @@ export default function NotificationMenu() {
           <div key={notification.id} className="hover:bg-accent rounded-md px-3 py-2 text-sm transition-colors">
             <div className="relative flex items-start pe-3">
               <div className="flex-1 space-y-1">
-                <button className="text-foreground/80 text-left after:absolute after:inset-0" onClick={() => handleNotificationClick(notification.id)}>
+                <button
+                  className="text-foreground/80 text-left after:absolute after:inset-0"
+                  onClick={() => handleNotificationClick(notification.id)}
+                >
                   <span className="text-foreground font-medium hover:underline">{notification.user}</span> {notification.action}{' '}
                   <span className="text-foreground font-medium hover:underline">{notification.target}</span>.
                 </button>

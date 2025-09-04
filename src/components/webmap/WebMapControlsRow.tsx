@@ -46,7 +46,11 @@ export default function WebMapControlsRow({ context, onBack, onLegendClick }: We
   const HiOutlineLocationMarkerIcon = <MdFamilyRestroom />
   return (
     <div
-      className={cn('flex w-full flex-nowrap items-center gap-2 overflow-x-auto pt-0 pb-1 md:mx-auto', 'lg:justify-center', !isNativePlatform() && 'no-scrollbar')}
+      className={cn(
+        'flex w-full flex-nowrap items-center gap-2 overflow-x-auto pt-0 pb-1 md:mx-auto',
+        'lg:justify-center',
+        !isNativePlatform() && 'no-scrollbar',
+      )}
       role="group"
       aria-label="Map controls"
       style={{ touchAction: 'pan-x', overscrollBehavior: 'contain' }}
@@ -74,7 +78,11 @@ export default function WebMapControlsRow({ context, onBack, onLegendClick }: We
       {/* Show only all the owned plots of the user */}
       {isNativePlatform() ? (
         <button className="no-long-press touch-manipulation bg-transparent" onClick={handleMyPlotsClick}>
-          <Fab className="k-color-brand-green h-10" icon={HiOutlineLocationMarkerIcon} style={{ transform: 'none !important', transition: 'none !important' }} />
+          <Fab
+            className="k-color-brand-green h-10"
+            icon={HiOutlineLocationMarkerIcon}
+            style={{ transform: 'none !important', transition: 'none !important' }}
+          />
         </button>
       ) : (
         <Button
@@ -106,7 +114,11 @@ export default function WebMapControlsRow({ context, onBack, onLegendClick }: We
               }}
               className="no-long-press touch-manipulation"
             >
-              <Fab className="k-color-brand-green h-10" icon={ArrowLeftIcon} style={{ transform: 'none !important', transition: 'none !important' }} />
+              <Fab
+                className="k-color-brand-green h-10"
+                icon={ArrowLeftIcon}
+                style={{ transform: 'none !important', transition: 'none !important' }}
+              />
             </button>
           ) : (
             <Button
@@ -156,7 +168,11 @@ export default function WebMapControlsRow({ context, onBack, onLegendClick }: We
         <>
           {isNativePlatform() ? (
             <button onClick={onLegendClick} className="no-long-press shrink-0 touch-manipulation lg:hidden">
-              <Fab className="k-color-brand-green h-10" icon={<Info className="h-6 w-6" />} style={{ transform: 'none !important', transition: 'none !important' }} />
+              <Fab
+                className="k-color-brand-green h-10"
+                icon={<Info className="h-6 w-6" />}
+                style={{ transform: 'none !important', transition: 'none !important' }}
+              />
             </button>
           ) : (
             <Button

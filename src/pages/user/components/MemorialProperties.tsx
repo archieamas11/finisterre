@@ -59,7 +59,10 @@ export const MemorialProperties: React.FC<Props> = ({ lot, records, onNavigate }
           const intermentDate = formatDate(rec.dead_interment)
           const yearsLabel = calculateYearsBuried(rec.dead_interment)
           return (
-            <div key={rec.deceased_id} className="mb-3 rounded-lg border border-slate-200 bg-slate-100/60 p-4 shadow-inner last:mb-0 dark:border-slate-700 dark:bg-slate-900/40">
+            <div
+              key={rec.deceased_id}
+              className="mb-3 rounded-lg border border-slate-200 bg-slate-100/60 p-4 shadow-inner last:mb-0 dark:border-slate-700 dark:bg-slate-900/40"
+            >
               <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                 <div className="w-full sm:w-auto">
                   <p className="text-sm font-medium text-slate-500 dark:text-slate-400">Deceased ID: {rec.deceased_id}</p>

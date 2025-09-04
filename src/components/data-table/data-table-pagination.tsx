@@ -13,7 +13,10 @@ interface DataTablePaginationProps<TData> extends React.ComponentProps<'div'> {
 
 export function DataTablePagination<TData>({ table, pageSizeOptions = [10, 20, 30, 40, 50], className, ...props }: DataTablePaginationProps<TData>) {
   return (
-    <div className={cn('flex w-full flex-col-reverse items-center justify-between gap-4 overflow-auto p-1 sm:flex-row sm:gap-8', className)} {...props}>
+    <div
+      className={cn('flex w-full flex-col-reverse items-center justify-between gap-4 overflow-auto p-1 sm:flex-row sm:gap-8', className)}
+      {...props}
+    >
       <div className="text-muted-foreground flex-1 text-sm whitespace-nowrap">
         {table.getFilteredSelectedRowModel().rows.length} of {table.getFilteredRowModel().rows.length} row(s) selected.
       </div>
@@ -52,10 +55,24 @@ export function DataTablePagination<TData>({ table, pageSizeOptions = [10, 20, 3
           >
             <ChevronsLeft />
           </Button>
-          <Button aria-label="Go to previous page" variant="outline" size="icon" className="size-8" onClick={() => table.previousPage()} disabled={!table.getCanPreviousPage()}>
+          <Button
+            aria-label="Go to previous page"
+            variant="outline"
+            size="icon"
+            className="size-8"
+            onClick={() => table.previousPage()}
+            disabled={!table.getCanPreviousPage()}
+          >
             <ChevronLeft />
           </Button>
-          <Button aria-label="Go to next page" variant="outline" size="icon" className="size-8" onClick={() => table.nextPage()} disabled={!table.getCanNextPage()}>
+          <Button
+            aria-label="Go to next page"
+            variant="outline"
+            size="icon"
+            className="size-8"
+            onClick={() => table.nextPage()}
+            disabled={!table.getCanNextPage()}
+          >
             <ChevronRight />
           </Button>
           <Button

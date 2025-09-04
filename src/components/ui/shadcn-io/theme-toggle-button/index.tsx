@@ -21,7 +21,15 @@ export interface ThemeToggleButtonProps {
   onClick?: () => void
 }
 
-export const ThemeToggleButton = ({ theme = 'light', showLabel = false, variant = 'circle', start = 'center', url, className, onClick }: ThemeToggleButtonProps) => {
+export const ThemeToggleButton = ({
+  theme = 'light',
+  showLabel = false,
+  variant = 'circle',
+  start = 'center',
+  url,
+  className,
+  onClick,
+}: ThemeToggleButtonProps) => {
   const handleClick = useCallback(() => {
     // Inject animation styles for this specific transition
     const styleId = `theme-transition-${Date.now()}`

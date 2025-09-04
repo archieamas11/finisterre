@@ -76,11 +76,23 @@ function CommandGroup({ className, ...props }: React.ComponentProps<typeof Comma
 }
 
 function Command({ className, ...props }: React.ComponentProps<typeof CommandPrimitive>) {
-  return <CommandPrimitive className={cn('bg-popover text-popover-foreground flex h-full w-full flex-col overflow-hidden rounded-md', className)} data-slot="command" {...props} />
+  return (
+    <CommandPrimitive
+      className={cn('bg-popover text-popover-foreground flex h-full w-full flex-col overflow-hidden rounded-md', className)}
+      data-slot="command"
+      {...props}
+    />
+  )
 }
 
 function CommandList({ className, ...props }: React.ComponentProps<typeof CommandPrimitive.List>) {
-  return <CommandPrimitive.List className={cn('max-h-[300px] scroll-py-1 overflow-x-hidden overflow-y-auto', className)} data-slot="command-list" {...props} />
+  return (
+    <CommandPrimitive.List
+      className={cn('max-h-[300px] scroll-py-1 overflow-x-hidden overflow-y-auto', className)}
+      data-slot="command-list"
+      {...props}
+    />
+  )
 }
 
 function CommandShortcut({ className, ...props }: React.ComponentProps<'span'>) {

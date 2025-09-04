@@ -1,4 +1,15 @@
-import { ChevronDownIcon, type LucideIcon, MapPinIcon, ClockIcon, MenuIcon, BoneIcon, LayersIcon, TreesIcon, Building2Icon, ArrowLeftRightIcon } from 'lucide-react'
+import {
+  ChevronDownIcon,
+  type LucideIcon,
+  MapPinIcon,
+  ClockIcon,
+  MenuIcon,
+  BoneIcon,
+  LayersIcon,
+  TreesIcon,
+  Building2Icon,
+  ArrowLeftRightIcon,
+} from 'lucide-react'
 import * as React from 'react'
 
 import { Button } from '@/components/ui/button'
@@ -72,7 +83,19 @@ const coreServices: NavItem[] = [
 ]
 
 // Mobile menu item component
-const MobileMenuItem = ({ href, title, children, onSelect, icon: Icon }: { children?: React.ReactNode; onSelect?: () => void; icon?: LucideIcon; title: string; href: string }) => {
+const MobileMenuItem = ({
+  href,
+  title,
+  children,
+  onSelect,
+  icon: Icon,
+}: {
+  children?: React.ReactNode
+  onSelect?: () => void
+  icon?: LucideIcon
+  title: string
+  href: string
+}) => {
   const [isOpen, setIsOpen] = React.useState(false)
 
   if (children) {
@@ -105,9 +128,25 @@ const MobileMenuItem = ({ href, title, children, onSelect, icon: Icon }: { child
 }
 
 // Mobile submenu item
-const MobileSubMenuItem = ({ href, title, onSelect, icon: Icon, description }: { onSelect?: () => void; description: string; icon: LucideIcon; title: string; href: string }) => {
+const MobileSubMenuItem = ({
+  href,
+  title,
+  onSelect,
+  icon: Icon,
+  description,
+}: {
+  onSelect?: () => void
+  description: string
+  icon: LucideIcon
+  title: string
+  href: string
+}) => {
   return (
-    <Link className="hover:bg-accent hover:text-foreground focus:bg-background focus:text-foreground flex items-start gap-3 px-6 py-2" onClick={onSelect} to={href}>
+    <Link
+      className="hover:bg-accent hover:text-foreground focus:bg-background focus:text-foreground flex items-start gap-3 px-6 py-2"
+      onClick={onSelect}
+      to={href}
+    >
       <Icon className="mt-1 h-4 w-4 flex-shrink-0" />
       <div>
         <div className="text-sm font-medium">{title}</div>
@@ -276,7 +315,14 @@ export function NavigationMenuSection() {
                         <h6 className="text-xs font-semibold text-gray-500 uppercase">Our Services</h6>
                       </div>
                       {coreServices.map((svc) => (
-                        <MobileSubMenuItem onSelect={handleMobileMenuClose} description={svc.description} title={svc.title} key={svc.title} href={svc.href} icon={svc.icon} />
+                        <MobileSubMenuItem
+                          onSelect={handleMobileMenuClose}
+                          description={svc.description}
+                          title={svc.title}
+                          key={svc.title}
+                          href={svc.href}
+                          icon={svc.icon}
+                        />
                       ))}
                     </div>
                   </MobileMenuItem>

@@ -69,7 +69,12 @@ const FeatureCard = ({ feature }: { feature: Feature }) => {
           Learn more <ArrowRight className="ml-2 h-4 w-4 text-gray-500 transition-transform duration-300 group-hover:translate-x-1" />
         </a>
       </CardContent>
-      <div className={cn('absolute -right-1/4 -bottom-1/4 z-0 h-1/2 w-1/2 rounded-full opacity-10 transition-all duration-500 group-hover:scale-[2.5]', feature.color)} />
+      <div
+        className={cn(
+          'absolute -right-1/4 -bottom-1/4 z-0 h-1/2 w-1/2 rounded-full opacity-10 transition-all duration-500 group-hover:scale-[2.5]',
+          feature.color,
+        )}
+      />
     </Card>
   )
 }

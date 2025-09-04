@@ -6,7 +6,14 @@ import React from 'react'
 import type { Customer } from '@/api/customer.api'
 
 import { Button } from '@/components/ui/button'
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu'
 import EditCustomerDialog from '@/pages/admin/interment/customer/UpdateCustomer'
 import ViewCustomerDialog from '@/pages/admin/interment/customer/ViewCustomer'
 

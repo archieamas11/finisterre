@@ -77,7 +77,12 @@ export default function AdminUsersTable() {
       <DataTableToolbar table={table}>
         <div className="flex w-full flex-col justify-between gap-2 sm:flex-row">
           <div className="relative flex items-center gap-2">
-            <Input className="peer h-8 ps-9 pe-3" onChange={(event) => table.setGlobalFilter(event.target.value)} placeholder="Search users..." type="search" />
+            <Input
+              className="peer h-8 ps-9 pe-3"
+              onChange={(event) => table.setGlobalFilter(event.target.value)}
+              placeholder="Search users..."
+              type="search"
+            />
             <div className="text-muted-foreground/80 pointer-events-none absolute inset-y-0 start-0 flex items-center justify-center ps-3 peer-disabled:opacity-50">
               <SearchIcon size={16} />
             </div>

@@ -139,7 +139,12 @@ function ImagePopup({ title, description, imageSrc }: { title: string; descripti
               onTouchStart={(e) => e.stopPropagation()}
             >
               <div className="bg-muted relative aspect-[4/3] overflow-hidden rounded-xl sm:aspect-[16/10]">
-                <img src={imageSrc} alt={title} loading="lazy" className="absolute inset-0 h-full w-full object-cover transition-transform duration-500 group-hover:scale-105" />
+                <img
+                  src={imageSrc}
+                  alt={title}
+                  loading="lazy"
+                  className="absolute inset-0 h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                />
                 <div className="absolute inset-0 bg-black/0 transition-colors duration-300 group-hover:bg-black/30" />
                 <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/70 to-transparent p-2">
                   <CardTitle className="text-sm font-semibold text-white">{title}</CardTitle>

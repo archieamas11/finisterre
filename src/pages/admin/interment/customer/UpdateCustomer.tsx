@@ -73,5 +73,7 @@ export default function EditCustomerDialog({ open, customer, onOpenChange }: Edi
     birth_date: customer.birth_date ? String(customer.birth_date).slice(0, 10) : '',
   }
 
-  return <CustomerForm initialValues={initialValues} onOpenChange={onOpenChange} onSubmit={handleSubmit} isPending={isPending} mode="edit" open={open} />
+  return (
+    <CustomerForm initialValues={initialValues} onOpenChange={onOpenChange} onSubmit={handleSubmit} isPending={isPending} mode="edit" open={open} />
+  )
 }

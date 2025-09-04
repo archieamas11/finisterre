@@ -213,7 +213,9 @@ export function WeekView({ currentDate, events, onEventSelect, onEventCreate }: 
         <div className="border-border/70 bg-muted/50 border-b">
           <div className="grid grid-cols-8">
             <div className="border-border/70 relative border-r">
-              <span className="text-muted-foreground/70 absolute bottom-0 left-0 h-6 w-16 max-w-full pe-2 text-right text-[10px] sm:pe-4 sm:text-xs">All day</span>
+              <span className="text-muted-foreground/70 absolute bottom-0 left-0 h-6 w-16 max-w-full pe-2 text-right text-[10px] sm:pe-4 sm:text-xs">
+                All day
+              </span>
             </div>
             {days.map((day, dayIndex) => {
               const dayAllDayEvents = allDayEvents.filter((event) => {
@@ -235,7 +237,14 @@ export function WeekView({ currentDate, events, onEventSelect, onEventCreate }: 
                     const shouldShowTitle = isFirstDay || isFirstVisibleDay
 
                     return (
-                      <EventItem key={`spanning-${event.id}`} onClick={(e) => handleEventClick(event, e)} event={event} view="month" isFirstDay={isFirstDay} isLastDay={isLastDay}>
+                      <EventItem
+                        key={`spanning-${event.id}`}
+                        onClick={(e) => handleEventClick(event, e)}
+                        event={event}
+                        view="month"
+                        isFirstDay={isFirstDay}
+                        isLastDay={isLastDay}
+                      >
                         {/* Show title if it's the first day of the event or the first visible day in the week */}
                         <div className={cn('truncate', !shouldShowTitle && 'invisible')} aria-hidden={!shouldShowTitle}>
                           {event.title}
@@ -264,7 +273,11 @@ export function WeekView({ currentDate, events, onEventSelect, onEventCreate }: 
         </div>
 
         {days.map((day, dayIndex) => (
-          <div key={day.toString()} className="border-border/70 relative grid auto-cols-fr border-r last:border-r-0" data-today={isToday(day) || undefined}>
+          <div
+            key={day.toString()}
+            className="border-border/70 relative grid auto-cols-fr border-r last:border-r-0"
+            data-today={isToday(day) || undefined}
+          >
             {/* Positioned events */}
             {(processedDayEvents[dayIndex] ?? []).map((positionedEvent) => (
               <div
@@ -280,7 +293,13 @@ export function WeekView({ currentDate, events, onEventSelect, onEventCreate }: 
                 onClick={(e) => e.stopPropagation()}
               >
                 <div className="size-full">
-                  <DraggableEvent event={positionedEvent.event} view="week" onClick={(e) => handleEventClick(positionedEvent.event, e)} showTime height={positionedEvent.height} />
+                  <DraggableEvent
+                    event={positionedEvent.event}
+                    view="week"
+                    onClick={(e) => handleEventClick(positionedEvent.event, e)}
+                    showTime
+                    height={positionedEvent.height}
+                  />
                 </div>
               </div>
             ))}

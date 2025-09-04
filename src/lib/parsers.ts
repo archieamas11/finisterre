@@ -68,6 +68,12 @@ export const getFiltersStateParser = <TData>(columnIds?: string[] | Set<string>)
     serialize: (value) => JSON.stringify(value),
     eq: (a, b) =>
       a.length === b.length &&
-      a.every((filter, index) => filter.id === b[index]?.id && filter.value === b[index]?.value && filter.variant === b[index]?.variant && filter.operator === b[index]?.operator),
+      a.every(
+        (filter, index) =>
+          filter.id === b[index]?.id &&
+          filter.value === b[index]?.value &&
+          filter.variant === b[index]?.variant &&
+          filter.operator === b[index]?.operator,
+      ),
   })
 }

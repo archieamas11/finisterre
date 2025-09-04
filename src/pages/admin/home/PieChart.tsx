@@ -40,7 +40,14 @@ function toPieArray(obj: Record<string, number>) {
 
 function PrintButton({ onClick }: { onClick: () => void }) {
   return (
-    <Button type="button" variant="outline" onClick={onClick} aria-label="Print chart" size="icon" className="text-muted-foreground hover:text-foreground ml-2">
+    <Button
+      type="button"
+      variant="outline"
+      onClick={onClick}
+      aria-label="Print chart"
+      size="icon"
+      className="text-muted-foreground hover:text-foreground ml-2"
+    >
       <PrinterIcon />
     </Button>
   )

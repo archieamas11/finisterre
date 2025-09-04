@@ -130,8 +130,20 @@ export default function WebmapLegend() {
   if (isCollapsed) {
     return (
       <div className="hidden lg:block">
-        <motion.div initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.8 }} transition={{ duration: 0.2 }}>
-          <Button variant="secondary" size="sm" className="absolute top-4 right-4 z-100 h-8 w-8 rounded-full" onClick={toggleCollapse} aria-label="Show map legend" asChild>
+        <motion.div
+          initial={{ opacity: 0, scale: 0.8 }}
+          animate={{ opacity: 1, scale: 1 }}
+          exit={{ opacity: 0, scale: 0.8 }}
+          transition={{ duration: 0.2 }}
+        >
+          <Button
+            variant="secondary"
+            size="sm"
+            className="absolute top-4 right-4 z-100 h-8 w-8 rounded-full"
+            onClick={toggleCollapse}
+            aria-label="Show map legend"
+            asChild
+          >
             <motion.button whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }} transition={{ duration: 0.1 }}>
               <ChevronUp className="h-4 w-4" />
             </motion.button>
@@ -238,7 +250,11 @@ export default function WebmapLegend() {
                                         {item.icon}
                                       </motion.div>
                                     ) : section.key === 'categories' && item.shape ? (
-                                      <motion.div className="mr-3 flex h-6 w-6 items-center justify-center" whileHover={{ scale: 1.1 }} transition={{ duration: 0.1 }}>
+                                      <motion.div
+                                        className="mr-3 flex h-6 w-6 items-center justify-center"
+                                        whileHover={{ scale: 1.1 }}
+                                        transition={{ duration: 0.1 }}
+                                      >
                                         {item.shape === 'circle' && <div className="bg-primary h-3 w-3 rounded-full shadow-sm" />}
                                         {item.shape === 'diamond' && <div className="bg-primary h-3 w-3 rotate-45 shadow-sm" />}
                                         {item.shape === 'square' && <div className="bg-primary h-3 w-3 shadow-sm" />}

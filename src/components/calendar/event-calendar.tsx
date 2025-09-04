@@ -55,7 +55,12 @@ export function EventCalendar({ events = [], onEventAdd, onEventUpdate, onEventD
     const handleKeyDown = (e: KeyboardEvent) => {
       // Skip if user is typing in an input, textarea or contentEditable element
       // or if the event dialog is open
-      if (isEventDialogOpen || e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement || (e.target instanceof HTMLElement && e.target.isContentEditable)) {
+      if (
+        isEventDialogOpen ||
+        e.target instanceof HTMLInputElement ||
+        e.target instanceof HTMLTextAreaElement ||
+        (e.target instanceof HTMLElement && e.target.isContentEditable)
+      ) {
         return
       }
 
@@ -304,9 +309,15 @@ export function EventCalendar({ events = [], onEventAdd, onEventUpdate, onEventD
         </div>
 
         <div className="flex flex-1 flex-col">
-          {view === 'month' && <MonthView currentDate={currentDate} events={events} onEventSelect={handleEventSelect} onEventCreate={handleEventCreate} />}
-          {view === 'week' && <WeekView currentDate={currentDate} events={events} onEventSelect={handleEventSelect} onEventCreate={handleEventCreate} />}
-          {view === 'day' && <DayView currentDate={currentDate} events={events} onEventSelect={handleEventSelect} onEventCreate={handleEventCreate} />}
+          {view === 'month' && (
+            <MonthView currentDate={currentDate} events={events} onEventSelect={handleEventSelect} onEventCreate={handleEventCreate} />
+          )}
+          {view === 'week' && (
+            <WeekView currentDate={currentDate} events={events} onEventSelect={handleEventSelect} onEventCreate={handleEventCreate} />
+          )}
+          {view === 'day' && (
+            <DayView currentDate={currentDate} events={events} onEventSelect={handleEventSelect} onEventCreate={handleEventCreate} />
+          )}
           {view === 'agenda' && <AgendaView currentDate={currentDate} events={events} onEventSelect={handleEventSelect} />}
         </div>
 

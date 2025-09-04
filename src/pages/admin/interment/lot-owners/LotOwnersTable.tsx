@@ -37,7 +37,9 @@ export default function LotOwnersTable({ data }: LotOwnersTableProps) {
   const globalFilterFn = React.useCallback((row: Row<LotOwners>, _columnId: string, filterValue: string) => {
     if (!filterValue) return true
     if (!row.original || typeof row.original !== 'object') return true
-    return Object.values(row.original as unknown as Record<string, unknown>).some((val) => typeof val === 'string' && val.toLowerCase().includes(filterValue.toLowerCase()))
+    return Object.values(row.original as unknown as Record<string, unknown>).some(
+      (val) => typeof val === 'string' && val.toLowerCase().includes(filterValue.toLowerCase()),
+    )
   }, [])
 
   const table = useReactTable<LotOwners>({

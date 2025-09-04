@@ -58,7 +58,10 @@ export function Marquee({ className, reverse = false, pauseOnHover = false, chil
       onPointerLeave={onPointerLeave}
       className={cn('group relative flex overflow-hidden p-2 [--duration:40s] [--gap:1rem]', vertical ? 'flex-col' : 'flex-row', className)}
     >
-      <div style={isPaused ? { animationPlayState: 'paused' as const } : undefined} className={cn('flex shrink-0 [gap:var(--gap)]', directionClass, hoverClass, reverseClass)}>
+      <div
+        style={isPaused ? { animationPlayState: 'paused' as const } : undefined}
+        className={cn('flex shrink-0 [gap:var(--gap)]', directionClass, hoverClass, reverseClass)}
+      >
         {content}
       </div>
       <div

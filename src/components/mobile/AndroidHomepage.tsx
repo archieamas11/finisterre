@@ -144,7 +144,11 @@ export default function AndroidHomepage() {
           </div>
         </Card>
       )}
-      <Fab className="right-safe-4 ios:bottom-safe-19 material:bottom-safe-18 k-color-brand-red fixed z-20" icon={<MapPin className="h-6 w-6" />} onClick={handleOpenMap} />
+      <Fab
+        className="right-safe-4 ios:bottom-safe-19 material:bottom-safe-18 k-color-brand-red fixed z-20"
+        icon={<MapPin className="h-6 w-6" />}
+        onClick={handleOpenMap}
+      />
     </Page>
   )
 }

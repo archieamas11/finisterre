@@ -113,50 +113,52 @@ interface SelectiveGroupMarkersProps {
   }>
 }
 
-const SelectiveGroupMarkers = memo(({ groupKey, markers, onDirectionClick, isDirectionLoading, PlotMarkersComponent }: SelectiveGroupMarkersProps) => {
-  const map = useMap()
-  const [visibleMarkers, setVisibleMarkers] = useState<ConvertedMarker[]>(markers)
+const SelectiveGroupMarkers = memo(
+  ({ groupKey, markers, onDirectionClick, isDirectionLoading, PlotMarkersComponent }: SelectiveGroupMarkersProps) => {
+    const map = useMap()
+    const [visibleMarkers, setVisibleMarkers] = useState<ConvertedMarker[]>(markers)
 
-  // ⚡️ Update visible markers when map bounds change (viewport optimization)
-  const updateVisibleMarkers = useCallback(() => {
-    try {
-      const bounds = map.getBounds()
-      const filtered = markers.filter((marker) => isMarkerInBounds(marker, bounds))
-      setVisibleMarkers(filtered)
-    } catch (error) {
-      // 🐛 Fallback: show all markers if bounds calculation fails
-      console.warn('⚠️ Failed to calculate map bounds, showing all markers:', error)
-      setVisibleMarkers(markers)
-    }
-  }, [map, markers])
+    // ⚡️ Update visible markers when map bounds change (viewport optimization)
+    const updateVisibleMarkers = useCallback(() => {
+      try {
+        const bounds = map.getBounds()
+        const filtered = markers.filter((marker) => isMarkerInBounds(marker, bounds))
+        setVisibleMarkers(filtered)
+      } catch (error) {
+        // 🐛 Fallback: show all markers if bounds calculation fails
+        console.warn('⚠️ Failed to calculate map bounds, showing all markers:', error)
+        setVisibleMarkers(markers)
+      }
+    }, [map, markers])
 
-  // 🛠️ Update visible markers on map events with debouncing
-  useEffect(() => {
-    let timeoutId: NodeJS.Timeout
+    // 🛠️ Update visible markers on map events with debouncing
+    useEffect(() => {
+      let timeoutId: NodeJS.Timeout
 
-    const debouncedUpdate = () => {
-      clearTimeout(timeoutId)
-      timeoutId = setTimeout(updateVisibleMarkers, 100)
-    }
+      const debouncedUpdate = () => {
+        clearTimeout(timeoutId)
+        timeoutId = setTimeout(updateVisibleMarkers, 100)
+      }
 
-    // Initial update
-    updateVisibleMarkers()
+      // Initial update
+      updateVisibleMarkers()
 
-    // Listen to map events
-    map.on('moveend', debouncedUpdate)
-    map.on('zoomend', debouncedUpdate)
+      // Listen to map events
+      map.on('moveend', debouncedUpdate)
+      map.on('zoomend', debouncedUpdate)
 
-    return () => {
-      clearTimeout(timeoutId)
-      map.off('moveend', debouncedUpdate)
-      map.off('zoomend', debouncedUpdate)
-    }
-  }, [map, updateVisibleMarkers])
+      return () => {
+        clearTimeout(timeoutId)
+        map.off('moveend', debouncedUpdate)
+        map.off('zoomend', debouncedUpdate)
+      }
+    }, [map, updateVisibleMarkers])
 
-  const block = useMemo(() => (groupKey.startsWith('block:') ? groupKey.split('block:')[1] : ''), [groupKey])
+    const block = useMemo(() => (groupKey.startsWith('block:') ? groupKey.split('block:')[1] : ''), [groupKey])
 
-  return <PlotMarkersComponent markers={visibleMarkers} isDirectionLoading={isDirectionLoading} onDirectionClick={onDirectionClick} block={block} />
-})
+    return <PlotMarkersComponent markers={visibleMarkers} isDirectionLoading={isDirectionLoading} onDirectionClick={onDirectionClick} block={block} />
+  },
+)
 
 SelectiveGroupMarkers.displayName = 'SelectiveGroupMarkers'
 
@@ -201,7 +203,9 @@ const CustomClusterManager = memo(
         // Show clusters for unselected groups only (allows quick switching)
         return Object.entries(markersByGroup)
           .filter(([groupKey]) => !selectedGroups.has(groupKey))
-          .map(([groupKey, markers]) => <CustomClusterMarker key={`cluster-${groupKey}`} groupKey={groupKey} markers={markers} onClusterClick={handleClusterClick} />)
+          .map(([groupKey, markers]) => (
+            <CustomClusterMarker key={`cluster-${groupKey}`} groupKey={groupKey} markers={markers} onClusterClick={handleClusterClick} />
+          ))
       }
       return null
     }, [markersByGroup, clusterViewMode, selectedGroups, handleClusterClick, isSearchActive])
@@ -265,7 +269,17 @@ const CustomClusterManager = memo(
           />
         )
       })
-    }, [clusterViewMode, selectedGroups, markersByGroup, onDirectionClick, isDirectionLoading, PlotMarkersComponent, isSearchActive, searchResult, userMarkers])
+    }, [
+      clusterViewMode,
+      selectedGroups,
+      markersByGroup,
+      onDirectionClick,
+      isDirectionLoading,
+      PlotMarkersComponent,
+      isSearchActive,
+      searchResult,
+      userMarkers,
+    ])
 
     return (
       <>

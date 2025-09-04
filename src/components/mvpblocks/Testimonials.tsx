@@ -50,8 +50,8 @@ const testimonials = [
     img: 'https://randomuser.me/api/portraits/women/65.jpg',
     description: (
       <p>
-        Our family has trusted this memorial park for over fifty years. <Highlight>The lifetime memorial rights</Highlight> gave us peace of mind that our legacy would be
-        preserved. The grounds are always immaculate and filled with serene beauty.
+        Our family has trusted this memorial park for over fifty years. <Highlight>The lifetime memorial rights</Highlight> gave us peace of mind that
+        our legacy would be preserved. The grounds are always immaculate and filled with serene beauty.
       </p>
     ),
   },
@@ -61,8 +61,8 @@ const testimonials = [
     img: 'https://randomuser.me/api/portraits/men/41.jpg',
     description: (
       <p>
-        I've worked with many cemeteries, but this one stands apart. <Highlight>Their complete burial services</Highlight> and modern facilities make every arrangement dignified
-        and seamless. Families always express gratitude.
+        I've worked with many cemeteries, but this one stands apart. <Highlight>Their complete burial services</Highlight> and modern facilities make
+        every arrangement dignified and seamless. Families always express gratitude.
       </p>
     ),
   },
@@ -72,8 +72,8 @@ const testimonials = [
     img: 'https://randomuser.me/api/portraits/women/72.jpg',
     description: (
       <p>
-        The <Highlight>digital map feature</Highlight> has transformed how our community connects with its history. Finding relatives and learning about local heritage has never
-        been easier. It's wonderful to see technology used so meaningfully.
+        The <Highlight>digital map feature</Highlight> has transformed how our community connects with its history. Finding relatives and learning
+        about local heritage has never been easier. It's wonderful to see technology used so meaningfully.
       </p>
     ),
   },
@@ -83,8 +83,8 @@ const testimonials = [
     img: 'https://randomuser.me/api/portraits/men/58.jpg',
     description: (
       <p>
-        The memorial sections for veterans are truly exceptional. <Highlight>The respect and honor shown</Highlight> to those who served is evident in every detail. Our members
-        feel proud knowing this is their final resting place.
+        The memorial sections for veterans are truly exceptional. <Highlight>The respect and honor shown</Highlight> to those who served is evident in
+        every detail. Our members feel proud knowing this is their final resting place.
       </p>
     ),
   },
@@ -94,8 +94,8 @@ const testimonials = [
     img: 'https://randomuser.me/api/portraits/women/36.jpg',
     description: (
       <p>
-        As someone who appreciates horticulture, I'm continually impressed by the grounds. <Highlight>The serene gardens</Highlight> are thoughtfully designed and maintained with
-        exceptional care. It's a place of remembrance and beauty.
+        As someone who appreciates horticulture, I'm continually impressed by the grounds. <Highlight>The serene gardens</Highlight> are thoughtfully
+        designed and maintained with exceptional care. It's a place of remembrance and beauty.
       </p>
     ),
   },
@@ -105,8 +105,8 @@ const testimonials = [
     img: 'https://randomuser.me/api/portraits/men/63.jpg',
     description: (
       <p>
-        I often recommend this memorial park to clients. <Highlight>The growing value of the property</Highlight> makes it a sound investment for future generations. It's rare to
-        find such a combination of financial and emotional value.
+        I often recommend this memorial park to clients. <Highlight>The growing value of the property</Highlight> makes it a sound investment for
+        future generations. It's rare to find such a combination of financial and emotional value.
       </p>
     ),
   },
@@ -118,7 +118,9 @@ export default function Testimonials() {
       <div className="mx-auto w-full sm:w-[85%] md:w-[80%] lg:w-[75%] xl:w-full">
         <div className="mx-auto max-w-3xl text-center">
           <h2 className="text-4xl font-bold tracking-tight text-black sm:text-5xl">What Families Are Saying</h2>
-          <p className="mt-6 text-lg leading-8 text-gray-700">Don't just take our word for it. Here's what families in our community are saying about our memorial park.</p>
+          <p className="mt-6 text-lg leading-8 text-gray-700">
+            Don't just take our word for it. Here's what families in our community are saying about our memorial park.
+          </p>
         </div>
         <div className="relative mt-16 [mask-image:linear-gradient(to_bottom,transparent,black_10%,black_90%,transparent)]">
           <Marquee pauseOnHover className="[--duration:60s]">

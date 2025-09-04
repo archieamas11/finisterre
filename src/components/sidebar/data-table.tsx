@@ -1,4 +1,14 @@
-import { type UniqueIdentifier, type DragEndEvent, KeyboardSensor, closestCenter, MouseSensor, TouchSensor, DndContext, useSensors, useSensor } from '@dnd-kit/core'
+import {
+  type UniqueIdentifier,
+  type DragEndEvent,
+  KeyboardSensor,
+  closestCenter,
+  MouseSensor,
+  TouchSensor,
+  DndContext,
+  useSensors,
+  useSensor,
+} from '@dnd-kit/core'
 import { restrictToVerticalAxis } from '@dnd-kit/modifiers'
 import { verticalListSortingStrategy, SortableContext, useSortable, arrayMove } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
@@ -41,7 +51,14 @@ import { Button } from '@/components/ui/button'
 import { ChartTooltipContent, type ChartConfig, ChartContainer, ChartTooltip } from '@/components/ui/chart'
 import { Checkbox } from '@/components/ui/checkbox'
 import { DrawerDescription, DrawerContent, DrawerTrigger, DrawerFooter, DrawerHeader, DrawerClose, DrawerTitle, Drawer } from '@/components/ui/drawer'
-import { DropdownMenuCheckboxItem, DropdownMenuSeparator, DropdownMenuContent, DropdownMenuTrigger, DropdownMenuItem, DropdownMenu } from '@/components/ui/dropdown-menu'
+import {
+  DropdownMenuCheckboxItem,
+  DropdownMenuSeparator,
+  DropdownMenuContent,
+  DropdownMenuTrigger,
+  DropdownMenuItem,
+  DropdownMenu,
+} from '@/components/ui/dropdown-menu'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { SelectContent, SelectTrigger, SelectValue, SelectItem, Select } from '@/components/ui/select'
@@ -202,7 +219,11 @@ const columns: ColumnDef<z.infer<typeof schema>>[] = [
             Reviewer
           </Label>
           <Select>
-            <SelectTrigger className="w-38 **:data-[slot=select-value]:block **:data-[slot=select-value]:truncate" id={`${row.original.id}-reviewer`} size="sm">
+            <SelectTrigger
+              className="w-38 **:data-[slot=select-value]:block **:data-[slot=select-value]:truncate"
+              id={`${row.original.id}-reviewer`}
+              size="sm"
+            >
               <SelectValue placeholder="Assign reviewer" />
             </SelectTrigger>
             <SelectContent align="end">
@@ -352,7 +373,13 @@ export function DataTable({ data: initialData }: { data: z.infer<typeof schema>[
       </div>
       <TabsContent className="relative flex flex-col gap-4 overflow-auto px-4 lg:px-6" value="outline">
         <div className="overflow-hidden rounded-lg border">
-          <DndContext modifiers={[restrictToVerticalAxis]} collisionDetection={closestCenter} onDragEnd={handleDragEnd} sensors={sensors} id={sortableId}>
+          <DndContext
+            modifiers={[restrictToVerticalAxis]}
+            collisionDetection={closestCenter}
+            onDragEnd={handleDragEnd}
+            sensors={sensors}
+            id={sortableId}
+          >
             <Table>
               <TableHeader className="bg-muted sticky top-0 z-10">
                 {table.getHeaderGroups().map((headerGroup) => (
@@ -563,7 +590,8 @@ function TableCellViewer({ item }: { item: z.infer<typeof schema> }) {
                   Trending up by 5.2% this month <IconTrendingUp className="size-4" />
                 </div>
                 <div className="text-muted-foreground">
-                  Showing total visitors for the last 6 months. This is just some random text to test the layout. It spans multiple lines and should wrap around.
+                  Showing total visitors for the last 6 months. This is just some random text to test the layout. It spans multiple lines and should
+                  wrap around.
                 </div>
               </div>
               <Separator />

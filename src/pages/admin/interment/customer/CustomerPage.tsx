@@ -16,7 +16,13 @@ export default function CustomersPage() {
     )
   }
   if (isError || !customers) {
-    return <ErrorMessage message="Failed to load customer data. Please check your connection and try again." onRetry={() => refetch()} showRetryButton={true} />
+    return (
+      <ErrorMessage
+        message="Failed to load customer data. Please check your connection and try again."
+        onRetry={() => refetch()}
+        showRetryButton={true}
+      />
+    )
   }
   return <CustomersTable data={customers} />
 }

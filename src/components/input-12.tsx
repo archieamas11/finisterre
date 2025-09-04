@@ -46,10 +46,13 @@ export default function InputDemo() {
             {({ getRootProps, isDragActive, isDragAccept, isDragReject, getInputProps }) => (
               <div
                 {...getRootProps()}
-                className={cn('focus:border-primary flex aspect-square items-center justify-center rounded-md border border-dashed focus:outline-none', {
-                  'border-primary bg-secondary': isDragActive && isDragAccept,
-                  'border-destructive bg-destructive/20': isDragActive && isDragReject,
-                })}
+                className={cn(
+                  'focus:border-primary flex aspect-square items-center justify-center rounded-md border border-dashed focus:outline-none',
+                  {
+                    'border-primary bg-secondary': isDragActive && isDragAccept,
+                    'border-destructive bg-destructive/20': isDragActive && isDragReject,
+                  },
+                )}
               >
                 <input {...getInputProps()} id="profile" />
                 <ImageIcon className="h-16 w-16" strokeWidth={1.25} />

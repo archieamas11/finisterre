@@ -37,7 +37,9 @@ export default function DeceasedRecordsTable({ data }: DeceasedRecordsTableProps
   const globalFilterFn = React.useCallback((row: Row<DeceasedRecords>, _columnId: string, filterValue: string) => {
     if (!filterValue) return true
     if (!row.original || typeof row.original !== 'object') return true
-    return Object.values(row.original as unknown as Record<string, unknown>).some((val) => typeof val === 'string' && val.toLowerCase().includes(filterValue.toLowerCase()))
+    return Object.values(row.original as unknown as Record<string, unknown>).some(
+      (val) => typeof val === 'string' && val.toLowerCase().includes(filterValue.toLowerCase()),
+    )
   }, [])
 
   const table = useReactTable<DeceasedRecords>({

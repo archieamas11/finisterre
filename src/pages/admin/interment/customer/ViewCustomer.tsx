@@ -194,7 +194,9 @@ export default function ViewCustomer({ open, customer, onOpenChange }: ViewCusto
             </div>
 
             {/* Avatar */}
-            <div className="bg-muted flex h-20 w-20 items-center justify-center rounded-full text-lg font-semibold">{customer.first_name.charAt(0)}</div>
+            <div className="bg-muted flex h-20 w-20 items-center justify-center rounded-full text-lg font-semibold">
+              {customer.first_name.charAt(0)}
+            </div>
 
             {/* Name */}
             <h2 className="mt-4 text-center text-xl font-bold tracking-tight">
@@ -206,7 +208,9 @@ export default function ViewCustomer({ open, customer, onOpenChange }: ViewCusto
             <div className="mt-3 flex flex-wrap justify-center gap-2">
               <Badge variant="outline" className="flex items-center gap-2 capitalize">
                 Lot Owned
-                <span className="bg-accent text-accent-foreground rounded-full border px-2 py-0.5 text-xs font-medium">{customer.lot_info?.length ?? 0}</span>
+                <span className="bg-accent text-accent-foreground rounded-full border px-2 py-0.5 text-xs font-medium">
+                  {customer.lot_info?.length ?? 0}
+                </span>
               </Badge>
               <Badge variant="outline" className="flex items-center gap-2 capitalize">
                 Deceased

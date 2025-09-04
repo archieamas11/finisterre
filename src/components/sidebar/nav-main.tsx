@@ -2,7 +2,16 @@ import { ChevronRight } from 'lucide-react'
 
 import { CollapsibleContent, CollapsibleTrigger, Collapsible } from '@/components/ui/collapsible'
 import { DropdownMenuContent, DropdownMenuTrigger, DropdownMenuItem, DropdownMenu } from '@/components/ui/dropdown-menu'
-import { SidebarMenuSubButton, SidebarGroupContent, SidebarMenuSubItem, SidebarMenuButton, SidebarMenuItem, SidebarMenuSub, SidebarMenu, useSidebar } from '@/components/ui/sidebar'
+import {
+  SidebarMenuSubButton,
+  SidebarGroupContent,
+  SidebarMenuSubItem,
+  SidebarMenuButton,
+  SidebarMenuItem,
+  SidebarMenuSub,
+  SidebarMenu,
+  useSidebar,
+} from '@/components/ui/sidebar'
 import { type NavMainItem } from '@/navigation/sidebar/sidebar-items'
 
 interface NavMainProps {
@@ -72,7 +81,13 @@ const NavItemCollapsed = ({ item, isActive }: { isActive: (url: string, subItems
         <DropdownMenuContent className="w-50 space-y-1" align="start" side="right">
           {item.subItems?.map((subItem) => (
             <DropdownMenuItem key={subItem.title} asChild>
-              <SidebarMenuSubButton aria-disabled={subItem.comingSoon} className="focus-visible:ring-0" isActive={isActive(subItem.url)} key={subItem.title} asChild>
+              <SidebarMenuSubButton
+                aria-disabled={subItem.comingSoon}
+                className="focus-visible:ring-0"
+                isActive={isActive(subItem.url)}
+                key={subItem.title}
+                asChild
+              >
                 <Link target={subItem.newTab ? '_blank' : undefined} to={subItem.url}>
                   {subItem.icon && <subItem.icon className="[&>svg]:text-sidebar-foreground" />}
                   <span>{subItem.title}</span>

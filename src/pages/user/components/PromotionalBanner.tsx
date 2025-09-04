@@ -78,10 +78,22 @@ export const PromotionalBanner: React.FC<PromotionalBannerProps> = ({
 
       {/* Enhanced floating particles effect */}
       <div className="absolute inset-0 overflow-hidden">
-        <div className="absolute top-1/4 left-1/4 h-3 w-3 animate-bounce rounded-full bg-white/30 shadow-lg" style={{ animationDelay: '0s', animationDuration: '3s' }} />
-        <div className="absolute top-1/3 right-1/3 h-2 w-2 animate-bounce rounded-full bg-white/40 shadow-md" style={{ animationDelay: '1s', animationDuration: '4s' }} />
-        <div className="absolute bottom-1/4 left-1/2 h-2.5 w-2.5 animate-bounce rounded-full bg-white/35 shadow-lg" style={{ animationDelay: '2s', animationDuration: '3.5s' }} />
-        <div className="absolute top-1/2 right-1/4 h-1.5 w-1.5 animate-bounce rounded-full bg-white/50 shadow-sm" style={{ animationDelay: '0.5s', animationDuration: '2.5s' }} />
+        <div
+          className="absolute top-1/4 left-1/4 h-3 w-3 animate-bounce rounded-full bg-white/30 shadow-lg"
+          style={{ animationDelay: '0s', animationDuration: '3s' }}
+        />
+        <div
+          className="absolute top-1/3 right-1/3 h-2 w-2 animate-bounce rounded-full bg-white/40 shadow-md"
+          style={{ animationDelay: '1s', animationDuration: '4s' }}
+        />
+        <div
+          className="absolute bottom-1/4 left-1/2 h-2.5 w-2.5 animate-bounce rounded-full bg-white/35 shadow-lg"
+          style={{ animationDelay: '2s', animationDuration: '3.5s' }}
+        />
+        <div
+          className="absolute top-1/2 right-1/4 h-1.5 w-1.5 animate-bounce rounded-full bg-white/50 shadow-sm"
+          style={{ animationDelay: '0.5s', animationDuration: '2.5s' }}
+        />
       </div>
 
       {/* Subtle mesh pattern overlay */}
@@ -99,7 +111,9 @@ export const PromotionalBanner: React.FC<PromotionalBannerProps> = ({
           </div>
 
           {/* Enhanced Title */}
-          <h1 className="animate-fade-in text-2xl leading-tight font-bold tracking-tight text-white drop-shadow-2xl sm:text-3xl lg:text-4xl">{title}</h1>
+          <h1 className="animate-fade-in text-2xl leading-tight font-bold tracking-tight text-white drop-shadow-2xl sm:text-3xl lg:text-4xl">
+            {title}
+          </h1>
 
           {/* Enhanced Description */}
           <p className="animate-fade-in text-sm leading-relaxed text-white/95 drop-shadow-lg md:text-base" style={{ animationDelay: '0.2s' }}>
@@ -124,7 +138,12 @@ export const PromotionalBanner: React.FC<PromotionalBannerProps> = ({
         {imageSrc && (
           <div className="relative flex-shrink-0 overflow-hidden rounded-2xl shadow-2xl shadow-black/30 md:max-w-sm lg:max-w-md">
             <div className="aspect-[3/2] overflow-hidden rounded-2xl bg-gradient-to-br from-white/10 to-transparent">
-              <img src={imageSrc} alt={imageAlt} loading="lazy" className="h-full w-full object-cover transition-all duration-700 ease-out hover:scale-105 hover:brightness-110" />
+              <img
+                src={imageSrc}
+                alt={imageAlt}
+                loading="lazy"
+                className="h-full w-full object-cover transition-all duration-700 ease-out hover:scale-105 hover:brightness-110"
+              />
               {/* Subtle overlay gradient */}
               <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent opacity-0 transition-opacity duration-300 hover:opacity-100" />
             </div>

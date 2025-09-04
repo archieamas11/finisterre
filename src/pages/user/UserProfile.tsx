@@ -78,7 +78,9 @@ export default memo(function UserProfile() {
             </div>
             <div>
               <h3 className="font-semibold text-red-800 dark:text-red-200">Unable to Load Profile</h3>
-              <p className="text-sm text-red-600 dark:text-red-300">There was an error loading your profile information. Please try refreshing the page.</p>
+              <p className="text-sm text-red-600 dark:text-red-300">
+                There was an error loading your profile information. Please try refreshing the page.
+              </p>
             </div>
           </div>
         </div>
@@ -96,7 +98,10 @@ export default memo(function UserProfile() {
                     <Skeleton className="h-12 w-12 rounded-full sm:h-16 sm:w-16" aria-label="loading avatar" />
                   </div>
                 ) : (
-                  <AvatarFallback className="bg-slate-100 text-lg font-bold text-slate-600 dark:bg-slate-700 dark:text-slate-300" aria-label={`Avatar for ${fullName}`}>
+                  <AvatarFallback
+                    className="bg-slate-100 text-lg font-bold text-slate-600 dark:bg-slate-700 dark:text-slate-300"
+                    aria-label={`Avatar for ${fullName}`}
+                  >
                     {initials}
                   </AvatarFallback>
                 )}
@@ -120,7 +125,11 @@ export default memo(function UserProfile() {
               </h1>
               <p className="text-sm text-slate-600 dark:text-slate-400">Manage your account information</p>
               <div className="mt-2 flex flex-wrap gap-2">
-                <Badge variant={meUser?.isAdmin ? 'default' : 'secondary'} className="text-xs" aria-label={meUser?.isAdmin ? 'Administrator role' : 'User role'}>
+                <Badge
+                  variant={meUser?.isAdmin ? 'default' : 'secondary'}
+                  className="text-xs"
+                  aria-label={meUser?.isAdmin ? 'Administrator role' : 'User role'}
+                >
                   {meUser?.isAdmin ? 'Administrator' : 'User'}
                 </Badge>
                 <Badge variant="outline" className="text-xs">
@@ -148,7 +157,11 @@ export default memo(function UserProfile() {
                 {profileCompletion}%
               </span>
               {hasCompleteProfile && (
-                <Badge variant="secondary" className="bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200" aria-label="Profile is complete">
+                <Badge
+                  variant="secondary"
+                  className="bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200"
+                  aria-label="Profile is complete"
+                >
                   Complete
                 </Badge>
               )}
@@ -205,7 +218,10 @@ export default memo(function UserProfile() {
                   <Shield className="h-4 w-4 text-purple-600 dark:text-purple-400" />
                 </div>
                 <div className="min-w-0 flex-1">
-                  <p className="text-lg font-bold text-purple-600 dark:text-purple-400" aria-label={`Account type: ${meUser?.isAdmin ? 'Administrator' : 'User'}`}>
+                  <p
+                    className="text-lg font-bold text-purple-600 dark:text-purple-400"
+                    aria-label={`Account type: ${meUser?.isAdmin ? 'Administrator' : 'User'}`}
+                  >
                     {meUser?.isAdmin ? 'Admin' : 'User'}
                   </p>
                   <p className="text-xs text-slate-600 dark:text-slate-400">Account</p>
@@ -259,7 +275,9 @@ export default memo(function UserProfile() {
               </div>
               <div className="min-w-0 flex-1">
                 <p className="text-xs font-medium text-slate-600 dark:text-slate-400">Email Address</p>
-                <p className="font-semibold text-slate-900 dark:text-white">{isLoading ? <Skeleton className="h-4 w-32" /> : customer?.email || meUser?.email || 'Not provided'}</p>
+                <p className="font-semibold text-slate-900 dark:text-white">
+                  {isLoading ? <Skeleton className="h-4 w-32" /> : customer?.email || meUser?.email || 'Not provided'}
+                </p>
               </div>
             </div>
 
@@ -269,7 +287,9 @@ export default memo(function UserProfile() {
               </div>
               <div className="min-w-0 flex-1">
                 <p className="text-xs font-medium text-slate-600 dark:text-slate-400">Phone Number</p>
-                <p className="font-semibold text-slate-900 dark:text-white">{isLoading ? <Skeleton className="h-4 w-24" /> : customer?.contact_number || 'Not provided'}</p>
+                <p className="font-semibold text-slate-900 dark:text-white">
+                  {isLoading ? <Skeleton className="h-4 w-24" /> : customer?.contact_number || 'Not provided'}
+                </p>
               </div>
             </div>
 

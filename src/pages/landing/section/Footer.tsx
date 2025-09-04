@@ -39,7 +39,9 @@ export default function Footer() {
               <MapPin className="h-6 w-6 text-black" aria-hidden="true" />
               <span className="text-xl text-black">Finisterre</span>
             </Link>
-            <p className="text-base leading-6 text-gray-600">Providing dignified cemetery management solutions with compassion, technology, and respect for sacred spaces.</p>
+            <p className="text-base leading-6 text-gray-600">
+              Providing dignified cemetery management solutions with compassion, technology, and respect for sacred spaces.
+            </p>
             <div className="flex space-x-6">
               <a href="#" className="hover:text-primary text-gray-500">
                 <span className="sr-only">Facebook</span>

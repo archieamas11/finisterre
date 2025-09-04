@@ -176,7 +176,12 @@ export function DataTableDateFilter<TData>({ column, title, multiple }: DataTabl
       </PopoverTrigger>
       <PopoverContent className="w-auto p-0" align="start">
         {multiple ? (
-          <Calendar initialFocus mode="range" selected={getIsDateRange(selectedDates) ? selectedDates : { from: undefined, to: undefined }} onSelect={onSelect} />
+          <Calendar
+            initialFocus
+            mode="range"
+            selected={getIsDateRange(selectedDates) ? selectedDates : { from: undefined, to: undefined }}
+            onSelect={onSelect}
+          />
         ) : (
           <Calendar initialFocus mode="single" selected={!getIsDateRange(selectedDates) ? selectedDates[0] : undefined} onSelect={onSelect} />
         )}

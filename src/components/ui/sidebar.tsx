@@ -523,7 +523,12 @@ function SidebarMenuSkeleton({
   }, [])
 
   return (
-    <div className={cn('flex h-8 items-center gap-2 rounded-md px-2', className)} data-slot="sidebar-menu-skeleton" data-sidebar="menu-skeleton" {...props}>
+    <div
+      className={cn('flex h-8 items-center gap-2 rounded-md px-2', className)}
+      data-slot="sidebar-menu-skeleton"
+      data-sidebar="menu-skeleton"
+      {...props}
+    >
       {showIcon && <Skeleton data-sidebar="menu-skeleton-icon" className="size-4 rounded-md" />}
       <Skeleton
         style={
@@ -560,7 +565,11 @@ function SidebarMenuBadge({ className, ...props }: React.ComponentProps<'div'>) 
 function SidebarMenuSub({ className, ...props }: React.ComponentProps<'ul'>) {
   return (
     <ul
-      className={cn('border-sidebar-border mx-3.5 flex min-w-0 translate-x-px flex-col gap-1 border-l px-2.5 py-0.5', 'group-data-[collapsible=icon]:hidden', className)}
+      className={cn(
+        'border-sidebar-border mx-3.5 flex min-w-0 translate-x-px flex-col gap-1 border-l px-2.5 py-0.5',
+        'group-data-[collapsible=icon]:hidden',
+        className,
+      )}
       data-slot="sidebar-menu-sub"
       data-sidebar="menu-sub"
       {...props}

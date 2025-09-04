@@ -15,7 +15,9 @@ export function useEditLotOwner() {
 
       const prevData = queryClient.getQueryData<LotOwners[]>(['lotOwner'])
 
-      queryClient.setQueryData<LotOwners[]>(['lotOwner'], (old) => (old ? old.map((lot) => (lot.lot_id === updatedData.lot_id ? { ...lot, ...updatedData } : lot)) : []))
+      queryClient.setQueryData<LotOwners[]>(['lotOwner'], (old) =>
+        old ? old.map((lot) => (lot.lot_id === updatedData.lot_id ? { ...lot, ...updatedData } : lot)) : [],
+      )
 
       return { prevData }
     },

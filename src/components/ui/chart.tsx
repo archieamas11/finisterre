@@ -144,7 +144,12 @@ function ChartTooltipContent({
   const nestLabel = payload.length === 1 && indicator !== 'dot'
 
   return (
-    <div className={cn('border-border/50 bg-background grid min-w-[8rem] items-start gap-1.5 rounded-lg border px-2.5 py-1.5 text-xs shadow-xl', className)}>
+    <div
+      className={cn(
+        'border-border/50 bg-background grid min-w-[8rem] items-start gap-1.5 rounded-lg border px-2.5 py-1.5 text-xs shadow-xl',
+        className,
+      )}
+    >
       {!nestLabel ? tooltipLabel : null}
       <div className="grid gap-1.5">
         {payload.map((item, index) => {
@@ -154,7 +159,10 @@ function ChartTooltipContent({
 
           return (
             <div
-              className={cn('[&>svg]:text-muted-foreground flex w-full flex-wrap items-stretch gap-2 [&>svg]:h-2.5 [&>svg]:w-2.5', indicator === 'dot' && 'items-center')}
+              className={cn(
+                '[&>svg]:text-muted-foreground flex w-full flex-wrap items-stretch gap-2 [&>svg]:h-2.5 [&>svg]:w-2.5',
+                indicator === 'dot' && 'items-center',
+              )}
               key={item.dataKey}
             >
               {formatter && item?.value !== undefined && item.name ? (

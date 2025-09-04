@@ -41,7 +41,16 @@ const typeConfig = {
   },
 }
 
-export const AnnouncementCard: React.FC<AnnouncementCardProps> = ({ title, description, fullDescription, date, isNew = false, type = 'general', onClick, className }) => {
+export const AnnouncementCard: React.FC<AnnouncementCardProps> = ({
+  title,
+  description,
+  fullDescription,
+  date,
+  isNew = false,
+  type = 'general',
+  onClick,
+  className,
+}) => {
   const [isExpanded, setIsExpanded] = useState(false)
   const config = typeConfig[type]
   const Icon = config.icon

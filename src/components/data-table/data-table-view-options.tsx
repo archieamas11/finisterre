@@ -15,7 +15,10 @@ interface DataTableViewOptionsProps<TData> {
 }
 
 export function DataTableViewOptions<TData>({ table }: DataTableViewOptionsProps<TData>) {
-  const columns = React.useMemo(() => table.getAllColumns().filter((column) => typeof column.accessorFn !== 'undefined' && column.getCanHide()), [table])
+  const columns = React.useMemo(
+    () => table.getAllColumns().filter((column) => typeof column.accessorFn !== 'undefined' && column.getCanHide()),
+    [table],
+  )
 
   return (
     <Popover>

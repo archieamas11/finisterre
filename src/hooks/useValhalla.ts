@@ -98,99 +98,102 @@ export function useValhalla(options: UseValhallaOptions = {}) {
   }, [options])
 
   // 🗺️ Calculate route to destination
-  const calculateRoute = useCallback(async (from: { latitude: number; longitude: number }, to: RouteDestination, forceRecalculate: boolean = false) => {
-    console.log('🧭 Starting route calculation:', { from, to, forceRecalculate, costingType: optionsRef.current.costingType })
+  const calculateRoute = useCallback(
+    async (from: { latitude: number; longitude: number }, to: RouteDestination, forceRecalculate: boolean = false) => {
+      console.log('🧭 Starting route calculation:', { from, to, forceRecalculate, costingType: optionsRef.current.costingType })
 
-    try {
-      // 🎯 Store original coordinates before API call
-      const originalStart: [number, number] = [from.latitude, from.longitude]
-      const originalEnd: [number, number] = [to.latitude, to.longitude]
+      try {
+        // 🎯 Store original coordinates before API call
+        const originalStart: [number, number] = [from.latitude, from.longitude]
+        const originalEnd: [number, number] = [to.latitude, to.longitude]
 
-      setRouteState((prev) => ({
-        ...prev,
-        isLoading: true,
-        error: null,
-        rerouteCount: forceRecalculate ? prev.rerouteCount + 1 : 0,
-        originalStart,
-        originalEnd,
-      }))
+        setRouteState((prev) => ({
+          ...prev,
+          isLoading: true,
+          error: null,
+          rerouteCount: forceRecalculate ? prev.rerouteCount + 1 : 0,
+          originalStart,
+          originalEnd,
+        }))
 
-      destinationRef.current = to
+        destinationRef.current = to
 
-      // 🎯 Create appropriate route request based on costing type
-      let request: ValhallaRouteRequest
-      if (optionsRef.current.costingType === 'auto') {
-        request = createAutoRouteRequest({ lat: from.latitude, lon: from.longitude }, { lat: to.latitude, lon: to.longitude })
-      } else {
-        request = createPedestrianRouteRequest({ lat: from.latitude, lon: from.longitude }, { lat: to.latitude, lon: to.longitude })
-      }
+        // 🎯 Create appropriate route request based on costing type
+        let request: ValhallaRouteRequest
+        if (optionsRef.current.costingType === 'auto') {
+          request = createAutoRouteRequest({ lat: from.latitude, lon: from.longitude }, { lat: to.latitude, lon: to.longitude })
+        } else {
+          request = createPedestrianRouteRequest({ lat: from.latitude, lon: from.longitude }, { lat: to.latitude, lon: to.longitude })
+        }
 
-      console.log('🚀 Sending Valhalla request:', request)
-      const response = await getValhallaRoute(request)
-      console.log('✅ Valhalla response received:', {
-        legs: response.trip.legs.length,
-        totalDistance: response.trip.summary.length,
-        totalTime: response.trip.summary.time,
-      })
-
-      // 📍 Decode route coordinates from the first leg
-      let coordinates: [number, number][] = []
-      if (response.trip.legs.length > 0) {
-        coordinates = decodePolyline(response.trip.legs[0].shape)
-      }
-
-      console.log({
-        originalStart,
-        originalEnd,
-        snappedStart: coordinates[0],
-        snappedEnd: coordinates[coordinates.length - 1],
-        coordinatesCount: coordinates.length,
-      })
-
-      setRouteState((prev) => ({
-        ...prev,
-        isLoading: false,
-        route: response,
-        routeCoordinates: coordinates,
-        remainingCoordinates: coordinates, // 🎯 Initially show full route
-        progressIndex: 0,
-        error: null,
-      }))
-
-      // 🧭 Initialize navigation state
-      if (response.trip.legs.length > 0 && response.trip.legs[0].maneuvers.length > 0) {
-        const maneuvers = response.trip.legs[0].maneuvers
-        setNavigationState({
-          currentManeuver: maneuvers[0] || null,
-          nextManeuver: maneuvers[1] || null,
-          maneuverIndex: 0,
-          distanceToDestination: response.trip.summary.length,
-          estimatedTimeRemaining: response.trip.summary.time,
+        console.log('🚀 Sending Valhalla request:', request)
+        const response = await getValhallaRoute(request)
+        console.log('✅ Valhalla response received:', {
+          legs: response.trip.legs.length,
+          totalDistance: response.trip.summary.length,
+          totalTime: response.trip.summary.time,
         })
+
+        // 📍 Decode route coordinates from the first leg
+        let coordinates: [number, number][] = []
+        if (response.trip.legs.length > 0) {
+          coordinates = decodePolyline(response.trip.legs[0].shape)
+        }
+
+        console.log({
+          originalStart,
+          originalEnd,
+          snappedStart: coordinates[0],
+          snappedEnd: coordinates[coordinates.length - 1],
+          coordinatesCount: coordinates.length,
+        })
+
+        setRouteState((prev) => ({
+          ...prev,
+          isLoading: false,
+          route: response,
+          routeCoordinates: coordinates,
+          remainingCoordinates: coordinates, // 🎯 Initially show full route
+          progressIndex: 0,
+          error: null,
+        }))
+
+        // 🧭 Initialize navigation state
+        if (response.trip.legs.length > 0 && response.trip.legs[0].maneuvers.length > 0) {
+          const maneuvers = response.trip.legs[0].maneuvers
+          setNavigationState({
+            currentManeuver: maneuvers[0] || null,
+            nextManeuver: maneuvers[1] || null,
+            maneuverIndex: 0,
+            distanceToDestination: response.trip.summary.length,
+            estimatedTimeRemaining: response.trip.summary.time,
+          })
+        }
+
+        return response
+      } catch (error) {
+        const errorMessage = error instanceof Error ? error.message : 'Failed to calculate route'
+        console.error('🚫 Route calculation failed:', {
+          error,
+          from: { latitude: from.latitude, longitude: from.longitude },
+          to: { latitude: to.latitude, longitude: to.longitude },
+          costingType: optionsRef.current.costingType,
+          errorMessage,
+        })
+
+        setRouteState((prev) => ({
+          ...prev,
+          isLoading: false,
+          error: errorMessage,
+          route: null,
+          routeCoordinates: [],
+        }))
+
+        throw error
       }
-
-      return response
-    } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Failed to calculate route'
-      console.error('🚫 Route calculation failed:', {
-        error,
-        from: { latitude: from.latitude, longitude: from.longitude },
-        to: { latitude: to.latitude, longitude: to.longitude },
-        costingType: optionsRef.current.costingType,
-        errorMessage,
-      })
-
-      setRouteState((prev) => ({
-        ...prev,
-        isLoading: false,
-        error: errorMessage,
-        route: null,
-        routeCoordinates: [],
-      }))
-
-      throw error
-    }
-  }, [])
+    },
+    [],
+  )
 
   // 🎯 Start navigation to destination
   const startNavigation = useCallback(

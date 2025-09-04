@@ -6,7 +6,13 @@ import { cn } from '@/lib/utils'
 
 function BreadcrumbEllipsis({ className, ...props }: React.ComponentProps<'span'>) {
   return (
-    <span className={cn('flex size-9 items-center justify-center', className)} data-slot="breadcrumb-ellipsis" role="presentation" aria-hidden="true" {...props}>
+    <span
+      className={cn('flex size-9 items-center justify-center', className)}
+      data-slot="breadcrumb-ellipsis"
+      role="presentation"
+      aria-hidden="true"
+      {...props}
+    >
       <MoreHorizontal className="size-4" />
       <span className="sr-only">More</span>
     </span>
@@ -34,11 +40,26 @@ function BreadcrumbLink({
 }
 
 function BreadcrumbList({ className, ...props }: React.ComponentProps<'ol'>) {
-  return <ol className={cn('text-muted-foreground flex flex-wrap items-center gap-1.5 text-sm break-words sm:gap-2.5', className)} data-slot="breadcrumb-list" {...props} />
+  return (
+    <ol
+      className={cn('text-muted-foreground flex flex-wrap items-center gap-1.5 text-sm break-words sm:gap-2.5', className)}
+      data-slot="breadcrumb-list"
+      {...props}
+    />
+  )
 }
 
 function BreadcrumbPage({ className, ...props }: React.ComponentProps<'span'>) {
-  return <span className={cn('text-foreground font-normal', className)} data-slot="breadcrumb-page" aria-disabled="true" aria-current="page" role="link" {...props} />
+  return (
+    <span
+      className={cn('text-foreground font-normal', className)}
+      data-slot="breadcrumb-page"
+      aria-disabled="true"
+      aria-current="page"
+      role="link"
+      {...props}
+    />
+  )
 }
 
 function BreadcrumbItem({ className, ...props }: React.ComponentProps<'li'>) {

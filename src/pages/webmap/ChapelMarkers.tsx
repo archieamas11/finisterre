@@ -14,7 +14,8 @@ const chapelMarkersData: FinisterreMarkerData[] = [
     lng: 123.79787795587316,
     popupImage: 'https://res.cloudinary.com/djrkvgfvo/image/upload/v1755713548/chapel_emzqop.jpg',
     title: 'Chapel of Finisterre Gardenz',
-    description: 'A peaceful sanctuary for reflection, prayer, and community gatherings. All visitors are welcome to experience its serene atmosphere.',
+    description:
+      'A peaceful sanctuary for reflection, prayer, and community gatherings. All visitors are welcome to experience its serene atmosphere.',
     marker: {
       type: 'icon',
       source: <BiSolidChurch />,

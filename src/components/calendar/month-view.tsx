@@ -130,8 +130,18 @@ export function MonthView({ currentDate, events, onEventSelect, onEventCreate }:
 
                         if (!isFirstDay) {
                           return (
-                            <div key={`spanning-${event.id}-${day.toISOString().slice(0, 10)}`} className="aria-hidden:hidden" aria-hidden={isHidden ? 'true' : undefined}>
-                              <EventItem onClick={(e) => handleEventClick(event, e)} event={event} view="month" isFirstDay={isFirstDay} isLastDay={isLastDay}>
+                            <div
+                              key={`spanning-${event.id}-${day.toISOString().slice(0, 10)}`}
+                              className="aria-hidden:hidden"
+                              aria-hidden={isHidden ? 'true' : undefined}
+                            >
+                              <EventItem
+                                onClick={(e) => handleEventClick(event, e)}
+                                event={event}
+                                view="month"
+                                isFirstDay={isFirstDay}
+                                isLastDay={isLastDay}
+                              >
                                 <div className="invisible" aria-hidden={true}>
                                   {!event.allDay && <span>{format(new Date(event.start), 'h:mm')} </span>}
                                   {event.title}
@@ -143,7 +153,13 @@ export function MonthView({ currentDate, events, onEventSelect, onEventCreate }:
 
                         return (
                           <div key={event.id} className="aria-hidden:hidden" aria-hidden={isHidden ? 'true' : undefined}>
-                            <DraggableEvent event={event} view="month" onClick={(e) => handleEventClick(event, e)} isFirstDay={isFirstDay} isLastDay={isLastDay} />
+                            <DraggableEvent
+                              event={event}
+                              view="month"
+                              onClick={(e) => handleEventClick(event, e)}
+                              isFirstDay={isFirstDay}
+                              isLastDay={isLastDay}
+                            />
                           </div>
                         )
                       })}

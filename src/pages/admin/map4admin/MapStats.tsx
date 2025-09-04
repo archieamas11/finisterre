@@ -139,15 +139,21 @@ export default function MapStats() {
 
           <div className="grid grid-cols-3 gap-4">
             <div className="rounded-lg bg-green-50 p-3 text-center dark:bg-green-900/20">
-              <div className="text-lg font-bold text-green-600 dark:text-green-400">{isLoading ? <Skeleton className="mb-1 h-6 w-full rounded" /> : totals.available}</div>
+              <div className="text-lg font-bold text-green-600 dark:text-green-400">
+                {isLoading ? <Skeleton className="mb-1 h-6 w-full rounded" /> : totals.available}
+              </div>
               <div className="text-xs text-green-700 dark:text-green-300">Available</div>
             </div>
             <div className="rounded-lg bg-red-50 p-3 text-center dark:bg-red-900/20">
-              <div className="text-lg font-bold text-red-600 dark:text-red-400">{isLoading ? <Skeleton className="mb-1 h-6 w-full rounded" /> : totals.occupied}</div>
+              <div className="text-lg font-bold text-red-600 dark:text-red-400">
+                {isLoading ? <Skeleton className="mb-1 h-6 w-full rounded" /> : totals.occupied}
+              </div>
               <div className="text-xs text-red-700 dark:text-red-300">Occupied</div>
             </div>
             <div className="rounded-lg bg-yellow-50 p-3 text-center dark:bg-yellow-900/20">
-              <div className="text-lg font-bold text-yellow-600 dark:text-yellow-400">{isLoading ? <Skeleton className="mb-1 h-6 w-full rounded" /> : totals.reserved}</div>
+              <div className="text-lg font-bold text-yellow-600 dark:text-yellow-400">
+                {isLoading ? <Skeleton className="mb-1 h-6 w-full rounded" /> : totals.reserved}
+              </div>
               <div className="text-xs text-yellow-700 dark:text-yellow-300">Reserved</div>
             </div>
           </div>
@@ -191,7 +197,9 @@ export default function MapStats() {
                           </div>
                           <div className="flex items-center gap-2">
                             <Progress value={percentage} className="h-2 flex-1" />
-                            <span className="w-8 text-right text-xs text-gray-500 dark:text-gray-400">{Number.isFinite(percentage) ? percentage : 0}%</span>
+                            <span className="w-8 text-right text-xs text-gray-500 dark:text-gray-400">
+                              {Number.isFinite(percentage) ? percentage : 0}%
+                            </span>
                           </div>
                         </div>
                       )

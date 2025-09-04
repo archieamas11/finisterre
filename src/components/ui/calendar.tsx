@@ -42,16 +42,29 @@ function Calendar({
         weekday: cn('text-muted-foreground rounded-md flex-1 font-normal text-[0.8rem] select-none', defaultClassNames.weekday),
         month_caption: cn('flex items-center justify-center h-(--cell-size) w-full px-(--cell-size)', defaultClassNames.month_caption),
         dropdowns: cn('w-full flex items-center text-sm font-medium justify-center h-(--cell-size) gap-1.5', defaultClassNames.dropdowns),
-        button_next: cn(buttonVariants({ variant: buttonVariant }), 'size-(--cell-size) aria-disabled:opacity-50 p-0 select-none', defaultClassNames.button_next),
-        dropdown_root: cn('relative has-focus:border-ring border border-input shadow-xs has-focus:ring-ring/50 has-focus:ring-[3px] rounded-md', defaultClassNames.dropdown_root),
-        button_previous: cn(buttonVariants({ variant: buttonVariant }), 'size-(--cell-size) aria-disabled:opacity-50 p-0 select-none', defaultClassNames.button_previous),
+        button_next: cn(
+          buttonVariants({ variant: buttonVariant }),
+          'size-(--cell-size) aria-disabled:opacity-50 p-0 select-none',
+          defaultClassNames.button_next,
+        ),
+        dropdown_root: cn(
+          'relative has-focus:border-ring border border-input shadow-xs has-focus:ring-ring/50 has-focus:ring-[3px] rounded-md',
+          defaultClassNames.dropdown_root,
+        ),
+        button_previous: cn(
+          buttonVariants({ variant: buttonVariant }),
+          'size-(--cell-size) aria-disabled:opacity-50 p-0 select-none',
+          defaultClassNames.button_previous,
+        ),
         day: cn(
           'relative w-full h-full p-0 text-center [&:first-child[data-selected=true]_button]:rounded-l-md [&:last-child[data-selected=true]_button]:rounded-r-md group/day aspect-square select-none',
           defaultClassNames.day,
         ),
         caption_label: cn(
           'select-none font-medium',
-          captionLayout === 'label' ? 'text-sm' : 'rounded-md pl-2 pr-1 flex items-center gap-1 text-sm h-8 [&>svg]:text-muted-foreground [&>svg]:size-3.5',
+          captionLayout === 'label'
+            ? 'text-sm'
+            : 'rounded-md pl-2 pr-1 flex items-center gap-1 text-sm h-8 [&>svg]:text-muted-foreground [&>svg]:size-3.5',
           defaultClassNames.caption_label,
         ),
         ...classNames,

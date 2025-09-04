@@ -762,7 +762,12 @@ export default function MapPage({ onBack, initialDirection }: { onBack?: () => v
                   rerouteCount={rerouteCount}
                 />
                 {!(route && routeCoordinates.length > 0) && (
-                  <UserLocationMarker userLocation={currentLocation} centerOnFirst={state.shouldCenterOnUser} enableAnimation={true} showAccuracyCircle={true} />
+                  <UserLocationMarker
+                    userLocation={currentLocation}
+                    centerOnFirst={state.shouldCenterOnUser}
+                    enableAnimation={true}
+                    showAccuracyCircle={true}
+                  />
                 )}
               </Suspense>
             </MapContainer>

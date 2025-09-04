@@ -19,7 +19,8 @@ export default function UnauthorizedPage() {
 
         <CardContent className="space-y-4">
           <p className="text-muted-foreground text-center">
-            It looks like you're trying to access a page that requires special permissions. Please log in with an authorized account or contact your administrator.
+            It looks like you're trying to access a page that requires special permissions. Please log in with an authorized account or contact your
+            administrator.
           </p>
 
           <div className="flex flex-col gap-3 pt-2">

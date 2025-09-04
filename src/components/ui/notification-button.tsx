@@ -92,7 +92,9 @@ export default function Notification() {
           aria-label="Open notifications"
         >
           <BellIcon size={16} aria-hidden="true" />
-          {unreadCount > 0 && <Badge className="absolute -top-2 left-full min-w-5 -translate-x-1/2 px-1">{unreadCount > 99 ? '99+' : unreadCount}</Badge>}
+          {unreadCount > 0 && (
+            <Badge className="absolute -top-2 left-full min-w-5 -translate-x-1/2 px-1">{unreadCount > 99 ? '99+' : unreadCount}</Badge>
+          )}
         </Button>
       </PopoverTrigger>
       <PopoverContent className="w-80 p-1">
@@ -109,7 +111,10 @@ export default function Notification() {
           <div key={notification.id} className="hover:bg-accent rounded-md px-3 py-2 text-sm transition-colors">
             <div className="relative flex items-start pe-3">
               <div className="flex-1 space-y-1">
-                <button className="text-foreground/80 text-left after:absolute after:inset-0" onClick={() => handleNotificationClick(notification.id)}>
+                <button
+                  className="text-foreground/80 text-left after:absolute after:inset-0"
+                  onClick={() => handleNotificationClick(notification.id)}
+                >
                   <span className="text-foreground font-medium hover:underline">{notification.user}</span> {notification.action}{' '}
                   <span className="text-foreground font-medium hover:underline">{notification.target}</span>.
                 </button>

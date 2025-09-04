@@ -8,7 +8,14 @@ export interface AnimatedGradientTextProps extends ComponentPropsWithoutRef<'div
   colorTo?: string
 }
 
-export function AnimatedGradientText({ children, className, speed = 1, colorFrom = '#ffaa40', colorTo = '#9c40ff', ...props }: AnimatedGradientTextProps) {
+export function AnimatedGradientText({
+  children,
+  className,
+  speed = 1,
+  colorFrom = '#ffaa40',
+  colorTo = '#9c40ff',
+  ...props
+}: AnimatedGradientTextProps) {
   return (
     <span
       style={

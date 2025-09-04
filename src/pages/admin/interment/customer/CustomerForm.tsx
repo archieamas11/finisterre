@@ -61,7 +61,9 @@ export default function CustomerForm({ mode, open, onSubmit, isPending, onOpenCh
       <DialogContent className="lg:max-w-[900px]">
         <DialogHeader>
           <DialogTitle>{mode === 'add' ? 'Add New Customer' : mode === 'edit' ? 'Edit Customer' : 'View Customer'}</DialogTitle>
-          <DialogDescription>{mode === 'add' ? "Click save when you're done." : mode === 'edit' ? 'Edit customer details and save.' : 'View customer details.'}</DialogDescription>
+          <DialogDescription>
+            {mode === 'add' ? "Click save when you're done." : mode === 'edit' ? 'Edit customer details and save.' : 'View customer details.'}
+          </DialogDescription>
         </DialogHeader>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4">

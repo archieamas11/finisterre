@@ -77,7 +77,9 @@ export default function AddPlotMarkerDialog({ open, onOpenChange, coordinates, o
               {selectedMarkerType === 'Columbarium' && 'Add Columbarium'}
               {!selectedMarkerType && 'Select Marker Type First'}
             </DialogTitle>
-            <DialogDescription>{selectedMarkerType ? 'Provide the required details then save the plot.' : 'Go back and choose a marker type to proceed.'}</DialogDescription>
+            <DialogDescription>
+              {selectedMarkerType ? 'Provide the required details then save the plot.' : 'Go back and choose a marker type to proceed.'}
+            </DialogDescription>
           </DialogHeader>
           {selectedMarkerType === 'Serenity Lawn' && (
             <SerenityLawnStep

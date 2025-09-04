@@ -347,7 +347,12 @@ export default function CemeteryShowcase() {
                   className="focus-visible:ring-primary focus-visible:ring-offset-background block w-full overflow-hidden rounded-xl shadow-md focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none"
                 >
                   <div className="relative aspect-[4/3]">
-                    <img src={image.src} alt={image.alt} className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105" loading="lazy" />
+                    <img
+                      src={image.src}
+                      alt={image.alt}
+                      className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                      loading="lazy"
+                    />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
                     <div className="absolute inset-0 flex items-center justify-center opacity-0 transition-opacity duration-300 group-hover:opacity-100">
                       <Maximize2 className="h-8 w-8 text-white" />
@@ -410,7 +415,11 @@ export default function CemeteryShowcase() {
                 style={{ height: '100%', width: '100%' }}
               >
                 <MapInitializer onMap={(m) => setLeafletMap(m)} />
-                <TileLayer url="https://services.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}" maxNativeZoom={19} maxZoom={20} />
+                <TileLayer
+                  url="https://services.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"
+                  maxNativeZoom={19}
+                  maxZoom={20}
+                />
                 <Marker position={[10.249306880563585, 123.797848311330114]} icon={cemeteryIcon}>
                   <Popup minWidth={280} maxWidth={360}>
                     <div className="w-full max-w-[360px]">
@@ -434,7 +443,9 @@ export default function CemeteryShowcase() {
                             <span>150+ acres</span>
                           </div>
 
-                          <p className="mt-3 text-xs text-gray-600">A peaceful, thoughtfully landscaped memorial park set within rolling grounds and native plantings.</p>
+                          <p className="mt-3 text-xs text-gray-600">
+                            A peaceful, thoughtfully landscaped memorial park set within rolling grounds and native plantings.
+                          </p>
                         </div>
                       </div>
 
@@ -502,7 +513,13 @@ export default function CemeteryShowcase() {
                 >
                   <ChevronLeft className="h-6 w-6" />
                 </Button>
-                <Button variant="ghost" size="icon" onClick={nextImage} aria-label="Next image" className="mr-2 h-12 w-12 rounded-full bg-black/30 text-white hover:bg-black/50">
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={nextImage}
+                  aria-label="Next image"
+                  className="mr-2 h-12 w-12 rounded-full bg-black/30 text-white hover:bg-black/50"
+                >
                   <ChevronRight className="h-6 w-6" />
                 </Button>
               </div>

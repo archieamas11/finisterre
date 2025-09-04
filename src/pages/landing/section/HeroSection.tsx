@@ -56,7 +56,12 @@ export default function HeroSection() {
         variants={containerVariants}
         initial={shouldReduceMotion ? 'visible' : 'hidden'}
         animate="visible"
-        transition={{ duration: 0.72, ease: [0.22, 0.8, 0.3, 1], staggerChildren: shouldReduceMotion ? 0 : 0.08, delayChildren: shouldReduceMotion ? 0 : 0.14 }}
+        transition={{
+          duration: 0.72,
+          ease: [0.22, 0.8, 0.3, 1],
+          staggerChildren: shouldReduceMotion ? 0 : 0.08,
+          delayChildren: shouldReduceMotion ? 0 : 0.14,
+        }}
       >
         {/* Premium badge */}
         <motion.div className="mb-6 flex justify-center" variants={shouldReduceMotion ? undefined : subtleBadge}>
@@ -93,15 +98,19 @@ export default function HeroSection() {
             variants={shouldReduceMotion ? undefined : subtleItem}
             transition={{ delay: shouldReduceMotion ? 0 : 0.12 }}
           >
-            Inspired by Spain's <span className="font-semibold text-blue-200">El Camino de Santiago</span>, Finisterre Gardenz honors the journey of life, celebrating every step
-            with dignity and peace.
+            Inspired by Spain's <span className="font-semibold text-blue-200">El Camino de Santiago</span>, Finisterre Gardenz honors the journey of
+            life, celebrating every step with dignity and peace.
           </motion.p>
         </motion.div>
         {/* CTA Section */}
         <motion.div className="flex flex-col items-center justify-center gap-4 sm:flex-row" variants={shouldReduceMotion ? undefined : subtleItem}>
           {/* Primary CTA */}
           <motion.div variants={shouldReduceMotion ? undefined : subtleButton} transition={{ delay: shouldReduceMotion ? 0 : 0.16 }}>
-            <Button size={'lg'} variant={'secondary'} className="group rounded-full bg-white font-semibold shadow-lg transition-all duration-300 hover:scale-105 hover:bg-white/75">
+            <Button
+              size={'lg'}
+              variant={'secondary'}
+              className="group rounded-full bg-white font-semibold shadow-lg transition-all duration-300 hover:scale-105 hover:bg-white/75"
+            >
               <Link className="flex items-center gap-3" aria-label="Explore Map" to="/map">
                 <MapPin className="text-gray-800" />
                 <hr className="h-4 w-px shrink-0 bg-neutral-400" />

@@ -60,7 +60,13 @@ export function DatePicker({
         />
         <Popover onOpenChange={setCalendarOpen} open={calendarOpen}>
           <PopoverTrigger asChild>
-            <Button type="button" variant="ghost" size="icon" onClick={() => setCalendarOpen(true)} className="absolute top-1/2 right-2 h-5 w-5 -translate-y-1/2 p-0">
+            <Button
+              type="button"
+              variant="ghost"
+              size="icon"
+              onClick={() => setCalendarOpen(true)}
+              className="absolute top-1/2 right-2 h-5 w-5 -translate-y-1/2 p-0"
+            >
               <CalendarIcon className="h-4 w-4" />
             </Button>
           </PopoverTrigger>

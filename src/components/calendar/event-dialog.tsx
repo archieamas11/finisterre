@@ -198,7 +198,9 @@ export function EventDialog({ event, isOpen, onClose, onSave, onDelete }: EventD
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
           <DialogTitle>{event?.id ? 'Edit Event' : 'Create Event'}</DialogTitle>
-          <DialogDescription className="sr-only">{event?.id ? 'Edit the details of this event' : 'Add a new event to your calendar'}</DialogDescription>
+          <DialogDescription className="sr-only">
+            {event?.id ? 'Edit the details of this event' : 'Add a new event to your calendar'}
+          </DialogDescription>
         </DialogHeader>
         {error && <div className="bg-destructive/15 text-destructive rounded-md px-3 py-2 text-sm">{error}</div>}
         <div className="grid gap-4 py-4">
@@ -225,7 +227,9 @@ export function EventDialog({ event, isOpen, onClose, onSave, onDelete }: EventD
                       !startDate && 'text-muted-foreground',
                     )}
                   >
-                    <span className={cn('truncate', !startDate && 'text-muted-foreground')}>{startDate ? format(startDate, 'PPP') : 'Pick a date'}</span>
+                    <span className={cn('truncate', !startDate && 'text-muted-foreground')}>
+                      {startDate ? format(startDate, 'PPP') : 'Pick a date'}
+                    </span>
                     <RiCalendarLine size={16} className="text-muted-foreground/80 shrink-0" aria-hidden="true" />
                   </Button>
                 </PopoverTrigger>
@@ -334,7 +338,12 @@ export function EventDialog({ event, isOpen, onClose, onSave, onDelete }: EventD
           </div>
           <fieldset className="space-y-4">
             <legend className="text-foreground text-sm leading-none font-medium">Etiquette</legend>
-            <RadioGroup className="flex gap-1.5" defaultValue={colorOptions[0]?.value} value={color} onValueChange={(value: EventColor) => setColor(value)}>
+            <RadioGroup
+              className="flex gap-1.5"
+              defaultValue={colorOptions[0]?.value}
+              value={color}
+              onValueChange={(value: EventColor) => setColor(value)}
+            >
               {colorOptions.map((colorOption) => (
                 <RadioGroupItem
                   key={colorOption.value}

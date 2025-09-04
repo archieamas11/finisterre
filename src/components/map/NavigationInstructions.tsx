@@ -195,8 +195,18 @@ export default function NavigationInstructions({
               {/* Current maneuver */}
               {currentManeuver && (
                 <div className="mb-3 sm:mb-4" aria-live="polite">
-                  <div className={cn('flex items-start gap-3 rounded-lg p-3', 'border border-blue-200 bg-blue-50 dark:border-blue-900/40 dark:bg-blue-950/40')}>
-                    <div className={cn('flex h-9 w-9 items-center justify-center rounded-full sm:h-8 sm:w-8', getManeuverColor(currentManeuver.type, true))}>
+                  <div
+                    className={cn(
+                      'flex items-start gap-3 rounded-lg p-3',
+                      'border border-blue-200 bg-blue-50 dark:border-blue-900/40 dark:bg-blue-950/40',
+                    )}
+                  >
+                    <div
+                      className={cn(
+                        'flex h-9 w-9 items-center justify-center rounded-full sm:h-8 sm:w-8',
+                        getManeuverColor(currentManeuver.type, true),
+                      )}
+                    >
                       {getManeuverIcon(currentManeuver.type)}
                     </div>
                     <div className="min-w-0 flex-1">
@@ -215,7 +225,9 @@ export default function NavigationInstructions({
                   {nextManeuver && (
                     <div className="text-muted-foreground mt-4 flex items-center gap-2 text-xs sm:text-sm">
                       <span className="text-[10px] sm:text-xs">Then</span>
-                      <div className={cn('flex h-6 w-6 items-center justify-center rounded', getManeuverColor(nextManeuver.type))}>{getManeuverIcon(nextManeuver.type)}</div>
+                      <div className={cn('flex h-6 w-6 items-center justify-center rounded', getManeuverColor(nextManeuver.type))}>
+                        {getManeuverIcon(nextManeuver.type)}
+                      </div>
                       <span className="truncate">{nextManeuver.instruction}</span>
                     </div>
                   )}
@@ -231,9 +243,17 @@ export default function NavigationInstructions({
                         {allManeuvers.map((maneuver, index) => (
                           <div
                             key={index}
-                            className={cn('flex w-full items-start gap-3 rounded-md p-2 transition-colors', index === maneuverIndex ? 'bg-muted/60 border' : 'hover:bg-muted/50')}
+                            className={cn(
+                              'flex w-full items-start gap-3 rounded-md p-2 transition-colors',
+                              index === maneuverIndex ? 'bg-muted/60 border' : 'hover:bg-muted/50',
+                            )}
                           >
-                            <div className={cn('flex h-6 w-6 items-center justify-center rounded', getManeuverColor(maneuver.type, index === maneuverIndex))}>
+                            <div
+                              className={cn(
+                                'flex h-6 w-6 items-center justify-center rounded',
+                                getManeuverColor(maneuver.type, index === maneuverIndex),
+                              )}
+                            >
                               {getManeuverIcon(maneuver.type)}
                             </div>
                             <div className="min-w-0 flex-1">

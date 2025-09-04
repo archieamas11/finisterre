@@ -149,7 +149,15 @@ export default function LoginPage() {
                 <FormItem>
                   <FormLabel htmlFor="username">Property ID</FormLabel>
                   <FormControl>
-                    <Input placeholder="your property ID" autoComplete="username" id="username" type="text" {...field} aria-required="true" aria-label="Property ID" />
+                    <Input
+                      placeholder="your property ID"
+                      autoComplete="username"
+                      id="username"
+                      type="text"
+                      {...field}
+                      aria-required="true"
+                      aria-label="Property ID"
+                    />
                   </FormControl>
                   <FormMessage aria-live="polite" />
                 </FormItem>
@@ -195,7 +203,13 @@ export default function LoginPage() {
               render={({ field }) => (
                 <FormItem className="flex flex-row items-center justify-between">
                   <FormLabel className="flex cursor-pointer items-center gap-2" htmlFor="login-remember">
-                    <Checkbox onCheckedChange={field.onChange} checked={field.value} id="login-remember" className="size-4" aria-label="Remember me" />
+                    <Checkbox
+                      onCheckedChange={field.onChange}
+                      checked={field.value}
+                      id="login-remember"
+                      className="size-4"
+                      aria-label="Remember me"
+                    />
                     Remember me
                   </FormLabel>
                   <Link className="text-muted-foreground mt-1 block text-xs hover:underline" to="/forgot-password" aria-label="Forgot your password?">

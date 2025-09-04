@@ -27,12 +27,18 @@ function Table({ className, ...props }: React.ComponentProps<'table'>) {
 
 function TableCell({ className, ...props }: React.ComponentProps<'td'>) {
   return (
-    <td className={cn('p-2 align-middle whitespace-nowrap [&:has([role=checkbox])]:pr-0 [&>[role=checkbox]]:translate-y-[2px]', className)} data-slot="table-cell" {...props} />
+    <td
+      className={cn('p-2 align-middle whitespace-nowrap [&:has([role=checkbox])]:pr-0 [&>[role=checkbox]]:translate-y-[2px]', className)}
+      data-slot="table-cell"
+      {...props}
+    />
   )
 }
 
 function TableRow({ className, ...props }: React.ComponentProps<'tr'>) {
-  return <tr className={cn('hover:bg-muted/50 data-[state=selected]:bg-muted border-b transition-colors', className)} data-slot="table-row" {...props} />
+  return (
+    <tr className={cn('hover:bg-muted/50 data-[state=selected]:bg-muted border-b transition-colors', className)} data-slot="table-row" {...props} />
+  )
 }
 
 function TableFooter({ className, ...props }: React.ComponentProps<'tfoot'>) {

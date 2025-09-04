@@ -82,7 +82,10 @@ export function useDataTable<TData>(props: UseDataTableProps<TData>) {
   const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>(initialState?.columnVisibility ?? {})
 
   const [page, setPage] = useQueryState(PAGE_KEY, parseAsInteger.withOptions(queryStateOptions).withDefault(1))
-  const [perPage, setPerPage] = useQueryState(PER_PAGE_KEY, parseAsInteger.withOptions(queryStateOptions).withDefault(initialState?.pagination?.pageSize ?? 10))
+  const [perPage, setPerPage] = useQueryState(
+    PER_PAGE_KEY,
+    parseAsInteger.withOptions(queryStateOptions).withDefault(initialState?.pagination?.pageSize ?? 10),
+  )
 
   const pagination: PaginationState = React.useMemo(() => {
     return {
@@ -159,7 +162,11 @@ export function useDataTable<TData>(props: UseDataTableProps<TData>) {
 
     return Object.entries(filterValues).reduce<ColumnFiltersState>((filters, [key, value]) => {
       if (value !== null) {
-        const processedValue = Array.isArray(value) ? value : typeof value === 'string' && /[^a-zA-Z0-9]/.test(value) ? value.split(/[^a-zA-Z0-9]+/).filter(Boolean) : [value]
+        const processedValue = Array.isArray(value)
+          ? value
+          : typeof value === 'string' && /[^a-zA-Z0-9]/.test(value)
+            ? value.split(/[^a-zA-Z0-9]+/).filter(Boolean)
+            : [value]
 
         filters.push({
           id: key,

@@ -1,6 +1,16 @@
 'use client'
 
-import { addHours, areIntervalsOverlapping, differenceInMinutes, eachHourOfInterval, format, getHours, getMinutes, isSameDay, startOfDay } from 'date-fns'
+import {
+  addHours,
+  areIntervalsOverlapping,
+  differenceInMinutes,
+  eachHourOfInterval,
+  format,
+  getHours,
+  getMinutes,
+  isSameDay,
+  startOfDay,
+} from 'date-fns'
 import React, { useMemo } from 'react'
 
 import { EndHour, StartHour, WeekCellsHeight } from '@/components/calendar/constants'
@@ -114,7 +124,9 @@ export function DayView({ currentDate, events, onEventSelect, onEventCreate }: D
           columns[columnIndex] = col
           placed = true
         } else {
-          const overlaps = col.some((c) => areIntervalsOverlapping({ start: adjustedStart, end: adjustedEnd }, { start: new Date(c.event.start), end: new Date(c.event.end) }))
+          const overlaps = col.some((c) =>
+            areIntervalsOverlapping({ start: adjustedStart, end: adjustedEnd }, { start: new Date(c.event.start), end: new Date(c.event.end) }),
+          )
           if (!overlaps) {
             placed = true
           } else {
@@ -159,7 +171,9 @@ export function DayView({ currentDate, events, onEventSelect, onEventCreate }: D
         <div className="border-border/70 bg-muted/50 border-t">
           <div className="grid grid-cols-[3rem_1fr] sm:grid-cols-[4rem_1fr]">
             <div className="relative">
-              <span className="text-muted-foreground/70 absolute bottom-0 left-0 h-6 w-16 max-w-full pe-2 text-right text-[10px] sm:pe-4 sm:text-xs">All day</span>
+              <span className="text-muted-foreground/70 absolute bottom-0 left-0 h-6 w-16 max-w-full pe-2 text-right text-[10px] sm:pe-4 sm:text-xs">
+                All day
+              </span>
             </div>
             <div className="border-border/70 relative border-r p-1 last:border-r-0">
               {allDayEvents.map((event) => {
@@ -169,7 +183,14 @@ export function DayView({ currentDate, events, onEventSelect, onEventCreate }: D
                 const isLastDay = isSameDay(currentDate, eventEnd)
 
                 return (
-                  <EventItem key={`spanning-${event.id}`} onClick={(e) => handleEventClick(event, e)} event={event} view="month" isFirstDay={isFirstDay} isLastDay={isLastDay}>
+                  <EventItem
+                    key={`spanning-${event.id}`}
+                    onClick={(e) => handleEventClick(event, e)}
+                    event={event}
+                    view="month"
+                    isFirstDay={isFirstDay}
+                    isLastDay={isLastDay}
+                  >
                     {/* Always show the title in day view for better usability */}
                     <div>{event.title}</div>
                   </EventItem>
@@ -208,7 +229,13 @@ export function DayView({ currentDate, events, onEventSelect, onEventCreate }: D
               }}
             >
               <div className="size-full">
-                <DraggableEvent event={positionedEvent.event} view="day" onClick={(e) => handleEventClick(positionedEvent.event, e)} showTime height={positionedEvent.height} />
+                <DraggableEvent
+                  event={positionedEvent.event}
+                  view="day"
+                  onClick={(e) => handleEventClick(positionedEvent.event, e)}
+                  showTime
+                  height={positionedEvent.height}
+                />
               </div>
             </div>
           ))}

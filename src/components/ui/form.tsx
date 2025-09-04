@@ -71,13 +71,29 @@ function FormMessage({ className, ...props }: React.ComponentProps<'p'>) {
 function FormControl({ ...props }: React.ComponentProps<typeof Slot>) {
   const { error, formItemId, formMessageId, formDescriptionId } = useFormField()
 
-  return <Slot aria-describedby={!error ? formDescriptionId : `${formDescriptionId} ${formMessageId}`} data-slot="form-control" aria-invalid={!!error} id={formItemId} {...props} />
+  return (
+    <Slot
+      aria-describedby={!error ? formDescriptionId : `${formDescriptionId} ${formMessageId}`}
+      data-slot="form-control"
+      aria-invalid={!!error}
+      id={formItemId}
+      {...props}
+    />
+  )
 }
 
 function FormLabel({ className, ...props }: React.ComponentProps<typeof LabelPrimitive.Root>) {
   const { error, formItemId } = useFormField()
 
-  return <Label className={cn('data-[error=true]:text-destructive', className)} data-slot="form-label" data-error={!!error} htmlFor={formItemId} {...props} />
+  return (
+    <Label
+      className={cn('data-[error=true]:text-destructive', className)}
+      data-slot="form-label"
+      data-error={!!error}
+      htmlFor={formItemId}
+      {...props}
+    />
+  )
 }
 
 function FormItem({ className, ...props }: React.ComponentProps<'div'>) {

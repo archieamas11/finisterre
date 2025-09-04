@@ -192,7 +192,12 @@ export function CalendarDndProvider({ children, onEventUpdate }: CalendarDndProv
         }
 
         // Only update if date has changed
-        if (!currentTime || newTime.getDate() !== currentTime.getDate() || newTime.getMonth() !== currentTime.getMonth() || newTime.getFullYear() !== currentTime.getFullYear()) {
+        if (
+          !currentTime ||
+          newTime.getDate() !== currentTime.getDate() ||
+          newTime.getMonth() !== currentTime.getMonth() ||
+          newTime.getFullYear() !== currentTime.getFullYear()
+        ) {
           setCurrentTime(newTime)
         }
       }

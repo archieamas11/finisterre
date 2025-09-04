@@ -16,7 +16,9 @@ const ErrorFallback: React.FC<ErrorFallbackProps> = ({ error, resetErrorBoundary
           <AlertTriangle className="text-destructive h-12 w-12" />
         </div>
         <CardTitle className="text-destructive">Oops! Something went wrong</CardTitle>
-        <CardDescription>We're sorry, but an unexpected error occurred. Please try refreshing the page or contact support if the problem persists.</CardDescription>
+        <CardDescription>
+          We're sorry, but an unexpected error occurred. Please try refreshing the page or contact support if the problem persists.
+        </CardDescription>
       </CardHeader>
       <CardContent className="space-y-4 text-center">
         <details className="text-left">

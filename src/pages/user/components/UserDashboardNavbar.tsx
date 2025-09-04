@@ -52,7 +52,10 @@ export default function UserDashboardNavbar() {
                     d="M4 12L20 12"
                     className="origin-center -translate-y-[7px] transition-all duration-300 ease-[cubic-bezier(.5,.85,.25,1.1)] group-aria-expanded:translate-x-0 group-aria-expanded:translate-y-0 group-aria-expanded:rotate-[315deg]"
                   />
-                  <path d="M4 12H20" className="origin-center transition-all duration-300 ease-[cubic-bezier(.5,.85,.25,1.8)] group-aria-expanded:rotate-45" />
+                  <path
+                    d="M4 12H20"
+                    className="origin-center transition-all duration-300 ease-[cubic-bezier(.5,.85,.25,1.8)] group-aria-expanded:rotate-45"
+                  />
                   <path
                     d="M4 12H20"
                     className="origin-center translate-y-[7px] transition-all duration-300 ease-[cubic-bezier(.5,.85,.25,1.1)] group-aria-expanded:translate-y-0 group-aria-expanded:rotate-[135deg]"
@@ -100,9 +103,13 @@ export default function UserDashboardNavbar() {
                 <NavigationMenuItem key={index}>
                   <Link
                     to={link.href}
-                    className={cn('flex items-center gap-2 rounded-md px-2 py-1.5 font-medium transition-colors', 'text-foreground hover:text-primary', {
-                      'bg-primary/10 text-primary': link.active,
-                    })}
+                    className={cn(
+                      'flex items-center gap-2 rounded-md px-2 py-1.5 font-medium transition-colors',
+                      'text-foreground hover:text-primary',
+                      {
+                        'bg-primary/10 text-primary': link.active,
+                      },
+                    )}
                   >
                     <Icon size={16} className={cn('text-muted-foreground/80', { 'text-primary': link.active })} aria-hidden="true" />
                     <span className="text-sm">{link.label}</span>

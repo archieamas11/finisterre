@@ -80,7 +80,9 @@ function DataTableToolbarFilter<TData>({ column }: DataTableToolbarFilterProps<T
                 className={cn('h-8 w-[120px]', columnMeta.unit && 'pr-8')}
               />
               {columnMeta.unit && (
-                <span className="bg-accent text-muted-foreground absolute top-0 right-0 bottom-0 flex items-center rounded-r-md px-2 text-sm">{columnMeta.unit}</span>
+                <span className="bg-accent text-muted-foreground absolute top-0 right-0 bottom-0 flex items-center rounded-r-md px-2 text-sm">
+                  {columnMeta.unit}
+                </span>
               )}
             </div>
           )
@@ -94,7 +96,14 @@ function DataTableToolbarFilter<TData>({ column }: DataTableToolbarFilterProps<T
 
         case 'select':
         case 'multiSelect':
-          return <DataTableFacetedFilter column={column} title={columnMeta.label ?? column.id} options={columnMeta.options ?? []} multiple={columnMeta.variant === 'multiSelect'} />
+          return (
+            <DataTableFacetedFilter
+              column={column}
+              title={columnMeta.label ?? column.id}
+              options={columnMeta.options ?? []}
+              multiple={columnMeta.variant === 'multiSelect'}
+            />
+          )
 
         default:
           return null

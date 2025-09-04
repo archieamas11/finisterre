@@ -22,10 +22,14 @@ export const HeaderSection: FC = () => {
 
   return (
     <header
-      className={cn('fixed top-2 right-0 left-0 z-50 mx-auto flex max-w-7xl items-center justify-between rounded-xl px-4 py-2 sm:px-6', 'w-[85vw] sm:w-[90vw] md:w-[80vw]', {
-        'border-border text-foreground bg-white/60 shadow-lg backdrop-blur-lg': scrolled,
-        'bg-transparent text-white': !scrolled,
-      })}
+      className={cn(
+        'fixed top-2 right-0 left-0 z-50 mx-auto flex max-w-7xl items-center justify-between rounded-xl px-4 py-2 sm:px-6',
+        'w-[85vw] sm:w-[90vw] md:w-[80vw]',
+        {
+          'border-border text-foreground bg-white/60 shadow-lg backdrop-blur-lg': scrolled,
+          'bg-transparent text-white': !scrolled,
+        },
+      )}
       aria-label="Main Navigation"
     >
       <Link

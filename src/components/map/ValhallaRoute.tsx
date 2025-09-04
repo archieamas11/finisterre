@@ -145,7 +145,9 @@ export function ValhallaRoute({
           }}
         />
       )}
-      {showMarkers && userLocation && <UserLocationMarker userLocation={userLocation} centerOnFirst={false} showAccuracyCircle={isNavigating} enableAnimation />}
+      {showMarkers && userLocation && (
+        <UserLocationMarker userLocation={userLocation} centerOnFirst={false} showAccuracyCircle={isNavigating} enableAnimation />
+      )}
       {showMarkers && endPoint && <Marker pane="end-icon" position={endPoint} icon={endIcon} zIndexOffset={1000} interactive={false} />}
     </>
   )

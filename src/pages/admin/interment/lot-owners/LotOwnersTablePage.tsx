@@ -18,7 +18,13 @@ export default function LotOwnersTablePage() {
   }
 
   if (isError || !lotOwners) {
-    return <ErrorMessage message="Failed to load user data. Please check your connection and try again." onRetry={() => refetch()} showRetryButton={true} />
+    return (
+      <ErrorMessage
+        message="Failed to load user data. Please check your connection and try again."
+        onRetry={() => refetch()}
+        showRetryButton={true}
+      />
+    )
   }
   return <LotOwnersTable data={lotOwners} />
 }

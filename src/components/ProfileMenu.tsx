@@ -49,7 +49,11 @@ export default function ProfileMenu({ user }: { user: ProfileUser }) {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="ghost" size={'icon'} className="flex rounded-full p-0 ring-0 outline-none focus:ring-0 focus:outline-none focus-visible:ring-0 focus-visible:outline-none">
+        <Button
+          variant="ghost"
+          size={'icon'}
+          className="flex rounded-full p-0 ring-0 outline-none focus:ring-0 focus:outline-none focus-visible:ring-0 focus-visible:outline-none"
+        >
           <Avatar className="h-9 w-9">
             <AvatarImage src={user.avatar} alt={user.name} className="bg-background rounded-full" />
             <AvatarFallback className="bg-background">{getInitials(user.name)}</AvatarFallback>
@@ -71,7 +75,11 @@ export default function ProfileMenu({ user }: { user: ProfileUser }) {
           )}
 
           <DropdownMenuItem onClick={onToggleTheme} disabled={!isMounted} aria-label="Toggle theme">
-            {isMounted && isDark ? <SunIcon size={16} className="opacity-60" aria-hidden="true" /> : <MoonIcon size={16} className="opacity-60" aria-hidden="true" />}
+            {isMounted && isDark ? (
+              <SunIcon size={16} className="opacity-60" aria-hidden="true" />
+            ) : (
+              <MoonIcon size={16} className="opacity-60" aria-hidden="true" />
+            )}
             <span>{isMounted ? (isDark ? 'Light Mode' : 'Dark Mode') : 'Change Theme'}</span>
           </DropdownMenuItem>
         </DropdownMenuGroup>

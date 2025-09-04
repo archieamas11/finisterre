@@ -156,7 +156,11 @@ export function DataTableSliderFilter<TData>({ column, title }: DataTableSliderF
                 onChange={onFromInputChange}
                 className={cn('h-8 w-24', unit && 'pr-8')}
               />
-              {unit && <span className="bg-accent text-muted-foreground absolute top-0 right-0 bottom-0 flex items-center rounded-r-md px-2 text-sm">{unit}</span>}
+              {unit && (
+                <span className="bg-accent text-muted-foreground absolute top-0 right-0 bottom-0 flex items-center rounded-r-md px-2 text-sm">
+                  {unit}
+                </span>
+              )}
             </div>
             <Label htmlFor={`${id}-to`} className="sr-only">
               to
@@ -176,7 +180,11 @@ export function DataTableSliderFilter<TData>({ column, title }: DataTableSliderF
                 onChange={onToInputChange}
                 className={cn('h-8 w-24', unit && 'pr-8')}
               />
-              {unit && <span className="bg-accent text-muted-foreground absolute top-0 right-0 bottom-0 flex items-center rounded-r-md px-2 text-sm">{unit}</span>}
+              {unit && (
+                <span className="bg-accent text-muted-foreground absolute top-0 right-0 bottom-0 flex items-center rounded-r-md px-2 text-sm">
+                  {unit}
+                </span>
+              )}
             </div>
           </div>
           <Label htmlFor={`${id}-slider`} className="sr-only">

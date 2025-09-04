@@ -110,7 +110,12 @@ export function DataTableFacetedFilter<TData, TValue>({ column, title, options, 
 
                 return (
                   <CommandItem key={option.value} onSelect={() => onItemSelect(option, isSelected)}>
-                    <div className={cn('border-primary flex size-4 items-center justify-center rounded-sm border', isSelected ? 'bg-primary' : 'opacity-50 [&_svg]:invisible')}>
+                    <div
+                      className={cn(
+                        'border-primary flex size-4 items-center justify-center rounded-sm border',
+                        isSelected ? 'bg-primary' : 'opacity-50 [&_svg]:invisible',
+                      )}
+                    >
                       <Check />
                     </div>
                     {option.icon && <option.icon />}

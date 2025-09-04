@@ -27,7 +27,8 @@ export function DataTableColumnHeader<TData, TValue>({ column, title, className,
         {...props}
       >
         {title}
-        {column.getCanSort() && (column.getIsSorted() === 'desc' ? <ChevronDown /> : column.getIsSorted() === 'asc' ? <ChevronUp /> : <ChevronsUpDown />)}
+        {column.getCanSort() &&
+          (column.getIsSorted() === 'desc' ? <ChevronDown /> : column.getIsSorted() === 'asc' ? <ChevronUp /> : <ChevronsUpDown />)}
       </DropdownMenuTrigger>
       <DropdownMenuContent align="start" className="w-28">
         {column.getCanSort() && (

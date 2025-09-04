@@ -11,22 +11,31 @@ import type { DeceasedRecords } from '@/types/interment.types'
 import { DataTableColumnHeader } from '@/components/data-table/data-table-column-header'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
-import { DropdownMenuSeparator, DropdownMenuContent, DropdownMenuTrigger, DropdownMenuLabel, DropdownMenuItem, DropdownMenu } from '@/components/ui/dropdown-menu'
+import {
+  DropdownMenuSeparator,
+  DropdownMenuContent,
+  DropdownMenuTrigger,
+  DropdownMenuLabel,
+  DropdownMenuItem,
+  DropdownMenu,
+} from '@/components/ui/dropdown-menu'
 import { capitalizeWords } from '@/lib/stringUtils'
 import { calculateYearsBuried } from '@/utils/date.utils'
 
-const IndeterminateCheckbox = React.forwardRef<HTMLInputElement, React.InputHTMLAttributes<HTMLInputElement> & { indeterminate?: boolean }>(({ indeterminate, ...props }, ref) => {
-  const localRef = React.useRef<HTMLInputElement>(null)
-  const resolvedRef = (ref as React.RefObject<HTMLInputElement>) ?? localRef
+const IndeterminateCheckbox = React.forwardRef<HTMLInputElement, React.InputHTMLAttributes<HTMLInputElement> & { indeterminate?: boolean }>(
+  ({ indeterminate, ...props }, ref) => {
+    const localRef = React.useRef<HTMLInputElement>(null)
+    const resolvedRef = (ref as React.RefObject<HTMLInputElement>) ?? localRef
 
-  React.useEffect(() => {
-    if (resolvedRef.current) {
-      resolvedRef.current.indeterminate = Boolean(indeterminate) && !props.checked
-    }
-  }, [indeterminate, props.checked, resolvedRef])
+    React.useEffect(() => {
+      if (resolvedRef.current) {
+        resolvedRef.current.indeterminate = Boolean(indeterminate) && !props.checked
+      }
+    }, [indeterminate, props.checked, resolvedRef])
 
-  return <input ref={resolvedRef} type="checkbox" {...props} />
-})
+    return <input ref={resolvedRef} type="checkbox" {...props} />
+  },
+)
 IndeterminateCheckbox.displayName = 'IndeterminateCheckbox'
 
 export const deceasedRecordsColumns: ColumnDef<DeceasedRecords>[] = [
@@ -41,7 +50,12 @@ export const deceasedRecordsColumns: ColumnDef<DeceasedRecords>[] = [
       />
     ),
     cell: ({ row }) => (
-      <IndeterminateCheckbox aria-label={`Select row ${row.index + 1}`} checked={row.getIsSelected()} disabled={!row.getCanSelect?.()} onChange={row.getToggleSelectedHandler()} />
+      <IndeterminateCheckbox
+        aria-label={`Select row ${row.index + 1}`}
+        checked={row.getIsSelected()}
+        disabled={!row.getCanSelect?.()}
+        onChange={row.getToggleSelectedHandler()}
+      />
     ),
     size: 10,
   },

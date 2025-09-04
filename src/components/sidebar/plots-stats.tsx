@@ -57,7 +57,14 @@ export function ChartAreaStackedExpand() {
             <XAxis dataKey="month" tickLine={false} axisLine={false} tickMargin={8} tickFormatter={(value) => value.slice(0, 3)} />
             <ChartTooltip cursor={false} content={<ChartTooltipContent indicator="line" />} />
             <Area dataKey="memorial" type="natural" fill="var(--color-memorial)" fillOpacity={0.1} stroke="var(--color-memorial)" stackId="a" />{' '}
-            <Area dataKey="columbarium" type="natural" fill="var(--color-columbarium)" fillOpacity={0.4} stroke="var(--color-columbarium)" stackId="a" />
+            <Area
+              dataKey="columbarium"
+              type="natural"
+              fill="var(--color-columbarium)"
+              fillOpacity={0.4}
+              stroke="var(--color-columbarium)"
+              stackId="a"
+            />
             <Area dataKey="serenity" type="natural" fill="var(--color-serenity)" fillOpacity={0.4} stroke="var(--color-serenity)" stackId="a" />
           </AreaChart>
         </ChartContainer>

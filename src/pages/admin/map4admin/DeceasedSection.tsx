@@ -102,7 +102,9 @@ export function DeceasedSection({ owner, deceased, isLoading }: CombinedSectionP
                 </div>
               )
             })}
-            {deceased.length > 2 && <div className="text-muted-foreground mt-1 border-t pt-1 text-center text-xs">+{deceased.length - 2} more deceased</div>}
+            {deceased.length > 2 && (
+              <div className="text-muted-foreground mt-1 border-t pt-1 text-center text-xs">+{deceased.length - 2} more deceased</div>
+            )}
           </div>
         ) : (
           <p className="text-muted-foreground pl-3 text-xs">No deceased information</p>

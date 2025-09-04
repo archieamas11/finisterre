@@ -30,7 +30,14 @@ const formSchema = z.object({
 
 type FormData = z.infer<typeof formSchema>
 
-export function CreateDeceasedRecordDialog({ open, onOpenChange, onSubmit: propOnSubmit, initialValues, isPending = false, mode = 'add' }: DeceasedDialogProps) {
+export function CreateDeceasedRecordDialog({
+  open,
+  onOpenChange,
+  onSubmit: propOnSubmit,
+  initialValues,
+  isPending = false,
+  mode = 'add',
+}: DeceasedDialogProps) {
   const form = useForm<FormData>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -78,7 +85,9 @@ export function CreateDeceasedRecordDialog({ open, onOpenChange, onSubmit: propO
       <DialogContent className="sm:max-w-[650px]">
         <DialogHeader>
           <DialogTitle>{mode === 'add' ? '➕ Create New Deceased Record' : '✏️ Edit Deceased Record'}</DialogTitle>
-          <DialogDescription>{mode === 'add' ? 'Add a new deceased person record to the cemetery system.' : 'Make changes to the deceased person record.'}</DialogDescription>
+          <DialogDescription>
+            {mode === 'add' ? 'Add a new deceased person record to the cemetery system.' : 'Make changes to the deceased person record.'}
+          </DialogDescription>
         </DialogHeader>
 
         <Form {...form}>
