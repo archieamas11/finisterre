@@ -113,16 +113,16 @@ export default function NavigationInstructions({
           exit={{ opacity: 0, y: 20 }}
           transition={{ duration: 0.2 }}
           className={cn(
-            'fixed inset-x-3 bottom-3 z-[1000] mx-auto max-w-md',
+            'fixed bottom-0 z-[1000] mx-auto w-full',
             // Desktop/tablet placement as floating panel on the top-left
-            'sm:inset-x-auto sm:top-8 sm:bottom-auto sm:left-8',
+            'sm:inset-x-auto sm:top-8 sm:bottom-auto sm:left-8 sm:w-96',
           )}
           role="region"
           aria-label="Turn-by-turn navigation"
         >
           <Card
             className={cn(
-              'rounded-xl border shadow-lg',
+              'rounded-t-3xl rounded-bl-none border shadow-lg sm:rounded-lg',
               // Subtle translucency over the map
               'bg-background/90 supports-[backdrop-filter]:bg-background/60 backdrop-blur',
             )}
