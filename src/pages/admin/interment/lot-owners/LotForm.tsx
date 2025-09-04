@@ -13,7 +13,7 @@ import { DialogDescription, DialogContent, DialogHeader, DialogTitle, Dialog } f
 import { FormControl, FormMessage, FormField, FormLabel, FormItem, Form } from '@/components/ui/form'
 import { SelectTrigger, SelectContent, SelectValue, SelectItem, Select } from '@/components/ui/select'
 
-import CustomerSelect from './CustomerSelect'
+import CustomerSelect from '../customer/CustomerSelect'
 
 const LotSchema = z.object({
   plot_id: z.string().min(1, 'Plot ID is required'),

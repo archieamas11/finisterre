@@ -42,15 +42,15 @@ export const adminSidebarItems: NavGroup[] = [
         url: '/admin/interment-setup',
         subItems: [
           {
-            title: 'Manage Customers',
+            title: 'Customers',
             url: '/admin/interment-setup/customers',
           },
           {
-            title: 'Manage Lot Owners',
+            title: 'Lot Owners',
             url: '/admin/interment-setup/lot-owners',
           },
           {
-            title: 'Manage Deceased Records',
+            title: 'Deceased Records',
             url: '/admin/interment-setup/deceased-records',
           },
         ],

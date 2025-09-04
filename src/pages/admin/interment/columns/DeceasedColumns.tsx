@@ -4,44 +4,55 @@ import type { ColumnDef } from '@tanstack/react-table'
 
 import { MoreHorizontal, Archive } from 'lucide-react'
 // React import intentionally omitted; JSX runtime handles it
+import React from 'react'
 
 import type { DeceasedRecords } from '@/types/interment.types'
 
+import { DataTableColumnHeader } from '@/components/data-table/data-table-column-header'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
-import { Checkbox } from '@/components/ui/checkbox'
 import { DropdownMenuSeparator, DropdownMenuContent, DropdownMenuTrigger, DropdownMenuLabel, DropdownMenuItem, DropdownMenu } from '@/components/ui/dropdown-menu'
 import { capitalizeWords } from '@/lib/stringUtils'
-import DeceasedSelectAllCheckbox from '@/pages/admin/interment/columns/DeceasedSelectAllCheckbox'
+import { calculateYearsBuried } from '@/utils/date.utils'
+
+const IndeterminateCheckbox = React.forwardRef<HTMLInputElement, React.InputHTMLAttributes<HTMLInputElement> & { indeterminate?: boolean }>(({ indeterminate, ...props }, ref) => {
+  const localRef = React.useRef<HTMLInputElement>(null)
+  const resolvedRef = (ref as React.RefObject<HTMLInputElement>) ?? localRef
+
+  React.useEffect(() => {
+    if (resolvedRef.current) {
+      resolvedRef.current.indeterminate = Boolean(indeterminate) && !props.checked
+    }
+  }, [indeterminate, props.checked, resolvedRef])
+
+  return <input ref={resolvedRef} type="checkbox" {...props} />
+})
+IndeterminateCheckbox.displayName = 'IndeterminateCheckbox'
 
 export const deceasedRecordsColumns: ColumnDef<DeceasedRecords>[] = [
   {
     id: 'select',
+    header: ({ table: tbl }) => (
+      <IndeterminateCheckbox
+        aria-label="Select all rows"
+        checked={tbl.getIsAllPageRowsSelected()}
+        indeterminate={tbl.getIsSomePageRowsSelected()}
+        onChange={tbl.getToggleAllPageRowsSelectedHandler()}
+      />
+    ),
+    cell: ({ row }) => (
+      <IndeterminateCheckbox aria-label={`Select row ${row.index + 1}`} checked={row.getIsSelected()} disabled={!row.getCanSelect?.()} onChange={row.getToggleSelectedHandler()} />
+    ),
     size: 10,
-    enableHiding: false,
-    enableSorting: false,
-    header: ({ table }) => <DeceasedSelectAllCheckbox table={table} />,
-    cell: ({ row }) => {
-      if (!row || typeof row.getIsSelected !== 'function' || typeof row.toggleSelected !== 'function') return null
-      return (
-        <Checkbox
-          onCheckedChange={(value) => {
-            row.toggleSelected(!!value)
-          }}
-          className="border-gray-300 dark:border-gray-600"
-          checked={row.getIsSelected()}
-          aria-label="Select row"
-        />
-      )
-    },
   },
   {
-    header: 'ID',
+    header: ({ column }) => <DataTableColumnHeader column={column} title="ID" />,
     size: 10,
     accessorKey: 'deceased_id',
+    meta: { label: 'Deceased ID' },
   },
   {
-    header: 'Decesed Name',
+    header: ({ column }) => <DataTableColumnHeader column={column} title="Deceased Name" />,
     accessorKey: 'dead_fullname',
     cell: ({ row }) =>
       row.original.dead_fullname ? (
@@ -51,9 +62,10 @@ export const deceasedRecordsColumns: ColumnDef<DeceasedRecords>[] = [
           <span>N/A</span>
         </Badge>
       ),
+    meta: { label: 'Deceased Name' },
   },
   {
-    header: 'Kin',
+    header: ({ column }) => <DataTableColumnHeader column={column} title="kin" />,
     accessorKey: 'full_name',
     cell: ({ row }) =>
       row.original.full_name ? (
@@ -63,10 +75,11 @@ export const deceasedRecordsColumns: ColumnDef<DeceasedRecords>[] = [
           <span>N/A</span>
         </Badge>
       ),
+    meta: { label: 'Kin Name' },
   },
   {
     id: 'location',
-    header: 'Buried Location',
+    header: ({ column }) => <DataTableColumnHeader column={column} title="Buried Location" />,
     accessorFn: (row) =>
       row.block && row.plot_id
         ? `Block ${row.block} • Grave ${row.plot_id}`
@@ -74,7 +87,7 @@ export const deceasedRecordsColumns: ColumnDef<DeceasedRecords>[] = [
           ? `${capitalizeWords(row.category)} • Niche ${row.niche_number}`
           : null,
     cell: ({ row }) => {
-      // 🧩 Show block/plot if present, else category/niche_id, else N/A badge
+      // Show block/plot if present, else category/niche_id, else N/A badge
       if (row.original.block && row.original.plot_id) {
         return `Block ${row.original.block} • Grave ${row.original.plot_id}`
       } else if (row.original.category && row.original.niche_number) {
@@ -87,9 +100,10 @@ export const deceasedRecordsColumns: ColumnDef<DeceasedRecords>[] = [
         )
       }
     },
+    meta: { label: 'Buried Location' },
   },
   {
-    header: 'Interment Date',
+    header: ({ column }) => <DataTableColumnHeader column={column} title="Interment Date" />,
     accessorKey: 'dead_interment',
     cell: ({ row }) =>
       row.original.dead_interment ? (
@@ -101,25 +115,11 @@ export const deceasedRecordsColumns: ColumnDef<DeceasedRecords>[] = [
       ),
   },
   {
-    header: 'Status',
+    header: ({ column }) => <DataTableColumnHeader column={column} title="Status" />,
     size: 10,
     id: 'years_buried',
-    cell: ({ row }) => {
-      const buriedDateStr = row.original.dead_interment
-      if (!buriedDateStr) return 'Unknown'
-
-      const buriedDate = new Date(buriedDateStr)
-      const now = new Date()
-
-      const yearsBuried = now.getFullYear() - buriedDate.getFullYear()
-      const monthDiff = now.getMonth() - buriedDate.getMonth()
-      const dayDiff = now.getDate() - buriedDate.getDate()
-
-      // If less than a full year
-      const isLessThanOneYear = yearsBuried < 1 || (yearsBuried === 1 && (monthDiff < 0 || (monthDiff === 0 && dayDiff < 0)))
-
-      return isLessThanOneYear ? 'Less than a year' : `${yearsBuried} year${yearsBuried > 1 ? 's' : ''}`
-    },
+    cell: ({ row }) => calculateYearsBuried(row.original.dead_interment),
+    meta: { label: 'Years Buried' },
   },
   {
     id: 'actions',
