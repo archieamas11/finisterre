@@ -1,4 +1,6 @@
+import { Capacitor } from '@capacitor/core'
 import { CalendarDays, Heart, MapPin } from 'lucide-react'
+import { useNavigate } from 'react-router-dom'
 
 import { ErrorMessage } from '@/components/ErrorMessage'
 import { Badge } from '@/components/ui/badge'
@@ -22,11 +24,19 @@ interface UserDashboardProps {
 
 export default function UserDashboard({ onPlotNavigate }: UserDashboardProps) {
   const { data: dashboardData, isLoading, error } = useUserDashboard()
+  const navigate = useNavigate()
 
   const handleNavigateToPlot = (coordinates?: Coordinates | null) => {
     if (!coordinates) return
     window.scrollTo(0, 0)
-    onPlotNavigate?.(coordinates)
+    if (onPlotNavigate) {
+      onPlotNavigate(coordinates)
+      return
+    }
+    if (!Capacitor.isNativePlatform()) {
+      const [lat, lng] = coordinates
+      navigate(`/user/map?direction=true&lat=${lat}&lng=${lng}`)
+    }
   }
 
   if (isLoading) {

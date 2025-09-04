@@ -276,7 +276,7 @@ export default function MapPage({ onBack, initialDirection }: { onBack?: () => v
     }
   }, [route, routeCoordinates, state.isDirectionLoading])
 
-  // 🔄 Reset route completion state when route is cleared
+  // Reset route completion state when route is cleared
   useEffect(() => {
     if (!route || routeCoordinates.length === 0) {
       if (state.pendingPopupClose) dispatch({ type: 'POPUP_CLOSE_CONFIRMED' })
@@ -295,7 +295,7 @@ export default function MapPage({ onBack, initialDirection }: { onBack?: () => v
       try {
         loc = await getCurrentLocation()
       } catch (err) {
-        // 💡 Silent fail: toast not needed; user just won't see fly animation
+        // Silent fail: toast not needed; user just won't see fly animation
         console.warn('Could not get current location for flyTo:', err)
       }
     }
@@ -316,10 +316,10 @@ export default function MapPage({ onBack, initialDirection }: { onBack?: () => v
   const handleDirectionClick = useCallback(
     async (to: [number, number]) => {
       const [toLatitude, toLongitude] = to
-      console.log('🧭 Direction click triggered:', { to, toLatitude, toLongitude })
+      console.log(' Direction click triggered:', { to, toLatitude, toLongitude })
 
       if (!toLatitude || !toLongitude) {
-        console.warn('⚠️ Invalid destination coordinates:', to)
+        console.warn(' Invalid destination coordinates:', to)
         dispatch({ type: 'SET_DIRECTION_LOADING', value: false })
         return
       }
@@ -330,19 +330,19 @@ export default function MapPage({ onBack, initialDirection }: { onBack?: () => v
       try {
         // Get user location: use current if available, otherwise fetch
         let userLocation = currentLocation
-        console.log('📍 Current location available:', !!userLocation, userLocation)
+        console.log(' Current location available:', !!userLocation, userLocation)
 
         if (!userLocation) {
-          console.log('📍 Fetching fresh user location...')
+          console.log(' Fetching fresh user location...')
           userLocation = await getCurrentLocation()
-          console.log('📍 Fresh location obtained:', userLocation)
+          console.log(' Fresh location obtained:', userLocation)
         }
 
         if (!userLocation || !userLocation.latitude || !userLocation.longitude) {
           throw new Error('Could not determine current location')
         }
 
-        console.log('🚀 Starting navigation with locations:', {
+        console.log(' Starting navigation with locations:', {
           from: { latitude: userLocation.latitude, longitude: userLocation.longitude },
           to: { latitude: toLatitude, longitude: toLongitude },
         })
@@ -364,8 +364,8 @@ export default function MapPage({ onBack, initialDirection }: { onBack?: () => v
         // Open navigation instructions UI
         dispatch({ type: 'SET_NAV_OPEN', value: true })
       } catch (error) {
-        console.error('🚫 Failed to start navigation:', error)
-        console.error('🚫 Error details:', {
+        console.error(' Failed to start navigation:', error)
+        console.error(' Error details:', {
           name: error instanceof Error ? error.name : 'Unknown',
           message: error instanceof Error ? error.message : String(error),
           stack: error instanceof Error ? error.stack : undefined,
@@ -388,8 +388,11 @@ export default function MapPage({ onBack, initialDirection }: { onBack?: () => v
     const lat = searchParams.get('lat')
     const lng = searchParams.get('lng')
     if (direction === 'true' && lat && lng) {
-      const coords: [number, number] = [parseFloat(lat), parseFloat(lng)]
-      handleDirectionClick(coords)
+      const latNum = parseFloat(lat)
+      const lngNum = parseFloat(lng)
+      if (!isNaN(latNum) && !isNaN(lngNum)) {
+        handleDirectionClick([latNum, lngNum])
+      }
     }
   }, [searchParams, handleDirectionClick])
 
