@@ -1,11 +1,12 @@
 import { HiNewspaper } from 'react-icons/hi'
-import { useState } from 'react'
+import { useState, useCallback } from 'react'
 import { Page, Navbar, Tabbar, TabbarLink, ToolbarPane, Fab, Link, Card } from 'konsta/react'
 import { MapPin, UserIcon, HomeIcon, LogIn } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 import AndroidMapPage from './AndroidMapPage'
 import AndroidProfilePage from '@/pages/android/AndroidProfilePage'
 import UserDashboard from '@/pages/user/UserDashboard'
+import type { Coordinates } from '@/pages/user/components/types'
 import { isAuthenticated } from '@/utils/auth.utils'
 import { AnnouncementCard } from '@/pages/user/components/AnnouncementCard'
 
@@ -13,6 +14,7 @@ export default function AndroidHomepage() {
   const [activeTab, setActiveTab] = useState('home')
   const [showMapPage, setShowMapPage] = useState(false)
   const [showProfilePage, setShowProfilePage] = useState(false)
+  const [mapCoordinates, setMapCoordinates] = useState<Coordinates | null>(null)
   const navigate = useNavigate()
 
   // Dynamic navbar content based on active tab
@@ -29,6 +31,12 @@ export default function AndroidHomepage() {
 
   const { title, subtitle } = getNavbarContent()
 
+  const handlePlotNavigate = useCallback((coords?: Coordinates | null) => {
+    if (!coords) return
+    setMapCoordinates(coords)
+    setShowMapPage(true)
+  }, [])
+
   // If showing profile page, render it as the main page
   if (showProfilePage) {
     return <AndroidProfilePage onBack={() => setShowProfilePage(false)} />
@@ -36,7 +44,7 @@ export default function AndroidHomepage() {
 
   // If showing map page, render it as the main page
   if (showMapPage) {
-    return <AndroidMapPage onBack={() => setShowMapPage(false)} />
+    return <AndroidMapPage onBack={() => setShowMapPage(false)} coordinates={mapCoordinates ?? undefined} />
   }
 
   return (
@@ -73,7 +81,7 @@ export default function AndroidHomepage() {
       </Tabbar>
       {activeTab === 'home' && (
         <div className="mb-15 space-y-4">
-          <UserDashboard />
+          <UserDashboard onPlotNavigate={handlePlotNavigate} />
         </div>
       )}
       {activeTab === 'news' && (

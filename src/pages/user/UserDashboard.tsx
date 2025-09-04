@@ -1,5 +1,4 @@
 import { CalendarDays, Heart, MapPin } from 'lucide-react'
-import { useNavigate } from 'react-router-dom'
 
 import { ErrorMessage } from '@/components/ErrorMessage'
 import { Badge } from '@/components/ui/badge'
@@ -17,15 +16,17 @@ import { MemorialProperties } from './components/MemorialProperties'
 import { PromotionalBanner } from './components/PromotionalBanner'
 import { StatCard } from './components/StatCard'
 
-export default function UserDashboard() {
+interface UserDashboardProps {
+  onPlotNavigate?: (coordinates?: Coordinates | null) => void
+}
+
+export default function UserDashboard({ onPlotNavigate }: UserDashboardProps) {
   const { data: dashboardData, isLoading, error } = useUserDashboard()
-  const navigate = useNavigate()
 
   const handleNavigateToPlot = (coordinates?: Coordinates | null) => {
     if (!coordinates) return
     window.scrollTo(0, 0)
-    const [lat, lng] = coordinates
-    navigate(`/user/map?direction=true&lat=${lat}&lng=${lng}`)
+    onPlotNavigate?.(coordinates)
   }
 
   if (isLoading) {
