@@ -55,6 +55,7 @@ export default function WebMapControlsRow({ context, onBack, onLegendClick }: We
       {location.pathname !== '/user/map' && (
         <>
           {isNativePlatform() ? (
+            // Native go to android homepage screen button
             <button onClick={onBack} className="no-long-press shrink-0 touch-manipulation">
               <Fab className="k-color-brand-green h-10" icon={homeIcon} style={{ transform: 'none !important', transition: 'none !important' }} />
             </button>

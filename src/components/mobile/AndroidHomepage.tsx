@@ -37,6 +37,16 @@ export default function AndroidHomepage() {
     setShowMapPage(true)
   }, [])
 
+  const handleBackFromMap = useCallback(() => {
+    setShowMapPage(false)
+    setMapCoordinates(null)
+  }, [])
+
+  const handleOpenMap = useCallback(() => {
+    setMapCoordinates(null)
+    setShowMapPage(true)
+  }, [])
+
   // If showing profile page, render it as the main page
   if (showProfilePage) {
     return <AndroidProfilePage onBack={() => setShowProfilePage(false)} />
@@ -44,7 +54,7 @@ export default function AndroidHomepage() {
 
   // If showing map page, render it as the main page
   if (showMapPage) {
-    return <AndroidMapPage onBack={() => setShowMapPage(false)} coordinates={mapCoordinates ?? undefined} />
+    return <AndroidMapPage onBack={handleBackFromMap} coordinates={mapCoordinates ?? undefined} />
   }
 
   return (
@@ -134,11 +144,7 @@ export default function AndroidHomepage() {
           </div>
         </Card>
       )}
-      <Fab
-        className="right-safe-4 ios:bottom-safe-19 material:bottom-safe-18 k-color-brand-red fixed z-20"
-        icon={<MapPin className="h-6 w-6" />}
-        onClick={() => setShowMapPage(true)}
-      />
+      <Fab className="right-safe-4 ios:bottom-safe-19 material:bottom-safe-18 k-color-brand-red fixed z-20" icon={<MapPin className="h-6 w-6" />} onClick={handleOpenMap} />
     </Page>
   )
 }

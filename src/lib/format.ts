@@ -13,14 +13,14 @@ export function formatDate(date: Date | string | number | undefined, opts: Intl.
   }
 }
 
-// 📏 Distance: prefer km for long distances
+// Distance: prefer km for long distances
 export function formatDistance(meters?: number): string {
   if (!Number.isFinite(meters)) return '-'
   if ((meters ?? 0) >= 1000) return `${(meters! / 1000).toFixed(1)} km`
   return `${Math.round(meters!)} m`
 }
 
-// ⏱️ Duration: human readable h m
+//  Duration: human readable h m
 export function formatDuration(seconds?: number): string {
   if (!Number.isFinite(seconds)) return '-'
   const s = Math.round(seconds!)
