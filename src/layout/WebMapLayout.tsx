@@ -72,11 +72,11 @@ function MapInstanceBinder({ onMapReady }: { onMapReady: (map: L.Map) => void })
   const map = useMap()
 
   useEffect(() => {
+    if (!map) return
     onMapReady(map)
-    // Attach reference for legacy direct DOM usage elsewhere
     map.getContainer()._leaflet_map = map
 
-    // 💡 Pre-create custom panes to avoid race conditions when conditionally rendering components
+    // Pre-create custom panes to avoid race conditions when conditionally rendering components
     // that expect these panes to exist (prevents intermittent appendChild undefined errors)
     const ensurePane = (name: string, zIndex: number) => {
       if (!map.getPane(name)) {
@@ -114,6 +114,8 @@ function mapReducer(state: MapState, action: MapAction): MapState {
       return { ...state, isDirectionLoading: action.value }
     case 'REQUEST_LOCATE':
       return { ...state, shouldCenterOnUser: true }
+    case 'CLEAR_LOCATE':
+      return { ...state, shouldCenterOnUser: false }
     case 'SELECT_GROUPS':
       return { ...state, selectedGroups: action.groups, clusterViewMode: action.groups.size > 0 ? 'selective' : 'all' }
     case 'TOGGLE_GROUP': {
@@ -216,8 +218,7 @@ export default function MapPage({ onBack, initialDirection }: { onBack?: () => v
   const stateRef = useRef(state)
   stateRef.current = state
 
-  // Ref to track if navigation has been started for the current initialDirection
-  const navigationStartedRef = useRef(false)
+  // (navigationStartedRef removed; replaced by signature-based guard later)
 
   // Konsta Notification state for native platforms
   const [konstaNotificationOpen, setKonstaNotificationOpen] = useState(false)
@@ -267,29 +268,24 @@ export default function MapPage({ onBack, initialDirection }: { onBack?: () => v
 
   // FIXED: Added proper cleanup and reset logic for shouldCenterOnUser
   useEffect(() => {
-    if (state.shouldCenterOnUser && currentLocation) {
-      const timeoutId = setTimeout(() => {
-        // Reset the shouldCenterOnUser flag after processing
-        dispatch({ type: 'REQUEST_LOCATE' }) // This should be changed to a RESET action
-      }, 1000)
-      return () => clearTimeout(timeoutId)
-    }
-  }, [state.shouldCenterOnUser, currentLocation])
+    if (!state.shouldCenterOnUser || !currentLocation || !mapInstance) return
+    mapInstance.flyTo([currentLocation.latitude, currentLocation.longitude], 18, { animate: true })
+    dispatch({ type: 'CLEAR_LOCATE' })
+  }, [state.shouldCenterOnUser, currentLocation, mapInstance])
 
   // Effect to detect when route is fully loaded and flyTo animation is complete
   useEffect(() => {
-    if (route && routeCoordinates.length > 0 && state.isDirectionLoading) {
-      // Route is loaded, start flyTo animation and wait for it to complete
-      const timeoutId = setTimeout(() => {
-        dispatch({ type: 'SET_DIRECTION_LOADING', value: false })
-        if (stateRef.current.pendingPopupClose) {
-          dispatch({ type: 'POPUP_CLOSE_CONFIRMED' })
-        }
-      }, 1500) // Wait for flyTo animation to complete (~1.5s)
-
-      return () => clearTimeout(timeoutId)
+    if (!(route && routeCoordinates.length > 0 && state.isDirectionLoading && mapInstance)) return
+    const handleMoveEnd = () => {
+      dispatch({ type: 'SET_DIRECTION_LOADING', value: false })
+      if (stateRef.current.pendingPopupClose) dispatch({ type: 'POPUP_CLOSE_CONFIRMED' })
+      mapInstance.off('moveend', handleMoveEnd)
     }
-  }, [route, routeCoordinates, state.isDirectionLoading])
+    mapInstance.on('moveend', handleMoveEnd)
+    return () => {
+      mapInstance.off('moveend', handleMoveEnd)
+    }
+  }, [route, routeCoordinates, state.isDirectionLoading, mapInstance])
 
   // Reset route completion state when route is cleared
   useEffect(() => {
@@ -300,25 +296,16 @@ export default function MapPage({ onBack, initialDirection }: { onBack?: () => v
 
   // Memoize callback functions to prevent them from being recreated on every render.
   const requestLocate = useCallback(async () => {
-    // Start tracking if not already active
     if (!isTracking) startTracking()
-
-    // Try to obtain a fresh location if we don't have one yet
     let loc = currentLocation
     if (!loc) {
       try {
         loc = await getCurrentLocation()
       } catch (err) {
-        // Silent fail: toast not needed; user just won't see fly animation
-        console.warn('Could not get current location for flyTo:', err)
+        if (import.meta.env.DEV) console.warn('Could not get current location for flyTo:', err)
       }
     }
-
-    // Perform animated fly to the user's position
-    if (loc && mapInstance) {
-      // Using flyTo for smoother animated transition similar to resetView animation semantics
-      mapInstance.flyTo([loc.latitude, loc.longitude], 18, { animate: true })
-    }
+    if (loc && mapInstance) mapInstance.flyTo([loc.latitude, loc.longitude], 18, { animate: true })
   }, [isTracking, startTracking, currentLocation, getCurrentLocation, mapInstance])
 
   const clearRoute = useCallback(() => {
@@ -330,7 +317,7 @@ export default function MapPage({ onBack, initialDirection }: { onBack?: () => v
   const handleDirectionClick = useCallback(
     async (to: [number, number]) => {
       const [toLatitude, toLongitude] = to
-      console.log('Direction click triggered:', { to, toLatitude, toLongitude })
+      if (import.meta.env.DEV) console.log('Direction click triggered:', { to, toLatitude, toLongitude })
 
       if (!toLatitude || !toLongitude) {
         console.warn('Invalid destination coordinates:', to)
@@ -344,22 +331,23 @@ export default function MapPage({ onBack, initialDirection }: { onBack?: () => v
       try {
         // Get user location: use current if available, otherwise fetch
         let userLocation = currentLocation
-        console.log('Current location available:', !!userLocation, userLocation)
+        if (import.meta.env.DEV) console.log('Current location available:', !!userLocation, userLocation)
 
         if (!userLocation) {
-          console.log('Fetching fresh user location...')
+          if (import.meta.env.DEV) console.log('Fetching fresh user location...')
           userLocation = await getCurrentLocation()
-          console.log('Fresh location obtained:', userLocation)
+          if (import.meta.env.DEV) console.log('Fresh location obtained:', userLocation)
         }
 
         if (!userLocation || !userLocation.latitude || !userLocation.longitude) {
           throw new Error('Could not determine current location')
         }
 
-        console.log('Starting navigation with locations:', {
-          from: { latitude: userLocation.latitude, longitude: userLocation.longitude },
-          to: { latitude: toLatitude, longitude: toLongitude },
-        })
+        if (import.meta.env.DEV)
+          console.log('Starting navigation with locations:', {
+            from: { latitude: userLocation.latitude, longitude: userLocation.longitude },
+            to: { latitude: toLatitude, longitude: toLongitude },
+          })
 
         // Start navigation with proper typed coordinates
         await startNavigation(
@@ -370,7 +358,7 @@ export default function MapPage({ onBack, initialDirection }: { onBack?: () => v
           { latitude: toLatitude, longitude: toLongitude },
         )
 
-        console.log('✅ Navigation started successfully')
+        if (import.meta.env.DEV) console.log('✅ Navigation started successfully')
 
         // Trigger map recentering or location update
         requestLocate()
@@ -378,12 +366,14 @@ export default function MapPage({ onBack, initialDirection }: { onBack?: () => v
         // Open navigation instructions UI
         dispatch({ type: 'SET_NAV_OPEN', value: true })
       } catch (error) {
-        console.error('Failed to start navigation:', error)
-        console.error('Error details:', {
-          name: error instanceof Error ? error.name : 'Unknown',
-          message: error instanceof Error ? error.message : String(error),
-          stack: error instanceof Error ? error.stack : undefined,
-        })
+        if (import.meta.env.DEV) {
+          console.error('Failed to start navigation:', error)
+          console.error('Error details:', {
+            name: error instanceof Error ? error.name : 'Unknown',
+            message: error instanceof Error ? error.message : String(error),
+            stack: error instanceof Error ? error.stack : undefined,
+          })
+        }
 
         // FIXED: Show user-friendly error message
         const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred'
@@ -423,18 +413,14 @@ export default function MapPage({ onBack, initialDirection }: { onBack?: () => v
     }
   }, [searchParams, handleDirectionClick])
 
-  // Reset navigation started flag when initialDirection changes
+  // Stabilize initialDirection-based navigation (avoid duplicate triggers on same coords)
+  const lastInitDirRef = useRef<string | null>(null)
   useEffect(() => {
-    navigationStartedRef.current = false
-  }, [initialDirection])
-
-  // If initialDirection prop is provided (used by native Android wrapper), start navigation
-  useEffect(() => {
-    if (initialDirection && isNativePlatform() && !navigationStartedRef.current) {
-      navigationStartedRef.current = true
-      const coords: [number, number] = [initialDirection.lat, initialDirection.lng]
-      handleDirectionClick(coords)
-    }
+    if (!initialDirection || !isNativePlatform()) return
+    const sig = `${initialDirection.lat},${initialDirection.lng}`
+    if (lastInitDirRef.current === sig) return
+    lastInitDirRef.current = sig
+    requestAnimationFrame(() => handleDirectionClick([initialDirection.lat, initialDirection.lng]))
   }, [initialDirection, handleDirectionClick])
 
   // Cluster control functions
@@ -492,9 +478,7 @@ export default function MapPage({ onBack, initialDirection }: { onBack?: () => v
             const centerCoords = plotCoords || matchedMarker.position
 
             // Center and zoom the map on the found plot using stored map instance
-            if (mapInstance) {
-              mapInstance.setView(centerCoords, 18, { animate: true })
-            }
+            if (mapInstance && centerCoords) mapInstance.setView(centerCoords, 18, { animate: true })
           }
 
           if (isNativePlatform()) {
@@ -570,16 +554,23 @@ export default function MapPage({ onBack, initialDirection }: { onBack?: () => v
     [markersByGroup],
   )
 
-  // 🔄 Reset map view to default state (center via bounds + default zoom)
+  // Reset map view to default state (center via bounds + default zoom)
   const resetView = useCallback(() => {
-    if (mapInstance) {
-      const targetZoom = 18
-      const centerLat = (bounds[0][0] + bounds[1][0]) / 2
-      const centerLng = (bounds[0][1] + bounds[1][1]) / 2
-      mapInstance.flyTo([centerLat, centerLng], targetZoom, { animate: true })
-    }
+    if (mapInstance) mapInstance.fitBounds(bounds, { animate: true, maxZoom: 18 })
     dispatch({ type: 'RESET_VIEW' })
   }, [mapInstance, bounds])
+
+  // Move error notifications to effect (avoid side effects in render)
+  useEffect(() => {
+    if (!(locationError || routingError)) return
+    const message = 'Unable to get directions. Please try again.'
+    if (isNativePlatform()) {
+      setKonstaNotificationProps({ title: 'Error', text: message, titleRightText: 'now' })
+      setKonstaNotificationOpen(true)
+    } else {
+      toast.error(message)
+    }
+  }, [locationError, routingError])
 
   // 👤 Show only user-owned plots
   const showUserPlotsOnly = useCallback(() => {
@@ -657,29 +648,6 @@ export default function MapPage({ onBack, initialDirection }: { onBack?: () => v
               className="z-999"
             />
 
-            {/* FIXED: Improved error handling with proper conditional rendering */}
-            {(locationError || routingError) && (
-              <>
-                {isNativePlatform() ? (
-                  <Notification
-                    opened={true}
-                    title="Error"
-                    text="Unable to get directions. Please try again."
-                    button
-                    onClick={() => {
-                      /* Handle error notification close */
-                    }}
-                  />
-                ) : (
-                  // This effect will run once when error occurs
-                  (() => {
-                    toast.error('Unable to get directions. Please try again.')
-                    return null
-                  })()
-                )}
-              </>
-            )}
-
             <MapContainer
               className="h-full w-full"
               markerZoomAnimation={true}
@@ -738,7 +706,6 @@ export default function MapPage({ onBack, initialDirection }: { onBack?: () => v
               <Suspense fallback={null}>
                 {route && routeCoordinates.length > 0 && (
                   <ValhallaRoute
-                    key={route.trip.summary.length}
                     route={route}
                     routeCoordinates={routeCoordinates}
                     remainingCoordinates={remainingCoordinates}

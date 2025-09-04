@@ -27,6 +27,7 @@ export type MapAction =
   | { type: 'SET_NAV_OPEN'; value: boolean }
   | { type: 'SET_DIRECTION_LOADING'; value: boolean }
   | { type: 'REQUEST_LOCATE' }
+  | { type: 'CLEAR_LOCATE' }
   | { type: 'SELECT_GROUPS'; groups: Set<string> }
   | { type: 'TOGGLE_GROUP'; group: string }
   | { type: 'RESET_GROUPS' }
