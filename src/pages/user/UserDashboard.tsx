@@ -23,7 +23,6 @@ export default function UserDashboard() {
 
   const handleNavigateToPlot = (coordinates?: Coordinates | null) => {
     if (!coordinates) return
-    // Reset scroll position before navigation
     window.scrollTo(0, 0)
     const [lat, lng] = coordinates
     navigate(`/user/map?direction=true&lat=${lat}&lng=${lng}`)

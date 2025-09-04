@@ -229,14 +229,9 @@ export default function MapPage({ onBack, initialDirection }: { onBack?: () => v
   }, [konstaNotificationOpen])
 
   const [searchParams] = useSearchParams()
-
-  // Reset scroll position when map loads
   useEffect(() => {
     window.scrollTo(0, 0)
   }, [])
-
-  // 🛠️ Backward-compat bridge (TEMP): map former individual state variables to reducer state fields.
-  // FIXME: Remove once all references are updated.
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const bounds: [[number, number], [number, number]] = [
@@ -244,7 +239,7 @@ export default function MapPage({ onBack, initialDirection }: { onBack?: () => v
     [10.249302749341647, 123.7988598710129],
   ]
 
-  // 🗺️ Hold reference to Leaflet map for reset
+  // Hold reference to Leaflet map for reset
   const [mapInstance, setMapInstance] = useState<L.Map | null>(null)
 
   useEffect(() => {
@@ -603,15 +598,10 @@ export default function MapPage({ onBack, initialDirection }: { onBack?: () => v
               titleRightText={konstaNotificationProps.titleRightText}
               button
               onClick={() => setKonstaNotificationOpen(false)}
-              className="z-[999]"
+              className="z-999"
             />
-            {(locationError || routingError) && (
-              <div className="absolute top-4 right-4 z-[999] max-w-sm">
-                <div className="rounded-md border border-red-200 bg-red-50 p-4">
-                  <p className="text-sm text-red-800">{locationError?.message || routingError || 'Unknown error'}</p>
-                </div>
-              </div>
-            )}
+            {(locationError || routingError) && isNativePlatform() && <Notification opened={true} title="Error" text="Unable to get directions. Please try again." />}
+            {(locationError || routingError) && !isNativePlatform() && toast.error('Unable to get directions. Please try again.')}
 
             <MapContainer
               className="h-full w-full"
