@@ -1,5 +1,6 @@
 import { Suspense, lazy } from 'react'
 import { FaFacebookMessenger } from 'react-icons/fa'
+import { Link } from 'react-router-dom'
 
 import { PulsatingButton } from '@/components/pulsating-button'
 import Spinner from '@/components/ui/spinner'
@@ -21,24 +22,33 @@ export default function LandingLayout() {
       {/* Stack content above decorative layer */}
       <div className="relative z-10">
         <HeaderSection />
-        <div className="fixed right-4 bottom-4 z-999">
-          <Link
-            to="https://www.facebook.com/finisterregardenz/"
-            target="_blank"
-            rel="noopener noreferrer"
-            aria-label="Contact us on Facebook Messenger"
-          >
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <PulsatingButton className="bg-ring h-15 w-15 rounded-full shadow-lg">
-                  <FaFacebookMessenger />
-                </PulsatingButton>
-              </TooltipTrigger>
-              <TooltipContent>
-                <p>Message us in Facebook Messenger</p>
-              </TooltipContent>
-            </Tooltip>
-          </Link>
+
+        {/* Floating message us button */}
+        <div className="group">
+          <div className="fixed right-22 bottom-9 z-999">
+            <span className="rounded-full bg-white px-4 py-2 text-black/80 shadow-lg transition-opacity duration-300 group-hover:opacity-0">
+              Message us
+            </span>
+          </div>
+          <div className="fixed right-4 bottom-4 z-999">
+            <Link
+              to="https://www.facebook.com/finisterregardenz/"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Contact us on Facebook Messenger"
+            >
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <PulsatingButton className="bg-ring h-15 w-15 rounded-full shadow-lg">
+                    <FaFacebookMessenger className="text-white" />
+                  </PulsatingButton>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>Message us in Facebook Messenger</p>
+                </TooltipContent>
+              </Tooltip>
+            </Link>
+          </div>
         </div>
         <main className="flex-1">
           <Suspense
