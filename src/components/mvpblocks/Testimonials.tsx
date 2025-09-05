@@ -122,31 +122,21 @@ export default function Testimonials() {
             Don't just take our word for it. Here's what families in our community are saying about our memorial park.
           </p>
         </div>
-        <div className="relative mt-16 [mask-image:linear-gradient(to_bottom,transparent,black_10%,black_90%,transparent)]">
-          <Marquee pauseOnHover className="[--duration:60s]">
-            {testimonials.map((testimonial) => (
-              <TestimonialCard key={testimonial.name} {...testimonial} className="w-80 bg-white/70" />
-            ))}
-          </Marquee>
-          <Marquee reverse pauseOnHover className="[--duration:60s]">
-            {testimonials.map((testimonial) => (
-              <TestimonialCard key={testimonial.name} {...testimonial} className="w-80 bg-white/70" />
-            ))}
-          </Marquee>
-          <div
-            aria-hidden="true"
-            className="pointer-events-none absolute inset-y-0 left-0 w-1/4 transform-gpu"
-            style={{
-              background: 'linear-gradient(90deg, rgba(247,234,255,0.95) 0%, rgba(247,234,255,0.65) 25%, rgba(247,234,255,0.0) 60%)',
-            }}
-          />
-          <div
-            aria-hidden="true"
-            className="pointer-events-none absolute inset-y-0 right-0 w-1/4 transform-gpu"
-            style={{
-              background: 'linear-gradient(270deg, rgba(253,226,234,0.95) 0%, rgba(253,226,234,0.65) 25%, rgba(253,226,234,0.0) 60%)',
-            }}
-          />
+        <div className="relative mt-16">
+          <div className="[mask-image:linear-gradient(to_right,transparent,black_0%,black_80%,transparent)]">
+            <div className="[mask-image:linear-gradient(to_left,transparent,black_0%,black_80%,transparent)]">
+              <Marquee pauseOnHover className="[--duration:60s]">
+                {testimonials.map((testimonial) => (
+                  <TestimonialCard key={testimonial.name} {...testimonial} className="w-80 bg-white/70" />
+                ))}
+              </Marquee>
+              <Marquee reverse pauseOnHover className="[--duration:60s]">
+                {testimonials.map((testimonial) => (
+                  <TestimonialCard key={testimonial.name} {...testimonial} className="w-80 bg-white/70" />
+                ))}
+              </Marquee>
+            </div>
+          </div>
         </div>
       </div>
     </section>

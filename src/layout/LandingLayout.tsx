@@ -1,6 +1,9 @@
 import { Suspense, lazy } from 'react'
+import { FaFacebookMessenger } from 'react-icons/fa'
 
+import { PulsatingButton } from '@/components/pulsating-button'
 import Spinner from '@/components/ui/spinner'
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
 import { HeaderSection } from '@/pages/landing/section/HeaderSection'
 
 const HeroSection = lazy(() => import('@/pages/landing/section/HeroSection'))
@@ -18,6 +21,25 @@ export default function LandingLayout() {
       {/* Stack content above decorative layer */}
       <div className="relative z-10">
         <HeaderSection />
+        <div className="fixed right-4 bottom-4 z-999">
+          <Link
+            to="https://www.facebook.com/finisterregardenz/"
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="Contact us on Facebook Messenger"
+          >
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <PulsatingButton className="bg-ring h-15 w-15 rounded-full shadow-lg">
+                  <FaFacebookMessenger />
+                </PulsatingButton>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>Message us in Facebook Messenger</p>
+              </TooltipContent>
+            </Tooltip>
+          </Link>
+        </div>
         <main className="flex-1">
           <Suspense
             fallback={

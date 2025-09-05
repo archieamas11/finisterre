@@ -3,7 +3,6 @@ import { ArrowRight, MapPin, Heart } from 'lucide-react'
 import { FaPhoneAlt } from 'react-icons/fa'
 import { Link } from 'react-router-dom'
 
-import { AnimatedGradientText } from '@/components/magicui/animated-gradient-text'
 import { Button } from '@/components/ui/button'
 
 // Smooth, understated animation variants with reduced-motion support
@@ -106,34 +105,37 @@ export default function HeroSection() {
             life, celebrating every step with dignity and peace.
           </motion.p>
         </motion.div>
+
         {/* CTA Section */}
         <motion.div className="flex flex-col items-center justify-center gap-4 sm:flex-row" variants={shouldReduceMotion ? undefined : subtleItem}>
           {/* Primary CTA */}
           <motion.div variants={shouldReduceMotion ? undefined : subtleButton} transition={{ delay: shouldReduceMotion ? 0 : 0.16 }}>
             <Button
               size={'lg'}
-              variant={'secondary'}
-              className="group rounded-full bg-white font-semibold shadow-lg transition-all duration-300 hover:scale-105 hover:bg-white/75"
+              variant={'default'}
+              className="group bg-ring hover:bg-ring rounded-lg font-semibold shadow-lg transition-all duration-300 hover:scale-105"
             >
               <Link className="flex items-center gap-3" aria-label="Explore Map" to="/map">
-                <MapPin className="text-gray-800" />
+                <MapPin className="text-gray-100" />
                 <hr className="h-4 w-px shrink-0 bg-neutral-400" />
-                <AnimatedGradientText>Explore Plots</AnimatedGradientText>
-                <ArrowRight className="h-4 w-4 text-gray-800 transition-transform duration-300 group-hover:translate-x-1" />
+                <span className="text-gray-100">Explore Plots</span>
+                <ArrowRight className="h-4 w-4 text-gray-100 transition-transform duration-300 group-hover:translate-x-1" />
               </Link>
             </Button>
           </motion.div>
           {/* Secondary CTA */}
           <motion.div variants={shouldReduceMotion ? undefined : subtleButton} transition={{ delay: shouldReduceMotion ? 0 : 0.22 }}>
             <Button
-              className="group rounded-full border-white/30 bg-white/10 px-6 py-3 font-medium text-white shadow-lg backdrop-blur-md transition-all duration-300 hover:scale-105 hover:border-white/50 hover:bg-white/20"
-              variant="outline"
+              className="group bg-chart-2 hover:bg-chart-2 rounded-lg font-medium shadow-lg transition-all duration-300 hover:scale-105"
+              variant="secondary"
               size="lg"
               asChild
             >
-              <Link className="flex items-center gap-2" to="/about">
-                <Heart className="h-4 w-4" />
-                Our Story
+              <Link to="/about">
+                <span className="flex items-center gap-2 text-gray-800">
+                  <Heart className="h-4 w-4" />
+                  Our Story
+                </span>
               </Link>
             </Button>
           </motion.div>
