@@ -37,17 +37,21 @@ export default function HeroSection() {
 
   return (
     <section className="relative flex min-h-screen items-center justify-center overflow-hidden">
-      <div className="absolute inset-0 z-0 [mask-image:linear-gradient(to_bottom,transparent,black_0%,black_30%,transparent)]">
-        <img
-          className="h-full w-full object-cover"
-          src="/hero-bg.webp"
-          alt="Scenic landscape of Finisterre Gardenz memorial park, evoking peace and remembrance"
-          width={1920}
-          height={1280}
-          loading="eager"
-          fetchPriority="high"
-          decoding="async"
+      <div className="absolute inset-0 z-0 [mask-image:linear-gradient(to_bottom,transparent,black_0%,black_60%,transparent)]">
+        {/* Background video: muted autoplay loop with a local poster and source element for better browser handling */}
+        <video
+          src="https://finisterre.ph/wp-content/uploads/2023/09/Finisterre-Masterplan-Actual-Development.mp4"
+          poster="/hero-bg.webp"
+          className="pointer-events-none h-full w-full object-cover"
+          autoPlay
+          muted
+          loop
+          playsInline
+          preload="metadata"
+          aria-hidden="true"
+          role="presentation"
         />
+
         <div className="absolute inset-0 bg-gradient-to-br from-black/70 via-black/50 to-transparent" />
       </div>
       {/* Main Content Container */}
@@ -63,7 +67,7 @@ export default function HeroSection() {
           delayChildren: shouldReduceMotion ? 0 : 0.14,
         }}
       >
-        {/* Premium badge */}
+        {/* Contact number badge */}
         <motion.div className="mb-6 flex justify-center" variants={shouldReduceMotion ? undefined : subtleBadge}>
           <div className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-4 py-2 text-sm font-medium text-white/90 backdrop-blur-md">
             <FaPhoneAlt />
