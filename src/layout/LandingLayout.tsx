@@ -27,7 +27,7 @@ export default function LandingLayout() {
         <div className="group">
           <div className="fixed right-22 bottom-9 z-999">
             <span className="rounded-full bg-white px-4 py-2 text-black/80 shadow-lg transition-opacity duration-300 group-hover:opacity-0">
-              Message us
+              Message Us!
             </span>
           </div>
           <div className="fixed right-4 bottom-4 z-999">
@@ -43,9 +43,7 @@ export default function LandingLayout() {
                     <FaFacebookMessenger className="text-white" />
                   </PulsatingButton>
                 </TooltipTrigger>
-                <TooltipContent>
-                  <p>Message us in Facebook Messenger</p>
-                </TooltipContent>
+                <TooltipContent>Facebook Messenger</TooltipContent>
               </Tooltip>
             </Link>
           </div>
