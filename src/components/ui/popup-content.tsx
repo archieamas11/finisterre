@@ -5,7 +5,7 @@ import React, { cloneElement, isValidElement, useContext } from 'react'
 import { renderToStaticMarkup } from 'react-dom/server'
 import { FaDirections } from 'react-icons/fa'
 import { Marker, Popup } from 'react-leaflet'
-
+import { isAdmin } from '@/utils/auth.utils'
 import { LocateContext } from '@/contexts/MapContext'
 import { CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Dialog, DialogContent, DialogTrigger } from '@/components/ui/dialog'
@@ -209,25 +209,27 @@ function FinisterreMarkers({ items, onDirectionClick, isDirectionLoading = false
               }
               return <SimplePopup title={itemData.title} description={itemData.description} />
             })()}
-            <Button
-              className="mt-1 mb-1 w-full rounded-lg"
-              onClick={(e) => {
-                e.stopPropagation()
-                // Start the navigation process
-                onDirectionClick?.([itemData.lat, itemData.lng])
-                // Use the new context method to request popup close
-                // This will close the popup only after route is loaded and flyTo animation completes
-                if (locateContext?.requestPopupClose) {
-                  locateContext.requestPopupClose()
-                }
-              }}
-              disabled={isDirectionLoading}
-              aria-busy={isDirectionLoading}
-              variant="default"
-            >
-              {isDirectionLoading ? <Spinner className="h-4 w-4" /> : <FaDirections />}
-              Get Direction
-            </Button>
+            {!isAdmin() && (
+              <Button
+                className="mt-1 mb-1 w-full rounded-lg"
+                onClick={(e) => {
+                  e.stopPropagation()
+                  // Start the navigation process
+                  onDirectionClick?.([itemData.lat, itemData.lng])
+                  // Use the new context method to request popup close
+                  // This will close the popup only after route is loaded and flyTo animation completes
+                  if (locateContext?.requestPopupClose) {
+                    locateContext.requestPopupClose()
+                  }
+                }}
+                disabled={isDirectionLoading}
+                aria-busy={isDirectionLoading}
+                variant="default"
+              >
+                {isDirectionLoading ? <Spinner className="h-4 w-4" /> : <FaDirections />}
+                Get Direction
+              </Button>
+            )}
           </Popup>
         </Marker>
       ))}

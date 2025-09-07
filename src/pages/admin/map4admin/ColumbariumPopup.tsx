@@ -251,27 +251,6 @@ export default function ColumbariumPopup({ marker, onDirectionClick, isDirection
         </div>
       </div>
 
-      {/* Media display */}
-      {(() => {
-        const images = marker.file_names_array || marker.file_name || []
-        if (!isAdmin()) {
-          return Array.isArray(images) && images.length > 0 ? (
-            <div className="mt-5 grid grid-cols-2 gap-2">
-              {images.map((imageUrl, idx) => (
-                <img
-                  className="h-30 w-full rounded object-cover transition-transform duration-200 hover:scale-105 hover:transform"
-                  alt={`Plot media ${idx + 1}`}
-                  src={imageUrl}
-                  key={idx}
-                />
-              ))}
-            </div>
-          ) : (
-            <div className="mt-5 text-center text-xs text-gray-400">No photos available</div>
-          )
-        }
-      })()}
-
       {/* 🔍 Niche Detail Dialog */}
       <Dialog
         open={isDetailOpen}

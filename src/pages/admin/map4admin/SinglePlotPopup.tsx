@@ -9,7 +9,6 @@ import type { DeceasedRecords } from '@/types/interment.types'
 import type { ConvertedMarker } from '@/types/map.types'
 
 import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from '@/components/ui/command'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 import { useCustomers } from '@/hooks/customer-hooks/customer.hooks'
@@ -19,7 +18,6 @@ import { usePlotDetails } from '@/hooks/plots-hooks/usePlotDetails'
 import { cn } from '@/lib/utils'
 import { CreateDeceasedRecordDialog } from '@/pages/admin/map4admin/columbarium-dialogs/CreateDeceasedRecordDialog'
 import { DeceasedSection } from '@/pages/admin/map4admin/DeceasedSection'
-import { isAdmin } from '@/utils/auth.utils'
 
 import PlotInfo from './PlotInfo'
 
@@ -275,41 +273,6 @@ export default function SinglePlotLocations({ marker, popupCloseTick }: PlotLoca
           <DeceasedSection owner={ownerData ?? null} deceased={deceasedList} isLoading={isLoadingDetails} />
         </div>
       </div>
-
-      {/* Plot Images - Full Width if exists */}
-      {(() => {
-        const images = marker.file_names_array || marker.file_name || []
-        if (!isAdmin() && Array.isArray(images) && images.length > 0) {
-          return (
-            <Card className="mt-3">
-              <CardHeader className="pb-2">
-                <CardTitle className="text-sm">Images</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="grid grid-cols-3 gap-2">
-                  {images.slice(0, 3).map((imageUrl, idx) => (
-                    <div key={idx} className="aspect-square overflow-hidden rounded border">
-                      <img
-                        className="h-full w-full object-cover transition-transform duration-200 hover:scale-105"
-                        alt={`Plot image ${idx + 1}`}
-                        src={imageUrl}
-                      />
-                    </div>
-                  ))}
-                </div>
-                {images.length > 3 && <p className="text-muted-foreground mt-1 text-center text-xs">+{images.length - 3} more images</p>}
-              </CardContent>
-            </Card>
-          )
-        } else if (!isAdmin()) {
-          return (
-            <div className="mt-3 text-center">
-              <p className="text-muted-foreground text-xs">No images available</p>
-            </div>
-          )
-        }
-        return null
-      })()}
     </div>
   )
 }

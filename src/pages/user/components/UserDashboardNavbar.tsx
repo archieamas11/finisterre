@@ -90,7 +90,7 @@ export default function UserDashboardNavbar() {
           <Link to="/" className="text-primary hover:text-primary/90">
             <div className="flex items-center">
               <img src="/favicon.svg" className="mr-2 h-5 w-5" alt="Logo" />
-              <span className="font-medium">Finisterre</span>
+              <span className="font-medium text-gray-300">Finisterre</span>
             </div>
           </Link>
         </div>

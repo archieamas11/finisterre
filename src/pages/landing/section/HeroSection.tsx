@@ -1,34 +1,34 @@
 import { motion, useReducedMotion } from 'framer-motion'
-import { ArrowRight, MapPin, Heart } from 'lucide-react'
-import { FaPhoneAlt } from 'react-icons/fa'
+import { ArrowRight, MapPin, Leaf } from 'lucide-react'
 import { Link } from 'react-router-dom'
 
 import { Button } from '@/components/ui/button'
 
-// Smooth, understated animation variants with reduced-motion support
 const containerVariants = {
   hidden: { opacity: 0 },
-  visible: { opacity: 1 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.1,
+      delayChildren: 0.2,
+    },
+  },
 }
 
-const subtleItem = {
-  hidden: { opacity: 0, y: 12, scale: 0.997 },
-  visible: { opacity: 1, y: 0, scale: 1 },
+const itemVariants = {
+  hidden: { opacity: 0, y: 20 },
+  visible: {
+    opacity: 1,
+    y: 0,
+  },
 }
 
-const subtleBadge = {
-  hidden: { opacity: 0, y: -6, scale: 0.99 },
-  visible: { opacity: 1, y: 0, scale: 1 },
-}
-
-const subtleHeading = {
-  hidden: { opacity: 0, y: 10 },
-  visible: { opacity: 1, y: 0 },
-}
-
-const subtleButton = {
-  hidden: { opacity: 0, y: 8, scale: 0.998 },
-  visible: { opacity: 1, y: 0, scale: 1 },
+const buttonVariants = {
+  hidden: { opacity: 0, y: 15 },
+  visible: {
+    opacity: 1,
+    y: 0,
+  },
 }
 
 export default function HeroSection() {
@@ -53,92 +53,69 @@ export default function HeroSection() {
 
         <div className="absolute inset-0 bg-gradient-to-br from-black/70 via-black/50 to-transparent" />
       </div>
+
       {/* Main Content Container */}
       <motion.div
-        className="relative z-10 mx-auto w-full max-w-7xl px-6 text-center sm:px-8 lg:mb-10"
+        className="relative z-10 mx-auto w-full max-w-5xl px-6 py-20 text-center sm:px-8 lg:py-24"
         variants={containerVariants}
         initial={shouldReduceMotion ? 'visible' : 'hidden'}
         animate="visible"
-        transition={{
-          duration: 0.72,
-          ease: [0.22, 0.8, 0.3, 1],
-          staggerChildren: shouldReduceMotion ? 0 : 0.08,
-          delayChildren: shouldReduceMotion ? 0 : 0.14,
-        }}
       >
-        {/* Contact number badge */}
-        <motion.div className="mb-6 flex justify-center" variants={shouldReduceMotion ? undefined : subtleBadge}>
-          <div className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-4 py-2 text-sm font-medium text-white/90 backdrop-blur-md">
-            <FaPhoneAlt />
-            <a href="tel:09988411173" className="tracking-wider hover:underline">
-              09988411173
-            </a>
-            <hr className="h-4 w-px shrink-0 bg-neutral-400" />
-            <a href="tel:09176216823" className="tracking-wider hover:underline">
-              09176216823
-            </a>
-          </div>
+        {/* Badge */}
+        <motion.div className="mb-8 flex justify-center" variants={itemVariants}>
+          {/* Contact Information */}
+          <motion.div className="flex flex-col items-center justify-center gap-4 text-gray-200 sm:flex-row" variants={itemVariants}>
+            <div className="flex items-center gap-2 text-sm">
+              <span className="font-medium">Contact Us:</span>
+              <a href="tel:09988411173" className="hover:text-[#fecf0c] hover:underline">
+                0998 841 1173
+              </a>
+              <span className="text-stone-400">|</span>
+              <a href="tel:09176216823" className="hover:text-[#fecf0c] hover:underline">
+                0917 621 6823
+              </a>
+            </div>
+          </motion.div>
         </motion.div>
-        {/* Main heading with modern typography */}
-        <motion.div className="mb-10 space-y-4" variants={shouldReduceMotion ? undefined : subtleItem}>
-          <h1 className="text-4xl leading-tight font-bold text-white sm:text-6xl lg:text-7xl">
-            <motion.span
-              className="block bg-gradient-to-r from-white via-gray-200 to-gray-400 bg-clip-text text-transparent drop-shadow-lg"
-              variants={shouldReduceMotion ? undefined : subtleHeading}
-            >
-              Not Your Usual
-            </motion.span>
-            <motion.span
-              className="mt-2 block bg-gradient-to-r from-blue-300 via-purple-300 to-pink-300 bg-clip-text font-extrabold text-transparent"
-              variants={shouldReduceMotion ? undefined : subtleHeading}
-              transition={{ delay: shouldReduceMotion ? 0 : 0.06 }}
-            >
-              Memorial Park
-            </motion.span>
+
+        {/* Main heading */}
+        <motion.div className="mb-10 space-y-6" variants={itemVariants}>
+          <h1 className="font-serif text-4xl leading-tight tracking-tight text-[#fecf0c] sm:text-5xl md:text-6xl lg:text-7xl">
+            <span>Not Your Usual</span>
+            <span className="mt-2 block bg-clip-text font-serif font-semibold text-[#fecf0c]">Memorial Park</span>
           </h1>
-          <motion.p
-            className="mx-auto max-w-3xl text-lg leading-relaxed font-light text-white/80 sm:text-xl"
-            variants={shouldReduceMotion ? undefined : subtleItem}
-            transition={{ delay: shouldReduceMotion ? 0 : 0.12 }}
-          >
-            Inspired by Spain's <span className="font-semibold text-blue-200">El Camino de Santiago</span>, Finisterre Gardenz honors the journey of
-            life, celebrating every step with dignity and peace.
+
+          <motion.p className="mx-auto max-w-2xl font-sans text-lg leading-relaxed text-gray-100 sm:text-xl md:text-xl" variants={itemVariants}>
+            Inspired by <span className="font-medium text-[#fecf0c]">Spain’s El Camino de Santiago</span>, Finisterre Gardenz celebrates life, and
+            honors the pilgrimage we all make as we live life to the fullest.
           </motion.p>
         </motion.div>
 
         {/* CTA Section */}
-        <motion.div className="flex flex-col items-center justify-center gap-4 sm:flex-row" variants={shouldReduceMotion ? undefined : subtleItem}>
-          {/* Primary CTA */}
-          <motion.div variants={shouldReduceMotion ? undefined : subtleButton} transition={{ delay: shouldReduceMotion ? 0 : 0.16 }}>
-            <Button
-              size={'lg'}
-              variant={'default'}
-              className="group bg-ring hover:bg-ring rounded-lg font-semibold shadow-lg transition-all duration-300 hover:scale-105"
-            >
-              <Link className="flex items-center gap-3" aria-label="Explore Map" to="/map">
-                <MapPin className="text-gray-100" />
-                <hr className="h-4 w-px shrink-0 bg-neutral-400" />
-                <span className="text-gray-100">Explore Plots</span>
-                <ArrowRight className="h-4 w-4 text-gray-100 transition-transform duration-300 group-hover:translate-x-1" />
-              </Link>
-            </Button>
-          </motion.div>
-          {/* Secondary CTA */}
-          <motion.div variants={shouldReduceMotion ? undefined : subtleButton} transition={{ delay: shouldReduceMotion ? 0 : 0.22 }}>
-            <Button
-              className="group bg-chart-2 hover:bg-chart-2 rounded-lg font-medium shadow-lg transition-all duration-300 hover:scale-105"
-              variant="secondary"
-              size="lg"
-              asChild
-            >
-              <Link to="/about">
-                <span className="flex items-center gap-2 text-gray-800">
-                  <Heart className="h-4 w-4" />
-                  Our Story
-                </span>
-              </Link>
-            </Button>
-          </motion.div>
+        <motion.div className="flex flex-col items-center justify-center gap-3 sm:flex-row sm:gap-4" variants={buttonVariants}>
+          <Button
+            size="lg"
+            variant="default"
+            className="flex items-center gap-3 rounded-lg bg-[#003366] px-5 py-3 font-semibold text-white shadow-md transition-transform duration-200 hover:scale-[1.02] hover:bg-[#003366] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#fecf0c]"
+          >
+            <Link to="/map" aria-label="Explore plots map" className="flex items-center gap-3">
+              <MapPin className="h-4 w-4 text-white" aria-hidden />
+              <span className="text-white">Explore Plots</span>
+              <ArrowRight className="h-4 w-4 text-white" aria-hidden />
+            </Link>
+          </Button>
+
+          <Button
+            asChild
+            size="lg"
+            variant="secondary"
+            className="rounded-lg bg-gray-100 px-5 py-3 font-medium text-[#003366] shadow-sm transition-transform duration-200 hover:scale-[1.02] hover:bg-gray-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#003366]"
+          >
+            <Link to="/about" aria-label="Read our story" className="flex items-center gap-2">
+              <Leaf className="h-4 w-4" aria-hidden />
+              <span>Our Story</span>
+            </Link>
+          </Button>
         </motion.div>
       </motion.div>
     </section>

@@ -17,9 +17,7 @@ export interface ConvertedMarker {
   category: string
   plotStatus: string
   label: string | null
-  file_name?: string[]
   position: [number, number]
-  file_names_array?: string[]
   dimensions: {
     length: number
     width: number
@@ -39,8 +37,6 @@ export interface plots {
   plot_id: string
   columns: string
   category: string
-  file_names: string[]
-  file_names_array?: string[]
   coordinates: [number, number]
 }
 
@@ -81,7 +77,6 @@ export interface CreateColumbariumRequest {
 
 // 🔧 Map utility functions
 export const convertPlotToMarker = (plot: {
-  file_names_array?: string[]
   dead_fullname?: string
   dead_interment?: string
   customer_id?: string
@@ -89,7 +84,6 @@ export const convertPlotToMarker = (plot: {
   email?: string
   contact?: string
   label: string | null
-  file_name?: string[]
   coordinates: string
   category: string
   plot_id: string
@@ -105,30 +99,6 @@ export const convertPlotToMarker = (plot: {
   // 📍 Parse coordinates from database format "lng, lat" to [lat, lng]
   const [lng, lat] = plot.coordinates.split(', ').map(Number)
 
-  // 🖼️ Handle file_name conversion - ensure it's always an array
-  let fileNames: string[] = []
-
-  // 🔍 Check multiple sources for image files
-  if (plot.file_names_array && Array.isArray(plot.file_names_array)) {
-    fileNames = plot.file_names_array.filter(Boolean) // Remove empty strings
-  } else if (plot.file_name) {
-    if (Array.isArray(plot.file_name)) {
-      fileNames = plot.file_name.filter(Boolean)
-    } else if (typeof plot.file_name === 'string') {
-      // 🔧 Handle case where backend sends JSON string or comma-separated
-      try {
-        const parsed = JSON.parse(plot.file_name)
-        fileNames = Array.isArray(parsed) ? parsed.filter(Boolean) : [plot.file_name]
-      } catch {
-        // 📝 Might be comma-separated string
-        fileNames = (plot.file_name as string)
-          .split(',')
-          .map((s: string) => s.trim())
-          .filter(Boolean)
-      }
-    }
-  }
-
   return {
     rows: plot.rows,
     block: plot.block,
@@ -139,8 +109,6 @@ export const convertPlotToMarker = (plot: {
     category: plot.category,
     position: [lat, lng] as [number, number],
     location: `Block ${plot.block} • Plot ${plot.plot_id}`,
-    file_name: fileNames.length > 0 ? fileNames : undefined,
-    file_names_array: fileNames.length > 0 ? fileNames : undefined,
     dimensions: {
       area: parseFloat(plot.area),
       width: parseFloat(plot.width),
@@ -215,7 +183,5 @@ export interface LotSearchResult {
     width: string | null
     area: string | null
     plot_status: string
-    file_names: string | null
-    file_names_array: string[]
   }
 }

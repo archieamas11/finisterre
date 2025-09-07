@@ -11,7 +11,7 @@ const HeroSection = lazy(() => import('@/pages/landing/section/HeroSection'))
 const FAQs = lazy(() => import('@/pages/landing/section/FAQs'))
 const Showcase = lazy(() => import('@/pages/landing/section/Showcase'))
 const Footer = lazy(() => import('@/pages/landing/section/Footer'))
-const FeatureSection = lazy(() => import('@/components/mvpblocks/FeatureSection'))
+const FeatureSection = lazy(() => import('@/pages/landing/section/FeatureSection'))
 const Testimonials = lazy(() => import('@/components/mvpblocks/Testimonials'))
 
 export default function LandingLayout() {
@@ -26,7 +26,7 @@ export default function LandingLayout() {
         {/* Floating message us button */}
         <div className="group">
           <div className="fixed right-22 bottom-9 z-999">
-            <span className="rounded-full bg-white px-4 py-2 text-black/80 shadow-lg transition-opacity duration-300 group-hover:opacity-0">
+            <span className="rounded-full bg-white px-4 py-2 text-[#003366] shadow-lg transition-opacity duration-300 group-hover:opacity-0">
               Message Us!
             </span>
           </div>
@@ -39,7 +39,7 @@ export default function LandingLayout() {
             >
               <Tooltip>
                 <TooltipTrigger asChild>
-                  <PulsatingButton className="bg-ring h-15 w-15 rounded-full shadow-lg">
+                  <PulsatingButton className="h-15 w-15 rounded-full bg-[#003366] shadow-lg">
                     <FaFacebookMessenger className="text-white" />
                   </PulsatingButton>
                 </TooltipTrigger>

@@ -41,7 +41,7 @@ export const HeaderSection: FC = () => {
         aria-label="Go to homepage"
       >
         <img src="/favicon.svg" className="h-6 w-6" alt="Home Logo" />
-        <span className="hidden md:inline">Finisterre Gardenz</span>
+        <span className="hidden md:inline">Finisterre</span>
       </Link>
       <NavigationMenuSection />
       {/* Show profile when user loaded; otherwise show Login */}

@@ -1,6 +1,5 @@
 import { ShieldCheck, TrendingUp, Medal, Wrench, MapIcon, Leaf, ArrowRight } from 'lucide-react'
 
-import { Badge } from '@/components/ui/badge'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { cn } from '@/lib/utils'
 
@@ -84,10 +83,7 @@ const FeatureSection = () => {
     <section className="py-24 sm:py-32">
       <div className="mx-auto max-w-7xl px-6 lg:px-8">
         <div className="mx-auto max-w-3xl text-center">
-          <Badge variant="outline" className="mb-4 rounded-full border-black px-4 py-1.5 text-sm font-medium text-black">
-            Our Promise
-          </Badge>
-          <h2 className="text-4xl font-bold tracking-tight text-black sm:text-5xl">Why Choose Finisterre</h2>
+          <h2 className="text-4xl font-bold tracking-tight text-[#003366] sm:text-5xl">Why Choose Finisterre</h2>
           <p className="mx-auto mt-6 max-w-2xl text-lg leading-8 text-black">
             A sacred place inspired by El Camino de Santiago, providing peace, dignity, and beauty for generations to come.
           </p>

@@ -9,7 +9,6 @@ import { DatePicker } from '@/components/ui/date-picker'
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 
 export interface DeceasedDialogProps {
   open: boolean
@@ -25,7 +24,6 @@ const formSchema = z.object({
   dead_birth_date: z.string().min(1, 'Birth date is required'),
   dead_date_death: z.string().min(1, 'Date of death is required'),
   dead_interment: z.string().min(1, 'Interment date is required'),
-  dead_gender: z.enum(['Male', 'Female'], { message: 'Gender is required.' }),
 })
 
 type FormData = z.infer<typeof formSchema>
@@ -42,7 +40,6 @@ export function CreateDeceasedRecordDialog({
     resolver: zodResolver(formSchema),
     defaultValues: {
       dead_fullname: initialValues?.dead_fullname || '',
-      dead_gender: (initialValues?.dead_gender as 'Male' | 'Female') || undefined,
       dead_birth_date: initialValues?.dead_birth_date || '',
       dead_date_death: initialValues?.dead_date_death || '',
       dead_interment: initialValues?.dead_interment || '',
@@ -59,7 +56,6 @@ export function CreateDeceasedRecordDialog({
         deceased_id: deceasedId,
         dead_fullname: values.dead_fullname,
         full_name: values.dead_fullname,
-        dead_gender: values.dead_gender,
         dead_birth_date: values.dead_birth_date,
         dead_date_death: values.dead_date_death,
         dead_interment: values.dead_interment,
@@ -71,6 +67,7 @@ export function CreateDeceasedRecordDialog({
         dead_relationship: '',
         dead_message: '',
         dead_profile_link: '',
+        dead_gender: '',
       }
       await propOnSubmit(payload)
       form.reset()
@@ -92,50 +89,22 @@ export function CreateDeceasedRecordDialog({
 
         <Form {...form}>
           <form onSubmit={form.handleSubmit(handleSubmit)} className="mx-auto max-w-3xl space-y-8">
-            <div className="grid grid-cols-12 gap-4">
-              <div className="col-span-6">
-                <FormField
-                  control={form.control}
-                  name="dead_fullname"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>
-                        Full Name<span className="text-red-500">*</span>
-                      </FormLabel>
-                      <FormControl>
-                        <Input placeholder="Enter deceased full name" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </div>
-
-              <div className="col-span-6">
-                <FormField
-                  control={form.control}
-                  name="dead_gender"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>
-                        Gender<span className="text-red-500">*</span>
-                      </FormLabel>
-                      <Select onValueChange={field.onChange} defaultValue={field.value}>
-                        <FormControl>
-                          <SelectTrigger className="w-full">
-                            <SelectValue placeholder="Select gender" />
-                          </SelectTrigger>
-                        </FormControl>
-                        <SelectContent>
-                          <SelectItem value="Male">Male</SelectItem>
-                          <SelectItem value="Female">Female</SelectItem>
-                        </SelectContent>
-                      </Select>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </div>
+            <div className="col-span-6">
+              <FormField
+                control={form.control}
+                name="dead_fullname"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>
+                      Full Name<span className="text-red-500">*</span>
+                    </FormLabel>
+                    <FormControl>
+                      <Input placeholder="Enter deceased full name" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
             </div>
 
             <div className="grid grid-cols-12 gap-4">

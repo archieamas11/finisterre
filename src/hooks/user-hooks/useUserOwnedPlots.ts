@@ -46,9 +46,7 @@ export function convertUserPlotToMarker(plot: UserOwnedPlot): ConvertedMarker | 
     category: plot.category,
     plotStatus: plot.plot_status || 'available',
     label: plot.plot_label || null,
-    file_name: undefined,
     position: plot.coordinates, // Already in [lat, lng] format
-    file_names_array: undefined,
     dimensions: {
       length: plot.length || 0,
       width: plot.width || 0,
