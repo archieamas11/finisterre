@@ -1,4 +1,4 @@
-import { MapPin, User, Calendar, Ruler, Grid3X3 } from 'lucide-react'
+import { MapPin, User, Calendar, Ruler } from 'lucide-react'
 import { Popup } from 'react-map-gl/mapbox'
 
 import { Button } from '@/components/ui/button'
@@ -82,12 +82,6 @@ export function PlotPopup({ coords, props, onClose, onGetDirections }: PlotPopup
             <Ruler className="text-muted-foreground h-3 w-3" />
             <span className="text-sm">
               Dimensions: {props.dimensions.length} x {props.dimensions.width} ({props.dimensions.area} sqm)
-            </span>
-          </div>
-          <div className="flex items-center gap-1">
-            <Grid3X3 className="text-muted-foreground h-3 w-3" />
-            <span className="text-sm">
-              Block: {props.block}, Plot: {props.plot_id}
             </span>
           </div>
           {props.rows && <div className="text-muted-foreground text-sm">Row: {props.rows}</div>}

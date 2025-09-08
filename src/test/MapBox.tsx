@@ -1,6 +1,7 @@
 import 'mapbox-gl/dist/mapbox-gl.css'
+import { MapPin } from 'lucide-react'
 import { useState, useMemo, useRef } from 'react'
-import Map, { FullscreenControl, NavigationControl, GeolocateControl, type MapRef, Source, Layer } from 'react-map-gl/mapbox'
+import Map, { FullscreenControl, NavigationControl, GeolocateControl, type MapRef, Source, Layer, Marker } from 'react-map-gl/mapbox'
 
 import { Button } from '@/components/ui/button'
 import { usePlots } from '@/hooks/plots-hooks/plot.hooks'
@@ -35,6 +36,8 @@ function MapBox() {
 
   const [routeFeature, setRouteFeature] = useState<LineStringFeature | null>(null)
   const [instructions, setInstructions] = useState<string[]>([])
+  const [originMarker, setOriginMarker] = useState<[number, number] | null>(null)
+  const [destinationMarker, setDestinationMarker] = useState<[number, number] | null>(null)
 
   const circleLayer = plotsCircleLayer
 
@@ -49,6 +52,8 @@ function MapBox() {
           if (!res) return
           setRouteFeature(res.feature)
           setInstructions(res.steps)
+          setOriginMarker(origin)
+          setDestinationMarker(destination)
           mapRef.current?.fitBounds([origin, destination], { padding: 60 })
         })
       },
@@ -101,6 +106,19 @@ function MapBox() {
           </Source>
         )}
         {routeFeature && <RouteLayer feature={routeFeature} />}
+        {originMarker && (
+          <Marker longitude={originMarker[0]} latitude={originMarker[1]} anchor="center">
+            <div className="relative">
+              <span className="bg-primary block h-3 w-3 rounded-full border-2 border-white shadow" />
+              <span className="bg-primary/30 absolute top-1/2 left-1/2 -z-10 block h-6 w-6 -translate-x-1/2 -translate-y-1/2 rounded-full" />
+            </div>
+          </Marker>
+        )}
+        {destinationMarker && (
+          <Marker longitude={destinationMarker[0]} latitude={destinationMarker[1]} anchor="bottom">
+            <MapPin className="text-destructive h-6 w-6 drop-shadow" />
+          </Marker>
+        )}
         {popup && <PlotPopup coords={popup.coords} props={popup.props} onClose={() => setPopup(null)} onGetDirections={onGetDirections} />}
       </Map>
       <DirectionsList steps={instructions} />
