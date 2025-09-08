@@ -7,7 +7,7 @@ import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import Spinner from '@/components/ui/spinner'
-import { useUserDashboard } from '@/hooks/user-hooks/useUserDashboard'
+import { useUserDashboardOffline } from '@/hooks/user-hooks/useUserDashboardOffline'
 import { cn } from '@/lib/utils'
 import { isNativePlatform } from '@/utils/platform.utils'
 
@@ -23,7 +23,7 @@ interface UserDashboardProps {
 }
 
 export default function UserDashboard({ onPlotNavigate }: UserDashboardProps) {
-  const { data: dashboardData, isLoading, error } = useUserDashboard()
+  const { data: dashboardData, isLoading, error, isOffline, source } = useUserDashboardOffline()
   const navigate = useNavigate()
 
   const handleNavigateToPlot = (coordinates?: Coordinates | null) => {
@@ -39,7 +39,8 @@ export default function UserDashboard({ onPlotNavigate }: UserDashboardProps) {
     }
   }
 
-  if (isLoading) {
+  // Only show loading spinner if we have no data at all (neither cached nor fresh)
+  if (isLoading && !dashboardData) {
     return (
       <div className="flex h-screen w-full items-center justify-center">
         <Spinner />
@@ -47,8 +48,10 @@ export default function UserDashboard({ onPlotNavigate }: UserDashboardProps) {
     )
   }
 
-  if (error) {
-    return <ErrorMessage message={error.message} showRetryButton />
+  // Only show error if we have no data at all (not even cached data)
+  if (error && !dashboardData) {
+    const errorMessage = error instanceof Error ? error.message : 'An error occurred while loading dashboard data'
+    return <ErrorMessage message={errorMessage} showRetryButton />
   }
 
   const stats = {
@@ -82,7 +85,19 @@ export default function UserDashboard({ onPlotNavigate }: UserDashboardProps) {
 
       {/* Quick Stats Section */}
       <section className="mb-12">
-        <h2 className="mb-6 text-2xl font-bold text-slate-900 dark:text-white">Your Memorial Overview</h2>
+        <div className="mb-6 flex items-center justify-between">
+          <h2 className="text-2xl font-bold text-slate-900 dark:text-white">Your Memorial Overview</h2>
+          {isOffline && source === 'cache' && (
+            <Badge variant="outline" className="text-xs text-amber-600 dark:text-amber-400">
+              Offline Mode
+            </Badge>
+          )}
+          {!!error && dashboardData && source === 'cache' && (
+            <Badge variant="outline" className="text-xs text-orange-600 dark:text-orange-400">
+              Using Cached Data
+            </Badge>
+          )}
+        </div>
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
           <StatCard
             title="Connected Memorials"

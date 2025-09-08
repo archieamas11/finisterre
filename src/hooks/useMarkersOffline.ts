@@ -45,6 +45,7 @@ export function useMarkersOffline(options: UseMarkersOfflineOptions = {}): UseMa
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<unknown>(null)
   const [source, setSource] = useState<'network' | 'cache' | undefined>(undefined)
+  const [isInitialLoad, setIsInitialLoad] = useState(true)
   const isOffline = typeof navigator !== 'undefined' ? navigator.onLine === false : false
 
   const loadFromCache = useCallback(async () => {
@@ -55,50 +56,109 @@ export function useMarkersOffline(options: UseMarkersOfflineOptions = {}): UseMa
       setData(cached)
       setSource('cache')
     }
+    return cached
   }, [])
 
   const fetchAndCache = useCallback(async () => {
     if (!enabled) return
+
+    // If offline, only load from cache
     if (isOffline) {
       await loadFromCache()
       return
     }
-    setIsLoading(true)
+
+    // For online mode, fetch fresh data in background
     setError(null)
     try {
       const res = await getPlots()
       const plotsData: plots[] = Array.isArray(res) ? res : res?.plots || []
       setData(plotsData)
       setSource('network')
+
       // Persist (best-effort)
       const database = getDB()
-      // Clear then bulk add (Dexie transaction implicit via table operations order not strictly required here)
       await database.plots.clear()
       if (plotsData.length) await database.plots.bulkAdd(plotsData)
     } catch (err) {
       setError(err)
-      // fallback to cache on network failure
-      await loadFromCache()
-    } finally {
-      setIsLoading(false)
+      // If we have cached data, keep showing it; otherwise fallback to cache
+      if (!data || data.length === 0) {
+        await loadFromCache()
+      }
     }
+  }, [enabled, isOffline, loadFromCache, data])
+
+  // Initial load: show cached data instantly, then fetch fresh data
+  useEffect(() => {
+    const initializeData = async () => {
+      if (!enabled) return
+
+      // First, try to load cached data instantly
+      const cachedData = await loadFromCache()
+
+      // If we have cached data, show it immediately
+      if (cachedData.length > 0) {
+        setIsInitialLoad(false)
+      }
+
+      // Then fetch fresh data in background (if online)
+      if (!isOffline) {
+        setIsLoading(true)
+        try {
+          const res = await getPlots()
+          const plotsData: plots[] = Array.isArray(res) ? res : res?.plots || []
+          setData(plotsData)
+          setSource('network')
+
+          // Persist fresh data
+          const database = getDB()
+          await database.plots.clear()
+          if (plotsData.length) await database.plots.bulkAdd(plotsData)
+        } catch (err) {
+          setError(err)
+          // Keep showing cached data on network error
+        } finally {
+          setIsLoading(false)
+        }
+      } else {
+        setIsInitialLoad(false)
+      }
+    }
+
+    initializeData()
   }, [enabled, isOffline, loadFromCache])
 
-  // Initial & refetchKey triggered load
+  // Handle refetchKey changes
   useEffect(() => {
-    fetchAndCache()
-  }, [fetchAndCache, refetchKey])
+    if (refetchKey !== undefined) {
+      fetchAndCache()
+    }
+  }, [refetchKey, fetchAndCache])
 
   // Listen to online event to refresh automatically
   useEffect(() => {
-    const handler = () => fetchAndCache()
+    const handler = () => {
+      if (!isInitialLoad) {
+        fetchAndCache()
+      }
+    }
     window.addEventListener('online', handler)
     return () => window.removeEventListener('online', handler)
-  }, [fetchAndCache])
+  }, [fetchAndCache, isInitialLoad])
 
   const refetch = useCallback(async () => {
+    setIsLoading(true)
     await fetchAndCache()
+    setIsLoading(false)
   }, [fetchAndCache])
 
-  return { data, isLoading, isOffline, error, refetch, source }
+  return {
+    data,
+    isLoading: isLoading && !isInitialLoad, // Don't show loading on initial load if we have cached data
+    isOffline,
+    error,
+    refetch,
+    source,
+  }
 }

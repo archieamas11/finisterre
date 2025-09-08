@@ -170,8 +170,12 @@ export default function MapPage({ onBack, initialDirection }: { onBack?: () => v
   // Existing React Query (kept for consistency) & new offline-aware hook
   const { isLoading: rqLoading, data: plotsDataRQ } = usePlots()
   const { data: offlinePlots, isLoading: offlineLoading } = useMarkersOffline()
-  const isLoading = rqLoading || offlineLoading
+
+  // Use offline data if available, otherwise fallback to React Query data
   const plotsData = offlinePlots && offlinePlots.length > 0 ? offlinePlots : plotsDataRQ
+
+  // Only show loading if we have no data at all (neither cached nor fresh)
+  const isLoading = !plotsData && (rqLoading || offlineLoading)
   const { data: userPlotsData } = useUserOwnedPlots()
 
   const markers = useMemo(() => plotsData?.map(convertPlotToMarker) || [], [plotsData])

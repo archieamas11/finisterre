@@ -1,5 +1,5 @@
 import { User, Mail, Phone, Calendar, Edit3, Shield, Heart, TrendingUp, Award, Camera } from 'lucide-react'
-import { useMemo, memo } from 'react'
+import { BiLogOut } from 'react-icons/bi'
 
 import { Avatar, AvatarFallback } from '@/components/ui/avatar'
 import { Badge } from '@/components/ui/badge'
@@ -7,8 +7,10 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Progress } from '@/components/ui/progress'
 import { Skeleton } from '@/components/ui/skeleton'
+import { useLogout } from '@/hooks/useLogout'
 import { useMe } from '@/hooks/useMe'
 import { useMyCustomer } from '@/hooks/useMyCustomer'
+import { isNativePlatform } from '@/utils/platform.utils'
 
 export default memo(function UserProfile() {
   const { user: meUser, isLoading: isMeLoading, isError: isMeError } = useMe()
@@ -61,6 +63,7 @@ export default memo(function UserProfile() {
   const hasCompleteProfile = computed.hasCompleteProfile
   const memberSinceYear = computed.memberSinceYear
   const memberSinceDate = computed.memberSinceDate
+  const { performLogout, isPending } = useLogout()
 
   const handleEditProfile = () => {
     // TODO: Implement edit profile functionality
@@ -304,7 +307,6 @@ export default memo(function UserProfile() {
             </div>
           </CardContent>
         </Card>
-
         <Card className="bg-gradient-to-br from-white to-slate-50/50 shadow-xl dark:from-slate-900 dark:to-slate-800/50">
           <CardHeader className="pb-4">
             <CardTitle className="flex items-center gap-2 text-lg">
@@ -371,6 +373,12 @@ export default memo(function UserProfile() {
             </div>
           </CardContent>
         </Card>
+        {isNativePlatform() && (
+          <Button className="text-destructive" onClick={() => performLogout()} disabled={isPending} aria-label="Logout">
+            <BiLogOut />
+            Logout
+          </Button>
+        )}
       </div>
     </div>
   )

@@ -5,6 +5,7 @@ import { toast } from 'sonner'
 
 import { useLogoutMutation } from '@/hooks/useAuthMutations'
 import { logout as clearAuthStorage } from '@/utils/auth.utils'
+import { isNativePlatform } from '@/utils/platform.utils'
 
 type ClearClientStateFn = () => void
 
@@ -14,7 +15,9 @@ export function useLogout() {
   const qc = useQueryClient()
 
   const performLogout = useCallback(
-    async (clearClientState?: ClearClientStateFn, redirect = '/') => {
+    async (clearClientState?: ClearClientStateFn, redirect?: string) => {
+      // Determine redirect path based on platform if not explicitly provided
+      const redirectPath = redirect ?? (isNativePlatform() ? '/landing-android' : '/')
       try {
         // Ensure we await the mutation so navigation happens after logout completes
         await toast.promise(mutation.mutateAsync(), {
@@ -46,13 +49,18 @@ export function useLogout() {
           }
         }
 
-        // Use hard navigation so client-side route guards can't immediately redirect back to login
+        // Use appropriate navigation method based on platform
         try {
-          // prefer window.location.replace (no history entry)
-          window.location.replace(redirect)
+          if (isNativePlatform()) {
+            // For native platforms, use React Router navigate to stay within the app
+            navigate(redirectPath, { replace: true })
+          } else {
+            // For web platforms, use window.location.replace for hard navigation
+            window.location.replace(redirectPath)
+          }
         } catch {
           // fallback to react-router navigate if window isn't available
-          navigate(redirect, { replace: true })
+          navigate(redirectPath, { replace: true })
         }
         return true
       } catch (error) {
