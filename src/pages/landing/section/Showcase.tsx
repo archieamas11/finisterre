@@ -457,7 +457,7 @@ export default function CemeteryShowcase() {
                             leafletMap.flyTo([10.249306880563585, 123.797848311330114], 18, { duration: 1.5 })
                           }
                         }}
-                        className="bg-[var(--brand-primary)] text-xs"
+                        className="bg-[var(--brand-primary)] text-xs text-gray-100"
                       >
                         <MdTravelExplore />
                         Explore Map

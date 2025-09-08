@@ -175,7 +175,7 @@
 /* 🌟 Aurora background protection - ensures it's never overridden by theme changes */
 .aurora-background {
   background: #ffffff;
-  background-image: radial-gradient(circle at top center, rgba(59, 130, 246, 0.5), transparent 70%);
+  background-image: radial-gradient(circle at top center, rgba(59, 130, 246, 0.5), transparent 60%);
 }
 
 /* Protect aurora background from theme overrides */
@@ -186,7 +186,7 @@ html:not(.dark) .aurora-background,
 .md.dark .aurora-background,
 .md:not(.dark) .aurora-background {
   background: #ffffff;
-  background-image: radial-gradient(circle at top center, rgba(59, 130, 246, 0.5), transparent 70%);
+  background-image: radial-gradient(circle at top center, rgba(59, 130, 246, 0.5), transparent 60%);
 }
 
 /* Ensure landing page container is always transparent */
