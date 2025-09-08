@@ -36,7 +36,7 @@ export default function HeroSection() {
 
   return (
     <section className="relative flex min-h-screen items-center justify-center overflow-hidden">
-      <div className="absolute inset-0 z-0 [mask-image:linear-gradient(to_bottom,transparent,black_0%,black_60%,transparent)]">
+      <div className="absolute inset-0 z-0 [mask-image:linear-gradient(to_bottom,transparent,black_0%,black_40%,transparent)]">
         {/* Background video: muted autoplay loop with a local poster and source element for better browser handling */}
         <video
           src="https://finisterre.ph/wp-content/uploads/2023/09/Finisterre-Masterplan-Actual-Development.mp4"
@@ -46,7 +46,7 @@ export default function HeroSection() {
           muted
           loop
           playsInline
-          preload="metadata"
+          preload="auto"
           aria-hidden="true"
           role="presentation"
         />
