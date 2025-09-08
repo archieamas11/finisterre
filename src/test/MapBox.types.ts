@@ -16,7 +16,7 @@ export interface FeatureCollection<G = Point, P = unknown> {
   features: Array<Feature<G, P>>
 }
 
-// 🧭 Build a performant GeoJSON for WebGL rendering
+// Build a performant GeoJSON for WebGL rendering
 export type PlotFeatureProps = Omit<ConvertedMarker, 'position'> & { color: string }
 
 export const plotsToGeoJSON = (plots: Array<unknown>): FeatureCollection<Point, PlotFeatureProps> => {
