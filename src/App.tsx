@@ -30,6 +30,7 @@ const AndroidLandingPage = React.lazy(() => import('@/pages/android/AndroidLandi
 const IosLandingPage = React.lazy(() => import('@/pages/ios/iosLandingPage'))
 const PublicMap = React.lazy(() => import('@/pages/webmap/PublicWebMap'))
 import LandingLayout from '@/layout/LandingLayout'
+const TestMapPage = React.lazy(() => import('@/test/TestMapPage'))
 
 function AppRoutes() {
   const navigate = useNavigate()
@@ -68,6 +69,7 @@ function AppRoutes() {
           <Route path="/unauthorized" element={<UnauthorizedPage />} />
           <Route path="/landing-android" element={<AndroidLandingPage />} />
           <Route path="/landing-ios" element={<IosLandingPage />} />
+          <Route path="/test-map" element={<TestMapPage />} />
 
           {/* User Protected Routes */}
           <Route

@@ -4,21 +4,6 @@ import type { plots } from '@/types/map.types'
 
 import { createPlots, editPlots, getPlots } from '@/api/plots.api'
 
-// 2) Mutation for create
-// export function useCreatePlots() {
-//   const qc = useQueryClient();
-//   return useMutation<plots, Error, Partial<plots>>({
-//     onSuccess: () => {
-//       // Invalidate both plots and plot details
-//       qc.invalidateQueries({ queryKey: ["plots"] });
-//       qc.invalidateQueries({ queryKey: ["plotDetails"] });
-//     },
-//     mutationFn: async (data) => {
-//       return await createPlots(data as plots);
-//     },
-//   });
-// }
-
 export function useEditPlots() {
   const qc = useQueryClient()
   return useMutation<plots, Error, plots>({

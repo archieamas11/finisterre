@@ -12,7 +12,7 @@ const parkingMarkersData: FinisterreMarkerData[] = [
     id: 'parking-1',
     lat: 10.248467771138005,
     lng: 123.797668761148387,
-    title: '🚗 Main Parking Area',
+    title: 'Main Parking Area',
     description: 'Primary parking zone for Finisterre guests. Closest to the main entrance and reception.',
     marker: {
       type: 'icon',
