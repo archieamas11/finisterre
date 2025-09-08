@@ -1,14 +1,17 @@
+import 'mapbox-gl/dist/mapbox-gl.css'
 import { useState, useMemo, useRef } from 'react'
 import Map, { FullscreenControl, NavigationControl, GeolocateControl, type MapRef, Source, Layer } from 'react-map-gl/mapbox'
-import 'mapbox-gl/dist/mapbox-gl.css'
 
 import { Button } from '@/components/ui/button'
 import { usePlots } from '@/hooks/plots-hooks/plot.hooks'
 
 import arcgisSatelliteStyle from './ArcGisTileLayer'
 import { plotsToGeoJSON, type PlotFeatureProps } from './buildGeoJSON'
+import { fetchWalkingDirections, type LineStringFeature } from './directions'
+import { DirectionsList } from './DirectionsList'
 import { PlotPopup } from './PlotPopup'
 import { plotsCircleLayer } from './plotsCircleLayer'
+import { RouteLayer } from './RouteLayer'
 
 const MAPBOX_ACCESS_TOKEN = import.meta.env.VITE_MAPBOX_ACCESS_TOKEN
 
@@ -29,7 +32,30 @@ function MapBox() {
       zoom: INITIAL_VIEW_STATE.zoom,
     })
   }
+
+  const [routeFeature, setRouteFeature] = useState<LineStringFeature | null>(null)
+  const [instructions, setInstructions] = useState<string[]>([])
+
   const circleLayer = plotsCircleLayer
+
+  const onGetDirections = async (destination: [number, number]) => {
+    if (!('geolocation' in navigator)) {
+      return
+    }
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        const origin: [number, number] = [pos.coords.longitude, pos.coords.latitude]
+        fetchWalkingDirections(origin, destination, MAPBOX_ACCESS_TOKEN).then((res) => {
+          if (!res) return
+          setRouteFeature(res.feature)
+          setInstructions(res.steps)
+          mapRef.current?.fitBounds([origin, destination], { padding: 60 })
+        })
+      },
+      () => {},
+      { enableHighAccuracy: true },
+    )
+  }
   return (
     <div style={{ position: 'relative', width: '100vw', height: '100vh' }}>
       <Map
@@ -74,8 +100,10 @@ function MapBox() {
             <Layer {...circleLayer} />
           </Source>
         )}
-        {popup && <PlotPopup coords={popup.coords} props={popup.props} onClose={() => setPopup(null)} />}
+        {routeFeature && <RouteLayer feature={routeFeature} />}
+        {popup && <PlotPopup coords={popup.coords} props={popup.props} onClose={() => setPopup(null)} onGetDirections={onGetDirections} />}
       </Map>
+      <DirectionsList steps={instructions} />
     </div>
   )
 }

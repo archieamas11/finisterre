@@ -1,6 +1,7 @@
 import { MapPin, User, Calendar, Ruler, Grid3X3 } from 'lucide-react'
 import { Popup } from 'react-map-gl/mapbox'
 
+import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 
 import type { PlotFeatureProps } from './buildGeoJSON'
@@ -9,13 +10,17 @@ type PlotPopupProps = {
   coords: [number, number]
   props: PlotFeatureProps
   onClose: () => void
+  onGetDirections?: (destination: [number, number]) => void
 }
 
-export function PlotPopup({ coords, props, onClose }: PlotPopupProps) {
+export function PlotPopup({ coords, props, onClose, onGetDirections }: PlotPopupProps) {
   return (
     <Popup anchor="bottom" longitude={coords[0]} latitude={coords[1]} onClose={onClose} closeOnClick={false} className="rounded-lg shadow-lg">
       <div className="bg-card text-card-foreground max-w-sm rounded-lg border p-4">
         {/* Header */}
+
+        {/* Get direction button */}
+        <Button onClick={() => onGetDirections?.(coords)}>Get Direction</Button>
         <div className="mb-3 flex items-center gap-2">
           <MapPin className="text-primary h-4 w-4" />
           <h3 className="text-lg font-semibold">{props.location}</h3>
