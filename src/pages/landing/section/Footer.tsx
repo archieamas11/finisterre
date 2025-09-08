@@ -1,4 +1,4 @@
-import { Facebook, Twitter, Linkedin, Instagram, MapPin } from 'lucide-react'
+import { Facebook, Twitter, Linkedin, Instagram } from 'lucide-react'
 
 export default function Footer() {
   const footerLinks = {
@@ -28,34 +28,34 @@ export default function Footer() {
   }
 
   return (
-    <footer id="contact" className="border-t border-black/30" aria-labelledby="footer-heading">
+    <footer id="contact" className="border-t border-gray-300" aria-labelledby="footer-heading">
       <h2 id="footer-heading" className="sr-only">
         Footer
       </h2>
-      <div className="mx-auto max-w-7xl px-6 py-16 sm:py-24 lg:px-8 lg:py-32">
+      <div className="mx-auto max-w-7xl px-6 py-16 sm:py-24 lg:px-8 lg:py-15">
         <div className="xl:grid xl:grid-cols-3 xl:gap-8">
           <div className="space-y-8">
             <Link to="/" className="flex items-center gap-2 font-bold">
-              <MapPin className="h-6 w-6 text-black" aria-hidden="true" />
-              <span className="text-xl text-black">Finisterre</span>
+              <img src="/favicon.svg" alt="Finisterre" className="h-6 w-6" />
+              <span className="text-xl text-[var(--brand-primary)]">Finisterre Gardenz</span>
             </Link>
             <p className="text-base leading-6 text-gray-600">
               Providing dignified cemetery management solutions with compassion, technology, and respect for sacred spaces.
             </p>
             <div className="flex space-x-6">
-              <a href="#" className="hover:text-primary text-gray-500">
+              <a href="#" className="hover:text-primary text-[var(--brand-primary)]">
                 <span className="sr-only">Facebook</span>
                 <Facebook className="h-6 w-6" />
               </a>
-              <a href="#" className="hover:text-primary text-gray-500">
+              <a href="#" className="hover:text-primary text-[var(--brand-primary)]">
                 <span className="sr-only">Twitter</span>
                 <Twitter className="h-6 w-6" />
               </a>
-              <a href="#" className="hover:text-primary text-gray-500">
+              <a href="#" className="hover:text-primary text-[var(--brand-primary)]">
                 <span className="sr-only">Instagram</span>
                 <Instagram className="h-6 w-6" />
               </a>
-              <a href="#" className="hover:text-primary text-gray-500">
+              <a href="#" className="hover:text-primary text-[var(--brand-primary)]">
                 <span className="sr-only">LinkedIn</span>
                 <Linkedin className="h-6 w-6" />
               </a>
@@ -64,7 +64,7 @@ export default function Footer() {
           <div className="mt-16 grid grid-cols-2 gap-8 xl:col-span-2 xl:mt-0">
             <div className="md:grid md:grid-cols-2 md:gap-8">
               <div>
-                <h3 className="text-sm leading-6 font-semibold text-black">Solutions</h3>
+                <h3 className="text-sm leading-6 font-semibold text-[var(--brand-primary)]">Solutions</h3>
                 <ul role="list" className="mt-6 space-y-4">
                   {footerLinks.solutions.map((item) => (
                     <li key={item.name}>
@@ -76,7 +76,7 @@ export default function Footer() {
                 </ul>
               </div>
               <div className="mt-10 md:mt-0">
-                <h3 className="text-sm leading-6 font-semibold text-black">Support</h3>
+                <h3 className="text-sm leading-6 font-semibold text-[var(--brand-primary)]">Support</h3>
                 <ul role="list" className="mt-6 space-y-4">
                   {footerLinks.support.map((item) => (
                     <li key={item.name}>
@@ -90,7 +90,7 @@ export default function Footer() {
             </div>
             <div className="md:grid md:grid-cols-2 md:gap-8">
               <div>
-                <h3 className="text-sm leading-6 font-semibold text-black">Company</h3>
+                <h3 className="text-sm leading-6 font-semibold text-[var(--brand-primary)]">Company</h3>
                 <ul role="list" className="mt-6 space-y-4">
                   {footerLinks.company.map((item) => (
                     <li key={item.name}>
@@ -102,7 +102,7 @@ export default function Footer() {
                 </ul>
               </div>
               <div className="mt-10 md:mt-0">
-                <h3 className="text-sm leading-6 font-semibold text-black">Legal</h3>
+                <h3 className="text-sm leading-6 font-semibold text-[var(--brand-primary)]">Legal</h3>
                 <ul role="list" className="mt-6 space-y-4">
                   {footerLinks.legal.map((item) => (
                     <li key={item.name}>

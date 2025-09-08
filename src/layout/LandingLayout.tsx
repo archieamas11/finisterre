@@ -17,16 +17,13 @@ const Testimonials = lazy(() => import('@/components/mvpblocks/Testimonials'))
 export default function LandingLayout() {
   return (
     <div className="landing-page-root relative min-h-screen w-full bg-transparent">
-      {/* Aurora Dream Corner Whispers - decorative background (non-interactive, behind content) */}
       <div className="aurora-background pointer-events-none fixed inset-0 -z-10" aria-hidden="true" />
-      {/* Stack content above decorative layer */}
       <div className="relative z-10">
         <HeaderSection />
-
         {/* Floating message us button */}
         <div className="group">
           <div className="fixed right-22 bottom-9 z-999">
-            <span className="rounded-full bg-white px-4 py-2 text-[#003366] shadow-lg transition-opacity duration-300 group-hover:opacity-0">
+            <span className="rounded-full bg-white px-4 py-2 text-[var(--brand-primary)] shadow-lg transition-opacity duration-300 group-hover:opacity-0">
               Message Us!
             </span>
           </div>
@@ -39,7 +36,7 @@ export default function LandingLayout() {
             >
               <Tooltip>
                 <TooltipTrigger asChild>
-                  <PulsatingButton className="h-15 w-15 rounded-full bg-[#003366] shadow-lg">
+                  <PulsatingButton className="h-15 w-15 rounded-full bg-[var(--brand-primary)] shadow-lg">
                     <FaFacebookMessenger className="text-white" />
                   </PulsatingButton>
                 </TooltipTrigger>

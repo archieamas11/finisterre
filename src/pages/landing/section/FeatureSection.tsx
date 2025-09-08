@@ -58,7 +58,7 @@ const FeatureCard = ({ feature }: { feature: Feature }) => {
         <div className={cn('mb-4 flex h-12 w-12 items-center justify-center rounded-lg bg-gradient-to-br text-white shadow-md', feature.color)}>
           <Icon className="h-6 w-6" />
         </div>
-        <CardTitle className="text-xl font-bold text-black">{feature.title}</CardTitle>
+        <CardTitle className="text-xl font-bold text-[var(--brand-primary)]">{feature.title}</CardTitle>
       </CardHeader>
 
       <CardContent className="relative z-10 flex flex-grow flex-col">
@@ -83,8 +83,8 @@ const FeatureSection = () => {
     <section className="py-24 sm:py-32">
       <div className="mx-auto max-w-7xl px-6 lg:px-8">
         <div className="mx-auto max-w-3xl text-center">
-          <h2 className="text-4xl font-bold tracking-tight text-[#003366] sm:text-5xl">Why Choose Finisterre</h2>
-          <p className="mx-auto mt-6 max-w-2xl text-lg leading-8 text-black">
+          <h2 className="text-4xl font-bold tracking-tight text-[var(--brand-primary)] sm:text-5xl">Why Choose Finisterre</h2>
+          <p className="mx-auto mt-6 max-w-2xl text-lg leading-8 text-gray-800">
             A sacred place inspired by El Camino de Santiago, providing peace, dignity, and beauty for generations to come.
           </p>
         </div>

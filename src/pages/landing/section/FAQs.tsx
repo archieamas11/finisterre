@@ -53,10 +53,10 @@ export default function FAQs() {
       <div className="mx-auto max-w-7xl px-6 lg:px-8">
         <div className="grid grid-cols-1 gap-x-8 gap-y-16 lg:grid-cols-3">
           <div className="lg:col-span-1">
-            <h2 className="text-3xl font-bold tracking-tight text-black sm:text-4xl">Frequently Asked Questions</h2>
+            <h2 className="text-3xl font-bold tracking-tight text-[var(--brand-primary)] sm:text-4xl">Frequently Asked Questions</h2>
             <p className="mt-4 text-lg leading-7 text-gray-600">
               Can’t find the answer you’re looking for? Reach out to our{' '}
-              <Link to="#contact" className="hover:text-primary/80 font-semibold text-gray-900">
+              <Link to="#contact" className="hover:text-primary/80 font-semibold text-[var(--brand-primary)]">
                 customer support
               </Link>{' '}
               team.

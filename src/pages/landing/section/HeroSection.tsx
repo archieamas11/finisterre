@@ -67,11 +67,11 @@ export default function HeroSection() {
           <motion.div className="flex flex-col items-center justify-center gap-4 text-gray-200 sm:flex-row" variants={itemVariants}>
             <div className="flex items-center gap-2 text-sm">
               <span className="font-medium">Contact Us:</span>
-              <a href="tel:09988411173" className="hover:text-[#fecf0c] hover:underline">
+              <a href="tel:09988411173" className="hover:text-[var(--brand-secondary)] hover:underline">
                 0998 841 1173
               </a>
               <span className="text-stone-400">|</span>
-              <a href="tel:09176216823" className="hover:text-[#fecf0c] hover:underline">
+              <a href="tel:09176216823" className="hover:text-[var(--brand-secondary)] hover:underline">
                 0917 621 6823
               </a>
             </div>
@@ -80,14 +80,14 @@ export default function HeroSection() {
 
         {/* Main heading */}
         <motion.div className="mb-10 space-y-6" variants={itemVariants}>
-          <h1 className="font-serif text-4xl leading-tight tracking-tight text-[#fecf0c] sm:text-5xl md:text-6xl lg:text-7xl">
+          <h1 className="font-serif text-4xl leading-tight tracking-tight text-[var(--brand-secondary)] sm:text-5xl md:text-6xl lg:text-7xl">
             <span>Not Your Usual</span>
-            <span className="mt-2 block bg-clip-text font-serif font-semibold text-[#fecf0c]">Memorial Park</span>
+            <span className="mt-2 block bg-clip-text font-serif font-semibold text-[var(--brand-secondary)]">Memorial Park</span>
           </h1>
 
           <motion.p className="mx-auto max-w-2xl font-sans text-lg leading-relaxed text-gray-100 sm:text-xl md:text-xl" variants={itemVariants}>
-            Inspired by <span className="font-medium text-[#fecf0c]">Spain’s El Camino de Santiago</span>, Finisterre Gardenz celebrates life, and
-            honors the pilgrimage we all make as we live life to the fullest.
+            Inspired by <span className="font-medium text-[var(--brand-secondary)]">Spain's El Camino de Santiago</span>, Finisterre Gardenz
+            celebrates life, and honors the pilgrimage we all make as we live life to the fullest.
           </motion.p>
         </motion.div>
 
@@ -96,7 +96,7 @@ export default function HeroSection() {
           <Button
             size="lg"
             variant="default"
-            className="flex items-center gap-3 rounded-lg bg-[#003366] px-5 py-3 font-semibold text-white shadow-md transition-transform duration-200 hover:scale-[1.02] hover:bg-[#003366] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#fecf0c]"
+            className="flex items-center gap-3 rounded-lg bg-[var(--brand-primary)] px-5 py-3 font-semibold text-white shadow-md transition-transform duration-200 hover:scale-[1.02] hover:bg-[var(--brand-primary)] focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--brand-secondary)]"
           >
             <Link to="/map" aria-label="Explore plots map" className="flex items-center gap-3">
               <MapPin className="h-4 w-4 text-white" aria-hidden />
@@ -109,7 +109,7 @@ export default function HeroSection() {
             asChild
             size="lg"
             variant="secondary"
-            className="rounded-lg bg-gray-100 px-5 py-3 font-medium text-[#003366] shadow-sm transition-transform duration-200 hover:scale-[1.02] hover:bg-gray-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#003366]"
+            className="rounded-lg bg-gray-100 px-5 py-3 font-medium text-[var(--brand-primary)] shadow-sm transition-transform duration-200 hover:scale-[1.02] hover:bg-gray-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--brand-primary)]"
           >
             <Link to="/about" aria-label="Read our story" className="flex items-center gap-2">
               <Leaf className="h-4 w-4" aria-hidden />

@@ -5,7 +5,7 @@ import { Marquee } from '@/components/ui/marquee'
 import { cn } from '@/lib/utils'
 
 export function Highlight({ children, className }: { children: React.ReactNode; className?: string }) {
-  return <span className={cn('rounded-md bg-black/30 px-1.5 py-0.5 font-semibold text-black/80', className)}>{children}</span>
+  return <span className={cn('rounded-md bg-[var(--brand-primary)] px-1.5 py-0.5 font-semibold text-gray-100', className)}>{children}</span>
 }
 
 export interface TestimonialCardProps {
@@ -33,7 +33,7 @@ export function TestimonialCard({ description, name, img, role, className, ...pr
           <p className="text-xs text-gray-600">{role}</p>
         </div>
       </div>
-      <blockquote className="mt-4 text-base text-gray-800">{description}</blockquote>
+      <blockquote className="mt-4 text-base text-gray-700">{description}</blockquote>
       <div className="mt-4 flex items-center gap-1">
         {[...Array(5)].map((_, i) => (
           <Star key={i} className="h-4 w-4 fill-yellow-400 text-yellow-400" />
@@ -117,8 +117,8 @@ export default function Testimonials() {
     <section className="relative overflow-hidden sm:py-32">
       <div className="mx-auto w-full sm:w-[85%] md:w-[80%] lg:w-[75%] xl:w-full">
         <div className="mx-auto max-w-3xl text-center">
-          <h2 className="text-4xl font-bold tracking-tight text-black sm:text-5xl">What Families Are Saying</h2>
-          <p className="mt-6 text-lg leading-8 text-gray-700">
+          <h2 className="text-4xl font-bold tracking-tight text-[var(--brand-primary)] sm:text-5xl">What Families Are Saying</h2>
+          <p className="mt-6 text-lg leading-8 text-gray-800">
             Don't just take our word for it. Here's what families in our community are saying about our memorial park.
           </p>
         </div>
@@ -127,12 +127,12 @@ export default function Testimonials() {
             <div className="[mask-image:linear-gradient(to_left,transparent,black_0%,black_80%,transparent)]">
               <Marquee pauseOnHover className="[--duration:60s]">
                 {testimonials.map((testimonial) => (
-                  <TestimonialCard key={testimonial.name} {...testimonial} className="w-80 bg-white/70" />
+                  <TestimonialCard key={testimonial.name} {...testimonial} className="w-80 bg-white/50" />
                 ))}
               </Marquee>
               <Marquee reverse pauseOnHover className="[--duration:60s]">
                 {testimonials.map((testimonial) => (
-                  <TestimonialCard key={testimonial.name} {...testimonial} className="w-80 bg-white/70" />
+                  <TestimonialCard key={testimonial.name} {...testimonial} className="w-80 bg-white/50" />
                 ))}
               </Marquee>
             </div>

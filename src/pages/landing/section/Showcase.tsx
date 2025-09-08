@@ -274,27 +274,14 @@ export default function CemeteryShowcase() {
     return null
   }
 
-  useEffect(() => {
-    if (!isLightboxOpen) return
-
-    const onKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'ArrowRight') nextImage()
-      if (e.key === 'ArrowLeft') prevImage()
-      if (e.key === 'Escape') setIsLightboxOpen(false)
-    }
-
-    window.addEventListener('keydown', onKeyDown)
-    return () => window.removeEventListener('keydown', onKeyDown)
-  }, [isLightboxOpen, nextImage, prevImage])
-
   return (
     <section id="showcase-section" className="w-full py-24 sm:py-32" aria-labelledby="showcase-heading">
       <div className="mx-auto max-w-7xl px-6 lg:px-8">
         <div className="mx-auto max-w-3xl text-center">
-          <h2 id="showcase-heading" className="text-4xl font-bold tracking-tight text-black sm:text-5xl">
+          <h2 id="showcase-heading" className="text-4xl font-bold tracking-tight text-[var(--brand-primary)] sm:text-5xl">
             A Sacred Place of Natural Beauty
           </h2>
-          <p className="mt-6 text-lg leading-8 text-gray-600">
+          <p className="mt-6 text-lg leading-8 text-gray-800">
             Discover the serene landscape and thoughtful design that makes our cemetery a peaceful sanctuary for remembrance and reflection.
           </p>
         </div>
@@ -378,17 +365,17 @@ export default function CemeteryShowcase() {
 
         <div className="mt-24 grid grid-cols-1 gap-16 lg:grid-cols-2 lg:gap-x-8">
           <div className="lg:max-w-lg">
-            <h3 className="text-3xl font-bold tracking-tight text-black sm:text-4xl">Location Highlights</h3>
+            <h3 className="text-3xl font-bold tracking-tight text-[var(--brand-primary)] sm:text-4xl">Location Highlights</h3>
             <dl className="mt-10 space-y-8">
               {locationFeatures.map((feature) => (
                 <div key={feature.title} className="flex items-start">
                   <div className="flex-shrink-0">
                     <div className="text-primary flex h-12 w-12 items-center justify-center rounded-lg bg-black/10">
-                      <feature.icon className="h-6 w-6 text-black" aria-hidden="true" />
+                      <feature.icon className="h-6 w-6 text-amber-500" aria-hidden="true" />
                     </div>
                   </div>
                   <div className="ml-4">
-                    <dt className="text-md font-medium text-black">{feature.title}</dt>
+                    <dt className="text-md font-medium text-[var(--brand-primary)]">{feature.title}</dt>
                     <dd className="mt-1 text-sm text-gray-600">{feature.description}</dd>
                   </div>
                 </div>
@@ -459,8 +446,8 @@ export default function CemeteryShowcase() {
               {/* Floating location card */}
               <div className="pointer-events-none absolute bottom-2 left-1 z-20">
                 <div className="pointer-events-auto ml-1 inline-block max-w-xs rounded-lg border border-gray-200 bg-white/95 p-4 shadow-lg backdrop-blur-sm">
-                  <h4 className="text-lg font-semibold text-gray-900">Finisterre Gardenz</h4>
-                  <p className="mt-1 text-sm text-gray-700">6QXX+C4 Minglanilla, Cebu</p>
+                  <h4 className="text-lg font-semibold text-[var(--brand-primary)]">Finisterre Gardenz</h4>
+                  <p className="mt-1 text-sm text-gray-600">6QXX+C4 Minglanilla, Cebu</p>
                   <div className="mt-3 flex items-center gap-2">
                     <Link to="/map">
                       <Button
@@ -470,7 +457,7 @@ export default function CemeteryShowcase() {
                             leafletMap.flyTo([10.249306880563585, 123.797848311330114], 18, { duration: 1.5 })
                           }
                         }}
-                        className="text-xs"
+                        className="bg-[var(--brand-primary)] text-xs"
                       >
                         <MdTravelExplore />
                         Explore Map
