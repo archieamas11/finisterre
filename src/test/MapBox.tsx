@@ -14,7 +14,7 @@ import { PlotPopup } from './PlotPopup'
 import { plotsCircleLayer } from './plotsCircleLayer'
 import { RouteLayer } from './RouteLayer'
 
-const MAPBOX_ACCESS_TOKEN = import.meta.env.VITE_MAPBOX_ACCESS_TOKEN
+const MAPBOX_ACCESS_TOKEN = import.meta.env.VITE_MAPBOX_ACCESS_TOKEN as string
 
 function MapBox() {
   const INITIAL_VIEW_STATE = {
@@ -65,6 +65,7 @@ function MapBox() {
     <div style={{ position: 'relative', width: '100vw', height: '100vh' }}>
       <Map
         ref={mapRef}
+        reuseMaps
         initialViewState={INITIAL_VIEW_STATE}
         mapboxAccessToken={MAPBOX_ACCESS_TOKEN}
         style={{ width: '100%', height: '100%' }}
