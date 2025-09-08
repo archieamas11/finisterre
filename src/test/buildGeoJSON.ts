@@ -1,33 +1,33 @@
 import { convertPlotToMarker, getStatusColor, type ConvertedMarker } from '@/types/map.types'
 
-export interface Point {
+// Local minimal GeoJSON types
+export interface PointGeometry {
   type: 'Point'
   coordinates: [number, number]
 }
 
-export interface Feature<G = Point, P = unknown> {
+export interface Feature<G = PointGeometry, P = unknown> {
   type: 'Feature'
   geometry: G
   properties: P
 }
 
-export interface FeatureCollection<G = Point, P = unknown> {
+export interface FeatureCollection<G = PointGeometry, P = unknown> {
   type: 'FeatureCollection'
   features: Array<Feature<G, P>>
 }
 
-// 🧭 Build a performant GeoJSON for WebGL rendering
 export type PlotFeatureProps = Omit<ConvertedMarker, 'position'> & { color: string }
 
-export const plotsToGeoJSON = (plots: Array<unknown>): FeatureCollection<Point, PlotFeatureProps> => {
-  const features = (plots ?? []).map((p) => {
-    const m = convertPlotToMarker(p as Parameters<typeof convertPlotToMarker>[0])
+export const plotsToGeoJSON = (plots: Array<Parameters<typeof convertPlotToMarker>[0]>): FeatureCollection<PointGeometry, PlotFeatureProps> => {
+  const features: Array<Feature<PointGeometry, PlotFeatureProps>> = (plots ?? []).map((p) => {
+    const m = convertPlotToMarker(p)
     const [lat, lng] = m.position
     return {
-      type: 'Feature' as const,
+      type: 'Feature',
       geometry: {
-        type: 'Point' as const,
-        coordinates: [lng, lat] as [number, number],
+        type: 'Point',
+        coordinates: [lng, lat],
       },
       properties: {
         ...m,
