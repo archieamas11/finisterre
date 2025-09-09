@@ -25,7 +25,7 @@ const parkingMarkersData: FinisterreMarkerData[] = [
     id: 'parking-2',
     lat: 10.248150553375426,
     lng: 123.797848903904878,
-    title: '🚗 Overflow Parking',
+    title: 'Overflow Parking',
     description: 'Additional parking space for busy days. Located near the secondary entrance.',
     marker: {
       type: 'icon',

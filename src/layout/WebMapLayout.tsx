@@ -28,6 +28,7 @@ import ComfortRoomMarker from '@/pages/webmap/ComfortRoomMarkers'
 import MainEntranceMarkers from '@/pages/webmap/MainEntranceMarkers'
 import ParkingMarkers from '@/pages/webmap/ParkingMarkers'
 import PlaygroundMarkers from '@/pages/webmap/PlaygroundMarkers'
+import PetersRockMarkers from '@/pages/webmap/PeterRock'
 import PlotMarkers from '@/pages/webmap/PlotMarkers'
 import WebmapLegend from '@/pages/webmap/WebmapLegend'
 import WebMapNavs from '@/pages/webmap/WebMapNavs'
@@ -57,6 +58,7 @@ const MemoizedCenterSerenityMarkers = memo(CenterSerenityMarkers)
 const MemoizedMainEntranceMarkers = memo(MainEntranceMarkers)
 const MemoizedChapelMarkers = memo(ChapelMarkers)
 const MemoizedPlaygroundMarkers = memo(PlaygroundMarkers)
+const MemoizedPetersRockMarkers = memo(PetersRockMarkers)
 const MemoizedPlotMarkers = memo(PlotMarkers)
 const MemoizedNavigationInstructions = memo(NavigationInstructions)
 
@@ -693,6 +695,7 @@ export default function MapPage({ onBack, initialDirection }: { onBack?: () => v
               <MemoizedCenterSerenityMarkers onDirectionClick={handleDirectionClick} isDirectionLoading={state.isDirectionLoading} />
               <MemoizedMainEntranceMarkers onDirectionClick={handleDirectionClick} isDirectionLoading={state.isDirectionLoading} />
               <MemoizedChapelMarkers onDirectionClick={handleDirectionClick} isDirectionLoading={state.isDirectionLoading} />
+              <MemoizedPetersRockMarkers onDirectionClick={handleDirectionClick} isDirectionLoading={state.isDirectionLoading} />
 
               <CustomClusterManager
                 markersByGroup={markersByGroup}

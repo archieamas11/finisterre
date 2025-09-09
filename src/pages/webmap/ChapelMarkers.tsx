@@ -12,10 +12,9 @@ const chapelMarkersData: FinisterreMarkerData[] = [
     id: 'chapel-1',
     lat: 10.248435228156183,
     lng: 123.79787795587316,
-    popupImage: 'https://res.cloudinary.com/djrkvgfvo/image/upload/v1755713548/chapel_emzqop.jpg',
-    title: 'Chapel of Finisterre Gardenz',
-    description:
-      'A peaceful sanctuary for reflection, prayer, and community gatherings. All visitors are welcome to experience its serene atmosphere.',
+    popupImage: 'https://res.cloudinary.com/djrkvgfvo/image/upload/v1757390326/image-205_kcqegm.webp',
+    title: 'El Camino Pavillion',
+    description: 'Celebrating here, in this special open events place, with the love and light of all we hold dear.',
     marker: {
       type: 'icon',
       source: <BiSolidChurch />,

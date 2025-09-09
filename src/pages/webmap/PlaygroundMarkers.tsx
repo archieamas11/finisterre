@@ -12,11 +12,11 @@ const playgroundMarkersData: CustomMarkerData[] = [
     id: 'playground',
     lat: 10.248972753171127,
     lng: 123.79755735707532,
-    title: 'Finisterre Park Playground',
+    title: 'Finisterre Playland',
     description: 'A vibrant play area with modern equipment for children of all ages. Shaded seating available for parents.',
     marker: {
       type: 'image',
-      source: 'https://res.cloudinary.com/djrkvgfvo/image/upload/v1753206700/playground_mxeqep.jpg',
+      source: 'https://res.cloudinary.com/djrkvgfvo/image/upload/v1757390677/image-8_pzd0f9.jpg',
     },
     popupType: 'image',
   },
