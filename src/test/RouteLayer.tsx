@@ -43,8 +43,12 @@ export function RouteLayer({ feature, userPosition }: Props) {
         type="line"
         paint={{
           'line-color': '#fecf0c',
-          'line-width': 4,
-          'line-opacity': 0.9,
+          'line-width': 5,
+          'line-opacity': 1,
+        }}
+        layout={{
+          'line-cap': 'round',
+          'line-join': 'round',
         }}
       />
     </Source>

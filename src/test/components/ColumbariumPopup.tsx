@@ -1,6 +1,7 @@
 import type { PlotFeatureProps } from '../buildGeoJSON'
 import GetDirectionsButton from './GetDirectionsButton'
 import ShareDialog from './ShareDialog'
+import { ucwords } from '../../lib/format'
 
 type PlotPopupProps = {
   coords: [number, number]
@@ -17,11 +18,9 @@ export default function ColumbariumPopup({ coords, props, onGetDirections }: Plo
       </div>
       <div className="grid grid-cols-2 gap-2">
         <span className="text-secondary">Location:</span>
-        <span className="text-secondary">{props.location}</span>
-        <span className="text-secondary">Category:</span>
-        <span className="text-secondary">{props.category}</span>
-        <span className="text-secondary">Status:</span>
-        <span className="text-secondary">{props.plotStatus}</span>
+        <span className="text-secondary">
+          {ucwords(props.category)} • {props.plot_id}
+        </span>
         {props.deceased.dead_fullname && (
           <>
             <span className="text-secondary">Deceased:</span>
@@ -52,10 +51,6 @@ export default function ColumbariumPopup({ coords, props, onGetDirections }: Plo
             )}
           </>
         )}
-        <span className="text-secondary">Dimensions:</span>
-        <span className="text-secondary">
-          {props.dimensions.length} x {props.dimensions.width} ({props.dimensions.area} sqm)
-        </span>
         {props.rows && (
           <>
             <span className="text-secondary">Row:</span>
