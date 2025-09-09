@@ -55,7 +55,7 @@ export default function ShareDialog({ coords, location }: ShareDialogProps) {
   // Function to shorten the URL using TinyURL API
   const shortenUrl = async (url: string): Promise<string> => {
     const response = await axios.get(`https://tinyurl.com/api-create.php?url=${encodeURIComponent(url)}`)
-    return response.data
+    return response.data as string
   }
 
   // Fetch shortened link
