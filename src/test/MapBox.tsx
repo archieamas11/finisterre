@@ -1,7 +1,6 @@
-import 'mapbox-gl/dist/mapbox-gl.css'
-import mapboxgl from 'mapbox-gl'
+import 'maplibre-gl/dist/maplibre-gl.css'
 import { useState, useMemo, useRef, useEffect } from 'react'
-import Map, { type MapRef, Source, Layer } from 'react-map-gl/mapbox'
+import Map, { type MapRef, Source, Layer } from 'react-map-gl/maplibre'
 
 import { usePlots } from '@/hooks/plots-hooks/plot.hooks'
 
@@ -20,9 +19,6 @@ import { useNavigation } from './hooks/useNavigation'
 
 const MAPBOX_ACCESS_TOKEN = import.meta.env.VITE_MAPBOX_ACCESS_TOKEN
 
-// Global flag to track if RTL plugin has been initialized
-let rtlPluginInitialized = false
-
 function MapBox() {
   const INITIAL_VIEW_STATE = {
     longitude: 123.79779924469761,
@@ -34,30 +30,6 @@ function MapBox() {
   const mapRef = useRef<MapRef>(null)
   const { data: plotsData, isLoading, isError } = usePlots()
   const geojson = useMemo(() => plotsToGeoJSON((plotsData as Parameters<typeof plotsToGeoJSON>[0]) ?? []), [plotsData])
-
-  // Disable Mapbox telemetry to prevent blocked requests
-  useEffect(() => {
-    mapboxgl.accessToken = MAPBOX_ACCESS_TOKEN
-
-    // Only set RTL text plugin once to avoid "cannot be called multiple times" error
-    if (!rtlPluginInitialized) {
-      try {
-        mapboxgl.setRTLTextPlugin('', null, true)
-        rtlPluginInitialized = true
-      } catch {
-        // RTL plugin already set, ignore error
-        console.debug('RTL text plugin already initialized')
-        rtlPluginInitialized = true
-      }
-    }
-
-    // Disable Mapbox telemetry/analytics
-    if (typeof window !== 'undefined') {
-      // Set a global flag to disable telemetry
-      ;(window as unknown as Record<string, unknown>).mapboxgl = mapboxgl
-      ;(window as unknown as Record<string, unknown>).mapboxgl = { ...mapboxgl, accessToken: MAPBOX_ACCESS_TOKEN }
-    }
-  }, [])
 
   const circleLayer = plotsCircleLayer
 
@@ -139,7 +111,6 @@ function MapBox() {
         ref={mapRef}
         reuseMaps
         initialViewState={INITIAL_VIEW_STATE}
-        mapboxAccessToken={MAPBOX_ACCESS_TOKEN}
         style={{ width: '100%', height: '100%' }}
         mapStyle={arcgisSatelliteStyle}
         maxZoom={22}

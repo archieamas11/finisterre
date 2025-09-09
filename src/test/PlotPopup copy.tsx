@@ -1,5 +1,5 @@
 import { MapPin, User, Calendar, Ruler } from 'lucide-react'
-import { Popup } from 'react-map-gl/mapbox'
+import { Popup } from 'react-map-gl/maplibre'
 
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'

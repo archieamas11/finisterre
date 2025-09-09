@@ -1,4 +1,4 @@
-import { Source, Layer } from 'react-map-gl/mapbox'
+import { Source, Layer } from 'react-map-gl/maplibre'
 import { useMemo } from 'react'
 
 import type { LineStringFeature } from './directions'

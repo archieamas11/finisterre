@@ -1,5 +1,5 @@
 import { useState, useRef, useCallback, useEffect, useMemo } from 'react'
-import type { MapRef } from 'react-map-gl/mapbox'
+import type { MapRef } from 'react-map-gl/maplibre'
 
 import { fetchWalkingDirections, type LineStringFeature } from '../directions'
 import type { Coordinate } from '../utils/location.utils'

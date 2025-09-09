@@ -1,5 +1,5 @@
 import { lazy, Suspense } from 'react'
-import { Popup } from 'react-map-gl/mapbox'
+import { Popup } from 'react-map-gl/maplibre'
 import type { PlotFeatureProps } from '../buildGeoJSON'
 
 const SinglePopup = lazy(() => import('./SinglePopup'))
