@@ -1,20 +1,28 @@
 import 'mapbox-gl/dist/mapbox-gl.css'
-import { MapPin } from 'lucide-react'
-import { useState, useMemo, useRef } from 'react'
-import Map, { FullscreenControl, NavigationControl, GeolocateControl, type MapRef, Source, Layer, Marker } from 'react-map-gl/mapbox'
+import mapboxgl from 'mapbox-gl'
+import { useState, useMemo, useRef, useEffect } from 'react'
+import Map, { FullscreenControl, NavigationControl, GeolocateControl, type MapRef, Source, Layer } from 'react-map-gl/mapbox'
 
-import { Button } from '@/components/ui/button'
 import { usePlots } from '@/hooks/plots-hooks/plot.hooks'
 
 import arcgisSatelliteStyle from './ArcGisTileLayer'
 import { plotsToGeoJSON, type PlotFeatureProps } from './buildGeoJSON'
-import { fetchWalkingDirections, type LineStringFeature } from './directions'
 import { DirectionsList } from './DirectionsList'
 import { PlotPopup } from './PlotPopup'
 import { plotsCircleLayer } from './plotsCircleLayer'
+import type { Coordinate } from './utils/location.utils'
 import { RouteLayer } from './RouteLayer'
 
-const MAPBOX_ACCESS_TOKEN = import.meta.env.VITE_MAPBOX_ACCESS_TOKEN as string
+import { DestinationMarker } from './components/DestinationMarker'
+import { NavigationControls } from './components/NavigationControls'
+import { UserMarker } from './components/UserMarker'
+import { useNavigation } from './hooks/useNavigation'
+import { Button } from '@/components/ui/button'
+
+const MAPBOX_ACCESS_TOKEN = import.meta.env.VITE_MAPBOX_ACCESS_TOKEN
+
+// Global flag to track if RTL plugin has been initialized
+let rtlPluginInitialized = false
 
 function MapBox() {
   const INITIAL_VIEW_STATE = {
@@ -27,39 +35,43 @@ function MapBox() {
   const { data: plotsData, isLoading, isError } = usePlots()
   const geojson = useMemo(() => plotsToGeoJSON((plotsData as Parameters<typeof plotsToGeoJSON>[0]) ?? []), [plotsData])
 
-  const resetMap = () => {
-    mapRef.current?.flyTo({
-      center: [INITIAL_VIEW_STATE.longitude, INITIAL_VIEW_STATE.latitude],
-      zoom: INITIAL_VIEW_STATE.zoom,
-    })
-  }
+  // Disable Mapbox telemetry to prevent blocked requests
+  useEffect(() => {
+    mapboxgl.accessToken = MAPBOX_ACCESS_TOKEN
 
-  const [routeFeature, setRouteFeature] = useState<LineStringFeature | null>(null)
-  const [instructions, setInstructions] = useState<string[]>([])
-  const [originMarker, setOriginMarker] = useState<[number, number] | null>(null)
-  const [destinationMarker, setDestinationMarker] = useState<[number, number] | null>(null)
+    // Only set RTL text plugin once to avoid "cannot be called multiple times" error
+    if (!rtlPluginInitialized) {
+      try {
+        mapboxgl.setRTLTextPlugin('', null, true)
+        rtlPluginInitialized = true
+      } catch {
+        // RTL plugin already set, ignore error
+        console.debug('RTL text plugin already initialized')
+        rtlPluginInitialized = true
+      }
+    }
+
+    // Disable Mapbox telemetry/analytics
+    if (typeof window !== 'undefined') {
+      // Set a global flag to disable telemetry
+      ;(window as unknown as Record<string, unknown>).mapboxgl = mapboxgl
+      ;(window as unknown as Record<string, unknown>).mapboxgl = { ...mapboxgl, accessToken: MAPBOX_ACCESS_TOKEN }
+    }
+  }, [])
 
   const circleLayer = plotsCircleLayer
 
-  const onGetDirections = async (destination: [number, number]) => {
-    if (!('geolocation' in navigator)) {
-      return
-    }
-    navigator.geolocation.getCurrentPosition(
-      (pos) => {
-        const origin: [number, number] = [pos.coords.longitude, pos.coords.latitude]
-        fetchWalkingDirections(origin, destination, MAPBOX_ACCESS_TOKEN).then((res) => {
-          if (!res) return
-          setRouteFeature(res.feature)
-          setInstructions(res.steps)
-          setOriginMarker(origin)
-          setDestinationMarker(destination)
-          mapRef.current?.fitBounds([origin, destination], { padding: 60 })
-        })
-      },
-      () => {},
-      { enableHighAccuracy: true },
-    )
+  // Use navigation hook for all navigation logic
+  const navigation = useNavigation({
+    mapRef: mapRef as React.RefObject<MapRef>,
+    mapboxAccessToken: MAPBOX_ACCESS_TOKEN,
+    onDestinationReached: () => {
+      alert('🎉 You have reached your destination!')
+    },
+  })
+
+  const onGetDirections = async (destination: Coordinate) => {
+    await navigation.startNavigation(destination)
   }
   return (
     <div style={{ position: 'relative', width: '100vw', height: '100vh' }}>
@@ -73,6 +85,8 @@ function MapBox() {
         maxZoom={22}
         minZoom={6}
         interactiveLayerIds={['plots-layer']}
+        attributionControl={false}
+        logoPosition="bottom-right"
         onClick={(e) => {
           const f = e.features?.[0]
           if (f) {
@@ -97,32 +111,37 @@ function MapBox() {
         <NavigationControl />
         <FullscreenControl />
         <GeolocateControl />
-        <Button onClick={resetMap} style={{ position: 'absolute', top: 10, left: 10, zIndex: 1 }}>
-          Reset View
-        </Button>
+        <NavigationControls
+          onResetView={() => {
+            mapRef.current?.flyTo({
+              center: [INITIAL_VIEW_STATE.longitude, INITIAL_VIEW_STATE.latitude],
+              zoom: INITIAL_VIEW_STATE.zoom,
+              bearing: 0,
+              pitch: 0,
+              essential: true,
+            })
+          }}
+        />
+
+        {navigation.isActive && (
+          <div className="absolute top-0 left-20 z-10 m-2">
+            <Button onClick={navigation.cancelNavigation} style={{ position: 'absolute', top: 10, left: 10, zIndex: 1 }}>
+              Cancel Navigation
+            </Button>
+          </div>
+        )}
 
         {!isLoading && !isError && (
           <Source id="plots" type="geojson" data={geojson}>
             <Layer {...circleLayer} />
           </Source>
         )}
-        {routeFeature && <RouteLayer feature={routeFeature} />}
-        {originMarker && (
-          <Marker longitude={originMarker[0]} latitude={originMarker[1]} anchor="center">
-            <div className="relative">
-              <span className="bg-primary block h-3 w-3 rounded-full border-2 border-white shadow" />
-              <span className="bg-primary/30 absolute top-1/2 left-1/2 -z-10 block h-6 w-6 -translate-x-1/2 -translate-y-1/2 rounded-full" />
-            </div>
-          </Marker>
-        )}
-        {destinationMarker && (
-          <Marker longitude={destinationMarker[0]} latitude={destinationMarker[1]} anchor="bottom">
-            <MapPin className="text-destructive h-6 w-6 drop-shadow" />
-          </Marker>
-        )}
+        {navigation.route && <RouteLayer feature={navigation.route} userPosition={navigation.currentUserPosition} />}
+        {navigation.origin && <UserMarker position={navigation.origin} isNavigating={navigation.isActive} />}
+        {navigation.destination && <DestinationMarker position={navigation.destination} />}
         {popup && <PlotPopup coords={popup.coords} props={popup.props} onClose={() => setPopup(null)} onGetDirections={onGetDirections} />}
       </Map>
-      <DirectionsList steps={instructions} />
+      <DirectionsList steps={navigation.instructions} />
     </div>
   )
 }
