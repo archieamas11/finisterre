@@ -219,16 +219,31 @@ export const useNavigationStore = create<NavigationStore>((set, get) => ({
         isNaN(fromCoords[0]) ||
         isNaN(fromCoords[1]) ||
         isNaN(toCoords[0]) ||
-        isNaN(toCoords[1])
+        isNaN(toCoords[1]) ||
+        fromCoords[0] < -90 ||
+        fromCoords[0] > 90 || // lat should be between -90 and 90
+        fromCoords[1] < -180 ||
+        fromCoords[1] > 180 || // lng should be between -180 and 180
+        toCoords[0] < -90 ||
+        toCoords[0] > 90 ||
+        toCoords[1] < -180 ||
+        toCoords[1] > 180
       ) {
-        console.warn('Invalid coordinates in URL')
+        console.warn('Invalid coordinates in URL:', { fromCoords, toCoords })
         return
       }
 
       const origin: Coordinate = [fromCoords[1], fromCoords[0]] // lng, lat
       const destination: Coordinate = [toCoords[1], toCoords[0]] // lng, lat
 
-      console.log('Parsed coordinates - origin:', origin, 'destination:', destination)
+      console.log('Parsed coordinates from URL:', {
+        from,
+        to,
+        fromCoords,
+        toCoords,
+        origin,
+        destination,
+      })
 
       set({
         currentUserPosition: origin,

@@ -1,4 +1,5 @@
 import GetDirectionsButton from '@/test/components/GetDirectionsButton'
+import ShareDialog from './ShareDialog'
 import type { PlotFeatureProps } from '../buildGeoJSON'
 
 type PlotPopupProps = {
@@ -10,7 +11,10 @@ type PlotPopupProps = {
 export default function SinglePopup({ coords, props, onGetDirections }: PlotPopupProps) {
   return (
     <div>
-      <GetDirectionsButton onGetDirections={onGetDirections} coords={coords} />
+      <div className="mb-4 flex gap-2">
+        <GetDirectionsButton onGetDirections={onGetDirections} coords={coords} />
+        <ShareDialog coords={coords} location={props.location} />
+      </div>
       <div className="grid grid-cols-2 gap-2">
         <span className="text-secondary">Location:</span>
         <span className="text-secondary">{props.location}</span>
