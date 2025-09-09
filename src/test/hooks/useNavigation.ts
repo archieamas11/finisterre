@@ -1,11 +1,10 @@
-import { useState, useRef, useCallback, useEffect, useMemo } from 'react'
+import { useEffect, useCallback, useRef } from 'react'
+import { useQueryState } from 'nuqs'
 import type { MapRef } from 'react-map-gl/maplibre'
 
-import { fetchWalkingDirections, type LineStringFeature } from '../directions'
 import type { Coordinate } from '../utils/location.utils'
-import { hasReachedDestination } from '../utils/location.utils'
 import type { NavigationState, NavigationActions, NavigationConfig } from '../types/navigation.types'
-import { DEFAULT_NAVIGATION_CONFIG } from '../types/navigation.types'
+import { useNavigationStore } from '../stores/navigation.store'
 
 interface UseNavigationProps {
   mapRef: React.RefObject<MapRef>
@@ -20,120 +19,65 @@ export function useNavigation({
   config = {},
   onDestinationReached,
 }: UseNavigationProps): NavigationState & NavigationActions {
-  const finalConfig = useMemo(() => ({ ...DEFAULT_NAVIGATION_CONFIG, ...config }), [config])
+  const initializedRef = useRef(false)
+  const [from, setFrom] = useQueryState('from', { defaultValue: '' })
+  const [to, setTo] = useQueryState('to', { defaultValue: '' })
 
-  // Navigation state
-  const [isActive, setIsActive] = useState(false)
-  const [route, setRoute] = useState<LineStringFeature | null>(null)
-  const [instructions, setInstructions] = useState<string[]>([])
-  const [origin, setOrigin] = useState<Coordinate | null>(null)
-  const [destination, setDestination] = useState<Coordinate | null>(null)
-  const [currentUserPosition, setCurrentUserPosition] = useState<Coordinate | null>(null)
+  const {
+    isActive,
+    route,
+    instructions,
+    origin,
+    destination,
+    currentUserPosition,
+    setMapRef,
+    setMapboxAccessToken,
+    setConfig,
+    setOnDestinationReached,
+    setOnUrlParamsChange,
+    startNavigation: storeStartNavigation,
+    cancelNavigation: storeCancelNavigation,
+    updateUserPosition: storeUpdateUserPosition,
+    loadRouteFromURL,
+    stopLocationWatch,
+  } = useNavigationStore()
 
-  // Geolocation watch reference
-  const watchIdRef = useRef<number | null>(null)
-
-  // Stop watching user position
-  const stopLocationWatch = useCallback(() => {
-    if (watchIdRef.current !== null) {
-      navigator.geolocation.clearWatch(watchIdRef.current)
-      watchIdRef.current = null
+  // Set up the store with the provided props - only once
+  useEffect(() => {
+    if (!initializedRef.current) {
+      setMapRef(mapRef)
+      setMapboxAccessToken(mapboxAccessToken)
+      setConfig(config)
+      setOnDestinationReached(onDestinationReached || null)
+      setOnUrlParamsChange((from: string, to: string) => {
+        console.log('URL params callback called with:', from, to)
+        setFrom(from)
+        setTo(to)
+      })
+      initializedRef.current = true
     }
-  }, [])
+  }, [
+    mapRef,
+    mapboxAccessToken,
+    config,
+    onDestinationReached,
+    setMapRef,
+    setMapboxAccessToken,
+    setConfig,
+    setOnDestinationReached,
+    setOnUrlParamsChange,
+    setFrom,
+    setTo,
+  ])
 
-  // Cancel navigation
-  const cancelNavigation = useCallback(() => {
-    stopLocationWatch()
-    setRoute(null)
-    setInstructions([])
-    setOrigin(null)
-    setDestination(null)
-    setCurrentUserPosition(null)
-    setIsActive(false)
-  }, [stopLocationWatch])
-
-  // Start watching user position during navigation
-  const startLocationWatch = useCallback(() => {
-    if (!('geolocation' in navigator) || watchIdRef.current !== null) {
-      return
+  // Read query params on mount and auto-start navigation
+  useEffect(() => {
+    console.log('URL params changed - from:', from, 'to:', to, 'isActive:', isActive, 'route:', !!route)
+    if (from && to && !isActive && !route) {
+      console.log('Loading route from URL params')
+      loadRouteFromURL(from, to)
     }
-
-    watchIdRef.current = navigator.geolocation.watchPosition(
-      (pos) => {
-        const newPosition: Coordinate = [pos.coords.longitude, pos.coords.latitude]
-        setCurrentUserPosition(newPosition)
-        setOrigin(newPosition)
-
-        // Check if user has reached destination
-        if (destination && hasReachedDestination(newPosition, destination, finalConfig.destinationThreshold)) {
-          onDestinationReached?.()
-          cancelNavigation()
-          return
-        }
-
-        // Smoothly pan the map to follow the user
-        if (mapRef.current && isActive) {
-          mapRef.current.easeTo({
-            center: newPosition,
-            duration: finalConfig.mapPanDuration,
-            essential: true,
-          })
-        }
-      },
-      (error) => {
-        console.warn('Geolocation watch error:', error)
-      },
-      finalConfig.geolocationOptions,
-    )
-  }, [mapRef, isActive, destination, finalConfig, onDestinationReached, cancelNavigation])
-
-  // Start navigation to destination
-  const startNavigation = useCallback(
-    async (destinationCoord: Coordinate) => {
-      if (!('geolocation' in navigator)) {
-        console.warn('Geolocation not available')
-        return
-      }
-
-      try {
-        const position = await new Promise<GeolocationPosition>((resolve, reject) => {
-          navigator.geolocation.getCurrentPosition(resolve, reject, {
-            enableHighAccuracy: true,
-          })
-        })
-
-        const originCoord: Coordinate = [position.coords.longitude, position.coords.latitude]
-        setCurrentUserPosition(originCoord)
-
-        const directionsResult = await fetchWalkingDirections(originCoord, destinationCoord, mapboxAccessToken)
-
-        if (!directionsResult) {
-          console.warn('Failed to fetch directions')
-          return
-        }
-
-        setRoute(directionsResult.feature)
-        setInstructions(directionsResult.steps)
-        setOrigin(originCoord)
-        setDestination(destinationCoord)
-        setIsActive(true)
-
-        // Fit map to show the route
-        mapRef.current?.fitBounds([originCoord, destinationCoord], { padding: 60 })
-
-        // Start watching user position
-        startLocationWatch()
-      } catch (error) {
-        console.error('Failed to start navigation:', error)
-      }
-    },
-    [mapboxAccessToken, mapRef, startLocationWatch],
-  )
-
-  // Update user position manually
-  const updateUserPosition = useCallback((position: Coordinate) => {
-    setCurrentUserPosition(position)
-  }, [])
+  }, [from, to, isActive, route, loadRouteFromURL])
 
   // Cleanup on unmount
   useEffect(() => {
@@ -141,6 +85,29 @@ export function useNavigation({
       stopLocationWatch()
     }
   }, [stopLocationWatch])
+
+  const startNavigation = useCallback(
+    async (destination: Coordinate) => {
+      console.log('Hook startNavigation called with destination:', destination)
+      await storeStartNavigation(destination)
+      // URL params are now handled by the store callback
+    },
+    [storeStartNavigation],
+  )
+
+  const cancelNavigation = useCallback(() => {
+    console.log('Hook cancelNavigation called')
+    storeCancelNavigation()
+    // URL params are now cleared by the store callback
+    console.log('URL params cleared via callback')
+  }, [storeCancelNavigation])
+
+  const updateUserPosition = useCallback(
+    (position: Coordinate) => {
+      storeUpdateUserPosition(position)
+    },
+    [storeUpdateUserPosition],
+  )
 
   return {
     // State

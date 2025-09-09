@@ -42,7 +42,7 @@ export function RouteLayer({ feature, userPosition }: Props) {
         id="route-line"
         type="line"
         paint={{
-          'line-color': '#3b82f6',
+          'line-color': '#fecf0c',
           'line-width': 4,
           'line-opacity': 0.9,
         }}

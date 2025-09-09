@@ -12,7 +12,7 @@ type GetDirectionsButtonProps = {
 export default function GetDirectionsButton({
   variant = 'secondary',
   size = 'icon',
-  className = 'rounded-full',
+  className = 'rounded-full bg-[var(--brand-primary)]',
   onGetDirections,
   coords,
 }: GetDirectionsButtonProps) {

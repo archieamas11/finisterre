@@ -12,7 +12,14 @@ export function DirectionsList({ steps, navigation }: Props) {
     <div style={{ position: 'absolute', top: 56, left: 10, zIndex: 2 }} className="bg-background rounded-md border p-3 shadow">
       <div className="mb-2 flex items-center justify-between">
         <div className="text-foreground text-sm font-medium">Walking directions</div>
-        <Button onClick={navigation.cancelNavigation} size="sm" variant="ghost">
+        <Button
+          onClick={() => {
+            console.log('Cancel button clicked')
+            navigation.cancelNavigation()
+          }}
+          size="sm"
+          variant="ghost"
+        >
           <X className="h-4 w-4" />
         </Button>
       </div>

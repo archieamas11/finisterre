@@ -1,5 +1,5 @@
 import 'maplibre-gl/dist/maplibre-gl.css'
-import { useState, useMemo, useRef, useEffect } from 'react'
+import { useMemo, useRef, useEffect } from 'react'
 import Map, { type MapRef, Source, Layer } from 'react-map-gl/maplibre'
 
 import { usePlots } from '@/hooks/plots-hooks/plot.hooks'
@@ -16,6 +16,7 @@ import { DestinationMarker } from './components/DestinationMarker'
 import { NavigationControls } from './components/NavigationControls'
 import { UserMarker } from './components/UserMarker'
 import { useNavigation } from './hooks/useNavigation'
+import { useMapUIStore } from './stores/map-ui.store'
 
 const MAPBOX_ACCESS_TOKEN = import.meta.env.VITE_MAPBOX_ACCESS_TOKEN
 
@@ -25,8 +26,7 @@ function MapBox() {
     latitude: 10.249290885383175,
     zoom: 18,
   }
-  const [popup, setPopup] = useState<{ coords: [number, number]; props: PlotFeatureProps } | null>(null)
-  const [isFullscreen, setIsFullscreen] = useState(false)
+  const { popup, setPopup, isFullscreen, setIsFullscreen, clearPopup, toggleFullscreen } = useMapUIStore()
   const mapRef = useRef<MapRef>(null)
   const { data: plotsData, isLoading, isError } = usePlots()
   const geojson = useMemo(() => plotsToGeoJSON((plotsData as Parameters<typeof plotsToGeoJSON>[0]) ?? []), [plotsData])
@@ -68,10 +68,10 @@ function MapBox() {
   const handleToggleFullscreen = () => {
     if (!document.fullscreenElement) {
       document.documentElement.requestFullscreen()
-      setIsFullscreen(true)
+      toggleFullscreen()
     } else {
       document.exitFullscreen()
-      setIsFullscreen(false)
+      toggleFullscreen()
     }
   }
 
@@ -104,7 +104,7 @@ function MapBox() {
 
     document.addEventListener('fullscreenchange', handleFullscreenChange)
     return () => document.removeEventListener('fullscreenchange', handleFullscreenChange)
-  }, [])
+  }, [setIsFullscreen])
   return (
     <div style={{ position: 'relative', width: '100vw', height: '100vh' }}>
       <Map
@@ -125,7 +125,7 @@ function MapBox() {
             const [lng, lat] = (f.geometry as { type: 'Point'; coordinates: [number, number] }).coordinates
             setPopup({ coords: [lng, lat], props })
           } else {
-            setPopup(null)
+            clearPopup()
           }
         }}
         onMouseEnter={(e) => {
@@ -165,7 +165,7 @@ function MapBox() {
         {navigation.route && <RouteLayer feature={navigation.route} userPosition={navigation.currentUserPosition} />}
         {navigation.origin && <UserMarker position={navigation.origin} isNavigating={navigation.isActive} />}
         {navigation.destination && <DestinationMarker position={navigation.destination} />}
-        {popup && <PlotPopup coords={popup.coords} props={popup.props} onClose={() => setPopup(null)} onGetDirections={onGetDirections} />}
+        {popup && <PlotPopup coords={popup.coords} props={popup.props} onClose={clearPopup} onGetDirections={onGetDirections} />}
       </Map>
       <DirectionsList steps={navigation.instructions} navigation={navigation} />
     </div>
