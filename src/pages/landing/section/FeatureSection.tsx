@@ -64,7 +64,7 @@ const FeatureCard = ({ feature }: { feature: Feature }) => {
       <CardContent className="relative z-10 flex flex-grow flex-col">
         <CardDescription className="mb-6 flex-grow text-gray-600">{feature.description}</CardDescription>
 
-        <a href="#" className="inline-flex items-center font-medium text-gray-500 transition-all duration-300">
+        <a href="#" className="group inline-flex items-center font-medium text-gray-500 transition-all duration-300 hover:underline">
           Learn more <ArrowRight className="ml-2 h-4 w-4 text-gray-500 transition-transform duration-300 group-hover:translate-x-1" />
         </a>
       </CardContent>
