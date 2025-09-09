@@ -1,14 +1,14 @@
 import 'mapbox-gl/dist/mapbox-gl.css'
 import mapboxgl from 'mapbox-gl'
 import { useState, useMemo, useRef, useEffect } from 'react'
-import Map, { FullscreenControl, NavigationControl, GeolocateControl, type MapRef, Source, Layer } from 'react-map-gl/mapbox'
+import Map, { type MapRef, Source, Layer } from 'react-map-gl/mapbox'
 
 import { usePlots } from '@/hooks/plots-hooks/plot.hooks'
 
 import arcgisSatelliteStyle from './ArcGisTileLayer'
 import { plotsToGeoJSON, type PlotFeatureProps } from './buildGeoJSON'
 import { DirectionsList } from './DirectionsList'
-import { PlotPopup } from './PlotPopup'
+import { PlotPopup } from './components/PlotPopup'
 import { plotsCircleLayer } from './plotsCircleLayer'
 import type { Coordinate } from './utils/location.utils'
 import { RouteLayer } from './RouteLayer'
@@ -17,7 +17,6 @@ import { DestinationMarker } from './components/DestinationMarker'
 import { NavigationControls } from './components/NavigationControls'
 import { UserMarker } from './components/UserMarker'
 import { useNavigation } from './hooks/useNavigation'
-import { Button } from '@/components/ui/button'
 
 const MAPBOX_ACCESS_TOKEN = import.meta.env.VITE_MAPBOX_ACCESS_TOKEN
 
@@ -31,6 +30,7 @@ function MapBox() {
     zoom: 18,
   }
   const [popup, setPopup] = useState<{ coords: [number, number]; props: PlotFeatureProps } | null>(null)
+  const [isFullscreen, setIsFullscreen] = useState(false)
   const mapRef = useRef<MapRef>(null)
   const { data: plotsData, isLoading, isError } = usePlots()
   const geojson = useMemo(() => plotsToGeoJSON((plotsData as Parameters<typeof plotsToGeoJSON>[0]) ?? []), [plotsData])
@@ -73,6 +73,66 @@ function MapBox() {
   const onGetDirections = async (destination: Coordinate) => {
     await navigation.startNavigation(destination)
   }
+
+  // Custom control handlers
+  const handleZoomIn = () => {
+    if (mapRef.current) {
+      mapRef.current.zoomIn()
+    }
+  }
+
+  const handleZoomOut = () => {
+    if (mapRef.current) {
+      mapRef.current.zoomOut()
+    }
+  }
+
+  const handleResetBearing = () => {
+    if (mapRef.current) {
+      mapRef.current.resetNorth()
+    }
+  }
+
+  const handleToggleFullscreen = () => {
+    if (!document.fullscreenElement) {
+      document.documentElement.requestFullscreen()
+      setIsFullscreen(true)
+    } else {
+      document.exitFullscreen()
+      setIsFullscreen(false)
+    }
+  }
+
+  const handleGeolocate = () => {
+    if (navigator.geolocation && mapRef.current) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          const { latitude, longitude } = position.coords
+          mapRef.current?.flyTo({
+            center: [longitude, latitude],
+            zoom: 18,
+            essential: true,
+          })
+        },
+        (error) => {
+          console.error('Geolocation error:', error)
+          alert('Unable to retrieve your location.')
+        },
+      )
+    } else {
+      alert('Geolocation is not supported by this browser.')
+    }
+  }
+
+  // Listen for fullscreen changes
+  useEffect(() => {
+    const handleFullscreenChange = () => {
+      setIsFullscreen(!!document.fullscreenElement)
+    }
+
+    document.addEventListener('fullscreenchange', handleFullscreenChange)
+    return () => document.removeEventListener('fullscreenchange', handleFullscreenChange)
+  }, [])
   return (
     <div style={{ position: 'relative', width: '100vw', height: '100vh' }}>
       <Map
@@ -108,9 +168,6 @@ function MapBox() {
           }
         }}
       >
-        <NavigationControl />
-        <FullscreenControl />
-        <GeolocateControl />
         <NavigationControls
           onResetView={() => {
             mapRef.current?.flyTo({
@@ -121,15 +178,13 @@ function MapBox() {
               essential: true,
             })
           }}
+          onZoomIn={handleZoomIn}
+          onZoomOut={handleZoomOut}
+          onResetBearing={handleResetBearing}
+          onToggleFullscreen={handleToggleFullscreen}
+          onGeolocate={handleGeolocate}
+          isFullscreen={isFullscreen}
         />
-
-        {navigation.isActive && (
-          <div className="absolute top-0 left-20 z-10 m-2">
-            <Button onClick={navigation.cancelNavigation} style={{ position: 'absolute', top: 10, left: 10, zIndex: 1 }}>
-              Cancel Navigation
-            </Button>
-          </div>
-        )}
 
         {!isLoading && !isError && (
           <Source id="plots" type="geojson" data={geojson}>
@@ -141,7 +196,7 @@ function MapBox() {
         {navigation.destination && <DestinationMarker position={navigation.destination} />}
         {popup && <PlotPopup coords={popup.coords} props={popup.props} onClose={() => setPopup(null)} onGetDirections={onGetDirections} />}
       </Map>
-      <DirectionsList steps={navigation.instructions} />
+      <DirectionsList steps={navigation.instructions} navigation={navigation} />
     </div>
   )
 }
