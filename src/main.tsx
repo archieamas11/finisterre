@@ -1,13 +1,3 @@
-// Service Worker Cleanup (This is temporary, ill delete it later.)
-if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.getRegistrations().then((registrations) => {
-    registrations.forEach((registration) => {
-      registration.unregister()
-      console.log('Old service worker removed')
-    })
-  })
-}
-
 import { QueryClientProvider, QueryClient } from '@tanstack/react-query'
 import { Analytics } from '@vercel/analytics/react'
 import { NuqsAdapter } from 'nuqs/adapters/react'
