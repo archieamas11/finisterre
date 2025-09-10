@@ -11,7 +11,6 @@ export interface NavigationState {
   origin: Coordinate | null
   destination: Coordinate | null
   currentUserPosition: Coordinate | null
-  isCameraLocked: boolean
 }
 
 /**
@@ -21,7 +20,6 @@ export interface NavigationActions {
   startNavigation: (destination: Coordinate) => Promise<void>
   cancelNavigation: () => void
   updateUserPosition: (position: Coordinate) => void
-  toggleCameraLock: () => void
 }
 
 /**
