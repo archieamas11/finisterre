@@ -1,6 +1,7 @@
 {
   "name": "Finisterre Gardenz",
   "short_name": "Finisterre",
+  "start_url": "/",
   "icons": [
     {
       "src": "/web-app-manifest-192x192.png",
