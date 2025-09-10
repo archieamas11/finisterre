@@ -172,7 +172,7 @@
   }
 }
 
-/* 🌟 Aurora background protection - ensures it's never overridden by theme changes */
+/* Aurora background protection - ensures it's never overridden by theme changes */
 .aurora-background {
   background: #ffffff;
   background-image: radial-gradient(circle at top center, rgba(59, 130, 246, 0.5), transparent 60%);
