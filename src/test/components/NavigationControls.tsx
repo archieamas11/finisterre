@@ -25,6 +25,8 @@ export function NavigationControls({
   isFullscreen,
   isCameraLocked,
 }: NavigationControlsProps) {
+  // Debug logging
+  console.log('NavigationControls render:', { isCameraLocked, onToggleCameraLock: !!onToggleCameraLock })
   return (
     <div className="absolute top-4 right-4 z-10 flex flex-col gap-2">
       <Button variant="default" size="sm" onClick={onZoomIn} className="border bg-white/90 shadow-md hover:bg-white">
@@ -45,7 +47,10 @@ export function NavigationControls({
       <Button
         variant="default"
         size="sm"
-        onClick={onToggleCameraLock}
+        onClick={() => {
+          console.log('Camera lock button clicked!')
+          onToggleCameraLock()
+        }}
         className={`border shadow-md hover:bg-white ${isCameraLocked ? 'border-blue-300 bg-blue-100 text-blue-700' : 'bg-white/90'}`}
         title={isCameraLocked ? 'Unlock camera (camera follows user)' : 'Lock camera (free view)'}
       >

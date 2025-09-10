@@ -283,6 +283,8 @@ export const useNavigationStore = create<NavigationStore>((set, get) => ({
 
   toggleCameraLock: () => {
     const { isCameraLocked } = get()
+    console.log('toggleCameraLock called, current state:', isCameraLocked)
     set({ isCameraLocked: !isCameraLocked })
+    console.log('toggleCameraLock new state:', !isCameraLocked)
   },
 }))

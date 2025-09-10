@@ -42,6 +42,12 @@ function MapBox() {
     },
   })
 
+  // Debug logging
+  console.log('MapBox navigation state:', {
+    isCameraLocked: navigation.isCameraLocked,
+    toggleCameraLock: !!navigation.toggleCameraLock,
+  })
+
   const onGetDirections = async (destination: Coordinate) => {
     await navigation.startNavigation(destination)
   }
