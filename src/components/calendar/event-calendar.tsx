@@ -8,21 +8,6 @@ import { toast } from 'sonner'
 
 import { Button } from '@/components/ui/button'
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuShortcut, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
-// import {
-//   addHoursToDate,
-//   AgendaDaysToShow,
-//   AgendaView,
-//   CalendarDndProvider,
-//   CalendarEvent,
-//   CalendarView,
-//   DayView,
-//   EventDialog,
-//   EventGap,
-//   EventHeight,
-//   MonthView,
-//   WeekCellsHeight,
-//   WeekView,
-// } from "@/components/event-calendar"
 import { cn } from '@/lib/utils'
 
 import { AgendaView } from './agenda-view'
