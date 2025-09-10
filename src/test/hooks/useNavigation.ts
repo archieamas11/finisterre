@@ -30,6 +30,7 @@ export function useNavigation({
     origin,
     destination,
     currentUserPosition,
+    isCameraLocked,
     setMapRef,
     setMapboxAccessToken,
     setConfig,
@@ -40,6 +41,7 @@ export function useNavigation({
     updateUserPosition: storeUpdateUserPosition,
     loadRouteFromURL,
     stopLocationWatch,
+    toggleCameraLock: storeToggleCameraLock,
   } = useNavigationStore()
 
   // Set up the store with the provided props - only once
@@ -109,6 +111,10 @@ export function useNavigation({
     [storeUpdateUserPosition],
   )
 
+  const toggleCameraLock = useCallback(() => {
+    storeToggleCameraLock()
+  }, [storeToggleCameraLock])
+
   return {
     // State
     isActive,
@@ -117,10 +123,12 @@ export function useNavigation({
     origin,
     destination,
     currentUserPosition,
+    isCameraLocked,
 
     // Actions
     startNavigation,
     cancelNavigation,
     updateUserPosition,
+    toggleCameraLock,
   }
 }

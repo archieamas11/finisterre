@@ -154,7 +154,9 @@ function MapBox() {
           onResetBearing={handleResetBearing}
           onToggleFullscreen={handleToggleFullscreen}
           onGeolocate={handleGeolocate}
+          onToggleCameraLock={navigation.toggleCameraLock}
           isFullscreen={isFullscreen}
+          isCameraLocked={navigation.isCameraLocked}
         />
 
         {!isLoading && !isError && (

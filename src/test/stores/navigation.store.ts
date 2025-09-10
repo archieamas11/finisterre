@@ -15,6 +15,7 @@ interface NavigationStore {
   origin: Coordinate | null
   destination: Coordinate | null
   currentUserPosition: Coordinate | null
+  isCameraLocked: boolean
   mapboxAccessToken: string
   config: NavigationConfig
   mapRef: React.RefObject<MapRef> | null
@@ -34,6 +35,7 @@ interface NavigationStore {
   stopLocationWatch: () => void
   startLocationWatch: () => void
   loadRouteFromURL: (from: string, to: string) => Promise<void>
+  toggleCameraLock: () => void
 }
 
 export const useNavigationStore = create<NavigationStore>((set, get) => ({
@@ -44,6 +46,7 @@ export const useNavigationStore = create<NavigationStore>((set, get) => ({
   origin: null,
   destination: null,
   currentUserPosition: null,
+  isCameraLocked: false,
   mapboxAccessToken: '',
   config: DEFAULT_NAVIGATION_CONFIG,
   mapRef: null,
@@ -74,7 +77,7 @@ export const useNavigationStore = create<NavigationStore>((set, get) => ({
   },
 
   startLocationWatch: () => {
-    const { watchId, mapRef, isActive, destination, config, stopLocationWatch, cancelNavigation } = get()
+    const { watchId, mapRef, isActive, destination, config, stopLocationWatch, cancelNavigation, isCameraLocked } = get()
     if (!('geolocation' in navigator) || watchId !== null) {
       return
     }
@@ -96,8 +99,8 @@ export const useNavigationStore = create<NavigationStore>((set, get) => ({
           return
         }
 
-        // Smoothly pan the map to follow the user
-        if (mapRef?.current && isActive) {
+        // Only smoothly pan the map to follow the user if camera is locked
+        if (mapRef?.current && isActive && isCameraLocked) {
           mapRef.current.easeTo({
             center: newPosition,
             duration: config.mapPanDuration,
@@ -276,5 +279,10 @@ export const useNavigationStore = create<NavigationStore>((set, get) => ({
 
   updateUserPosition: (position: Coordinate) => {
     set({ currentUserPosition: position })
+  },
+
+  toggleCameraLock: () => {
+    const { isCameraLocked } = get()
+    set({ isCameraLocked: !isCameraLocked })
   },
 }))
