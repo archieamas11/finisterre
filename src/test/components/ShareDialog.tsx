@@ -110,7 +110,7 @@ export default function ShareDialog({ coords, location }: ShareDialogProps) {
           <div className="w-full">
             <p className="text-muted-foreground mb-2 text-sm">Or copy the link:</p>
             <div className="flex gap-2">
-              <Input type="text" value={shortenedLink} readOnly className="bg-muted flex-1 rounded-md border px-3 py-2 text-sm" />
+              <Input type="text" value={shortenedLink || ''} readOnly className="bg-muted flex-1 rounded-md border px-3 py-2 text-sm" />
               <Button onClick={copyToClipboard}>Copy</Button>
             </div>
           </div>
