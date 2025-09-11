@@ -323,12 +323,9 @@ export default function MapPage({ onBack, initialDirection }: { onBack?: () => v
       return next
     })
     stopNavigation()
-    // Also stop user location tracking when navigation is cancelled to honor user intent
-    // (safe to call even if not currently tracking)
-    void stopTracking()
     dispatch({ type: 'SET_NAV_OPEN', value: false })
     dispatch({ type: 'SET_DIRECTION_LOADING', value: false })
-  }, [stopNavigation, stopTracking, setSearchParams, searchParams])
+  }, [stopNavigation, setSearchParams, searchParams])
 
   const handleDirectionClick = useCallback(
     async (to: [number, number]) => {

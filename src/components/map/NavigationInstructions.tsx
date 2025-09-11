@@ -1,4 +1,4 @@
-import { X, Navigation, Clock, MapPin, Route, AlertTriangle, ChevronDown, ChevronUp } from 'lucide-react'
+import { X, Navigation, Clock, MapPin, Route, AlertTriangle, ChevronDown, ChevronUp, Volume2, VolumeOff } from 'lucide-react'
 import { AnimatePresence, motion } from 'framer-motion'
 import React from 'react'
 
@@ -10,6 +10,8 @@ import { ScrollArea } from '@/components/ui/scroll-area'
 import { Separator } from '@/components/ui/separator'
 import { type NavigationState } from '@/hooks/useValhalla'
 import { cn } from '@/lib/utils'
+import useVoiceGuidance from '@/hooks/useVoiceGuidance'
+import { formatTime, formatDistance } from '@/lib/format'
 
 interface NavigationInstructionsProps {
   isOpen: boolean
@@ -74,20 +76,7 @@ function getManeuverColor(type: number, isCurrent: boolean = false): string {
   }
 }
 
-// ⏱️ Format time in seconds to human readable
-function formatTime(seconds: number): string {
-  if (seconds < 60) return `${Math.round(seconds)}s`
-  const minutes = Math.floor(seconds / 60)
-  const remainingSeconds = Math.round(seconds % 60)
-  return remainingSeconds > 0 ? `${minutes}m ${remainingSeconds}s` : `${minutes}m`
-}
-
-// 📏 Format distance (Valhalla returns kilometers) to human-readable
-function formatDistance(kilometers: number): string {
-  const km = Math.max(0, Number.isFinite(kilometers) ? kilometers : 0)
-  if (km < 1) return `${Math.round(km * 1000)}m`
-  return `${km < 10 ? km.toFixed(1) : Math.round(km)}km`
-}
+const { isEnabled, toggle, speak, canUseTts, stop } = useVoiceGuidance()
 
 export default function NavigationInstructions({
   isOpen,
@@ -103,6 +92,18 @@ export default function NavigationInstructions({
   const { currentManeuver, nextManeuver, maneuverIndex } = navigationState
   const [showDetails, setShowDetails] = React.useState(false)
   const hasSummary = typeof totalDistance === 'number' || typeof totalTime === 'number'
+
+  // Speak the current maneuver when it changes and navigation is active.
+  React.useEffect(() => {
+    if (!isNavigating || !currentManeuver) return
+    const text = currentManeuver.instruction || ''
+    // Speak asynchronously; ignore errors
+    speak(text).catch(() => {})
+    return () => {
+      // stop any ongoing speech when maneuver changes
+      stop()
+    }
+  }, [currentManeuver, isNavigating, speak, stop])
 
   // Stop TTS when navigation ends or on component unmount.
   React.useEffect(() => {
@@ -162,7 +163,7 @@ export default function NavigationInstructions({
                     <span className="sr-only">Toggle details</span>
                   </Button>
                   {/* Voice guidance toggle */}
-                  {/* <Button
+                  <Button
                     type="button"
                     variant={isEnabled ? 'default' : 'ghost'}
                     size="icon"
@@ -172,7 +173,7 @@ export default function NavigationInstructions({
                     disabled={!canUseTts}
                   >
                     {isEnabled ? <Volume2 className="h-4 w-4" /> : <VolumeOff className="h-4 w-4" />}
-                  </Button> */}
+                  </Button>
                   <Button type="button" variant="ghost" size="icon" onClick={onClose} aria-label="Close navigation">
                     <X className="h-4 w-4" aria-hidden="true" />
                   </Button>

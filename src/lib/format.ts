@@ -13,21 +13,17 @@ export function formatDate(date: Date | string | number | undefined, opts: Intl.
   }
 }
 
-// Distance: prefer km for long distances
-export function formatDistance(meters?: number): string {
-  if (!Number.isFinite(meters)) return '-'
-  if ((meters ?? 0) >= 1000) return `${(meters! / 1000).toFixed(1)} km`
-  return `${Math.round(meters!)} m`
+export function formatTime(seconds: number): string {
+  if (seconds < 60) return `${Math.round(seconds)}s`
+  const minutes = Math.floor(seconds / 60)
+  const remainingSeconds = Math.round(seconds % 60)
+  return remainingSeconds > 0 ? `${minutes}m ${remainingSeconds}s` : `${minutes}m`
 }
 
-//  Duration: human readable h m
-export function formatDuration(seconds?: number): string {
-  if (!Number.isFinite(seconds)) return '-'
-  const s = Math.round(seconds!)
-  const h = Math.floor(s / 3600)
-  const m = Math.floor((s % 3600) / 60)
-  if (h > 0) return `${h}h ${m}m`
-  return `${m}m`
+export function formatDistance(kilometers: number): string {
+  const km = Math.max(0, Number.isFinite(kilometers) ? kilometers : 0)
+  if (km < 1) return `${Math.round(km * 1000)}m`
+  return `${km < 10 ? km.toFixed(1) : Math.round(km)}km`
 }
 
 export function ucwords(str: string): string {
