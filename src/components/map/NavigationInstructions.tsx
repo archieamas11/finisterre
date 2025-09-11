@@ -1,7 +1,6 @@
-import { X, Navigation, Clock, MapPin, Route, AlertTriangle, ChevronDown, ChevronUp, Volume2, VolumeOff } from 'lucide-react'
+import { X, Navigation, Clock, MapPin, Route, AlertTriangle, ChevronDown, ChevronUp } from 'lucide-react'
 import { AnimatePresence, motion } from 'framer-motion'
 import React from 'react'
-import useVoiceGuidance from '@/hooks/useVoiceGuidance'
 
 import { type ValhallaManeuver } from '@/api/valhalla.api'
 import { Badge } from '@/components/ui/badge'
@@ -104,23 +103,6 @@ export default function NavigationInstructions({
   const { currentManeuver, nextManeuver, maneuverIndex } = navigationState
   const [showDetails, setShowDetails] = React.useState(false)
   const hasSummary = typeof totalDistance === 'number' || typeof totalTime === 'number'
-  const { isEnabled, toggle, speak, canUseTts, stop } = useVoiceGuidance()
-
-  // Root cause of duplicate TTS: the previous effect depended on the entire
-  // currentManeuver object and performed a cleanup (stop) before every re-run.
-  // Navigation state updates (e.g., remaining distance) produce new object
-  // identities even when the spoken instruction text is unchanged. That
-  // sequence: cleanup -> stop (cancels audio mid-play) -> speak again caused
-  // the same instruction to restart, sounding like duplicates.
-  // Fix: depend only on the stable instruction text string and do NOT stop
-  // ongoing playback on each object update; only speak when the instruction
-  // text itself changes while navigating.
-  const currentInstruction = currentManeuver?.instruction || ''
-
-  React.useEffect(() => {
-    if (!isNavigating || !currentInstruction) return
-    speak(currentInstruction).catch(() => {})
-  }, [isNavigating, currentInstruction, speak])
 
   // Stop TTS when navigation ends or on component unmount.
   React.useEffect(() => {
@@ -180,7 +162,7 @@ export default function NavigationInstructions({
                     <span className="sr-only">Toggle details</span>
                   </Button>
                   {/* Voice guidance toggle */}
-                  <Button
+                  {/* <Button
                     type="button"
                     variant={isEnabled ? 'default' : 'ghost'}
                     size="icon"
@@ -190,7 +172,7 @@ export default function NavigationInstructions({
                     disabled={!canUseTts}
                   >
                     {isEnabled ? <Volume2 className="h-4 w-4" /> : <VolumeOff className="h-4 w-4" />}
-                  </Button>
+                  </Button> */}
                   <Button type="button" variant="ghost" size="icon" onClick={onClose} aria-label="Close navigation">
                     <X className="h-4 w-4" aria-hidden="true" />
                   </Button>
