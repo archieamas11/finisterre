@@ -14,7 +14,7 @@ export interface AdminContext {
 
 export interface WebMapContext {
   requestLocate: () => void
-  clearRoute: () => void
+  cancelNavigation: () => void
   selectedGroups: Set<string>
   toggleGroupSelection: (groupKey: string) => void
   resetGroupSelection: () => void

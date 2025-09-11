@@ -45,7 +45,7 @@ export interface AvailableGroup {
 
 export interface LocateContextValue extends MapState {
   requestLocate: () => Promise<void>
-  clearRoute: () => void
+  cancelNavigation: () => void
   resetView: () => void
   toggleGroupSelection: (groupKey: string) => void
   resetGroupSelection: () => void

@@ -253,10 +253,10 @@ export default function MapPage({ onBack, initialDirection }: { onBack?: () => v
   // Hold reference to Leaflet map for reset
   const [mapInstance, setMapInstance] = useState<L.Map | null>(null)
 
+  // Process location updates only when navigating; stable callback prevents re-renders
   useEffect(() => {
-    if (currentLocation && isNavigating) {
-      handleLocationUpdate(currentLocation)
-    }
+    if (!isNavigating || !currentLocation) return
+    handleLocationUpdate(currentLocation)
   }, [currentLocation, isNavigating, handleLocationUpdate])
 
   // Stop track user location
@@ -267,10 +267,19 @@ export default function MapPage({ onBack, initialDirection }: { onBack?: () => v
   }, [stopTracking])
 
   // This should center the user map view only once, when location is first obtained
+  // Center on user only once per explicit request
+  const hasCenteredRef = useRef(false)
   useEffect(() => {
     if (!state.shouldCenterOnUser || !currentLocation || !mapInstance) return
+    if (hasCenteredRef.current) return
+    hasCenteredRef.current = true
     mapInstance.flyTo([currentLocation.latitude, currentLocation.longitude])
     dispatch({ type: 'CLEAR_LOCATE' })
+    // reset guard when user explicitly requests again
+    const t = setTimeout(() => {
+      hasCenteredRef.current = false
+    }, 1000)
+    return () => clearTimeout(t)
   }, [state.shouldCenterOnUser, currentLocation, mapInstance])
 
   // Effect to detect when route is fully loaded and flyTo animation is complete
@@ -300,18 +309,23 @@ export default function MapPage({ onBack, initialDirection }: { onBack?: () => v
     if (loc && mapInstance) mapInstance.flyTo([loc.latitude, loc.longitude], 18, { animate: true })
   }, [isTracking, startTracking, currentLocation, getCurrentLocation, mapInstance])
 
-  const clearRoute = useCallback(() => {
-    stopNavigation()
-    dispatch({ type: 'SET_NAV_OPEN', value: false })
-    dispatch({ type: 'SET_DIRECTION_LOADING', value: false })
-    // Remove navigation params from URL
+  const lastDestSigRef = useRef<string | null>(null)
+  const lastCancelledDestRef = useRef<string | null>(null)
+
+  const cancelNavigation = useCallback(() => {
+    const currentTo = searchParams.get('to')
+    if (currentTo) lastCancelledDestRef.current = currentTo
+    lastDestSigRef.current = null
     setSearchParams((prev) => {
       const next = new URLSearchParams(prev)
       next.delete('from')
       next.delete('to')
       return next
     })
-  }, [stopNavigation, setSearchParams])
+    stopNavigation()
+    dispatch({ type: 'SET_NAV_OPEN', value: false })
+    dispatch({ type: 'SET_DIRECTION_LOADING', value: false })
+  }, [stopNavigation, setSearchParams, searchParams])
 
   const handleDirectionClick = useCallback(
     async (to: [number, number]) => {
@@ -410,23 +424,24 @@ export default function MapPage({ onBack, initialDirection }: { onBack?: () => v
   )
 
   // Parse new navigation params (?from=lat,lng&to=lat,lng) and auto-start navigation
+  // Avoid retriggering navigation if already navigating to same destination
   useEffect(() => {
-    // Reading 'from' not required to start navigation; we only need destination
     const to = searchParams.get('to')
     if (!to) return
-    const parsePair = (val: string): [number, number] | null => {
-      const parts = val.split(',')
-      if (parts.length !== 2) return null
-      const a = parseFloat(parts[0])
-      const b = parseFloat(parts[1])
-      if (isNaN(a) || isNaN(b)) return null
-      return [a, b]
-    }
-    const toCoords = parsePair(to)
-    if (toCoords) {
-      handleDirectionClick(toCoords)
-    }
-  }, [searchParams, handleDirectionClick])
+    // Only trigger when destination changed and we're not currently navigating
+    if (lastDestSigRef.current === to) return
+    if (lastCancelledDestRef.current === to) return // user just cancelled this destination
+    if (isNavigating) return
+    const parts = to.split(',')
+    if (parts.length !== 2) return
+    const a = parseFloat(parts[0])
+    const b = parseFloat(parts[1])
+    if (isNaN(a) || isNaN(b)) return
+    lastDestSigRef.current = to
+    // New user intent, clear cancelled marker
+    lastCancelledDestRef.current = null
+    handleDirectionClick([a, b])
+  }, [searchParams, handleDirectionClick, isNavigating])
 
   // Stabilize initialDirection-based navigation (avoid duplicate triggers on same coords)
   const lastInitDirRef = useRef<string | null>(null)
@@ -434,9 +449,10 @@ export default function MapPage({ onBack, initialDirection }: { onBack?: () => v
     if (!initialDirection || !isNativePlatform()) return
     const sig = `${initialDirection.lat},${initialDirection.lng}`
     if (lastInitDirRef.current === sig) return
+    if (isNavigating) return // already navigating
     lastInitDirRef.current = sig
     requestAnimationFrame(() => handleDirectionClick([initialDirection.lat, initialDirection.lng]))
-  }, [initialDirection, handleDirectionClick])
+  }, [initialDirection, handleDirectionClick, isNavigating])
 
   // Cluster control functions
   const toggleGroupSelection = useCallback((groupKey: string) => dispatch({ type: 'TOGGLE_GROUP', group: groupKey }), [])
@@ -591,7 +607,7 @@ export default function MapPage({ onBack, initialDirection }: { onBack?: () => v
       // direct state (for backward compat; prefer useMapState selectors moving forward)
       ...state,
       requestLocate,
-      clearRoute,
+      cancelNavigation,
       resetView,
       selectedGroups: state.selectedGroups,
       toggleGroupSelection,
@@ -614,7 +630,7 @@ export default function MapPage({ onBack, initialDirection }: { onBack?: () => v
     [
       state,
       requestLocate,
-      clearRoute,
+      cancelNavigation,
       resetView,
       toggleGroupSelection,
       resetGroupSelection,
@@ -701,7 +717,7 @@ export default function MapPage({ onBack, initialDirection }: { onBack?: () => v
                 )}
                 <MemoizedNavigationInstructions
                   isOpen={state.isNavigationInstructionsOpen}
-                  onClose={clearRoute}
+                  onClose={cancelNavigation}
                   navigationState={navigation}
                   allManeuvers={route?.trip.legs[0]?.maneuvers || []}
                   isNavigating={isNavigating}

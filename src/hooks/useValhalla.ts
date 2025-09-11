@@ -79,6 +79,7 @@ export function useValhalla(options: UseValhallaOptions = {}) {
     isNavigating: false,
     rerouteCount: 0,
   })
+  const routeStateRef = useRef(routeState)
 
   const [navigationState, setNavigationState] = useState<NavigationState>({
     currentManeuver: null,
@@ -87,10 +88,19 @@ export function useValhalla(options: UseValhallaOptions = {}) {
     distanceToDestination: null,
     estimatedTimeRemaining: null,
   })
+  const navigationStateRef = useRef(navigationState)
 
   const destinationRef = useRef<RouteDestination | null>(null)
   const lastRerouteTimeRef = useRef<number>(0)
   const isReroutingRef = useRef<boolean>(false)
+
+  // Keep refs in sync with latest state (cheap synchronous assignment)
+  useEffect(() => {
+    routeStateRef.current = routeState
+  }, [routeState])
+  useEffect(() => {
+    navigationStateRef.current = navigationState
+  }, [navigationState])
 
   // 🔄 Update options ref when options change
   useEffect(() => {
@@ -192,7 +202,7 @@ export function useValhalla(options: UseValhallaOptions = {}) {
         throw error
       }
     },
-    [],
+    [], // stable: uses refs internally
   )
 
   // 🎯 Start navigation to destination
@@ -206,7 +216,7 @@ export function useValhalla(options: UseValhallaOptions = {}) {
         throw error
       }
     },
-    [calculateRoute],
+    [calculateRoute], // calculateRoute stable
   )
 
   // 🛑 Stop navigation
@@ -237,38 +247,26 @@ export function useValhalla(options: UseValhallaOptions = {}) {
   // 🔄 Handle automatic rerouting
   const checkAndReroute = useCallback(
     async (userLocation: UserLocation) => {
+      const rs = routeStateRef.current
       if (
-        !routeState.isNavigating ||
+        !rs.isNavigating ||
         !destinationRef.current ||
         isReroutingRef.current ||
         !optionsRef.current.enableAutoReroute ||
-        routeState.rerouteCount >= optionsRef.current.maxReroutes
+        rs.rerouteCount >= optionsRef.current.maxReroutes
       ) {
         return
       }
 
-      // ⏱️ Check reroute debounce time
       const now = Date.now()
-      if (now - lastRerouteTimeRef.current < optionsRef.current.rerouteDebounceTime) {
-        return
-      }
+      if (now - lastRerouteTimeRef.current < optionsRef.current.rerouteDebounceTime) return
 
-      // 🎯 Check if user is off route
-      if (isOffRoute(userLocation.latitude, userLocation.longitude, routeState.routeCoordinates, optionsRef.current.offRouteThreshold)) {
+      if (isOffRoute(userLocation.latitude, userLocation.longitude, rs.routeCoordinates, optionsRef.current.offRouteThreshold)) {
         console.log('🔄 User is off route, recalculating...')
-
         isReroutingRef.current = true
         lastRerouteTimeRef.current = now
-
         try {
-          await calculateRoute(
-            {
-              latitude: userLocation.latitude,
-              longitude: userLocation.longitude,
-            },
-            destinationRef.current,
-            true, // 🔄 Force recalculate
-          )
+          await calculateRoute({ latitude: userLocation.latitude, longitude: userLocation.longitude }, destinationRef.current!, true)
         } catch (error) {
           console.error('🚫 Rerouting failed:', error)
         } finally {
@@ -276,102 +274,74 @@ export function useValhalla(options: UseValhallaOptions = {}) {
         }
       }
     },
-    [routeState.isNavigating, routeState.routeCoordinates, routeState.rerouteCount, calculateRoute],
+    [calculateRoute],
   )
 
   // 📍 Update route progress based on user location (for dynamic polyline)
-  const updateRouteProgress = useCallback(
-    (userLocation: UserLocation) => {
-      if (!routeState.routeCoordinates.length || !routeState.isNavigating) return
+  const updateRouteProgress = useCallback((userLocation: UserLocation) => {
+    const rs = routeStateRef.current
+    if (!rs.routeCoordinates.length || !rs.isNavigating) return
+    const coordinates = rs.routeCoordinates
+    let closestIndex = rs.progressIndex
+    let closestDistance = Infinity
+    const startIndex = Math.max(0, rs.progressIndex - 2)
+    for (let i = startIndex; i < coordinates.length; i++) {
+      const [routeLat, routeLon] = coordinates[i]
+      const distance = Math.sqrt(Math.pow(userLocation.latitude - routeLat, 2) + Math.pow(userLocation.longitude - routeLon, 2))
+      if (distance < closestDistance) {
+        closestDistance = distance
+        closestIndex = i
+      }
+    }
+    if (closestIndex > rs.progressIndex || closestDistance < 0.0001) {
+      const remainingCoordinates = coordinates.slice(closestIndex)
+      setRouteState((prev) => ({ ...prev, progressIndex: closestIndex, remainingCoordinates }))
+    }
+  }, [])
 
-      const coordinates = routeState.routeCoordinates
-      let closestIndex = routeState.progressIndex
-      let closestDistance = Infinity
-
-      // 🔍 Find the closest point on the route to the user's current location
-      // Start from current progress index to avoid going backwards
-      const startIndex = Math.max(0, routeState.progressIndex - 2)
-      for (let i = startIndex; i < coordinates.length; i++) {
-        const [routeLat, routeLon] = coordinates[i]
-        const distance = Math.sqrt(Math.pow(userLocation.latitude - routeLat, 2) + Math.pow(userLocation.longitude - routeLon, 2))
-
+  // 🧭 Update navigation progress based on user location
+  const updateNavigationProgress = useCallback((userLocation: UserLocation) => {
+    const rs = routeStateRef.current
+    const ns = navigationStateRef.current
+    if (!rs.route || !rs.isNavigating) return
+    const maneuvers = rs.route.trip.legs[0]?.maneuvers || []
+    if (maneuvers.length === 0) return
+    const coordinates = rs.routeCoordinates
+    if (coordinates.length === 0) return
+    let closestDistance = Infinity
+    let closestIndex = ns.maneuverIndex
+    for (let i = Math.max(0, ns.maneuverIndex - 1); i < maneuvers.length; i++) {
+      const maneuver = maneuvers[i]
+      if (maneuver.begin_shape_index < coordinates.length) {
+        const [maneuverLat, maneuverLon] = coordinates[maneuver.begin_shape_index]
+        const distance = Math.sqrt(Math.pow(userLocation.latitude - maneuverLat, 2) + Math.pow(userLocation.longitude - maneuverLon, 2))
         if (distance < closestDistance) {
           closestDistance = distance
           closestIndex = i
         }
       }
-
-      // 🎯 Only update if we've made significant progress forward
-      if (closestIndex > routeState.progressIndex || closestDistance < 0.0001) {
-        // ~10 meters threshold
-        const remainingCoordinates = coordinates.slice(closestIndex)
-
-        setRouteState((prev) => ({
-          ...prev,
-          progressIndex: closestIndex,
-          remainingCoordinates,
-        }))
-      }
-    },
-    [routeState.routeCoordinates, routeState.isNavigating, routeState.progressIndex],
-  )
-
-  // 🧭 Update navigation progress based on user location
-  const updateNavigationProgress = useCallback(
-    (userLocation: UserLocation) => {
-      if (!routeState.route || !routeState.isNavigating) return
-
-      // 🎯 Find closest maneuver based on user location
-      const maneuvers = routeState.route.trip.legs[0]?.maneuvers || []
-      if (maneuvers.length === 0) return
-
-      // 🔍 Simple logic: advance to next maneuver if user is close to it
-      // In a production app, you'd use more sophisticated logic here
-      const coordinates = routeState.routeCoordinates
-      if (coordinates.length === 0) return
-
-      let closestDistance = Infinity
-      // read current maneuver index from navigationState for comparison
-      let closestIndex = navigationState.maneuverIndex
-
-      for (let i = Math.max(0, navigationState.maneuverIndex - 1); i < maneuvers.length; i++) {
-        const maneuver = maneuvers[i]
-        if (maneuver.begin_shape_index < coordinates.length) {
-          const [maneuverLat, maneuverLon] = coordinates[maneuver.begin_shape_index]
-          const distance = Math.sqrt(Math.pow(userLocation.latitude - maneuverLat, 2) + Math.pow(userLocation.longitude - maneuverLon, 2))
-
-          if (distance < closestDistance) {
-            closestDistance = distance
-            closestIndex = i
-          }
-        }
-      }
-
-      // 📍 Update navigation state if we've progressed
-      if (closestIndex !== navigationState.maneuverIndex) {
-        setNavigationState((prev) => ({
-          currentManeuver: maneuvers[closestIndex] || null,
-          nextManeuver: maneuvers[closestIndex + 1] || null,
-          maneuverIndex: closestIndex,
-          // preserve previous distance/time until a real calculation is implemented
-          distanceToDestination: prev.distanceToDestination,
-          estimatedTimeRemaining: prev.estimatedTimeRemaining,
-        }))
-      }
-    },
-    [routeState.route, routeState.isNavigating, routeState.routeCoordinates, navigationState.maneuverIndex],
-  )
+    }
+    if (closestIndex !== ns.maneuverIndex) {
+      setNavigationState((prev) => ({
+        currentManeuver: maneuvers[closestIndex] || null,
+        nextManeuver: maneuvers[closestIndex + 1] || null,
+        maneuverIndex: closestIndex,
+        distanceToDestination: prev.distanceToDestination,
+        estimatedTimeRemaining: prev.estimatedTimeRemaining,
+      }))
+    }
+  }, [])
 
   // 📍 Main function to handle location updates during navigation
   const handleLocationUpdate = useCallback(
     async (userLocation: UserLocation) => {
-      if (routeState.isNavigating) {
+      if (routeStateRef.current.isNavigating) {
         updateRouteProgress(userLocation)
         updateNavigationProgress(userLocation)
         await checkAndReroute(userLocation)
       }
     },
-    [routeState.isNavigating, updateRouteProgress, updateNavigationProgress, checkAndReroute],
+    [updateRouteProgress, updateNavigationProgress, checkAndReroute],
   )
 
   return {
