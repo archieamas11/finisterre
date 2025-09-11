@@ -211,6 +211,7 @@ function FinisterreMarkers({ items, onDirectionClick, isDirectionLoading = false
                   className="w-full flex-1"
                   isLoading={isDirectionLoading}
                   onClick={() => onDirectionClick?.([itemData.lat, itemData.lng])}
+                  variant={'default'}
                 />
                 <ShareButton coords={[itemData.lat, itemData.lng]} location={itemData.title} variant={'default'} className="flex-1 rounded-lg" />
               </div>

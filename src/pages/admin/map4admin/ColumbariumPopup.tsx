@@ -52,7 +52,7 @@ export default function ColumbariumPopup({ marker, onDirectionClick, isDirection
   const queryClient = useQueryClient()
   const createLotOwnerMutation = useCreateLotOwner()
 
-  // 🔍 Get search context for highlighting searched niche
+  // Get search context for highlighting searched niche
   const locateContext = useContext(LocateContext)
 
   const handleCustomerSelect = (customerId: string) => {
@@ -163,7 +163,7 @@ export default function ColumbariumPopup({ marker, onDirectionClick, isDirection
         {!isAdmin() && (
           <div className="flex gap-2">
             <GetDirectionButton
-              className="h-12 w-12 rounded-full text-white"
+              className="text-primary-foreground h-12 w-12 rounded-full"
               variant={'default'}
               isLoading={isDirectionLoading}
               onClick={onDirectionClick}

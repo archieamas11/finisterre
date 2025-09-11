@@ -17,10 +17,6 @@ export interface MapState {
   highlightedNiche: string | null
   // Auto popup
   autoOpenPopupFor: string | null
-  // Popup close orchestration
-  pendingPopupClose: boolean
-  // Declarative popup close flag (instead of DOM query removal)
-  forceClosePopupsToken: number // increment to signal popups should close
 }
 
 export type MapAction =
@@ -38,8 +34,6 @@ export type MapAction =
   | { type: 'SEARCH_END' }
   | { type: 'SET_HIGHLIGHTED_NICHE'; niche: string | null }
   | { type: 'SET_AUTO_POPUP'; plotId: string | null }
-  | { type: 'REQUEST_POPUP_CLOSE' }
-  | { type: 'POPUP_CLOSE_CONFIRMED' }
   | { type: 'RESET_VIEW' }
 
 // ==== Context Types ====
@@ -61,7 +55,6 @@ export interface LocateContextValue extends MapState {
   searchLot: (lotId: string) => Promise<void>
   clearSearch: () => void
   setAutoOpenPopupFor: (plotId: string | null) => void
-  requestPopupClose: () => void
   showUserPlotsOnly: () => void
   // Count of user-owned plots (used to conditionally show My Plots entry in filters)
   userOwnedPlotsCount: number

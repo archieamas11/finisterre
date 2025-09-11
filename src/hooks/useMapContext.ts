@@ -28,7 +28,3 @@ export function useSearchState() {
     highlightedNiche: s.highlightedNiche,
   }))
 }
-
-export function usePopupState() {
-  return useMapSelector((s) => ({ autoOpenPopupFor: s.autoOpenPopupFor, forceClosePopupsToken: s.forceClosePopupsToken }))
-}

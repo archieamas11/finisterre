@@ -104,8 +104,6 @@ const initialMapState: MapState = {
   isSearching: false,
   highlightedNiche: null,
   autoOpenPopupFor: null,
-  pendingPopupClose: false,
-  forceClosePopupsToken: 0,
 }
 
 function mapReducer(state: MapState, action: MapAction): MapState {
@@ -149,10 +147,6 @@ function mapReducer(state: MapState, action: MapAction): MapState {
       return { ...state, highlightedNiche: action.niche }
     case 'SET_AUTO_POPUP':
       return { ...state, autoOpenPopupFor: action.plotId }
-    case 'REQUEST_POPUP_CLOSE':
-      return { ...state, pendingPopupClose: true, forceClosePopupsToken: state.forceClosePopupsToken + 1 }
-    case 'POPUP_CLOSE_CONFIRMED':
-      return { ...state, pendingPopupClose: false }
     case 'RESET_VIEW':
       return {
         ...state,
@@ -169,7 +163,15 @@ function mapReducer(state: MapState, action: MapAction): MapState {
 }
 
 export default function MapPage({ onBack, initialDirection }: { onBack?: () => void; initialDirection?: { lat: number; lng: number } | null }) {
-  // Existing React Query (kept for consistency) & new offline-aware hook
+  // FIXED: Define bounds as a constant outside component or use useMemo
+  const bounds = useMemo<[[number, number], [number, number]]>(
+    () => [
+      [10.247883800064669, 123.79691285546676],
+      [10.249302749341647, 123.7988598710129],
+    ],
+    [],
+  )
+  // Dynamic React Query and offline-aware hook
   const { isLoading: rqLoading, data: plotsDataRQ } = usePlots()
   const { data: offlinePlots, isLoading: offlineLoading } = useMarkersOffline()
 
@@ -248,15 +250,6 @@ export default function MapPage({ onBack, initialDirection }: { onBack?: () => v
     window.scrollTo(0, 0)
   }, [])
 
-  // FIXED: Define bounds as a constant outside component or use useMemo
-  const bounds = useMemo<[[number, number], [number, number]]>(
-    () => [
-      [10.247883800064669, 123.79691285546676],
-      [10.249302749341647, 123.7988598710129],
-    ],
-    [],
-  )
-
   // Hold reference to Leaflet map for reset
   const [mapInstance, setMapInstance] = useState<L.Map | null>(null)
 
@@ -266,13 +259,14 @@ export default function MapPage({ onBack, initialDirection }: { onBack?: () => v
     }
   }, [currentLocation, isNavigating, handleLocationUpdate])
 
+  // Stop track user location
   useEffect(() => {
     return () => {
       stopTracking()
     }
   }, [stopTracking])
 
-  // FIXED: Added proper cleanup and reset logic for shouldCenterOnUser
+  // This should center the user map view only once, when location is first obtained
   useEffect(() => {
     if (!state.shouldCenterOnUser || !currentLocation || !mapInstance) return
     mapInstance.flyTo([currentLocation.latitude, currentLocation.longitude], 18, { animate: true })
@@ -284,7 +278,6 @@ export default function MapPage({ onBack, initialDirection }: { onBack?: () => v
     if (!(route && routeCoordinates.length > 0 && state.isDirectionLoading && mapInstance)) return
     const handleMoveEnd = () => {
       dispatch({ type: 'SET_DIRECTION_LOADING', value: false })
-      if (stateRef.current.pendingPopupClose) dispatch({ type: 'POPUP_CLOSE_CONFIRMED' })
       mapInstance.off('moveend', handleMoveEnd)
     }
     mapInstance.on('moveend', handleMoveEnd)
@@ -292,13 +285,6 @@ export default function MapPage({ onBack, initialDirection }: { onBack?: () => v
       mapInstance.off('moveend', handleMoveEnd)
     }
   }, [route, routeCoordinates, state.isDirectionLoading, mapInstance])
-
-  // Reset route completion state when route is cleared
-  useEffect(() => {
-    if (!route || routeCoordinates.length === 0) {
-      if (state.pendingPopupClose) dispatch({ type: 'POPUP_CLOSE_CONFIRMED' })
-    }
-  }, [route, routeCoordinates, state.pendingPopupClose])
 
   // Memoize callback functions to prevent them from being recreated on every render.
   const requestLocate = useCallback(async () => {
@@ -563,12 +549,6 @@ export default function MapPage({ onBack, initialDirection }: { onBack?: () => v
     dispatch({ type: 'RESET_GROUPS' })
   }, [])
 
-  // 🚀 Request popup close - either immediately or after route completion
-  const requestPopupClose = useCallback(() => {
-    // declarative: dispatch token increment
-    dispatch({ type: 'REQUEST_POPUP_CLOSE' })
-  }, [])
-
   // 🎯 Grouped markers (memoized) & available groups for dropdown
   const markersByGroup = useMemo(() => groupMarkersByKey(markers), [markers])
   const availableGroups = useMemo(
@@ -628,7 +608,6 @@ export default function MapPage({ onBack, initialDirection }: { onBack?: () => v
       highlightedNiche: state.highlightedNiche,
       autoOpenPopupFor: state.autoOpenPopupFor,
       setAutoOpenPopupFor: (plotId: string | null) => dispatch({ type: 'SET_AUTO_POPUP', plotId }),
-      requestPopupClose,
       showUserPlotsOnly,
       userOwnedPlotsCount: userMarkers.length,
     }),
@@ -643,7 +622,6 @@ export default function MapPage({ onBack, initialDirection }: { onBack?: () => v
       handleClusterClick,
       searchLot,
       clearSearch,
-      requestPopupClose,
       showUserPlotsOnly,
       userMarkers.length,
     ],

@@ -50,9 +50,7 @@ const PlotMarkers: React.FC<PlotMarkersProps> = memo(({ markers, isDirectionLoad
 
   // 🎯 Get search context for auto popup functionality
   const locateContext = useContext(LocateContext)
-  // const { autoOpenPopupFor, forceClosePopupsToken } = usePopupState()
   const autoOpenPopupFor = locateContext?.autoOpenPopupFor
-  const forceClosePopupsToken = locateContext?.forceClosePopupsToken
   const markerRefs = useRef<{ [key: string]: L.Marker | null }>({})
 
   const idToKey = useCallback((id: string | number) => String(id), [])
@@ -104,11 +102,6 @@ const PlotMarkers: React.FC<PlotMarkersProps> = memo(({ markers, isDirectionLoad
     }
   }, [autoOpenPopupFor, isSmallScreen, markers, locateContext, idToKey])
 
-  // Declarative close: when forceClosePopupsToken changes, close any open drawer
-  useEffect(() => {
-    setOpenDrawerPlotId(null)
-  }, [forceClosePopupsToken])
-
   return (
     <>
       {markers.map((marker) => {
@@ -125,14 +118,6 @@ const PlotMarkers: React.FC<PlotMarkersProps> = memo(({ markers, isDirectionLoad
 
         const onDir = () => {
           onDirectionClick(marker.position as [number, number])
-
-          // Use the new context method to request popup close
-          // This will close the popup only after route is loaded and flyTo animation completes
-          if (locateContext?.requestPopupClose) {
-            locateContext.requestPopupClose()
-          }
-
-          // Close any open drawer immediately for mobile
           setOpenDrawerPlotId(null)
         }
 

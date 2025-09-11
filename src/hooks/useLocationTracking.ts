@@ -207,7 +207,7 @@ export function useLocationTracking(options: UseLocationTrackingOptions = {}) {
     }
   }, [state.isSupported, onLocationSuccess, onLocationError])
 
-  // 🛑 Stop location tracking
+  // Stop location tracking
   const stopTracking = useCallback(async () => {
     if (watchIdRef.current !== null) {
       if (Capacitor.isNativePlatform()) {
