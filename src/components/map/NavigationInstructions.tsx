@@ -1,6 +1,7 @@
-import { X, Navigation, Clock, MapPin, Route, AlertTriangle, ChevronDown, ChevronUp } from 'lucide-react'
+import { X, Navigation, Clock, MapPin, Route, AlertTriangle, ChevronDown, ChevronUp, Volume2, VolumeOff } from 'lucide-react'
 import { AnimatePresence, motion } from 'framer-motion'
 import React from 'react'
+import useVoiceGuidance from '@/hooks/useVoiceGuidance'
 
 import { type ValhallaManeuver } from '@/api/valhalla.api'
 import { Badge } from '@/components/ui/badge'
@@ -103,6 +104,19 @@ export default function NavigationInstructions({
   const { currentManeuver, nextManeuver, maneuverIndex } = navigationState
   const [showDetails, setShowDetails] = React.useState(false)
   const hasSummary = typeof totalDistance === 'number' || typeof totalTime === 'number'
+  const { isEnabled, toggle, speak, canUseTts, stop } = useVoiceGuidance()
+
+  // Speak the current maneuver when it changes and navigation is active.
+  React.useEffect(() => {
+    if (!isNavigating || !currentManeuver) return
+    const text = currentManeuver.instruction || ''
+    // Speak asynchronously; ignore errors
+    speak(text).catch(() => {})
+    return () => {
+      // stop any ongoing speech when maneuver changes
+      stop()
+    }
+  }, [currentManeuver, isNavigating, speak, stop])
 
   return (
     <AnimatePresence>
@@ -154,6 +168,18 @@ export default function NavigationInstructions({
                   >
                     {showDetails ? <ChevronDown className="h-4 w-4" aria-hidden="true" /> : <ChevronUp className="h-4 w-4" aria-hidden="true" />}
                     <span className="sr-only">Toggle details</span>
+                  </Button>
+                  {/* Voice guidance toggle */}
+                  <Button
+                    type="button"
+                    variant={isEnabled ? 'default' : 'ghost'}
+                    size="icon"
+                    onClick={toggle}
+                    title={canUseTts ? (isEnabled ? 'Disable voice guidance' : 'Enable voice guidance') : 'TTS not available'}
+                    aria-pressed={isEnabled}
+                    disabled={!canUseTts}
+                  >
+                    {isEnabled ? <Volume2 className="h-4 w-4" /> : <VolumeOff className="h-4 w-4" />}
                   </Button>
                   <Button type="button" variant="ghost" size="icon" onClick={onClose} aria-label="Close navigation">
                     <X className="h-4 w-4" aria-hidden="true" />
