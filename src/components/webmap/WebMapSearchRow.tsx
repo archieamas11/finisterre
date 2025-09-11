@@ -21,10 +21,8 @@ export default function WebMapSearchRow({ context }: WebMapSearchRowProps) {
   return (
     <>
       <div className="flex w-full items-center gap-2 pr-3">
-        <div className="flex-1">
-          <div className="mx-auto w-full max-w-3xl xl:max-w-4xl">
-            <SearchToggle context={context} className="w-full" />
-          </div>
+        <div className="mx-auto w-full">
+          <SearchToggle context={context} className="w-full" />
         </div>
         {!isAuthenticated() && !isNativePlatform() ? (
           <Link to="/login" className="shrink-0">
