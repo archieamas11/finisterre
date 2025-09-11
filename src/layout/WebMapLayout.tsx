@@ -272,6 +272,14 @@ export default function MapPage({ onBack, initialDirection }: { onBack?: () => v
   useEffect(() => {
     if (!state.shouldCenterOnUser || !currentLocation || !mapInstance) return
     if (hasCenteredRef.current) return
+
+    // 🎯 During navigation, don't auto-center unless explicitly requested
+    // This prevents camera jumps during route following
+    if (isNavigating) {
+      dispatch({ type: 'CLEAR_LOCATE' })
+      return
+    }
+
     hasCenteredRef.current = true
     mapInstance.flyTo([currentLocation.latitude, currentLocation.longitude])
     dispatch({ type: 'CLEAR_LOCATE' })
@@ -280,7 +288,7 @@ export default function MapPage({ onBack, initialDirection }: { onBack?: () => v
       hasCenteredRef.current = false
     }, 1000)
     return () => clearTimeout(t)
-  }, [state.shouldCenterOnUser, currentLocation, mapInstance])
+  }, [state.shouldCenterOnUser, currentLocation, mapInstance, isNavigating])
 
   // Effect to detect when route is fully loaded and flyTo animation is complete
   useEffect(() => {
@@ -298,7 +306,7 @@ export default function MapPage({ onBack, initialDirection }: { onBack?: () => v
   // Get user location and fly to it
   // Stable callback prevents re-renders
   const requestLocate = useCallback(
-    async (zoom: number = 18) => {
+    async (zoom: number = 18, forceCenter: boolean = false) => {
       // Start tracking only if not already running
       if (!isTracking) {
         try {
@@ -323,14 +331,16 @@ export default function MapPage({ onBack, initialDirection }: { onBack?: () => v
         }
       }
 
-      // Skip small moves (<5m for example) to avoid spammy flyTo
-      if (loc && mapInstance) {
+      // 🎯 Don't center map during navigation unless explicitly requested
+      // This prevents the camera from jumping back to user location during route following
+      if (loc && mapInstance && (!isNavigating || forceCenter)) {
+        // Skip small moves (<5m for example) to avoid spammy flyTo
         if (!currentLocation || Math.hypot(loc.latitude - currentLocation.latitude, loc.longitude - currentLocation.longitude) > 0.00005) {
           mapInstance.flyTo([loc.latitude, loc.longitude], zoom, { animate: true })
         }
       }
     },
-    [isTracking, startTracking, currentLocation, getCurrentLocation, mapInstance],
+    [isTracking, startTracking, currentLocation, getCurrentLocation, mapInstance, isNavigating],
   )
 
   const lastDestSigRef = useRef<string | null>(null)
@@ -631,11 +641,20 @@ export default function MapPage({ onBack, initialDirection }: { onBack?: () => v
     dispatch({ type: 'SHOW_USER_PLOTS' })
   }, [])
 
+  // 📍 Request user location with forced centering (for UI buttons)
+  const locateUser = useCallback(
+    async (zoom: number = 18) => {
+      await requestLocate(zoom, true) // Always force center when user explicitly requests
+    },
+    [requestLocate],
+  )
+
   const contextValue = useMemo(
     () => ({
       // direct state (for backward compat; prefer useMapState selectors moving forward)
       ...state,
       requestLocate,
+      locateUser, // 📍 For explicit user location requests (always centers)
       cancelNavigation,
       resetView,
       selectedGroups: state.selectedGroups,
@@ -659,6 +678,7 @@ export default function MapPage({ onBack, initialDirection }: { onBack?: () => v
     [
       state,
       requestLocate,
+      locateUser,
       cancelNavigation,
       resetView,
       toggleGroupSelection,

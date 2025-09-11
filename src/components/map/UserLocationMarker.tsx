@@ -7,15 +7,11 @@ import { type UserLocation } from '@/hooks/useLocationTracking'
 
 interface UserLocationMarkerProps {
   userLocation: UserLocation | null
-  // 🎨 Styling options
   markerColor?: string
   accuracyColor?: string
   accuracyOpacity?: number
-  // 📍 Auto-center map on first location
   centerOnFirst?: boolean
-  // 🎯 Show accuracy circle
   showAccuracyCircle?: boolean
-  // 🔄 Animation options
   enableAnimation?: boolean
 }
 
@@ -27,7 +23,7 @@ export function UserLocationMarker({
   markerColor = '#2563eb',
   accuracyColor = '#2563eb',
   accuracyOpacity = 0.2,
-  centerOnFirst = true,
+  centerOnFirst = false,
   showAccuracyCircle = true,
   enableAnimation = true,
 }: UserLocationMarkerProps) {
@@ -48,7 +44,7 @@ export function UserLocationMarker({
     return null
   }
 
-  // 📍 Create custom user location icon
+  // Create custom user location icon
   const userLocationIcon = L.divIcon({
     className: 'user-location-marker',
     html: `
@@ -97,7 +93,7 @@ export function UserLocationMarker({
 
   return (
     <>
-      {/* 🎯 Accuracy circle */}
+      {/* Accuracy circle */}
       {showAccuracyCircle && accuracy && (
         <Circle
           center={position}
@@ -112,7 +108,7 @@ export function UserLocationMarker({
         />
       )}
 
-      {/* 📍 User location marker */}
+      {/* User location marker */}
       <ReactLeafletDriftMarker position={position} icon={userLocationIcon} duration={2000} />
     </>
   )
