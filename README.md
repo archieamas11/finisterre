@@ -4,18 +4,20 @@ A modern, comprehensive cemetery management system designed to streamline record
 
 ## Table of Contents
 
-- [Project Overview](#project-overview)
-- [Tech Stack](#tech-stack)
-- [Getting Started](#getting-started)
-  - [Prerequisites](#prerequisites)
-  - [Installation](#installation)
-  - [Environment Configuration](#environment-configuration)
-- [Running the Project](#running-the-project)
-  - [Development Server](#development-server)
-  - [Building for Production](#building-for-production)
-  - [Running Tests](#running-tests)
-- [Contribution Guidelines](#contribution-guidelines)
-- [Troubleshooting](#troubleshooting)
+- [Finisterre Gardenz](#finisterre-gardenz)
+  - [Table of Contents](#table-of-contents)
+  - [Project Overview](#project-overview)
+  - [Tech Stack](#tech-stack)
+  - [Getting Started](#getting-started)
+    - [Prerequisites](#prerequisites)
+    - [Installation](#installation)
+    - [Environment Configuration](#environment-configuration)
+  - [Running the Project](#running-the-project)
+    - [Development Server](#development-server)
+    - [Building for Production](#building-for-production)
+    - [Running Tests](#running-tests)
+  - [Contribution Guidelines](#contribution-guidelines)
+  - [Troubleshooting](#troubleshooting)
 
 ## Project Overview
 
@@ -101,8 +103,6 @@ To create a production-ready build of the web application:
 ```bash
 pnpm build
 ```
-
-The optimized files will be generated in the `dist/` directory.
 
 ### Running Tests
 

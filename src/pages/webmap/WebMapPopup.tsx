@@ -3,18 +3,18 @@ import { MapPin, Award, Ruler, Info } from 'lucide-react'
 import { BiXCircle } from 'react-icons/bi'
 import { BiCheckCircle } from 'react-icons/bi'
 import { BsPersonHeart } from 'react-icons/bs'
-import { FaDirections } from 'react-icons/fa'
 import { FaHourglassStart } from 'react-icons/fa'
 
-import { Button } from '@/components/ui/button'
 import { CardDescription, CardTitle } from '@/components/ui/card'
 import { Spinner } from '@/components/ui/spinner'
 import { useAuth } from '@/hooks/useAuth'
 import { useDeceasedForPlot } from '@/hooks/useDeceasedForPlot'
 import { cn } from '@/lib/utils'
+import { ShareButton } from '@/pages/webmap/components/share-button'
 import { type DeceasedData } from '@/types/deceased.types'
 import { type ConvertedMarker } from '@/types/map.types'
 import { calculateYearsBuried } from '@/utils/date.utils'
+import GetDirectionButton from '@/pages/webmap/components/get-direction-button'
 interface PlotLocationsProps {
   marker: ConvertedMarker
   backgroundColor?: string
@@ -38,17 +38,21 @@ export default function PlotLocations({ marker, backgroundColor, onDirectionClic
             <MapPin className="text-primary/80 dark:text-primary" size={16} />
             <span className="text-foreground text-sm leading-none font-medium">{marker.location}</span>
           </div>
-          <Button
-            className="flex h-8 w-8 items-center justify-center rounded-full shadow-md transition-colors"
-            style={backgroundColor ? { background: backgroundColor } : {}}
-            onClick={onDirectionClick}
-            disabled={isDirectionLoading}
-            aria-busy={isDirectionLoading}
-            type="button"
-            variant="secondary"
-          >
-            {isDirectionLoading ? <Spinner className="h-4 w-4 text-white" /> : <FaDirections className="text-white" />}
-          </Button>
+          <div className="flex gap-2">
+            <GetDirectionButton
+              className="h-8 w-8 rounded-full text-white"
+              isLoading={isDirectionLoading}
+              onClick={onDirectionClick}
+              style={backgroundColor ? { background: backgroundColor } : {}}
+            />
+            <ShareButton
+              coords={[marker.position[0], marker.position[1]]}
+              location={marker.location}
+              className="h-8 w-8 rounded-full"
+              variant={'default'}
+              size={'icon'}
+            />
+          </div>
         </div>
       </div>
 

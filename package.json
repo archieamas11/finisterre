@@ -78,6 +78,7 @@
     "react-leaflet": "5.0.0-rc.2",
     "react-leaflet-drift-marker": "^4.0.0",
     "react-leaflet-markercluster": "5.0.0-rc.0",
+    "react-qr-code": "^2.0.18",
     "react-router-dom": "^7.7.1",
     "recharts": "2.15.4",
     "sonner": "^2.0.6",

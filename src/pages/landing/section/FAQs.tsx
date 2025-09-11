@@ -59,7 +59,7 @@ export default function FAQs() {
               <Link to="#contact" className="hover:text-primary/80 font-semibold text-[var(--brand-primary)]">
                 customer support
               </Link>
-              team.
+              <span> team.</span>
             </p>
           </div>
           <div className="lg:col-span-2">

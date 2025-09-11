@@ -1,18 +1,15 @@
 import { motion } from 'framer-motion'
 import L from 'leaflet'
 import { Maximize2 } from 'lucide-react'
-import React, { cloneElement, isValidElement, useContext } from 'react'
+import React, { cloneElement, isValidElement } from 'react'
 import { renderToStaticMarkup } from 'react-dom/server'
-import { FaDirections } from 'react-icons/fa'
 import { Marker, Popup } from 'react-leaflet'
 import { isAdmin } from '@/utils/auth.utils'
-import { LocateContext } from '@/contexts/MapContext'
 import { CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Dialog, DialogContent, DialogTrigger } from '@/components/ui/dialog'
 import { cn } from '@/lib/utils'
-
-import { Button } from './button'
-import Spinner from './spinner'
+import { ShareButton } from '@/pages/webmap/components/share-button'
+import GetDirectionButton from '@/pages/webmap/components/get-direction-button'
 
 interface MarkerStyle {
   backgroundColor?: string
@@ -174,11 +171,11 @@ function SimplePopup({ title, description }: { title: string; description: strin
       animate={{ opacity: 1, y: 0, scale: 1 }}
       exit={{ opacity: 0, y: 4, scale: 0.98 }}
       transition={{ duration: 0.25, ease: 'easeOut' }}
-      className="mt-5 mb-1 w-64 rounded-xl shadow-lg"
+      className="mt-5 mb-2 w-64 rounded-xl shadow-lg"
     >
       <div className="relative overflow-hidden rounded-xl bg-gradient-to-t from-black/70 to-transparent p-0 text-gray-900">
         <div className="bg-white/90 p-4 backdrop-blur-sm">
-          <h3 className="mb-2 line-clamp-2 text-lg font-semibold text-gray-900">{title}</h3>
+          <h3 className="line-clamp-2 text-lg font-semibold text-gray-900">{title}</h3>
           <p className="text-sm leading-relaxed whitespace-pre-line text-gray-700">{description}</p>
         </div>
       </div>
@@ -193,8 +190,6 @@ interface CustomMarkersProps {
 }
 
 function FinisterreMarkers({ items, onDirectionClick, isDirectionLoading = false }: CustomMarkersProps) {
-  const locateContext = useContext(LocateContext)
-
   return (
     <>
       {items.map((itemData) => (
@@ -210,25 +205,15 @@ function FinisterreMarkers({ items, onDirectionClick, isDirectionLoading = false
               return <SimplePopup title={itemData.title} description={itemData.description} />
             })()}
             {!isAdmin() && (
-              <Button
-                className="mt-1 mb-1 w-full rounded-lg"
-                onClick={(e) => {
-                  e.stopPropagation()
-                  // Start the navigation process
-                  onDirectionClick?.([itemData.lat, itemData.lng])
-                  // Use the new context method to request popup close
-                  // This will close the popup only after route is loaded and flyTo animation completes
-                  if (locateContext?.requestPopupClose) {
-                    locateContext.requestPopupClose()
-                  }
-                }}
-                disabled={isDirectionLoading}
-                aria-busy={isDirectionLoading}
-                variant="default"
-              >
-                {isDirectionLoading ? <Spinner className="h-4 w-4" /> : <FaDirections />}
-                Get Direction
-              </Button>
+              <div className="mt-1 flex gap-2">
+                <GetDirectionButton
+                  label="Get Direction"
+                  className="w-full flex-1"
+                  isLoading={isDirectionLoading}
+                  onClick={() => onDirectionClick?.([itemData.lat, itemData.lng])}
+                />
+                <ShareButton coords={[itemData.lat, itemData.lng]} location={itemData.title} variant={'default'} className="flex-1 rounded-lg" />
+              </div>
             )}
           </Popup>
         </Marker>

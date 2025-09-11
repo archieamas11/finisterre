@@ -4,7 +4,6 @@ import { ChevronsUpDown, Check, Heart } from 'lucide-react'
 import { Crown, Phone, User, Mail, Save, X } from 'lucide-react'
 import { useState, useContext } from 'react'
 import { BsFillPatchCheckFill } from 'react-icons/bs'
-import { FaDirections } from 'react-icons/fa'
 import { ImLibrary } from 'react-icons/im'
 import { toast } from 'sonner'
 
@@ -20,7 +19,6 @@ import { CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList, Com
 import { DialogDescription, DialogContent, DialogHeader, DialogTitle, Dialog } from '@/components/ui/dialog'
 import { PopoverContent, PopoverTrigger, Popover } from '@/components/ui/popover'
 import { Skeleton } from '@/components/ui/skeleton'
-import { Spinner } from '@/components/ui/spinner'
 import { LocateContext } from '@/contexts/MapContext'
 import { useCustomers } from '@/hooks/customer-hooks/customer.hooks'
 import { useCreateLotOwner } from '@/hooks/lot-owner-hooks/useCreateLotOwner'
@@ -30,6 +28,8 @@ import { isAdmin } from '@/utils/auth.utils'
 import { calculateYearsBuried } from '@/utils/date.utils'
 
 import CreateDeceased from './columbarium-dialogs/CreateDeceasedPage'
+import { ShareButton } from '@/pages/webmap/components/share-button'
+import GetDirectionButton from '@/pages/webmap/components/get-direction-button'
 
 interface ColumbariumPopupProps {
   marker: ConvertedMarker
@@ -161,21 +161,20 @@ export default function ColumbariumPopup({ marker, onDirectionClick, isDirection
         </div>
         {/* Only show directions button if NOT admin */}
         {!isAdmin() && (
-          <Button
-            className="flex h-12 w-12 items-center justify-center rounded-full p-0 shadow-md transition-colors"
-            style={{
-              minWidth: '2rem',
-              minHeight: '2rem',
-              background: '#4f46e5',
-            }}
-            onClick={onDirectionClick}
-            disabled={isDirectionLoading}
-            aria-busy={isDirectionLoading}
-            type="button"
-            variant="secondary"
-          >
-            {isDirectionLoading ? <Spinner className="h-5 w-5 text-white" /> : <FaDirections className="text-base text-white" />}
-          </Button>
+          <div className="flex gap-2">
+            <GetDirectionButton
+              className="h-12 w-12 rounded-full text-white"
+              variant={'default'}
+              isLoading={isDirectionLoading}
+              onClick={onDirectionClick}
+            />
+            <ShareButton
+              coords={[marker.position[0], marker.position[1]]}
+              location={`Chamber ${marker.plot_id}`}
+              className="h-12 w-12 rounded-full shadow-md"
+              variant={'default'}
+            />
+          </div>
         )}
       </div>
       {/* 🔢 Grid layout for niches */}
@@ -190,7 +189,6 @@ export default function ColumbariumPopup({ marker, onDirectionClick, isDirection
           className="bg-background dark:bg-muted grid w-full gap-1 rounded-lg border p-2"
         >
           {nicheData.map((niche, index) => {
-            // 🔍 Check if this niche is highlighted from search
             const isHighlighted = locateContext?.highlightedNiche === String(niche.niche_number)
 
             return (
@@ -200,7 +198,6 @@ export default function ColumbariumPopup({ marker, onDirectionClick, isDirection
                 className={cn(
                   'flex aspect-square min-h-[40px] cursor-pointer flex-col items-center justify-center rounded border p-1 text-center transition-all duration-200 hover:scale-105 hover:shadow-sm',
                   getNicheStatusStyle(niche.niche_status),
-                  // 🔍 Add special highlighting for searched niche
                   isHighlighted && 'scale-110 transform shadow-lg ring-4 ring-blue-500 ring-offset-2',
                 )}
                 title={`${niche.lot_id} - ${niche.niche_status}${niche.owner ? ` (${niche.owner.name})` : ''}${isHighlighted ? ' (Search Result)' : ''}`}

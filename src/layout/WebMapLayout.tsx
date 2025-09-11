@@ -242,7 +242,7 @@ export default function MapPage({ onBack, initialDirection }: { onBack?: () => v
     return () => clearTimeout(t)
   }, [konstaNotificationOpen])
 
-  const [searchParams] = useSearchParams()
+  const [searchParams, setSearchParams] = useSearchParams()
 
   useEffect(() => {
     window.scrollTo(0, 0)
@@ -318,7 +318,14 @@ export default function MapPage({ onBack, initialDirection }: { onBack?: () => v
     stopNavigation()
     dispatch({ type: 'SET_NAV_OPEN', value: false })
     dispatch({ type: 'SET_DIRECTION_LOADING', value: false })
-  }, [stopNavigation])
+    // Remove navigation params from URL
+    setSearchParams((prev) => {
+      const next = new URLSearchParams(prev)
+      next.delete('from')
+      next.delete('to')
+      return next
+    })
+  }, [stopNavigation, setSearchParams])
 
   const handleDirectionClick = useCallback(
     async (to: [number, number]) => {
@@ -364,6 +371,17 @@ export default function MapPage({ onBack, initialDirection }: { onBack?: () => v
           { latitude: toLatitude, longitude: toLongitude },
         )
 
+        // Update URL params (?from=lat,lng&to=lat,lng) using decimal precision trimmed
+        setSearchParams((prev) => {
+          const next = new URLSearchParams(prev)
+          ;['direction', 'lat', 'lng'].forEach((k) => next.delete(k)) // cleanup legacy params
+          const fromLat = userLocation!.latitude.toFixed(6)
+          const fromLng = userLocation!.longitude.toFixed(6)
+          next.set('from', `${fromLat},${fromLng}`)
+          next.set('to', `${toLatitude.toFixed(6)},${toLongitude.toFixed(6)}`)
+          return next
+        })
+
         if (import.meta.env.DEV) console.log('✅ Navigation started successfully')
 
         // Trigger map recentering or location update
@@ -402,20 +420,25 @@ export default function MapPage({ onBack, initialDirection }: { onBack?: () => v
         dispatch({ type: 'SET_DIRECTION_LOADING', value: false })
       }
     },
-    [currentLocation, getCurrentLocation, isTracking, startNavigation, startTracking, requestLocate],
+    [currentLocation, getCurrentLocation, isTracking, startNavigation, startTracking, requestLocate, setSearchParams],
   )
 
-  // Check for direction query params and trigger navigation
+  // Parse new navigation params (?from=lat,lng&to=lat,lng) and auto-start navigation
   useEffect(() => {
-    const direction = searchParams.get('direction')
-    const lat = searchParams.get('lat')
-    const lng = searchParams.get('lng')
-    if (direction === 'true' && lat && lng) {
-      const latNum = parseFloat(lat)
-      const lngNum = parseFloat(lng)
-      if (!isNaN(latNum) && !isNaN(lngNum)) {
-        handleDirectionClick([latNum, lngNum])
-      }
+    // Reading 'from' not required to start navigation; we only need destination
+    const to = searchParams.get('to')
+    if (!to) return
+    const parsePair = (val: string): [number, number] | null => {
+      const parts = val.split(',')
+      if (parts.length !== 2) return null
+      const a = parseFloat(parts[0])
+      const b = parseFloat(parts[1])
+      if (isNaN(a) || isNaN(b)) return null
+      return [a, b]
+    }
+    const toCoords = parsePair(to)
+    if (toCoords) {
+      handleDirectionClick(toCoords)
     }
   }, [searchParams, handleDirectionClick])
 
