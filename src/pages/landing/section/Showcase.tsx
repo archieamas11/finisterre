@@ -15,51 +15,58 @@ import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs'
 const galleryImages = [
   {
     id: 1,
-    src: 'https://picsum.photos/id/1025/2070/1380',
-    alt: 'Panoramic view of peaceful cemetery grounds with rolling hills',
-    caption: 'Panoramic view of our 150-acre grounds nestled in the rolling countryside',
-    category: 'chapel',
-  },
-  {
-    id: 2,
-    src: 'https://picsum.photos/id/1025/2070/1380',
-    alt: 'Spring blossoms throughout the cemetery pathways',
-    caption: 'Spring transformation with cherry blossoms lining memorial pathways',
-    category: 'serenity',
-  },
-  {
-    id: 3,
-    src: 'https://picsum.photos/id/1025/2070/1380',
-    alt: 'Aerial view showing the full expanse of the cemetery property',
-    caption: 'Aerial perspective showcasing the thoughtful layout and natural integration',
-    category: 'chambers',
-  },
-  {
-    id: 4,
-    src: 'https://picsum.photos/id/1025/2070/1380',
-    alt: 'Historic monument with intricate architectural details',
-    caption: 'Historic memorial featuring 19th-century craftsmanship and artistry',
-    category: 'columbarium',
-  },
-  {
-    id: 5,
-    src: 'https://picsum.photos/id/1025/2070/1380',
-    alt: 'Golden sunset casting peaceful light across the grounds',
-    caption: 'Evening tranquility as golden hour illuminates the sacred grounds',
+    src: 'https://res.cloudinary.com/djrkvgfvo/image/upload/v1757390677/image-8_pzd0f9.jpg',
+    alt: 'A vibrant play area with modern equipment for children of all ages. Shaded seating available for parents.',
+    caption: 'A vibrant play area with modern equipment for children of all ages. Shaded seating available for parents.',
     category: 'playground',
   },
   {
+    id: 2,
+    src: 'https://res.cloudinary.com/djrkvgfvo/image/upload/v1757390326/image-205_kcqegm.webp',
+    alt: 'Celebrating here, in this special open events place, with the love and light of all we hold dear.',
+    caption: 'Celebrating here, in this special open events place, with the love and light of all we hold dear.',
+    category: 'chapel',
+  },
+  {
+    id: 3,
+    src: 'https://res.cloudinary.com/djrkvgfvo/image/upload/v1755713548/chapel_emzqop.jpg',
+    alt: 'Aerial view showing the full expanse of the cemetery property',
+    caption: 'Celebrating here, in this special open events place, with the love and light of all we hold dear.',
+    category: 'chapel',
+  },
+  {
+    id: 4,
+    src: 'https://res.cloudinary.com/djrkvgfvo/image/upload/v1754204943/d7c71ee6-552f-44dc-911b-b713023e4d03_tm2hdo.png',
+    alt: 'Historic monument with intricate architectural details',
+    caption: 'A concrete repository for bone and ash remains at the upper park level with a garden and magnificent view',
+    category: 'chambers',
+  },
+  {
+    id: 5,
+    src: 'https://res.cloudinary.com/djrkvgfvo/image/upload/v1755253760/Finisterre-Gardenz-columbarium_ewopci.png',
+    alt: 'Golden sunset casting peaceful light across the grounds',
+    caption: 'Evening tranquility as golden hour illuminates the sacred grounds',
+    category: 'chambers',
+  },
+  {
     id: 6,
-    src: 'https://picsum.photos/id/1025/2070/1380',
+    src: 'https://res.cloudinary.com/djrkvgfvo/image/upload/v1755713547/gate_1_v8nrqp.jpg',
     alt: 'Carefully maintained memorial gardens with seasonal flowers',
     caption: 'Memorial gardens featuring native plants and seasonal displays',
     category: 'parking',
   },
   {
     id: 7,
-    src: 'https://picsum.photos/id/1025/2070/1380',
+    src: 'https://res.cloudinary.com/djrkvgfvo/image/upload/v1755852053/END-3-scaled_1_zzrrv1.jpg',
     alt: 'A serene lake reflecting the sky within the memorial park',
     caption: 'A serene lake reflecting the sky, offering a place for quiet contemplation',
+    category: 'parking',
+  },
+  {
+    id: 8,
+    src: 'https://res.cloudinary.com/djrkvgfvo/image/upload/v1756789574/unnamed_r3svir.png',
+    alt: 'Carefully maintained memorial gardens with seasonal flowers',
+    caption: 'Memorial gardens featuring native plants and seasonal displays',
     category: 'parking',
   },
 ]
@@ -408,18 +415,13 @@ export default function CemeteryShowcase() {
                   maxZoom={20}
                 />
                 <Marker position={[10.249306880563585, 123.797848311330114]} icon={cemeteryIcon}>
-                  <Popup minWidth={280} maxWidth={360}>
-                    <div className="w-full max-w-[360px]">
+                  <Popup minWidth={100} maxWidth={200}>
+                    <div className="w-full max-w-[250px]">
                       <div className="flex gap-3">
-                        {/* Thumbnail */}
-                        <div className="w-20 shrink-0">
-                          <img src={galleryImages[0].src} alt="Finisterre Gardenz aerial" className="h-20 w-20 rounded-md object-cover" />
-                        </div>
-
                         {/* Main content */}
                         <div className="flex-1">
                           <h3 className="text-sm font-semibold text-gray-900">Finisterre Gardenz</h3>
-                          <p className="mt-1 text-xs text-emerald-600">Memorial Park & Cemetery</p>
+                          <p className="mt-1 text-xs text-emerald-600">Memorial Park</p>
 
                           <div className="mt-2 flex flex-wrap items-center gap-2 text-xs text-gray-500">
                             <div className="inline-flex items-center gap-1">
@@ -457,7 +459,7 @@ export default function CemeteryShowcase() {
                             leafletMap.flyTo([10.249306880563585, 123.797848311330114], 18, { duration: 1.5 })
                           }
                         }}
-                        className="bg-[var(--brand-primary)] text-xs text-gray-100"
+                        className="bg-[var(--brand-primary)] text-xs text-white hover:bg-[var(--brand-primary)]"
                       >
                         <MdTravelExplore />
                         Explore Map

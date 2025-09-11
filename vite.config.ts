@@ -10,8 +10,6 @@ import removeConsole from 'vite-plugin-remove-console'
 
 // https://vite.dev/config/
 export default defineConfig(() => ({
-  // Use absolute base on Vercel to avoid relative asset paths breaking on deep links.
-  // Keep './' for local/Capacitor builds.
   base: process.env.VERCEL ? '/' : './',
   plugins: [
     react(),

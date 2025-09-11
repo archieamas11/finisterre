@@ -58,7 +58,7 @@ export default function FAQs() {
               Can’t find the answer you’re looking for? Reach out to our{' '}
               <Link to="#contact" className="hover:text-primary/80 font-semibold text-[var(--brand-primary)]">
                 customer support
-              </Link>{' '}
+              </Link>
               team.
             </p>
           </div>
