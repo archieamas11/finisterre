@@ -269,7 +269,7 @@ export default function MapPage({ onBack, initialDirection }: { onBack?: () => v
   // This should center the user map view only once, when location is first obtained
   useEffect(() => {
     if (!state.shouldCenterOnUser || !currentLocation || !mapInstance) return
-    mapInstance.flyTo([currentLocation.latitude, currentLocation.longitude], 18, { animate: true })
+    mapInstance.flyTo([currentLocation.latitude, currentLocation.longitude])
     dispatch({ type: 'CLEAR_LOCATE' })
   }, [state.shouldCenterOnUser, currentLocation, mapInstance])
 
@@ -655,39 +655,13 @@ export default function MapPage({ onBack, initialDirection }: { onBack?: () => v
               className="z-999"
             />
 
-            <MapContainer
-              className="h-full w-full"
-              markerZoomAnimation={true}
-              scrollWheelZoom={true}
-              fadeAnimation={true}
-              zoomControl={false}
-              bounds={bounds}
-              maxZoom={25}
-              zoom={18}
-              transform3DLimit={0}
-              inertia={true}
-              inertiaDeceleration={3000}
-              inertiaMaxSpeed={1000}
-              easeLinearity={0.25}
-              worldCopyJump={false}
-              maxBoundsViscosity={1.0}
-            >
+            <MapContainer className="h-full w-full" zoomControl={false} bounds={bounds} maxZoom={25} zoom={18}>
               <MapInstanceBinder onMapReady={setMapInstance} />
               <TileLayer
                 url="https://services.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"
                 maxNativeZoom={18}
                 maxZoom={25}
                 tileSize={256}
-                updateWhenIdle={false}
-                updateWhenZooming={true}
-                updateInterval={200}
-                keepBuffer={16}
-                detectRetina={false}
-                crossOrigin={true}
-                zoomOffset={0}
-                zoomReverse={false}
-                opacity={1}
-                zIndex={1}
               />
 
               <MemoizedComfortRoomMarker onDirectionClick={handleDirectionClick} isDirectionLoading={state.isDirectionLoading} />

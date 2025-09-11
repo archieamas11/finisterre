@@ -1,6 +1,6 @@
 import L from 'leaflet'
-import { memo, useMemo, useState, useCallback, useEffect } from 'react'
-import { Marker, useMap } from 'react-leaflet'
+import { memo, useMemo, useCallback } from 'react'
+import { Marker } from 'react-leaflet'
 
 import { ucwords } from '@/lib/format'
 import { getLabelFromGroupKey } from '@/lib/clusterUtils'
@@ -41,11 +41,7 @@ function calculateCentroid(markers: ConvertedMarker[]): [number, number] {
   return [sum.lat / markers.length, sum.lng / markers.length]
 }
 
-// ⚡️ Check if marker is within current map bounds for viewport optimization
-function isMarkerInBounds(marker: ConvertedMarker, bounds: L.LatLngBounds): boolean {
-  const [lat, lng] = marker.position
-  return bounds.contains([lat, lng])
-}
+// Removed viewport pruning to prevent popup loss when marker scrolls off-screen.
 
 // 🎯 Custom cluster marker that shows group summary and handles clicks
 interface CustomClusterMarkerProps {
@@ -115,48 +111,9 @@ interface SelectiveGroupMarkersProps {
 
 const SelectiveGroupMarkers = memo(
   ({ groupKey, markers, onDirectionClick, isDirectionLoading, PlotMarkersComponent }: SelectiveGroupMarkersProps) => {
-    const map = useMap()
-    const [visibleMarkers, setVisibleMarkers] = useState<ConvertedMarker[]>(markers)
-
-    // ⚡️ Update visible markers when map bounds change (viewport optimization)
-    const updateVisibleMarkers = useCallback(() => {
-      try {
-        const bounds = map.getBounds()
-        const filtered = markers.filter((marker) => isMarkerInBounds(marker, bounds))
-        setVisibleMarkers(filtered)
-      } catch (error) {
-        // 🐛 Fallback: show all markers if bounds calculation fails
-        console.warn('⚠️ Failed to calculate map bounds, showing all markers:', error)
-        setVisibleMarkers(markers)
-      }
-    }, [map, markers])
-
-    // 🛠️ Update visible markers on map events with debouncing
-    useEffect(() => {
-      let timeoutId: NodeJS.Timeout
-
-      const debouncedUpdate = () => {
-        clearTimeout(timeoutId)
-        timeoutId = setTimeout(updateVisibleMarkers, 100)
-      }
-
-      // Initial update
-      updateVisibleMarkers()
-
-      // Listen to map events
-      map.on('moveend', debouncedUpdate)
-      map.on('zoomend', debouncedUpdate)
-
-      return () => {
-        clearTimeout(timeoutId)
-        map.off('moveend', debouncedUpdate)
-        map.off('zoomend', debouncedUpdate)
-      }
-    }, [map, updateVisibleMarkers])
-
+    // Simpler: always render all markers for the group to keep popups persistent off-screen.
     const block = useMemo(() => (groupKey.startsWith('block:') ? groupKey.split('block:')[1] : ''), [groupKey])
-
-    return <PlotMarkersComponent markers={visibleMarkers} isDirectionLoading={isDirectionLoading} onDirectionClick={onDirectionClick} block={block} />
+    return <PlotMarkersComponent markers={markers} isDirectionLoading={isDirectionLoading} onDirectionClick={onDirectionClick} block={block} />
   },
 )
 
