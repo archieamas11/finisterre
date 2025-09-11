@@ -76,8 +76,6 @@ function getManeuverColor(type: number, isCurrent: boolean = false): string {
   }
 }
 
-const { isEnabled, toggle, speak, canUseTts, stop } = useVoiceGuidance()
-
 export default function NavigationInstructions({
   isOpen,
   onClose,
@@ -92,6 +90,8 @@ export default function NavigationInstructions({
   const { currentManeuver, nextManeuver, maneuverIndex } = navigationState
   const [showDetails, setShowDetails] = React.useState(false)
   const hasSummary = typeof totalDistance === 'number' || typeof totalTime === 'number'
+
+  const { isEnabled, toggle, speak, canUseTts, stop } = useVoiceGuidance()
 
   // Speak the current maneuver when it changes and navigation is active.
   React.useEffect(() => {
