@@ -3,7 +3,7 @@ import { useQueryState } from 'nuqs'
 import type { MapRef } from 'react-map-gl/maplibre'
 
 import type { Coordinate } from '../utils/location.utils'
-import type { NavigationState, NavigationActions, NavigationConfig } from '../types/navigation.types'
+import type { NavigationState, NavigationActions, NavigationConfig, CameraMode } from '../types/navigation.types'
 import { useNavigationStore } from '../stores/navigation.store'
 
 interface UseNavigationProps {
@@ -30,11 +30,16 @@ export function useNavigation({
     origin,
     destination,
     currentUserPosition,
+    cameraMode,
+    routeProgressIndex,
+    snappedUserPosition,
     setMapRef,
     setMapboxAccessToken,
     setConfig,
     setOnDestinationReached,
     setOnUrlParamsChange,
+    setCameraMode,
+    cycleCameraMode,
     startNavigation: storeStartNavigation,
     cancelNavigation: storeCancelNavigation,
     updateUserPosition: storeUpdateUserPosition,
@@ -117,10 +122,15 @@ export function useNavigation({
     origin,
     destination,
     currentUserPosition,
+    cameraMode,
+    routeProgressIndex,
+    snappedUserPosition,
 
     // Actions
     startNavigation,
     cancelNavigation,
     updateUserPosition,
+    setCameraMode: setCameraMode as (mode: CameraMode) => void,
+    cycleCameraMode: cycleCameraMode as () => void,
   }
 }

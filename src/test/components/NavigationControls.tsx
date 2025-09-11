@@ -1,6 +1,6 @@
 import { BiRefresh } from 'react-icons/bi'
 import { Button } from '@/components/ui/button'
-import { ZoomIn, ZoomOut, Compass, Maximize, Minimize, Locate } from 'lucide-react'
+import { ZoomIn, ZoomOut, Compass, Maximize, Minimize, Locate, Camera } from 'lucide-react'
 
 interface NavigationControlsProps {
   onResetView: () => void
@@ -10,6 +10,7 @@ interface NavigationControlsProps {
   onToggleFullscreen: () => void
   onGeolocate: () => void
   isFullscreen: boolean
+  onCycleCameraMode?: () => void
 }
 
 export function NavigationControls({
@@ -20,6 +21,7 @@ export function NavigationControls({
   onToggleFullscreen,
   onGeolocate,
   isFullscreen,
+  onCycleCameraMode,
 }: NavigationControlsProps) {
   return (
     <div className="absolute top-4 right-4 z-10 flex flex-col gap-2">
@@ -38,6 +40,17 @@ export function NavigationControls({
       <Button variant="default" size="sm" onClick={onGeolocate} className="border bg-white/90 shadow-md hover:bg-white">
         <Locate className="h-4 w-4" />
       </Button>
+      {onCycleCameraMode && (
+        <Button
+          variant="default"
+          size="sm"
+          onClick={onCycleCameraMode}
+          className="border bg-white/90 shadow-md hover:bg-white"
+          title="Cycle camera mode"
+        >
+          <Camera className="h-4 w-4" />
+        </Button>
+      )}
       <Button onClick={onResetView} variant="default" size="sm" className="border bg-white/90 shadow-md hover:bg-white">
         <BiRefresh className="h-4 w-4" />
       </Button>

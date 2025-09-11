@@ -11,6 +11,9 @@ export interface NavigationState {
   origin: Coordinate | null
   destination: Coordinate | null
   currentUserPosition: Coordinate | null
+  cameraMode?: CameraMode
+  routeProgressIndex?: number | null
+  snappedUserPosition?: Coordinate | null
 }
 
 /**
@@ -20,6 +23,8 @@ export interface NavigationActions {
   startNavigation: (destination: Coordinate) => Promise<void>
   cancelNavigation: () => void
   updateUserPosition: (position: Coordinate) => void
+  setCameraMode?: (mode: CameraMode) => void
+  cycleCameraMode?: () => void
 }
 
 /**
@@ -52,3 +57,6 @@ export const DEFAULT_NAVIGATION_CONFIG: NavigationConfig = {
     maximumAge: 1000,
   },
 }
+
+/** Camera modes for map behavior during navigation */
+export type CameraMode = 'followHeading' | 'followNorth' | 'overview'

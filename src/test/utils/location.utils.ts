@@ -68,3 +68,71 @@ export function findClosestPointOnLine(lineCoordinates: Coordinate[], userPositi
 export function hasReachedDestination(userPosition: Coordinate, destination: Coordinate, threshold: number = 10): boolean {
   return calculateDistance(userPosition, destination) < threshold
 }
+
+/**
+ * Calculate initial bearing (forward azimuth) from point A to point B in degrees (0-360)
+ * @param from Coordinate [lng, lat]
+ * @param to Coordinate [lng, lat]
+ */
+export function calculateBearing(from: Coordinate, to: Coordinate): number {
+  const [lng1, lat1] = from.map(toRadians) as [number, number]
+  const [lng2, lat2] = to.map(toRadians) as [number, number]
+
+  const dLng = lng2 - lng1
+  const y = Math.sin(dLng) * Math.cos(lat2)
+  const x = Math.cos(lat1) * Math.sin(lat2) - Math.sin(lat1) * Math.cos(lat2) * Math.cos(dLng)
+  const bearingRad = Math.atan2(y, x)
+  const bearingDeg = (bearingRad * 180) / Math.PI
+  return (bearingDeg + 360) % 360
+}
+
+/**
+ * Exponential moving average smoothing between last and next coordinate
+ * @param lastSmoothed Previous smoothed coordinate (or null for first)
+ * @param nextRaw Next raw coordinate
+ * @param alpha Smoothing factor in [0,1], higher trusts new data more
+ */
+export function smoothCoordinate(lastSmoothed: Coordinate | null, nextRaw: Coordinate, alpha: number = 0.3): Coordinate {
+  if (!lastSmoothed) return nextRaw
+  const smoothedLng = lastSmoothed[0] + alpha * (nextRaw[0] - lastSmoothed[0])
+  const smoothedLat = lastSmoothed[1] + alpha * (nextRaw[1] - lastSmoothed[1])
+  return [smoothedLng, smoothedLat]
+}
+
+export interface PreprocessLocationResult {
+  smoothed: Coordinate
+  heading: number | null
+}
+
+/**
+ * Smooth raw location and compute heading from previous smoothed point
+ */
+export function preprocessLocation(
+  lastSmoothed: Coordinate | null,
+  nextRaw: Coordinate,
+  options?: { alpha?: number; minDistanceForHeading?: number },
+): PreprocessLocationResult {
+  const alpha = options?.alpha ?? 0.3
+  const minDistanceForHeading = options?.minDistanceForHeading ?? 0.5 // meters
+
+  const smoothed = smoothCoordinate(lastSmoothed, nextRaw, alpha)
+  let heading: number | null = null
+  if (lastSmoothed) {
+    const movedMeters = calculateDistance(lastSmoothed, smoothed)
+    if (movedMeters >= minDistanceForHeading) {
+      heading = calculateBearing(lastSmoothed, smoothed)
+    }
+  }
+  return { smoothed, heading }
+}
+
+/**
+ * Snap a location to the closest point on the given route geometry (LineString coordinates)
+ * Returns the snapped coordinate and distance (meters) from original point to snapped point.
+ */
+export function snapToRoute(point: Coordinate, routeCoordinates: Coordinate[]): { snapped: Coordinate; distanceMeters: number; index: number } {
+  // Fallback to nearest vertex (simple and fast)
+  const { closestPoint, index } = findClosestPointOnLine(routeCoordinates, point)
+  const distanceMeters = calculateDistance(point, closestPoint)
+  return { snapped: closestPoint, distanceMeters, index }
+}

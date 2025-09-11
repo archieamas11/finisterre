@@ -10,7 +10,7 @@ type PlotPopupProps = {
 
 export default function SinglePopup({ coords, props, onGetDirections }: PlotPopupProps) {
   return (
-    <div>
+    <div className="">
       <div className="mb-4 flex gap-2">
         <GetDirectionsButton onGetDirections={onGetDirections} coords={coords} />
         <ShareDialog coords={coords} location={props.location} />

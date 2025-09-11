@@ -16,13 +16,13 @@ export function PlotPopup({ coords, props, onClose, onGetDirections }: PlotPopup
   return (
     <div>
       {props.rows && props.columns ? (
-        <Popup closeButton={false} closeOnClick={false} longitude={coords[0]} latitude={coords[1]}>
+        <Popup closeOnClick={false} longitude={coords[0]} latitude={coords[1]} onClose={onClose} closeButton={false}>
           <Suspense fallback={null}>
             <ColumbariumPopup coords={coords} props={props} onGetDirections={onGetDirections} />
           </Suspense>
         </Popup>
       ) : (
-        <Popup longitude={coords[0]} latitude={coords[1]} onClose={onClose} closeOnClick={false} closeButton={false}>
+        <Popup closeOnClick={false} longitude={coords[0]} latitude={coords[1]} onClose={onClose} closeButton={false}>
           <Suspense fallback={null}>
             <SinglePopup coords={coords} props={props} onGetDirections={onGetDirections} />
           </Suspense>

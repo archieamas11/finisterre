@@ -8,16 +8,17 @@ import { findClosestPointOnLine } from './utils/location.utils'
 type Props = {
   feature: LineStringFeature
   userPosition?: Coordinate | null
+  progressIndex?: number | null
 }
 
-export function RouteLayer({ feature, userPosition }: Props) {
+export function RouteLayer({ feature, userPosition, progressIndex }: Props) {
   const progressFeature = useMemo(() => {
-    if (!userPosition || !feature.geometry.coordinates.length) {
+    if ((!userPosition && (progressIndex === null || progressIndex === undefined)) || !feature.geometry.coordinates.length) {
       return feature
     }
 
     const coordinates = feature.geometry.coordinates as Coordinate[]
-    const { index: closestIndex } = findClosestPointOnLine(coordinates, userPosition)
+    const closestIndex = typeof progressIndex === 'number' ? progressIndex : findClosestPointOnLine(coordinates, userPosition as Coordinate).index
 
     // Create a new feature with only the remaining route ahead
     const remainingCoordinates = coordinates.slice(closestIndex)

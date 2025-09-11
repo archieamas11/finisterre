@@ -11,6 +11,7 @@ import { PlotPopup } from './components/PlotPopup'
 import { plotsCircleLayer } from './plotsCircleLayer'
 import type { Coordinate } from './utils/location.utils'
 import { RouteLayer } from './RouteLayer'
+import { useVoiceGuidance } from './hooks/useVoiceGuidance'
 
 import { DestinationMarker } from './components/DestinationMarker'
 import { NavigationControls } from './components/NavigationControls'
@@ -41,6 +42,9 @@ function MapBox() {
       alert('🎉 You have reached your destination!')
     },
   })
+
+  // Voice guidance
+  useVoiceGuidance({ isActive: navigation.isActive, instructions: navigation.instructions })
 
   const onGetDirections = async (destination: Coordinate) => {
     await navigation.startNavigation(destination)
@@ -155,6 +159,7 @@ function MapBox() {
           onToggleFullscreen={handleToggleFullscreen}
           onGeolocate={handleGeolocate}
           isFullscreen={isFullscreen}
+          onCycleCameraMode={navigation.cycleCameraMode}
         />
 
         {!isLoading && !isError && (
@@ -162,7 +167,13 @@ function MapBox() {
             <Layer {...circleLayer} />
           </Source>
         )}
-        {navigation.route && <RouteLayer feature={navigation.route} userPosition={navigation.currentUserPosition} />}
+        {navigation.route && (
+          <RouteLayer
+            feature={navigation.route}
+            userPosition={navigation.currentUserPosition}
+            progressIndex={navigation.routeProgressIndex ?? null}
+          />
+        )}
         {navigation.origin && <UserMarker position={navigation.origin} isNavigating={navigation.isActive} />}
         {navigation.destination && <DestinationMarker position={navigation.destination} />}
         {popup && <PlotPopup coords={popup.coords} props={popup.props} onClose={clearPopup} onGetDirections={onGetDirections} />}

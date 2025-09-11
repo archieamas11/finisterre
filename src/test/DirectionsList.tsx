@@ -1,7 +1,7 @@
 import { FiNavigation } from 'react-icons/fi'
 import { Button } from '@/components/ui/button'
 import { X, ChevronDown } from 'lucide-react'
-import { useEffect, useRef, useState } from 'react'
+import { useRef, useState } from 'react'
 
 type Props = {
   steps: string[]
@@ -11,15 +11,6 @@ type Props = {
 export function DirectionsList({ steps, navigation }: Props) {
   const [open, setOpen] = useState(true)
   const containerRef = useRef<HTMLDivElement | null>(null)
-
-  useEffect(() => {
-    function onKey(e: KeyboardEvent) {
-      if (e.key === 'Escape') navigation.cancelNavigation()
-      if (e.key === 'd' && (e.ctrlKey || e.metaKey)) setOpen((v) => !v)
-    }
-    window.addEventListener('keydown', onKey)
-    return () => window.removeEventListener('keydown', onKey)
-  }, [navigation])
 
   if (steps.length === 0) return null
 

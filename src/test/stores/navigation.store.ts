@@ -3,8 +3,8 @@ import type { MapRef } from 'react-map-gl/maplibre'
 
 import { fetchWalkingDirections, type LineStringFeature } from '../directions'
 import type { Coordinate } from '../utils/location.utils'
-import { hasReachedDestination } from '../utils/location.utils'
-import type { NavigationConfig } from '../types/navigation.types'
+import { hasReachedDestination, preprocessLocation, calculateBearing } from '../utils/location.utils'
+import type { NavigationConfig, CameraMode } from '../types/navigation.types'
 import { DEFAULT_NAVIGATION_CONFIG } from '../types/navigation.types'
 
 interface NavigationStore {
@@ -15,12 +15,16 @@ interface NavigationStore {
   origin: Coordinate | null
   destination: Coordinate | null
   currentUserPosition: Coordinate | null
+  snappedUserPosition: Coordinate | null
   mapboxAccessToken: string
   config: NavigationConfig
   mapRef: React.RefObject<MapRef> | null
   watchId: number | null
   onDestinationReached: (() => void) | null
   onUrlParamsChange?: (from: string, to: string) => void
+  cameraMode: CameraMode
+  routeProgressIndex: number | null
+  locationWorker: Worker | null
 
   // Actions
   setMapRef: (ref: React.RefObject<MapRef>) => void
@@ -28,6 +32,8 @@ interface NavigationStore {
   setConfig: (config: Partial<NavigationConfig>) => void
   setOnDestinationReached: (callback: (() => void) | null) => void
   setOnUrlParamsChange: (callback: ((from: string, to: string) => void) | undefined) => void
+  setCameraMode: (mode: CameraMode) => void
+  cycleCameraMode: () => void
   startNavigation: (destination: Coordinate, origin?: Coordinate) => Promise<void>
   cancelNavigation: () => void
   updateUserPosition: (position: Coordinate) => void
@@ -44,12 +50,16 @@ export const useNavigationStore = create<NavigationStore>((set, get) => ({
   origin: null,
   destination: null,
   currentUserPosition: null,
+  snappedUserPosition: null,
   mapboxAccessToken: '',
   config: DEFAULT_NAVIGATION_CONFIG,
   mapRef: null,
   watchId: null,
   onDestinationReached: null,
   onUrlParamsChange: undefined,
+  cameraMode: 'followNorth',
+  routeProgressIndex: null,
+  locationWorker: null,
 
   // Actions
   setMapRef: (ref) => set({ mapRef: ref }),
@@ -65,6 +75,16 @@ export const useNavigationStore = create<NavigationStore>((set, get) => ({
 
   setOnUrlParamsChange: (callback) => set({ onUrlParamsChange: callback }),
 
+  setCameraMode: (mode) => set({ cameraMode: mode }),
+
+  cycleCameraMode: () =>
+    set((state) => {
+      const order: CameraMode[] = ['followHeading', 'followNorth', 'overview']
+      const idx = order.indexOf(state.cameraMode)
+      const next = order[(idx + 1) % order.length]
+      return { cameraMode: next }
+    }),
+
   stopLocationWatch: () => {
     const { watchId } = get()
     if (watchId !== null) {
@@ -79,13 +99,16 @@ export const useNavigationStore = create<NavigationStore>((set, get) => ({
       return
     }
 
+    let lastSmoothed: Coordinate | null = null
     const newWatchId = navigator.geolocation.watchPosition(
       (pos) => {
-        const newPosition: Coordinate = [pos.coords.longitude, pos.coords.latitude]
-        set({ currentUserPosition: newPosition, origin: newPosition })
+        const rawPosition: Coordinate = [pos.coords.longitude, pos.coords.latitude]
+        const { smoothed, heading } = preprocessLocation(lastSmoothed, rawPosition)
+        lastSmoothed = smoothed
+        set({ currentUserPosition: smoothed, origin: smoothed })
 
         // Check if user has reached destination
-        if (destination && hasReachedDestination(newPosition, destination, config.destinationThreshold)) {
+        if (destination && hasReachedDestination(smoothed, destination, config.destinationThreshold)) {
           // Stop the watch first to prevent further callbacks
           stopLocationWatch()
           // Call the destination reached callback
@@ -97,12 +120,32 @@ export const useNavigationStore = create<NavigationStore>((set, get) => ({
         }
 
         // Only smoothly pan the map to follow the user if camera is locked
+        const { cameraMode } = get()
         if (mapRef?.current && isActive) {
+          let nextBearing: number | undefined
+          if (cameraMode === 'followHeading') {
+            if (heading !== null) {
+              nextBearing = heading
+            } else if (lastSmoothed) {
+              nextBearing = calculateBearing(lastSmoothed, smoothed)
+            }
+          } else if (cameraMode === 'followNorth') {
+            nextBearing = 0
+          }
+
           mapRef.current.easeTo({
-            center: newPosition,
+            center: smoothed,
+            bearing: nextBearing,
             duration: config.mapPanDuration,
             essential: true,
           })
+        }
+
+        // Send to worker for snapping/progress if available
+        const { route, locationWorker } = get()
+        if (route && locationWorker) {
+          const coords = route.geometry.coordinates as Coordinate[]
+          locationWorker.postMessage({ type: 'closest', line: coords, point: smoothed })
         }
       },
       (error) => {
@@ -170,6 +213,18 @@ export const useNavigationStore = create<NavigationStore>((set, get) => ({
         instructions: directionsResult.steps,
       })
 
+      // Initialize worker if not exists
+      if (!get().locationWorker) {
+        const worker = new Worker(new URL('../workers/location.worker.ts', import.meta.url), { type: 'module' })
+        worker.onmessage = (e: MessageEvent) => {
+          const data = e.data as { type: string; index?: number; snapped?: Coordinate }
+          if (data.type === 'closestResult') {
+            set({ routeProgressIndex: data.index ?? null, snappedUserPosition: (data.snapped as Coordinate) ?? null })
+          }
+        }
+        set({ locationWorker: worker })
+      }
+
       // Fit map to show the route
       mapRef?.current?.fitBounds([finalOriginCoord, destinationCoord], { padding: 60 })
 
@@ -182,7 +237,7 @@ export const useNavigationStore = create<NavigationStore>((set, get) => ({
 
   cancelNavigation: () => {
     console.log('Cancel navigation called')
-    const { watchId, onUrlParamsChange } = get()
+    const { watchId, onUrlParamsChange, locationWorker } = get()
     if (watchId !== null) {
       navigator.geolocation.clearWatch(watchId)
     }
@@ -193,9 +248,16 @@ export const useNavigationStore = create<NavigationStore>((set, get) => ({
       origin: null,
       destination: null,
       currentUserPosition: null,
+      snappedUserPosition: null,
       isActive: false,
       watchId: null,
+      routeProgressIndex: null,
     })
+
+    if (locationWorker) {
+      locationWorker.terminate()
+      set({ locationWorker: null })
+    }
 
     // Clear URL params
     if (onUrlParamsChange) {
@@ -263,6 +325,18 @@ export const useNavigationStore = create<NavigationStore>((set, get) => ({
         route: directionsResult.feature,
         instructions: directionsResult.steps,
       })
+
+      // Initialize worker if not exists
+      if (!get().locationWorker) {
+        const worker = new Worker(new URL('../workers/location.worker.ts', import.meta.url), { type: 'module' })
+        worker.onmessage = (e: MessageEvent) => {
+          const data = e.data as { type: string; index?: number; snapped?: Coordinate }
+          if (data.type === 'closestResult') {
+            set({ routeProgressIndex: data.index ?? null, snappedUserPosition: (data.snapped as Coordinate) ?? null })
+          }
+        }
+        set({ locationWorker: worker })
+      }
 
       // Fit map to show the route
       mapRef?.current?.fitBounds([origin, destination], { padding: 60 })
