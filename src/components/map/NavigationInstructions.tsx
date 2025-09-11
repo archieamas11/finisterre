@@ -106,17 +106,27 @@ export default function NavigationInstructions({
   const hasSummary = typeof totalDistance === 'number' || typeof totalTime === 'number'
   const { isEnabled, toggle, speak, canUseTts, stop } = useVoiceGuidance()
 
-  // Speak the current maneuver when it changes and navigation is active.
+  // Root cause of duplicate TTS: the previous effect depended on the entire
+  // currentManeuver object and performed a cleanup (stop) before every re-run.
+  // Navigation state updates (e.g., remaining distance) produce new object
+  // identities even when the spoken instruction text is unchanged. That
+  // sequence: cleanup -> stop (cancels audio mid-play) -> speak again caused
+  // the same instruction to restart, sounding like duplicates.
+  // Fix: depend only on the stable instruction text string and do NOT stop
+  // ongoing playback on each object update; only speak when the instruction
+  // text itself changes while navigating.
+  const currentInstruction = currentManeuver?.instruction || ''
+
   React.useEffect(() => {
-    if (!isNavigating || !currentManeuver) return
-    const text = currentManeuver.instruction || ''
-    // Speak asynchronously; ignore errors
-    speak(text).catch(() => {})
-    return () => {
-      // stop any ongoing speech when maneuver changes
-      stop()
-    }
-  }, [currentManeuver, isNavigating, speak, stop])
+    if (!isNavigating || !currentInstruction) return
+    speak(currentInstruction).catch(() => {})
+  }, [isNavigating, currentInstruction, speak])
+
+  // Stop TTS when navigation ends or on component unmount.
+  React.useEffect(() => {
+    if (!isNavigating) stop()
+    return () => stop()
+  }, [isNavigating, stop])
 
   return (
     <AnimatePresence>

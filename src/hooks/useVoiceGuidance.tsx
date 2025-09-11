@@ -8,6 +8,14 @@ type SpeakOptions = {
 
 const STORAGE_KEY = 'ff_voice_guidance_enabled'
 
+// Module-level state to persist across React.StrictMode development double mounts.
+// This prevents duplicate initial speech playback caused by refs being reset on remount.
+let globalLastSpoken: { text: string; ts: number } | null = null
+let globalBusy = false
+let globalQueued: string | null = null
+let globalAudio: HTMLAudioElement | null = null
+let globalUtter: SpeechSynthesisUtterance | null = null
+
 function hasWebSpeechSupport() {
   return typeof window !== 'undefined' && 'speechSynthesis' in window && 'SpeechSynthesisUtterance' in window
 }
@@ -46,11 +54,14 @@ export default function useVoiceGuidance() {
     }
   })
 
-  const audioRef = useRef<HTMLAudioElement | null>(null)
-  const utterRef = useRef<SpeechSynthesisUtterance | null>(null)
-  const queueRef = useRef<string | null>(null)
-  const busyRef = useRef(false)
-  const lastSpokenRef = useRef<{ text: string; ts: number } | null>(null)
+  // Local refs proxy to module-level singletons to maintain semantics but survive remounts.
+  const audioRef = useRef<HTMLAudioElement | null>(globalAudio)
+  const utterRef = useRef<SpeechSynthesisUtterance | null>(globalUtter)
+  const queueRef = useRef<string | null>(globalQueued)
+  const busyRef = useRef<boolean>(globalBusy)
+  const lastSpokenRef = useRef<typeof globalLastSpoken>(globalLastSpoken)
+
+  // Sync outward to module scope when they change (minimal writes in critical paths only where mutated).
 
   useEffect(() => {
     try {
@@ -66,15 +77,19 @@ export default function useVoiceGuidance() {
       audioRef.current.pause()
       audioRef.current.src = ''
       audioRef.current = null
+      globalAudio = null
     }
 
     // stop speechSynthesis
     if (hasWebSpeechSupport()) {
       window.speechSynthesis.cancel()
       utterRef.current = null
+      globalUtter = null
     }
     queueRef.current = null
     busyRef.current = false
+    globalQueued = null
+    globalBusy = false
   }, [])
 
   const speak = useCallback(
@@ -89,11 +104,13 @@ export default function useVoiceGuidance() {
       // If already speaking/playing - queue latest text (replace previous queued) and return
       if (busyRef.current) {
         queueRef.current = text
+        globalQueued = text
         return
       }
 
       // Mark busy
       busyRef.current = true
+      globalBusy = true
 
       // If ElevenLabs configured, try it first
       if (apiKey && defaultVoiceId) {
@@ -103,16 +120,22 @@ export default function useVoiceGuidance() {
           const url = URL.createObjectURL(blob)
           const audio = new Audio(url)
           audioRef.current = audio
+          globalAudio = audio
           // ensure autoplay is attempted
           await audio.play().catch(() => {})
           audio.onended = () => {
             URL.revokeObjectURL(url)
             audioRef.current = null
-            lastSpokenRef.current = { text, ts: Date.now() }
+            globalAudio = null
+            const meta = { text, ts: Date.now() }
+            lastSpokenRef.current = meta
+            globalLastSpoken = meta
             busyRef.current = false
+            globalBusy = false
             // flush queue if any
             const queued = queueRef.current
             queueRef.current = null
+            globalQueued = null
             if (queued) void speak(queued, options)
           }
           return
@@ -128,11 +151,16 @@ export default function useVoiceGuidance() {
         utter.rate = options.rate ?? 1
         utter.pitch = options.pitch ?? 1
         utterRef.current = utter
+        globalUtter = utter
         utter.onend = () => {
-          lastSpokenRef.current = { text, ts: Date.now() }
+          const meta = { text, ts: Date.now() }
+          lastSpokenRef.current = meta
+          globalLastSpoken = meta
           busyRef.current = false
+          globalBusy = false
           const queued = queueRef.current
           queueRef.current = null
+          globalQueued = null
           if (queued) void speak(queued, options)
         }
         window.speechSynthesis.speak(utter)
