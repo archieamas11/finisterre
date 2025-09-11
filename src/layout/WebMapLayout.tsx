@@ -96,7 +96,6 @@ function MapInstanceBinder({ onMapReady }: { onMapReady: (map: L.Map) => void })
 const initialMapState: MapState = {
   isNavigationInstructionsOpen: false,
   isDirectionLoading: false,
-  shouldCenterOnUser: false,
   selectedGroups: new Set(),
   clusterViewMode: 'all',
   searchQuery: '',
@@ -112,10 +111,6 @@ function mapReducer(state: MapState, action: MapAction): MapState {
       return { ...state, isNavigationInstructionsOpen: action.value }
     case 'SET_DIRECTION_LOADING':
       return { ...state, isDirectionLoading: action.value }
-    case 'REQUEST_LOCATE':
-      return { ...state, shouldCenterOnUser: true }
-    case 'CLEAR_LOCATE':
-      return { ...state, shouldCenterOnUser: false }
     case 'SELECT_GROUPS':
       return { ...state, selectedGroups: action.groups, clusterViewMode: action.groups.size > 0 ? 'selective' : 'all' }
     case 'TOGGLE_GROUP': {
@@ -163,7 +158,6 @@ function mapReducer(state: MapState, action: MapAction): MapState {
 }
 
 export default function MapPage({ onBack, initialDirection }: { onBack?: () => void; initialDirection?: { lat: number; lng: number } | null }) {
-  // FIXED: Define bounds as a constant outside component or use useMemo
   const bounds = useMemo<[[number, number], [number, number]]>(
     () => [
       [10.247883800064669, 123.79691285546676],
@@ -270,7 +264,7 @@ export default function MapPage({ onBack, initialDirection }: { onBack?: () => v
   // Center on user only once per explicit request
   const hasCenteredRef = useRef(false)
   useEffect(() => {
-    if (!state.shouldCenterOnUser || !currentLocation || !mapInstance) return
+    if (!currentLocation || !mapInstance) return
     if (hasCenteredRef.current) return
 
     // 🎯 During navigation, don't auto-center unless explicitly requested
@@ -288,7 +282,7 @@ export default function MapPage({ onBack, initialDirection }: { onBack?: () => v
       hasCenteredRef.current = false
     }, 1000)
     return () => clearTimeout(t)
-  }, [state.shouldCenterOnUser, currentLocation, mapInstance, isNavigating])
+  }, [currentLocation, mapInstance, isNavigating])
 
   // Effect to detect when route is fully loaded and flyTo animation is complete
   useEffect(() => {
@@ -306,41 +300,20 @@ export default function MapPage({ onBack, initialDirection }: { onBack?: () => v
   // Get user location and fly to it
   // Stable callback prevents re-renders
   const requestLocate = useCallback(
-    async (zoom: number = 18, forceCenter: boolean = false) => {
-      // Start tracking only if not already running
-      if (!isTracking) {
-        try {
-          await startTracking()
-        } catch (err) {
-          console.error('Tracking failed:', err)
-          alert('Unable to start location tracking. Please enable GPS permissions.')
-          return
-        }
-      }
+    async (zoom: number = 18) => {
+      const loc = isTracking
+        ? currentLocation
+        : await getCurrentLocation().catch(() => {
+            alert('Unable to get your location. Check GPS permissions.')
+            return null
+          })
 
-      let loc = currentLocation
-
-      // Fallback to single-shot location if still missing
-      if (!loc) {
-        try {
-          loc = await getCurrentLocation()
-        } catch (err) {
-          console.error('Failed to get current location:', err)
-          alert('Unable to get your location. Please check GPS permissions.')
-          return
-        }
-      }
-
-      // 🎯 Don't center map during navigation unless explicitly requested
-      // This prevents the camera from jumping back to user location during route following
-      if (loc && mapInstance && (!isNavigating || forceCenter)) {
-        // Skip small moves (<5m for example) to avoid spammy flyTo
-        if (!currentLocation || Math.hypot(loc.latitude - currentLocation.latitude, loc.longitude - currentLocation.longitude) > 0.00005) {
-          mapInstance.flyTo([loc.latitude, loc.longitude], zoom, { animate: true })
-        }
+      if (loc && mapInstance && !isNavigating) {
+        startTracking()
+        mapInstance.flyTo([loc.latitude, loc.longitude], zoom, { animate: true })
       }
     },
-    [isTracking, startTracking, currentLocation, getCurrentLocation, mapInstance, isNavigating],
+    [isTracking, currentLocation, getCurrentLocation, startTracking, mapInstance, isNavigating],
   )
 
   const lastDestSigRef = useRef<string | null>(null)
@@ -363,104 +336,43 @@ export default function MapPage({ onBack, initialDirection }: { onBack?: () => v
 
   const handleDirectionClick = useCallback(
     async (to: [number, number]) => {
-      const [toLatitude, toLongitude] = to
-      if (import.meta.env.DEV) console.log('Direction click triggered:', { to, toLatitude, toLongitude })
-
-      if (!toLatitude || !toLongitude) {
-        console.warn('Invalid destination coordinates:', to)
-        dispatch({ type: 'SET_DIRECTION_LOADING', value: false })
-        return
-      }
+      const [toLat, toLng] = to
+      if (!toLat || !toLng) return
 
       dispatch({ type: 'SET_DIRECTION_LOADING', value: true })
       dispatch({ type: 'SET_NAV_OPEN', value: false })
 
       try {
-        // Get user location: use current if available, otherwise fetch
-        let userLocation = currentLocation
-        if (import.meta.env.DEV) console.log('Current location available:', !!userLocation, userLocation)
+        const from = currentLocation || (await getCurrentLocation())
+        if (!from) throw new Error('Could not determine current location')
 
-        if (!userLocation) {
-          if (import.meta.env.DEV) console.log('Fetching fresh user location...')
-          userLocation = await getCurrentLocation()
-          if (import.meta.env.DEV) console.log('Fresh location obtained:', userLocation)
-        }
+        await startNavigation(from, { latitude: toLat, longitude: toLng })
 
-        if (!userLocation || !userLocation.latitude || !userLocation.longitude) {
-          throw new Error('Could not determine current location')
-        }
-
-        if (import.meta.env.DEV)
-          console.log('Starting navigation with locations:', {
-            from: { latitude: userLocation.latitude, longitude: userLocation.longitude },
-            to: { latitude: toLatitude, longitude: toLongitude },
-          })
-
-        // Start navigation with proper typed coordinates
-        await startNavigation(
-          {
-            latitude: userLocation.latitude,
-            longitude: userLocation.longitude,
-          },
-          { latitude: toLatitude, longitude: toLongitude },
-        )
-
-        // Update URL params (?from=lat,lng&to=lat,lng) using decimal precision trimmed
-        setSearchParams((prev) => {
-          const next = new URLSearchParams(prev)
-          ;['direction', 'lat', 'lng'].forEach((k) => next.delete(k)) // cleanup legacy params
-          const fromLat = userLocation!.latitude.toFixed(6)
-          const fromLng = userLocation!.longitude.toFixed(6)
-          next.set('from', `${fromLat},${fromLng}`)
-          next.set('to', `${toLatitude.toFixed(6)},${toLongitude.toFixed(6)}`)
-          return next
+        setSearchParams((p) => {
+          const q = new URLSearchParams(p)
+          ;['direction', 'lat', 'lng'].forEach((key) => q.delete(key))
+          q.set('from', `${from.latitude.toFixed(6)},${from.longitude.toFixed(6)}`)
+          q.set('to', `${toLat.toFixed(6)},${toLng.toFixed(6)}`)
+          return q
         })
-        if (import.meta.env.DEV) console.log('✅ Navigation started successfully')
 
-        // This triggers tracking if not already active
-        if (!isTracking) {
-          await requestLocate()
-        }
-
-        // Open navigation instructions UI
+        if (!isTracking) await requestLocate()
         dispatch({ type: 'SET_NAV_OPEN', value: true })
-      } catch (error) {
-        if (import.meta.env.DEV) {
-          console.error('Failed to start navigation:', error)
-          console.error('Error details:', {
-            name: error instanceof Error ? error.name : 'Unknown',
-            message: error instanceof Error ? error.message : String(error),
-            stack: error instanceof Error ? error.stack : undefined,
-          })
-        }
-
-        // Show error message using konsta notif (native) or toast (web)
-        const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred'
-        if (isNativePlatform()) {
-          setKonstaNotificationProps({
-            title: 'Navigation Error',
-            text: errorMessage,
-            titleRightText: 'now',
-          })
-          setKonstaNotificationOpen(true)
-        } else {
-          toast.error(`Navigation failed: ${errorMessage}`)
-        }
-
-        // Fallback: resume tracking if not already doing so
-        if (!isTracking) {
-          try {
-            await startTracking()
-          } catch (err) {
-            console.error('Fallback startTracking failed:', err)
-          }
-        }
+      } catch (err: unknown) {
+        ;(isNativePlatform() ? konstaNotify : toast.error)(`Navigation failed: ${err instanceof Error ? err.message : 'Unknown error'}`)
+        if (!isTracking) await startTracking().catch(() => {})
       } finally {
         dispatch({ type: 'SET_DIRECTION_LOADING', value: false })
       }
     },
-    [currentLocation, getCurrentLocation, isTracking, startNavigation, startTracking, requestLocate, setSearchParams],
+    [currentLocation, getCurrentLocation, isTracking, startNavigation, requestLocate, setSearchParams, startTracking],
   )
+
+  /* helpers */
+  const konstaNotify = (text: string) => {
+    setKonstaNotificationProps({ title: 'Navigation Error', text, titleRightText: 'now' })
+    setKonstaNotificationOpen(true)
+  }
 
   // Parse new navigation params (?from=lat,lng&to=lat,lng) and auto-start navigation
   // Avoid retriggering navigation if already navigating to same destination
@@ -620,7 +532,12 @@ export default function MapPage({ onBack, initialDirection }: { onBack?: () => v
 
   // Reset map view to default state (center via bounds + default zoom)
   const resetView = useCallback(() => {
-    if (mapInstance) mapInstance.fitBounds(bounds, { animate: true, maxZoom: 18 })
+    if (!mapInstance) return
+
+    const [sw, ne] = bounds // [[lng,lat],[lng,lat]]
+    const centerLatLng: [number, number] = [(sw[0] + ne[0]) / 2, (sw[1] + ne[1]) / 2]
+
+    mapInstance.flyTo(centerLatLng, 18) // lat-lng first, zoom second
     dispatch({ type: 'RESET_VIEW' })
   }, [mapInstance, bounds])
 
@@ -641,20 +558,11 @@ export default function MapPage({ onBack, initialDirection }: { onBack?: () => v
     dispatch({ type: 'SHOW_USER_PLOTS' })
   }, [])
 
-  // 📍 Request user location with forced centering (for UI buttons)
-  const locateUser = useCallback(
-    async (zoom: number = 18) => {
-      await requestLocate(zoom, true) // Always force center when user explicitly requests
-    },
-    [requestLocate],
-  )
-
   const contextValue = useMemo(
     () => ({
       // direct state (for backward compat; prefer useMapState selectors moving forward)
       ...state,
       requestLocate,
-      locateUser, // 📍 For explicit user location requests (always centers)
       cancelNavigation,
       resetView,
       selectedGroups: state.selectedGroups,
@@ -678,7 +586,6 @@ export default function MapPage({ onBack, initialDirection }: { onBack?: () => v
     [
       state,
       requestLocate,
-      locateUser,
       cancelNavigation,
       resetView,
       toggleGroupSelection,
@@ -775,14 +682,7 @@ export default function MapPage({ onBack, initialDirection }: { onBack?: () => v
                   totalTime={totalTime || undefined}
                   rerouteCount={rerouteCount}
                 />
-                {!(route && routeCoordinates.length > 0) && (
-                  <UserLocationMarker
-                    userLocation={currentLocation}
-                    centerOnFirst={state.shouldCenterOnUser}
-                    enableAnimation={true}
-                    showAccuracyCircle={true}
-                  />
-                )}
+                {!(route && routeCoordinates.length > 0) && <UserLocationMarker userLocation={currentLocation} />}
               </Suspense>
             </MapContainer>
           </div>

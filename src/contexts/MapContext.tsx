@@ -6,7 +6,6 @@ import type { LotSearchResult } from '@/types/map.types'
 export interface MapState {
   isNavigationInstructionsOpen: boolean
   isDirectionLoading: boolean
-  shouldCenterOnUser: boolean
   // Cluster
   selectedGroups: Set<string>
   clusterViewMode: 'all' | 'selective' | 'user-plots'

@@ -1,6 +1,6 @@
 import L from 'leaflet'
 import React from 'react'
-import { Polyline, Marker, useMap } from 'react-leaflet'
+import { Polyline, Marker } from 'react-leaflet'
 
 import { type ValhallaRouteResponse } from '@/api/valhalla.api'
 import { UserLocationMarker } from '@/components/map/UserLocationMarker'
@@ -8,23 +8,17 @@ import { type UserLocation } from '@/hooks/useLocationTracking'
 interface ValhallaRouteProps {
   route: ValhallaRouteResponse | null
   routeCoordinates: [number, number][]
-  // 🎯 Dynamic coordinates showing remaining route during navigation
   remainingCoordinates?: [number, number][]
   isNavigating?: boolean
-  // 📍 Original coordinates (not snapped to roads)
   originalStart?: [number, number]
   originalEnd?: [number, number]
-  // 👤 User location to render as the start marker
   userLocation?: UserLocation | null
-  // 🎨 Styling options
-  // 🎯 Show start/end markers
   showMarkers?: boolean
-  // 🔄 Auto-fit bounds to route
   fitBounds?: boolean
 }
 
 /**
- * 🗺️ Valhalla route component that renders route polyline and markers
+ * Valhalla route component that renders route polyline and markers
  */
 export function ValhallaRoute({
   route,
@@ -35,60 +29,16 @@ export function ValhallaRoute({
   originalEnd,
   userLocation,
   showMarkers = true,
-  fitBounds = true,
 }: ValhallaRouteProps) {
-  const map = useMap()
-
   if (!route || routeCoordinates.length === 0) {
     return null
   }
 
-  // 🛡️ Defensive: ensure custom panes exist (should be pre-created in MapInstanceBinder)
-  // If not present (unlikely), create them silently to avoid appendChild errors.
-  React.useEffect(() => {
-    const ensurePane = (name: string, z: number) => {
-      if (!map.getPane(name)) {
-        try {
-          const pane = map.createPane(name)
-          pane.style.zIndex = String(z)
-        } catch {
-          // ignore
-        }
-      }
-    }
-    ensurePane('route-pane', 600)
-    ensurePane('end-icon', 1000)
-  }, [map])
-
-  // 🎯 Use original coordinates for markers if provided, otherwise fallback to route coordinates
+  // Use original coordinates for markers if provided, otherwise fallback to route coordinates
   // Start point is represented by the UserLocationMarker when provided
   const endPoint = originalEnd || routeCoordinates[routeCoordinates.length - 1]
 
-  // 🗺️ For bounds fitting, include original coordinates if available
-  const boundsCoordinates = React.useMemo(() => {
-    const coords = [...routeCoordinates]
-    if (originalStart && originalStart !== routeCoordinates[0]) {
-      coords.unshift(originalStart)
-    }
-    if (originalEnd && originalEnd !== routeCoordinates[routeCoordinates.length - 1]) {
-      coords.push(originalEnd)
-    }
-    return coords
-  }, [routeCoordinates, originalStart, originalEnd, route])
-
-  // 🎯 Auto-fit map bounds to route (including original coordinates)
-  React.useEffect(() => {
-    if (fitBounds && boundsCoordinates.length > 0) {
-      try {
-        const bounds = L.latLngBounds(boundsCoordinates)
-        map.fitBounds(bounds, { padding: [20, 20] })
-      } catch {
-        // 🤫 Silently ignore bounds errors to avoid noisy logs in UI
-      }
-    }
-  }, [boundsCoordinates, fitBounds, map])
-
-  // 🎯 End/Destination marker icon
+  // End/Destination marker icon
   const endIcon = L.divIcon({
     className: 'custom-destination-marker',
     html: `
@@ -108,14 +58,14 @@ export function ValhallaRoute({
     iconAnchor: [15, 30],
   })
 
-  // 🔗 Create complete polyline coordinates that connect original points to snapped route
+  // Create complete polyline coordinates that connect original points to snapped route
   const completePolylineCoordinates = React.useMemo(() => {
-    // 🎯 Use remaining coordinates during navigation for dynamic progress, otherwise use full route
+    // Use remaining coordinates during navigation for dynamic progress, otherwise use full route
     const baseCoords = isNavigating && remainingCoordinates && remainingCoordinates.length > 0 ? remainingCoordinates : routeCoordinates
 
     const coords = [...baseCoords]
 
-    // 🎯 If we have original coordinates, create connection lines
+    // If we have original coordinates, create connection lines
     // Only add original start when not navigating (to avoid connecting to old start position)
     if (originalStart && originalStart !== routeCoordinates[0] && !isNavigating) {
       // Add original start at the beginning to connect to first route point
@@ -145,9 +95,7 @@ export function ValhallaRoute({
           }}
         />
       )}
-      {showMarkers && userLocation && (
-        <UserLocationMarker userLocation={userLocation} centerOnFirst={false} showAccuracyCircle={isNavigating} enableAnimation />
-      )}
+      {showMarkers && userLocation && <UserLocationMarker userLocation={userLocation} />}
       {showMarkers && endPoint && <Marker pane="end-icon" position={endPoint} icon={endIcon} zIndexOffset={1000} interactive={false} />}
     </>
   )

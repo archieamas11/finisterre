@@ -1,6 +1,5 @@
 import L from 'leaflet'
-import React from 'react'
-import { Circle, useMap } from 'react-leaflet'
+import { Circle } from 'react-leaflet'
 import ReactLeafletDriftMarker from 'react-leaflet-drift-marker'
 
 import { type UserLocation } from '@/hooks/useLocationTracking'
@@ -10,36 +9,17 @@ interface UserLocationMarkerProps {
   markerColor?: string
   accuracyColor?: string
   accuracyOpacity?: number
-  centerOnFirst?: boolean
-  showAccuracyCircle?: boolean
-  enableAnimation?: boolean
 }
 
 /**
- * 📍 User location marker component that displays current position with accuracy circle
+ * User location marker component that displays current position with accuracy circle
  */
 export function UserLocationMarker({
   userLocation,
   markerColor = '#2563eb',
   accuracyColor = '#2563eb',
   accuracyOpacity = 0.2,
-  centerOnFirst = false,
-  showAccuracyCircle = true,
-  enableAnimation = true,
 }: UserLocationMarkerProps) {
-  const map = useMap()
-  const [hasInitiallyFocused, setHasInitiallyFocused] = React.useState(false)
-
-  // 🎯 Center map on user location when first found
-  React.useEffect(() => {
-    if (userLocation && centerOnFirst && !hasInitiallyFocused) {
-      map.setView([userLocation.latitude, userLocation.longitude], 16, {
-        animate: enableAnimation,
-      })
-      setHasInitiallyFocused(true)
-    }
-  }, [userLocation, centerOnFirst, hasInitiallyFocused, map, enableAnimation])
-
   if (!userLocation) {
     return null
   }
@@ -65,14 +45,9 @@ export function UserLocationMarker({
             stroke="${markerColor}" 
             stroke-width="2"
             filter="url(#user-shadow)"
-            ${
-              enableAnimation
-                ? `opacity="0.8">
-              <animate attributeName="r" values="8;10;8" dur="2s" repeatCount="indefinite"/>
-              <animate attributeName="opacity" values="0.8;0.4;0.8" dur="2s" repeatCount="indefinite"/>
-            `
-                : `>`
-            }
+            opacity="0.8">
+            <animate attributeName="r" values="8;10;8" dur="2s" repeatCount="indefinite"/>
+            <animate attributeName="opacity" values="0.8;0.4;0.8" dur="2s" repeatCount="indefinite"/>
           </circle>
           <!-- Inner dot -->
           <circle 
@@ -94,7 +69,7 @@ export function UserLocationMarker({
   return (
     <>
       {/* Accuracy circle */}
-      {showAccuracyCircle && accuracy && (
+      {accuracy && (
         <Circle
           center={position}
           radius={Math.min(accuracy, 100)}
@@ -109,7 +84,7 @@ export function UserLocationMarker({
       )}
 
       {/* User location marker */}
-      <ReactLeafletDriftMarker position={position} icon={userLocationIcon} duration={2000} />
+      <ReactLeafletDriftMarker position={position} icon={userLocationIcon} duration={1500} />
     </>
   )
 }

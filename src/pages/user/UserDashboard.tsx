@@ -29,14 +29,41 @@ export default function UserDashboard({ onPlotNavigate }: UserDashboardProps) {
   const handleNavigateToPlot = (coordinates?: Coordinates | null) => {
     if (!coordinates) return
     window.scrollTo(0, 0)
+
+    // If parent wants to handle navigation, let it
     if (onPlotNavigate) {
       onPlotNavigate(coordinates)
       return
     }
-    if (!Capacitor.isNativePlatform()) {
-      const [lat, lng] = coordinates
-      navigate(`/user/map?direction=true&lat=${lat}&lng=${lng}`)
+
+    if (Capacitor.isNativePlatform()) return
+
+    // Normalize coordinates to [lat, lng] for URL param `to=lat,lng`.
+    // Known shapes: [lng, lat] (existing code), [lat, lng], or null.
+    let lat: number | null = null
+    let lng: number | null = null
+
+    try {
+      const [a, b] = coordinates
+      if (typeof a === 'number' && typeof b === 'number') {
+        // Heuristic: lat is usually between -90 and 90, lng between -180 and 180.
+        if (Math.abs(a) <= 90 && Math.abs(b) <= 180 && Math.abs(b) > 90) {
+          // a looks like lat, b looks like lng
+          lat = a
+          lng = b
+        } else {
+          // fallback: treat as [lng, lat]
+          lng = a
+          lat = b
+        }
+      }
+    } catch {
+      // ignore and bail below
     }
+
+    if (lat == null || lng == null || Number.isNaN(lat) || Number.isNaN(lng)) return
+
+    navigate(`/user/map?to=${lat},${lng}`)
   }
 
   // Only show loading spinner if we have no data at all (neither cached nor fresh)

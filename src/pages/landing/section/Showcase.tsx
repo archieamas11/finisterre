@@ -8,6 +8,7 @@ import { useEffect, useMemo, useRef, useState, useCallback } from 'react'
 import { FaDirections } from 'react-icons/fa'
 import { MdTravelExplore } from 'react-icons/md'
 import { MapContainer, TileLayer, Marker, Popup, useMap } from 'react-leaflet'
+import { Link } from 'react-router-dom'
 
 import { Button } from '@/components/ui/button'
 import { Dialog, DialogContent } from '@/components/ui/dialog'
@@ -465,7 +466,7 @@ export default function CemeteryShowcase() {
                         Explore Map
                       </Button>
                     </Link>
-                    <Link to={`/map?direction=true&lat=10.248166481872728&lng=123.79754558858059`}>
+                    <Link to={`/map?to=10.248166481872728,123.79754558858059`}>
                       <Button size={'sm'} variant="neon" className="text-xs">
                         <FaDirections />
                         Get Direction
