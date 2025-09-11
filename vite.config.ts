@@ -10,7 +10,7 @@ import removeConsole from 'vite-plugin-remove-console'
 
 // https://vite.dev/config/
 export default defineConfig({
-  base: './',
+  base: process.env.VERCEL ? '/' : './',
   plugins: [
     react(),
     tailwindcss(),
