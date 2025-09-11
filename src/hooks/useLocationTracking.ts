@@ -140,7 +140,7 @@ export function useLocationTracking(options: UseLocationTrackingOptions = {}) {
     }
   }, [])
 
-  // 🚀 Start location tracking
+  // Start location tracking
   const startTracking = useCallback(async () => {
     if (!state.isSupported) {
       setState((prev) => ({
@@ -168,29 +168,31 @@ export function useLocationTracking(options: UseLocationTrackingOptions = {}) {
 
     try {
       if (Capacitor.isNativePlatform()) {
-        // Use Capacitor Geolocation for native apps
-        const permission = await Geolocation.checkPermissions()
-        if (permission.location !== 'granted') {
+        // ✅ Handle permissions more robustly
+        let { location } = await Geolocation.checkPermissions()
+        if (location !== 'granted') {
           const request = await Geolocation.requestPermissions()
-          if (request.location !== 'granted') {
+          location = request.location
+          if (location !== 'granted') {
             throw new Error('Location permission denied')
           }
         }
 
-        // Start watching position with Capacitor
+        // ✅ Start watching position
         const watchId = await Geolocation.watchPosition(geolocationOptions, (position, error) => {
           if (position) {
             onLocationSuccess(position)
           } else if (error) {
+            console.error('Geolocation error:', error)
             onLocationError({
-              code: error.code || -1,
-              message: error.message || 'Unknown geolocation error',
+              code: error.code ?? -1,
+              message: error.message ?? 'Unknown geolocation error',
             } as GeolocationPositionError)
           }
         })
         watchIdRef.current = watchId
       } else {
-        // Use browser geolocation for web
+        // ✅ Browser geolocation
         watchIdRef.current = navigator.geolocation.watchPosition(onLocationSuccess, onLocationError, geolocationOptions)
       }
     } catch (error) {

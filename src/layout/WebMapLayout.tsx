@@ -295,19 +295,43 @@ export default function MapPage({ onBack, initialDirection }: { onBack?: () => v
     }
   }, [route, routeCoordinates, state.isDirectionLoading, mapInstance])
 
-  // Memoize callback functions to prevent them from being recreated on every render.
-  const requestLocate = useCallback(async () => {
-    if (!isTracking) startTracking()
-    let loc = currentLocation
-    if (!loc) {
-      try {
-        loc = await getCurrentLocation()
-      } catch (err) {
-        if (import.meta.env.DEV) console.warn('Could not get current location for flyTo:', err)
+  // Get user location and fly to it
+  // Stable callback prevents re-renders
+  const requestLocate = useCallback(
+    async (zoom: number = 18) => {
+      // Start tracking only if not already running
+      if (!isTracking) {
+        try {
+          await startTracking()
+        } catch (err) {
+          console.error('Tracking failed:', err)
+          alert('Unable to start location tracking. Please enable GPS permissions.')
+          return
+        }
       }
-    }
-    if (loc && mapInstance) mapInstance.flyTo([loc.latitude, loc.longitude], 18, { animate: true })
-  }, [isTracking, startTracking, currentLocation, getCurrentLocation, mapInstance])
+
+      let loc = currentLocation
+
+      // Fallback to single-shot location if still missing
+      if (!loc) {
+        try {
+          loc = await getCurrentLocation()
+        } catch (err) {
+          console.error('Failed to get current location:', err)
+          alert('Unable to get your location. Please check GPS permissions.')
+          return
+        }
+      }
+
+      // Skip small moves (<5m for example) to avoid spammy flyTo
+      if (loc && mapInstance) {
+        if (!currentLocation || Math.hypot(loc.latitude - currentLocation.latitude, loc.longitude - currentLocation.longitude) > 0.00005) {
+          mapInstance.flyTo([loc.latitude, loc.longitude], zoom, { animate: true })
+        }
+      }
+    },
+    [isTracking, startTracking, currentLocation, getCurrentLocation, mapInstance],
+  )
 
   const lastDestSigRef = useRef<string | null>(null)
   const lastCancelledDestRef = useRef<string | null>(null)
@@ -381,11 +405,12 @@ export default function MapPage({ onBack, initialDirection }: { onBack?: () => v
           next.set('to', `${toLatitude.toFixed(6)},${toLongitude.toFixed(6)}`)
           return next
         })
-
         if (import.meta.env.DEV) console.log('✅ Navigation started successfully')
 
-        // Trigger map recentering or location update
-        requestLocate()
+        // This triggers tracking if not already active
+        if (!isTracking) {
+          await requestLocate()
+        }
 
         // Open navigation instructions UI
         dispatch({ type: 'SET_NAV_OPEN', value: true })
@@ -399,7 +424,7 @@ export default function MapPage({ onBack, initialDirection }: { onBack?: () => v
           })
         }
 
-        // FIXED: Show user-friendly error message
+        // Show error message using konsta notif (native) or toast (web)
         const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred'
         if (isNativePlatform()) {
           setKonstaNotificationProps({
@@ -414,7 +439,11 @@ export default function MapPage({ onBack, initialDirection }: { onBack?: () => v
 
         // Fallback: resume tracking if not already doing so
         if (!isTracking) {
-          startTracking()
+          try {
+            await startTracking()
+          } catch (err) {
+            console.error('Fallback startTracking failed:', err)
+          }
         }
       } finally {
         dispatch({ type: 'SET_DIRECTION_LOADING', value: false })
