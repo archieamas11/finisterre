@@ -6,7 +6,7 @@ import iconUrl from 'leaflet/dist/images/marker-icon.png'
 import shadowUrl from 'leaflet/dist/images/marker-shadow.png'
 import { useEffect, useMemo, useCallback, memo, useState, Suspense, lazy, useReducer, useRef } from 'react'
 import { MapContainer, TileLayer, useMap } from 'react-leaflet'
-import { useSearchParams } from 'react-router-dom'
+import { useQueryStates, parseAsString } from 'nuqs'
 import { toast } from 'sonner'
 
 import type { ConvertedMarker } from '@/types/map.types'
@@ -238,7 +238,18 @@ export default function MapPage({ onBack, initialDirection }: { onBack?: () => v
     return () => clearTimeout(t)
   }, [konstaNotificationOpen])
 
-  const [searchParams, setSearchParams] = useSearchParams()
+  // nuqs-backed query params
+  const [query, setQuery] = useQueryStates(
+    {
+      to: parseAsString,
+      from: parseAsString,
+      // legacy keys we clear when starting navigation
+      direction: parseAsString,
+      lat: parseAsString,
+      lng: parseAsString,
+    },
+    { clearOnDefault: true },
+  )
 
   useEffect(() => {
     window.scrollTo(0, 0)
@@ -328,15 +339,10 @@ export default function MapPage({ onBack, initialDirection }: { onBack?: () => v
   const lastCancelledDestRef = useRef<string | null>(null)
 
   const cancelNavigation = useCallback(() => {
-    const currentTo = searchParams.get('to')
+    const currentTo = query.to
     if (currentTo) lastCancelledDestRef.current = currentTo
     lastDestSigRef.current = null
-    setSearchParams((prev) => {
-      const next = new URLSearchParams(prev)
-      next.delete('from')
-      next.delete('to')
-      return next
-    })
+    setQuery({ from: null, to: null })
     stopNavigation()
     dispatch({ type: 'SET_NAV_OPEN', value: false })
     dispatch({ type: 'SET_DIRECTION_LOADING', value: false })
@@ -347,7 +353,7 @@ export default function MapPage({ onBack, initialDirection }: { onBack?: () => v
     setTimeout(() => {
       suppressAutoCenterRef.current = false
     }, 2000)
-  }, [stopNavigation, setSearchParams, searchParams])
+  }, [stopNavigation, setQuery, query.to])
 
   const handleDirectionClick = useCallback(
     async (to: [number, number]) => {
@@ -363,12 +369,13 @@ export default function MapPage({ onBack, initialDirection }: { onBack?: () => v
 
         await startNavigation(from, { latitude: toLat, longitude: toLng })
 
-        setSearchParams((p) => {
-          const q = new URLSearchParams(p)
-          ;['direction', 'lat', 'lng'].forEach((key) => q.delete(key))
-          q.set('from', `${from.latitude.toFixed(6)},${from.longitude.toFixed(6)}`)
-          q.set('to', `${toLat.toFixed(6)},${toLng.toFixed(6)}`)
-          return q
+        // Clear legacy keys and set from/to in one go
+        setQuery({
+          direction: null,
+          lat: null,
+          lng: null,
+          from: `${from.latitude.toFixed(6)},${from.longitude.toFixed(6)}`,
+          to: `${toLat.toFixed(6)},${toLng.toFixed(6)}`,
         })
 
         if (!isTracking) await requestLocate()
@@ -380,7 +387,7 @@ export default function MapPage({ onBack, initialDirection }: { onBack?: () => v
         dispatch({ type: 'SET_DIRECTION_LOADING', value: false })
       }
     },
-    [currentLocation, getCurrentLocation, isTracking, startNavigation, requestLocate, setSearchParams, startTracking],
+    [currentLocation, getCurrentLocation, isTracking, startNavigation, requestLocate, setQuery, startTracking],
   )
 
   /* helpers */
@@ -392,7 +399,7 @@ export default function MapPage({ onBack, initialDirection }: { onBack?: () => v
   // Parse new navigation params (?from=lat,lng&to=lat,lng) and auto-start navigation
   // Avoid retriggering navigation if already navigating to same destination
   useEffect(() => {
-    const to = searchParams.get('to')
+    const to = query.to
     if (!to) return
     // Only trigger when destination changed and we're not currently navigating
     if (lastDestSigRef.current === to) return
@@ -407,7 +414,7 @@ export default function MapPage({ onBack, initialDirection }: { onBack?: () => v
     // New user intent, clear cancelled marker
     lastCancelledDestRef.current = null
     handleDirectionClick([a, b])
-  }, [searchParams, handleDirectionClick, isNavigating])
+  }, [query.to, handleDirectionClick, isNavigating])
 
   // Stabilize initialDirection-based navigation (avoid duplicate triggers on same coords)
   const lastInitDirRef = useRef<string | null>(null)

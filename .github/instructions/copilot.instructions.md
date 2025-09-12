@@ -10,6 +10,7 @@ applyTo: "**"
 - Code must be clean, minimal, readable, and maintainable.
 - Prefer simple solutions; no over-engineering.
 - Keep code modular, not in one file.
+- Always use simple, easy to understand, and human readable variables and functions names.
 - YOU ARE NOT ALLOWED TO NOT FOLLOW THESE INSTRUCTIONS.
 
 ---
