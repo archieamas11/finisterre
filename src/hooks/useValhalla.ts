@@ -41,15 +41,15 @@ export interface NavigationState {
 }
 
 export interface UseValhallaOptions {
-  // 🚗 Routing preferences
+  // Routing preferences
   costingType?: 'auto' | 'pedestrian' | 'bicycle'
-  // 📏 Distance threshold to consider user off-route (meters)
+  // Distance threshold to consider user off-route (meters)
   offRouteThreshold?: number
-  // 🔄 Maximum number of automatic reroutes
+  // Maximum number of automatic reroutes
   maxReroutes?: number
-  // ⏱️ Minimum time between reroute attempts (ms)
+  //  Minimum time between reroute attempts (ms)
   rerouteDebounceTime?: number
-  // 🎯 Auto-reroute when user goes off route
+  // Auto-reroute when user goes off route
   enableAutoReroute?: boolean
 }
 
@@ -62,7 +62,7 @@ const DEFAULT_OPTIONS: Required<UseValhallaOptions> = {
 }
 
 /**
- * 🧭 Main hook for Valhalla routing and navigation
+ * Main hook for Valhalla routing and navigation
  * Handles route calculation, real-time navigation, and automatic rerouting
  */
 export function useValhalla(options: UseValhallaOptions = {}) {
@@ -102,18 +102,18 @@ export function useValhalla(options: UseValhallaOptions = {}) {
     navigationStateRef.current = navigationState
   }, [navigationState])
 
-  // 🔄 Update options ref when options change
+  // Update options ref when options change
   useEffect(() => {
     optionsRef.current = { ...DEFAULT_OPTIONS, ...options }
   }, [options])
 
-  // 🗺️ Calculate route to destination
+  // Calculate route to destination
   const calculateRoute = useCallback(
     async (from: { latitude: number; longitude: number }, to: RouteDestination, forceRecalculate: boolean = false) => {
-      console.log('🧭 Starting route calculation:', { from, to, forceRecalculate, costingType: optionsRef.current.costingType })
+      console.log('Starting route calculation:', { from, to, forceRecalculate, costingType: optionsRef.current.costingType })
 
       try {
-        // 🎯 Store original coordinates before API call
+        // Store original coordinates before API call
         const originalStart: [number, number] = [from.latitude, from.longitude]
         const originalEnd: [number, number] = [to.latitude, to.longitude]
 
@@ -128,7 +128,7 @@ export function useValhalla(options: UseValhallaOptions = {}) {
 
         destinationRef.current = to
 
-        // 🎯 Create appropriate route request based on costing type
+        // Create appropriate route request based on costing type
         let request: ValhallaRouteRequest
         if (optionsRef.current.costingType === 'auto') {
           request = createAutoRouteRequest({ lat: from.latitude, lon: from.longitude }, { lat: to.latitude, lon: to.longitude })
@@ -136,9 +136,9 @@ export function useValhalla(options: UseValhallaOptions = {}) {
           request = createPedestrianRouteRequest({ lat: from.latitude, lon: from.longitude }, { lat: to.latitude, lon: to.longitude })
         }
 
-        console.log('🚀 Sending Valhalla request:', request)
+        console.log('Sending Valhalla request:', request)
         const response = await getValhallaRoute(request)
-        console.log('✅ Valhalla response received:', {
+        console.log('Valhalla response received:', {
           legs: response.trip.legs.length,
           totalDistance: response.trip.summary.length,
           totalTime: response.trip.summary.time,
@@ -163,12 +163,12 @@ export function useValhalla(options: UseValhallaOptions = {}) {
           isLoading: false,
           route: response,
           routeCoordinates: coordinates,
-          remainingCoordinates: coordinates, // 🎯 Initially show full route
+          remainingCoordinates: coordinates, // Initially show full route
           progressIndex: 0,
           error: null,
         }))
 
-        // 🧭 Initialize navigation state
+        // Initialize navigation state
         if (response.trip.legs.length > 0 && response.trip.legs[0].maneuvers.length > 0) {
           const maneuvers = response.trip.legs[0].maneuvers
           setNavigationState({
@@ -183,7 +183,7 @@ export function useValhalla(options: UseValhallaOptions = {}) {
         return response
       } catch (error) {
         const errorMessage = error instanceof Error ? error.message : 'Failed to calculate route'
-        console.error('🚫 Route calculation failed:', {
+        console.error('Route calculation failed:', {
           error,
           from: { latitude: from.latitude, longitude: from.longitude },
           to: { latitude: to.latitude, longitude: to.longitude },
@@ -205,21 +205,21 @@ export function useValhalla(options: UseValhallaOptions = {}) {
     [], // stable: uses refs internally
   )
 
-  // 🎯 Start navigation to destination
+  // Start navigation to destination
   const startNavigation = useCallback(
     async (from: { latitude: number; longitude: number }, to: RouteDestination) => {
       try {
         await calculateRoute(from, to)
         setRouteState((prev) => ({ ...prev, isNavigating: true }))
       } catch (error) {
-        console.error('🚫 Failed to start navigation:', error)
+        console.error(' Failed to start navigation:', error)
         throw error
       }
     },
     [calculateRoute], // calculateRoute stable
   )
 
-  // 🛑 Stop navigation
+  // Stop navigation
   const stopNavigation = useCallback(() => {
     setRouteState((prev) => ({
       ...prev,
@@ -244,7 +244,7 @@ export function useValhalla(options: UseValhallaOptions = {}) {
     isReroutingRef.current = false
   }, [])
 
-  // 🔄 Handle automatic rerouting
+  // Handle automatic rerouting
   const checkAndReroute = useCallback(
     async (userLocation: UserLocation) => {
       const rs = routeStateRef.current
@@ -268,7 +268,7 @@ export function useValhalla(options: UseValhallaOptions = {}) {
         try {
           await calculateRoute({ latitude: userLocation.latitude, longitude: userLocation.longitude }, destinationRef.current!, true)
         } catch (error) {
-          console.error('🚫 Rerouting failed:', error)
+          console.error(' Rerouting failed:', error)
         } finally {
           isReroutingRef.current = false
         }
@@ -277,7 +277,7 @@ export function useValhalla(options: UseValhallaOptions = {}) {
     [calculateRoute],
   )
 
-  // 📍 Update route progress based on user location (for dynamic polyline)
+  // Update route progress based on user location (for dynamic polyline)
   const updateRouteProgress = useCallback((userLocation: UserLocation) => {
     const rs = routeStateRef.current
     if (!rs.routeCoordinates.length || !rs.isNavigating) return
@@ -299,7 +299,7 @@ export function useValhalla(options: UseValhallaOptions = {}) {
     }
   }, [])
 
-  // 🧭 Update navigation progress based on user location
+  // Update navigation progress based on user location
   const updateNavigationProgress = useCallback((userLocation: UserLocation) => {
     const rs = routeStateRef.current
     const ns = navigationStateRef.current
@@ -332,7 +332,7 @@ export function useValhalla(options: UseValhallaOptions = {}) {
     }
   }, [])
 
-  // 📍 Main function to handle location updates during navigation
+  // Main function to handle location updates during navigation
   const handleLocationUpdate = useCallback(
     async (userLocation: UserLocation) => {
       if (routeStateRef.current.isNavigating) {
@@ -345,23 +345,23 @@ export function useValhalla(options: UseValhallaOptions = {}) {
   )
 
   return {
-    // 🗺️ Route state
+    // Route state
     ...routeState,
 
-    // 🧭 Navigation state
+    // Navigation state
     navigation: navigationState,
 
-    // 🎯 Actions
+    // Actions
     calculateRoute,
     startNavigation,
     stopNavigation,
     handleLocationUpdate,
 
-    // 🔧 Utils
+    // Utils
     isRerouting: isReroutingRef.current,
     destination: destinationRef.current,
 
-    // 📊 Statistics
+    // Statistics
     hasRoute: routeState.route !== null,
     totalDistance: routeState.route?.trip.summary.length || null,
     totalTime: routeState.route?.trip.summary.time || null,

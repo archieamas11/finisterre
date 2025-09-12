@@ -25,7 +25,7 @@ interface NavigationInstructionsProps {
   rerouteCount?: number
 }
 
-// 🧭 Get icon for maneuver type
+// Get icon for maneuver type
 function getManeuverIcon(type: number): React.ReactNode {
   switch (type) {
     case 1: // Start
@@ -54,7 +54,7 @@ function getManeuverIcon(type: number): React.ReactNode {
   }
 }
 
-// 🎨 Get color for maneuver type
+// Get color for maneuver type
 function getManeuverColor(type: number, isCurrent: boolean = false): string {
   if (isCurrent) return 'bg-blue-600 text-white'
 
@@ -97,10 +97,8 @@ export default function NavigationInstructions({
   React.useEffect(() => {
     if (!isNavigating || !currentManeuver) return
     const text = currentManeuver.instruction || ''
-    // Speak asynchronously; ignore errors
     speak(text).catch(() => {})
     return () => {
-      // stop any ongoing speech when maneuver changes
       stop()
     }
   }, [currentManeuver, isNavigating, speak, stop])
@@ -119,18 +117,13 @@ export default function NavigationInstructions({
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: 20 }}
           transition={{ duration: 0.2 }}
-          className={cn(
-            'fixed bottom-0 z-[1000] mx-auto w-full',
-            // Desktop/tablet placement as floating panel on the top-left
-            'sm:inset-x-auto sm:top-8 sm:bottom-auto sm:left-8 sm:w-96',
-          )}
+          className={cn('fixed bottom-0 z-[1000] mx-auto w-full', 'sm:inset-x-auto sm:top-8 sm:bottom-auto sm:left-8 sm:w-96')}
           role="region"
           aria-label="Turn-by-turn navigation"
         >
           <Card
             className={cn(
               'rounded-t-3xl rounded-bl-none border shadow-lg sm:rounded-lg',
-              // Subtle translucency over the map
               'bg-background/90 supports-[backdrop-filter]:bg-background/60 backdrop-blur',
             )}
           >

@@ -263,11 +263,19 @@ export default function MapPage({ onBack, initialDirection }: { onBack?: () => v
   // This should center the user map view only once, when location is first obtained
   // Center on user only once per explicit request
   const hasCenteredRef = useRef(false)
+  // Suppress a single auto-center event (used when user cancels navigation)
+  const suppressAutoCenterRef = useRef(false)
   useEffect(() => {
     if (!currentLocation || !mapInstance) return
     if (hasCenteredRef.current) return
 
-    // 🎯 During navigation, don't auto-center unless explicitly requested
+    // If suppression flag is set, ignore this first location update and clear the flag
+    if (suppressAutoCenterRef.current) {
+      suppressAutoCenterRef.current = false
+      return
+    }
+
+    // During navigation, don't auto-center unless explicitly requested
     // This prevents camera jumps during route following
     if (isNavigating) {
       dispatch({ type: 'CLEAR_LOCATE' })
@@ -332,6 +340,13 @@ export default function MapPage({ onBack, initialDirection }: { onBack?: () => v
     stopNavigation()
     dispatch({ type: 'SET_NAV_OPEN', value: false })
     dispatch({ type: 'SET_DIRECTION_LOADING', value: false })
+    // Prevent the next location update from auto-centering the map
+    // This avoids an immediate flyTo when the user cancels navigation.
+    suppressAutoCenterRef.current = true
+    // Safety: clear suppression after 2s in case no location event arrives
+    setTimeout(() => {
+      suppressAutoCenterRef.current = false
+    }, 2000)
   }, [stopNavigation, setSearchParams, searchParams])
 
   const handleDirectionClick = useCallback(
@@ -537,7 +552,7 @@ export default function MapPage({ onBack, initialDirection }: { onBack?: () => v
     const [sw, ne] = bounds // [[lng,lat],[lng,lat]]
     const centerLatLng: [number, number] = [(sw[0] + ne[0]) / 2, (sw[1] + ne[1]) / 2]
 
-    mapInstance.flyTo(centerLatLng, 18) // lat-lng first, zoom second
+    mapInstance.flyTo(centerLatLng, 18)
     dispatch({ type: 'RESET_VIEW' })
   }, [mapInstance, bounds])
 
@@ -668,7 +683,6 @@ export default function MapPage({ onBack, initialDirection }: { onBack?: () => v
                     userLocation={currentLocation}
                     isNavigating={isNavigating}
                     showMarkers={true}
-                    fitBounds={!isNavigating}
                   />
                 )}
                 <MemoizedNavigationInstructions

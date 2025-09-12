@@ -14,7 +14,6 @@ interface ValhallaRouteProps {
   originalEnd?: [number, number]
   userLocation?: UserLocation | null
   showMarkers?: boolean
-  fitBounds?: boolean
 }
 
 /**
