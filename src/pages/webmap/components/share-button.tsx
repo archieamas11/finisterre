@@ -2,6 +2,7 @@ import type { Button } from '@/components/ui/button'
 
 import { ShareDialog } from '@/pages/webmap/ShareDialog'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
+import { useIsMobile } from '@/hooks/use-mobile'
 
 interface ShareButtonProps {
   coords: [number, number]
@@ -14,21 +15,27 @@ interface ShareButtonProps {
 }
 
 export function ShareButton({ coords, location, className, variant, size, iconClassName, children }: ShareButtonProps) {
+  const ShareButton = (
+    <ShareDialog
+      coords={coords}
+      location={location}
+      triggerClassName={className}
+      triggerVariant={variant}
+      triggerSize={size}
+      iconClassName={iconClassName}
+    >
+      {children}
+    </ShareDialog>
+  )
+
+  if (useIsMobile()) {
+    return ShareButton
+  }
+
   return (
     <Tooltip>
       <TooltipTrigger asChild>
-        <div>
-          <ShareDialog
-            coords={coords}
-            location={location}
-            triggerClassName={className}
-            triggerVariant={variant}
-            triggerSize={size}
-            iconClassName={iconClassName}
-          >
-            {children}
-          </ShareDialog>
-        </div>
+        <div>{ShareButton}</div>
       </TooltipTrigger>
       <TooltipContent side="right">Share this marker location</TooltipContent>
     </Tooltip>

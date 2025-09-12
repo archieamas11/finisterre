@@ -3,6 +3,7 @@ import { FaDirections } from 'react-icons/fa'
 import { Button } from '@/components/ui/button'
 import { Spinner } from '@/components/ui/spinner'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
+import { useIsMobile } from '@/hooks/use-mobile'
 
 interface GetDirectionButtonProps extends React.ComponentProps<'button'> {
   label?: string
@@ -22,15 +23,21 @@ export function GetDirectionButton({
   children,
   ...props
 }: GetDirectionButtonProps) {
+  const button = (
+    <Button type="button" variant={variant} size={size} aria-busy={isLoading} disabled={disabled || isLoading} className={className} {...props}>
+      {isLoading ? <Spinner /> : <FaDirections aria-hidden="true" />}
+      {label && <span>{label}</span>}
+      {children}
+    </Button>
+  )
+
+  if (useIsMobile()) {
+    return button
+  }
+
   return (
     <Tooltip>
-      <TooltipTrigger asChild>
-        <Button type="button" variant={variant} size={size} aria-busy={isLoading} disabled={disabled || isLoading} className={className} {...props}>
-          {isLoading ? <Spinner /> : <FaDirections aria-hidden="true" />}
-          {label && <span>{label}</span>}
-          {children}
-        </Button>
-      </TooltipTrigger>
+      <TooltipTrigger asChild>{button}</TooltipTrigger>
       <TooltipContent side="bottom">Start Navigation</TooltipContent>
     </Tooltip>
   )
