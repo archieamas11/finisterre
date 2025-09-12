@@ -1,6 +1,5 @@
 import { QueryClientProvider, QueryClient } from '@tanstack/react-query'
-// import { Analytics } from '@vercel/analytics/react'
-import { NuqsAdapter } from 'nuqs/adapters/react'
+import { NuqsAdapter } from 'nuqs/adapters/react-router/v7'
 
 import './index.css'
 import React, { Suspense } from 'react'
@@ -11,7 +10,6 @@ import { Toaster } from '@/components/ui/sonner.tsx'
 
 import App from './App.tsx'
 const queryClient = new QueryClient()
-// import { SpeedInsights } from '@vercel/speed-insights/react'
 const LazyReactQueryDevtools = React.lazy(() =>
   import('@tanstack/react-query-devtools').then((mod) => ({
     default: mod.ReactQueryDevtools,
@@ -24,8 +22,6 @@ createRoot(document.getElementById('root')!).render(
       <QueryClientProvider client={queryClient}>
         <NuqsAdapter>
           <App />
-          {/* <SpeedInsights />
-          <Analytics /> */}
           <Suspense fallback={null}>
             <LazyReactQueryDevtools initialIsOpen={false} />
           </Suspense>
