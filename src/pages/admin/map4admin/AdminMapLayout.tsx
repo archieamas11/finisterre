@@ -38,6 +38,7 @@ import { getCategoryBackgroundColor, convertPlotToMarker, getStatusColor } from 
 
 import AdminMapNavs from './AdminMapNavs'
 import { LocateContext } from './LocateContext'
+import PeterRockMarkers from '@/pages/webmap/PeterRock'
 
 const DefaultIcon = L.icon({ iconUrl, shadowUrl, iconRetinaUrl })
 ;(L.Marker.prototype as unknown as { options: { icon: L.Icon } }).options.icon = DefaultIcon
@@ -366,6 +367,7 @@ export default function AdminMapLayout() {
             <ParkingMarkers />
             <CenterSerenityMarkers />
             <ComfortRoomMarker />
+            <PeterRockMarkers />
             {/* Display all clustered markers */}
             {Object.entries(markersByGroup).map(([groupKey, groupMarkers]) => {
               if (isEditingMarker || isAddingMarker) {
