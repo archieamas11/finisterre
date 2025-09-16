@@ -6,9 +6,10 @@ import { cn } from '@/lib/utils'
 interface AdminMapNavsProps {
   searchLot: (lotId: string) => Promise<void>
   resetView: () => void
+  onSelectResult: (item: import('@/types/search.types').AdminSearchItem) => void
 }
 
-export default function AdminMapNavs({ searchLot, resetView }: AdminMapNavsProps) {
+export default function AdminMapNavs({ searchLot, resetView, onSelectResult }: AdminMapNavsProps) {
   return (
     <nav
       className={cn(
@@ -20,7 +21,7 @@ export default function AdminMapNavs({ searchLot, resetView }: AdminMapNavsProps
       <div className="flex w-full items-center gap-2 pr-3">
         <div className="flex-1">
           <div className="mx-auto w-full max-w-sm">
-            <AdminSearchBar onSearch={searchLot} />
+            <AdminSearchBar onSearch={searchLot} onSelectResult={onSelectResult} />
           </div>
         </div>
       </div>

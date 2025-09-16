@@ -2,7 +2,7 @@ import { useQueryClient } from '@tanstack/react-query'
 import { motion } from 'framer-motion'
 import { Heart } from 'lucide-react'
 import { Crown, Phone, User, Mail } from 'lucide-react'
-import { useState, useContext } from 'react'
+import { useState } from 'react'
 import { BsFillPatchCheckFill } from 'react-icons/bs'
 import { ImLibrary } from 'react-icons/im'
 import { toast } from 'sonner'
@@ -19,7 +19,6 @@ import { CardContent, CardHeader, CardTitle, Card } from '@/components/ui/card'
 import { DialogDescription, DialogContent, DialogHeader, DialogTitle, Dialog } from '@/components/ui/dialog'
 // import { PopoverContent, PopoverTrigger, Popover } from '@/components/ui/popover'
 import { Skeleton } from '@/components/ui/skeleton'
-import { LocateContext } from '@/contexts/MapContext'
 import { useCustomers } from '@/hooks/customer-hooks/customer.hooks'
 import { useCreateLotOwner } from '@/hooks/lot-owner-hooks/useCreateLotOwner'
 import { useNichesByPlot } from '@/hooks/plots-hooks/niche.hooks'
@@ -36,9 +35,10 @@ interface ColumbariumPopupProps {
   marker: ConvertedMarker
   onDirectionClick?: () => void
   isDirectionLoading?: boolean
+  highlightedNiche?: string
 }
 
-export default function ColumbariumPopup({ marker, onDirectionClick, isDirectionLoading = false }: ColumbariumPopupProps) {
+export default function ColumbariumPopup({ marker, onDirectionClick, isDirectionLoading = false, highlightedNiche }: ColumbariumPopupProps) {
   // Keep customers in cache fresh for the selector
   useCustomers()
   const [selectedNiche, setSelectedNiche] = useState<nicheData | null>(null)
@@ -51,8 +51,7 @@ export default function ColumbariumPopup({ marker, onDirectionClick, isDirection
   const queryClient = useQueryClient()
   const createLotOwnerMutation = useCreateLotOwner()
 
-  // Get search context for highlighting searched niche
-  const locateContext = useContext(LocateContext)
+  // Highlighting relies on prop passed from map layout when navigating from search
 
   const handleCancelReservation = () => {
     console.log('❌ Reservation cancelled')
@@ -183,7 +182,7 @@ export default function ColumbariumPopup({ marker, onDirectionClick, isDirection
           className="bg-background dark:bg-muted grid w-full gap-1 rounded-lg border p-2"
         >
           {nicheData.map((niche, index) => {
-            const isHighlighted = locateContext?.highlightedNiche === String(niche.niche_number)
+            const isHighlighted = (highlightedNiche ?? null) === String(niche.niche_number)
 
             return (
               <button

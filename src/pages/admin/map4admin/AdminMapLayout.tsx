@@ -37,6 +37,7 @@ import PlaygroundMarkers from '@/pages/webmap/PlaygroundMarkers'
 import { getCategoryBackgroundColor, convertPlotToMarker, getStatusColor } from '@/types/map.types'
 
 import AdminMapNavs from './AdminMapNavs'
+import type { AdminSearchItem } from '@/types/search.types'
 import { LocateContext } from './LocateContext'
 import PeterRockMarkers from '@/pages/webmap/PeterRock'
 
@@ -52,13 +53,13 @@ function buildStatusCircleIcon(color: string) {
 }
 
 //  Helper: popup content for columbarium vs single plot
-function renderPopupContent(marker: ConvertedMarker, backgroundColor: string) {
+function renderPopupContent(marker: ConvertedMarker, backgroundColor: string, highlightedNiche?: string | null) {
   const isColumbarium = !!(marker.rows && marker.columns)
   if (isColumbarium) {
     return (
       <Popup className="leaflet-theme-popup" closeButton={false} offset={[2, 10]} minWidth={450}>
         <div className="w-full py-2">
-          <ColumbariumPopup marker={marker} />
+          <ColumbariumPopup marker={marker} highlightedNiche={highlightedNiche ?? undefined} />
         </div>
       </Popup>
     )
@@ -78,6 +79,8 @@ export default function AdminMapLayout() {
   const markers = useMemo(() => (plotsData ? plotsData.map(convertPlotToMarker) : []), [plotsData])
 
   const [mapInstance, setMapInstance] = useState<L.Map | null>(null)
+  const [autoOpenPlotId, setAutoOpenPlotId] = useState<string | null>(null)
+  const [highlightedNiche, setHighlightedNiche] = useState<string | null>(null)
 
   const searchLot = useCallback(
     async (lotId: string) => {
@@ -92,6 +95,54 @@ export default function AdminMapLayout() {
       } catch (error) {
         console.error('Search error:', error)
       }
+    },
+    [markers, mapInstance],
+  )
+
+  // Handle click from search results list
+  const handleSelectSearchResult = useCallback(
+    (item: AdminSearchItem) => {
+      const marker = markers.find((m: ConvertedMarker) => m.plot_id === String(item.plot_id))
+      if (!marker || !mapInstance) return
+
+      const targetPlotId = String(item.plot_id)
+      const targetNiche = item.niche_number ? String(item.niche_number) : null
+
+      const openTargetPopup = () => {
+        setHighlightedNiche(targetNiche)
+        setAutoOpenPlotId(targetPlotId)
+      }
+
+      const desiredZoom = 20
+      const currentZoom = mapInstance.getZoom()
+      const [lat, lng] = marker.position
+      const center = mapInstance.getCenter()
+      const isAtPosition = Math.abs(center.lat - lat) < 1e-6 && Math.abs(center.lng - lng) < 1e-6
+
+      // If we're already at or beyond the desired zoom and centered, open immediately
+      if (currentZoom >= desiredZoom && isAtPosition) {
+        openTargetPopup()
+        return
+      }
+
+      // Otherwise, wait for moveend; also set a fallback in case the event doesn't fire
+      let fired = false
+      const onMoveEnd = () => {
+        if (fired) return
+        fired = true
+        mapInstance.off('moveend', onMoveEnd)
+        openTargetPopup()
+      }
+      mapInstance.on('moveend', onMoveEnd)
+      window.setTimeout(() => {
+        if (fired) return
+        fired = true
+        mapInstance.off('moveend', onMoveEnd)
+        openTargetPopup()
+      }, 750)
+
+      // Center and zoom; clustering is disabled at 20 so marker exists after moveend
+      mapInstance.flyTo(marker.position, desiredZoom, { animate: true })
     },
     [markers, mapInstance],
   )
@@ -297,7 +348,7 @@ export default function AdminMapLayout() {
         }}
       >
         <div className="relative z-1 h-full w-full">
-          <AdminMapNavs searchLot={searchLot} resetView={resetView} />
+          <AdminMapNavs searchLot={searchLot} resetView={resetView} onSelectResult={handleSelectSearchResult} />
           <MapStats />
           <AddMarkerInstructions isVisible={isAddingMarker} />
           <EditMarkerInstructions isVisible={isEditingMarker} step={selectedPlotForEdit ? 'edit' : 'select'} />
@@ -387,8 +438,15 @@ export default function AdminMapLayout() {
                           onEditComplete={onEditComplete}
                           onSaveSuccess={() => setSelectedPlotForEdit(null)}
                           onPopupOpen={() => handlePopupOpen(marker.plot_id)}
+                          // If this marker is targeted by search, open its popup once
+                          onPopupClose={() => {
+                            if (autoOpenPlotId === marker.plot_id) {
+                              setAutoOpenPlotId(null)
+                              setHighlightedNiche(null)
+                            }
+                          }}
                         >
-                          {renderPopupContent(marker, backgroundColor)}
+                          {renderPopupContent(marker, backgroundColor, autoOpenPlotId === marker.plot_id ? highlightedNiche : null)}
                         </EditableMarker>
                       )
                     })}
@@ -424,8 +482,14 @@ export default function AdminMapLayout() {
                         onEditComplete={onEditComplete}
                         onSaveSuccess={() => setSelectedPlotForEdit(null)}
                         onPopupOpen={() => handlePopupOpen(marker.plot_id)}
+                        onPopupClose={() => {
+                          if (autoOpenPlotId === marker.plot_id) {
+                            setAutoOpenPlotId(null)
+                            setHighlightedNiche(null)
+                          }
+                        }}
                       >
-                        {renderPopupContent(marker, backgroundColor)}
+                        {renderPopupContent(marker, backgroundColor, autoOpenPlotId === marker.plot_id ? highlightedNiche : null)}
                       </EditableMarker>
                     )
                   })}
