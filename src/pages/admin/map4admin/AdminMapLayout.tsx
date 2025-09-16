@@ -140,7 +140,6 @@ export default function AdminMapLayout() {
   const handleSelectSearchResult = useCallback(
     (item: AdminSearchItem) => {
       console.log('[AdminMapLayout] select result', { item })
-      // Ensure we are not in edit mode so popups can render
       if (isEditingMarker) {
         console.log('[AdminMapLayout] exiting edit mode for popup open')
         setIsEditingMarker(false)
@@ -164,11 +163,10 @@ export default function AdminMapLayout() {
         setAutoOpenPlotId(targetPlotId)
       }
 
-      // Show popup immediately, even if the map isn't ready yet.
-      openTargetPopup()
-
+      // If map isn't ready, open immediately; otherwise compute if we should wait
       if (!mapInstance) {
-        console.log('[AdminMapLayout] mapInstance not ready yet; will skip flyTo for now')
+        console.log('[AdminMapLayout] mapInstance not ready yet; opening immediately and skipping flyTo')
+        openTargetPopup()
         return
       }
 
@@ -199,7 +197,7 @@ export default function AdminMapLayout() {
         mapInstance.off('moveend', onMoveEnd)
         console.log('[AdminMapLayout] moveend fallback → opening popup')
         openTargetPopup()
-      }, 750)
+      }, 900)
 
       console.log('[AdminMapLayout] flyTo', { position: marker.position, desiredZoom })
       mapInstance.flyTo(marker.position, desiredZoom, { animate: true })
@@ -406,8 +404,9 @@ export default function AdminMapLayout() {
                 closeButton={false}
                 offset={[2, 10]}
                 minWidth={activeSearchMarker.rows && activeSearchMarker.columns ? 450 : 600}
-                maxWidth={activeSearchMarker.rows && activeSearchMarker.columns ? undefined : 600}
+                maxWidth={activeSearchMarker.rows && activeSearchMarker.columns ? 450 : 600}
                 position={activeSearchMarker.position}
+                key={`${activeSearchMarker.plot_id}-${highlightedNiche ?? ''}`}
                 eventHandlers={{
                   add: () => handlePopupOpen(activeSearchMarker.plot_id),
                   remove: () => {
@@ -417,13 +416,13 @@ export default function AdminMapLayout() {
                   },
                 }}
               >
-                {activeSearchMarker.rows && activeSearchMarker.columns ? (
-                  <div className="w-full p-2">
+                <div className="w-full py-2">
+                  {activeSearchMarker.rows && activeSearchMarker.columns ? (
                     <ColumbariumPopup marker={activeSearchMarker} highlightedNiche={highlightedNiche ?? undefined} />
-                  </div>
-                ) : (
-                  <SinglePlotLocations backgroundColor={getCategoryBackgroundColor(activeSearchMarker.category)} marker={activeSearchMarker} />
-                )}
+                  ) : (
+                    <SinglePlotLocations backgroundColor={getCategoryBackgroundColor(activeSearchMarker.category)} marker={activeSearchMarker} />
+                  )}
+                </div>
               </Popup>
             )}
             <TileLayer
