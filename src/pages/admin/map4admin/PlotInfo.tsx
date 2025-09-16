@@ -14,7 +14,7 @@ export default function PlotInfo({ marker }: { marker: ConvertedMarker }) {
       {/* Left Column - Plot Info */}
       <Card className="h-83">
         <CardHeader className="pb-2">
-          <CardTitle className="flex items-center gap-2 text-sm">
+          <CardTitle className="flex items-center gap-2 text-sm leading-0">
             <MapPin className="text-primary h-4 w-4" />
             Plot Information
           </CardTitle>

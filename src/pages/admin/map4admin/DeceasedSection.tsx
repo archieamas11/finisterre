@@ -46,9 +46,9 @@ export function DeceasedSection({ owner, deceased, isLoading }: CombinedSectionP
   return (
     <Card className="h-83">
       <CardHeader className="pb-2">
-        <CardTitle className="flex items-center gap-2 text-sm">
+        <CardTitle className="flex items-center gap-2 text-sm leading-0">
           <Users className="text-primary h-4 w-4" />
-          Plot Information
+          Interment Information
         </CardTitle>
       </CardHeader>
       <CardContent>
