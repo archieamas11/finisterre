@@ -57,7 +57,7 @@ function renderPopupContent(marker: ConvertedMarker, backgroundColor: string, hi
   const isColumbarium = !!(marker.rows && marker.columns)
   if (isColumbarium) {
     return (
-      <Popup className="leaflet-theme-popup" closeButton={false} offset={[2, 10]} minWidth={450}>
+      <Popup className="leaflet-theme-popup" closeButton={false} offset={[2, 3]} minWidth={450}>
         <div className="w-full py-2">
           <ColumbariumPopup marker={marker} highlightedNiche={highlightedNiche ?? undefined} />
         </div>
@@ -65,7 +65,7 @@ function renderPopupContent(marker: ConvertedMarker, backgroundColor: string, hi
     )
   }
   return (
-    <Popup className="leaflet-theme-popup" closeButton={false} offset={[2, 10]} minWidth={600} maxWidth={600}>
+    <Popup className="leaflet-theme-popup" closeButton={false} offset={[2, 3]} minWidth={600} maxWidth={600}>
       <SinglePlotLocations backgroundColor={backgroundColor} marker={marker} />
     </Popup>
   )
@@ -402,7 +402,7 @@ export default function AdminMapLayout() {
               <Popup
                 className="leaflet-theme-popup"
                 closeButton={false}
-                offset={[2, 10]}
+                offset={[2, 3]}
                 minWidth={activeSearchMarker.rows && activeSearchMarker.columns ? 450 : 600}
                 maxWidth={activeSearchMarker.rows && activeSearchMarker.columns ? 450 : 600}
                 position={activeSearchMarker.position}
