@@ -1,11 +1,10 @@
+import { RiHeart2Fill } from 'react-icons/ri'
 import { AiFillEye } from 'react-icons/ai'
 import { HiLibrary } from 'react-icons/hi'
 import { Printer } from 'lucide-react'
 import React from 'react'
 import { BiMessageSquareEdit } from 'react-icons/bi'
-
-import type { Customer, LotInfo } from '@/api/customer.api'
-
+import type { Customer, LotInfo, DeceasedInfo } from '@/api/customer.api'
 import { editCustomer } from '@/api/customer.api'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -14,6 +13,7 @@ import CustomerForm from '@/pages/admin/interment/customer/CustomerForm'
 import { calculateYearsBuried } from '@/utils/date.utils'
 import GetDirectionButton from '@/pages/webmap/components/get-direction-button'
 import { ShareButton } from '@/pages/webmap/components/share-button'
+import { formatDate } from '@/lib/format'
 
 interface ViewCustomerDialogProps {
   open: boolean
@@ -21,37 +21,13 @@ interface ViewCustomerDialogProps {
   onOpenChange: (open: boolean) => void
 }
 
-// Utility to format date strings for display
-function formatDate(date?: string | null) {
-  if (!date) {
-    return '-'
-  }
-
-  const d = new Date(date)
-  if (Number.isNaN(d.getTime())) {
-    return '-'
-  }
-
-  return d.toLocaleDateString(undefined, {
-    year: 'numeric',
-    month: 'short',
-    day: 'numeric',
-  })
-}
-
-// Component for rendering deceased information
-type LocalDeceasedInfo = {
-  deceased_id?: string | null
-  dead_fullname?: string | null
-  dead_date_death?: string | null
-  dead_interment?: string | null
-}
-
-function DeceasedInfoCard({ deceased }: { deceased: LocalDeceasedInfo }) {
+function DeceasedInfoCard({ deceased }: { deceased: DeceasedInfo }) {
   return (
     <div className="bg-muted/30 space-y-2 rounded-lg border border-dashed p-3">
       <div className="flex items-center gap-2">
-        <div className="bg-primary/10 text-primary flex h-8 w-8 items-center justify-center rounded-full text-sm font-medium">👤</div>
+        <div className="bg-primary/10 text-primary flex h-8 w-8 items-center justify-center rounded-full text-sm font-medium">
+          <RiHeart2Fill />
+        </div>
         <div>
           <div className="text-sm font-medium">{deceased.dead_fullname}</div>
           <div className="text-muted-foreground text-xs">Deceased ID: {deceased.deceased_id}</div>
@@ -60,11 +36,11 @@ function DeceasedInfoCard({ deceased }: { deceased: LocalDeceasedInfo }) {
       <div className="grid grid-cols-2 gap-2 text-xs">
         <div>
           <span className="text-muted-foreground">Death Date:</span>
-          <div className="font-medium">{formatDate(deceased.dead_date_death)}</div>
+          <div className="font-medium">{formatDate(deceased.dead_date_death ?? undefined)}</div>
         </div>
         <div>
           <span className="text-muted-foreground">Interment:</span>
-          <div className="font-medium">{formatDate(deceased.dead_interment)}</div>
+          <div className="font-medium">{formatDate(deceased.dead_interment ?? undefined)}</div>
         </div>
       </div>
       <div className="text-xs">
@@ -83,7 +59,6 @@ function PropertyDeceasedCard({ lot }: { lot: LotInfo }) {
   const toLatLng = React.useCallback((coords?: unknown): [number, number] | null => {
     if (coords == null) return null
 
-    // Helper: extract numeric tokens from input (array, object, or string)
     const extractNumbers = (input: unknown): number[] => {
       if (Array.isArray(input))
         return input
@@ -143,40 +118,29 @@ function PropertyDeceasedCard({ lot }: { lot: LotInfo }) {
       <div className="space-y-2">
         {hasGraveLot && (
           <div className="flex justify-between">
-            <div className="flex gap-2">
+            <div className="flex items-center gap-2">
+              <div className="bg-primary/10 text-primary rounded p-2 text-sm">🏢</div>
               <div>
                 <div className="font-medium">Block {lot.block}</div>
                 <div className="text-muted-foreground text-sm">Grave {lot.lot_plot_id}</div>
               </div>
             </div>
-            <div className="flex gap-2">
-              <GetDirectionButton className="h-8 w-8 rounded-full text-white" title="Navigate" size={'sm'} variant={'outline'} />
-              <Button size={'sm'} variant={'outline'} className="h-8 w-8 rounded-full text-white">
-                <AiFillEye />
-              </Button>
-              {coordsLatLng && (
-                <ShareButton
-                  coords={coordsLatLng}
-                  location={locationLabel}
-                  side="bottom"
-                  className="h-8 w-8 rounded-full"
-                  variant={'outline'}
-                  size={'sm'}
-                />
-              )}
-            </div>
+            <PropertyActions coordsLatLng={coordsLatLng} locationLabel={locationLabel} />
           </div>
         )}
 
         {hasNiche && (
-          <div className="flex items-center gap-3">
-            <div className="bg-primary/10 text-primary rounded p-2 text-sm">🏢</div>
-            <div>
-              <div className="font-medium">
-                {lot.category} {lot.plot_id ?? ''}
+          <div className="flex justify-between">
+            <div className="flex items-center gap-2">
+              <div className="bg-primary/10 text-primary rounded p-2 text-sm">🏢</div>
+              <div>
+                <div className="font-medium">
+                  {lot.category} {lot.plot_id ?? ''}
+                </div>
+                <div className="text-muted-foreground text-sm">Niche {lot.niche_number}</div>
               </div>
-              <div className="text-muted-foreground text-sm">Niche {lot.niche_number}</div>
             </div>
+            <PropertyActions coordsLatLng={coordsLatLng} locationLabel={locationLabel} />
           </div>
         )}
       </div>
@@ -200,6 +164,20 @@ function PropertyDeceasedCard({ lot }: { lot: LotInfo }) {
           </div>
         )}
       </div>
+    </div>
+  )
+}
+
+function PropertyActions({ coordsLatLng, locationLabel }: { coordsLatLng: [number, number] | null; locationLabel: string }) {
+  return (
+    <div className="flex gap-2">
+      <GetDirectionButton className="h-8 w-8 rounded-full text-white" title="Navigate" size="sm" variant="outline" />
+      <Button aria-label="View property" size="sm" variant="outline" className="h-8 w-8 rounded-full text-white">
+        <AiFillEye />
+      </Button>
+      {coordsLatLng && (
+        <ShareButton coords={coordsLatLng} location={locationLabel} side="bottom" className="h-8 w-8 rounded-full" variant="outline" size="sm" />
+      )}
     </div>
   )
 }
@@ -295,6 +273,18 @@ export default function ViewCustomer({ open, customer, onOpenChange }: ViewCusto
                 {customer.status}
               </Badge>
             </div>
+
+            {/* Footer Dates */}
+            <div className="text-muted-foreground mt-5 flex w-[90%] justify-around rounded-lg border p-3 text-center text-sm">
+              <div>
+                <div>Created</div>
+                <div className="font-medium">{formatDate(customer.created_at ?? undefined)}</div>
+              </div>
+              <div>
+                <div>Last Updated</div>
+                <div className="font-medium">{formatDate(customer.updated_at ?? undefined)}</div>
+              </div>
+            </div>
           </div>
 
           {/* Main Content */}
@@ -313,7 +303,7 @@ export default function ViewCustomer({ open, customer, onOpenChange }: ViewCusto
             <div className="bg-card rounded-lg border p-4">
               <SectionHeader title="Personal Details" />
               <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                <InfoItem label="Birth Date" value={formatDate(customer.birth_date)} />
+                <InfoItem label="Birth Date" value={formatDate(customer.birth_date ?? undefined)} />
                 <InfoItem label="Occupation" value={customer.occupation} />
                 <InfoItem label="Religion" value={customer.religion} />
                 <InfoItem label="Citizenship" value={customer.citizenship} />
@@ -335,18 +325,6 @@ export default function ViewCustomer({ open, customer, onOpenChange }: ViewCusto
                   <p className="text-muted-foreground mt-1 text-sm">This customer doesn't own any plots or niches</p>
                 </div>
               )}
-            </div>
-
-            {/* Footer Dates */}
-            <div className="text-muted-foreground flex justify-around text-center text-sm">
-              <div>
-                <div>Created</div>
-                <div className="font-medium">{formatDate(customer.created_at)}</div>
-              </div>
-              <div>
-                <div>Last Updated</div>
-                <div className="font-medium">{formatDate(customer.updated_at)}</div>
-              </div>
             </div>
           </div>
         </SheetContent>

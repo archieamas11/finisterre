@@ -18,7 +18,7 @@ export interface DeceasedInfo {
 }
 
 export type Customer = {
-  customer_id: string
+  customer_id: string | number
   first_name: string
   middle_name: string | null
   last_name: string

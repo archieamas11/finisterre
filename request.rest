@@ -1,6 +1,6 @@
-POST http://localhost/finisterre_backend/admin/admin_search.php
+POST https://api.finisterre.site/admin/admin_search.php
 Content-Type: application/json
 
 {
-    "search": "94"
+    "search": "pedro"
 }
