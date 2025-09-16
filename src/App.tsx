@@ -29,6 +29,7 @@ const AndroidLandingPage = React.lazy(() => import('@/pages/android/AndroidLandi
 const IosLandingPage = React.lazy(() => import('@/pages/ios/iosLandingPage'))
 const PublicMap = React.lazy(() => import('@/pages/webmap/PublicWebMap'))
 import LandingLayout from '@/layout/LandingLayout'
+const NewsAndUpdates = React.lazy(() => import('@/pages/admin/news/NewsAndUpdates'))
 
 function AppRoutes() {
   const navigate = useNavigate()
@@ -103,6 +104,7 @@ function AppRoutes() {
             <Route element={<AdminMapLayout />} path="map" />
             <Route element={<Bookings />} path="bookings" />
             <Route element={<AdminControlPanel />} path="control-panel" />
+            <Route element={<NewsAndUpdates />} path="news" />
           </Route>
 
           {/* Catch all invalid routes */}
