@@ -1,9 +1,6 @@
-'use client'
-
 import type { ColumnDef } from '@tanstack/react-table'
 
 import { MoreHorizontal, Archive } from 'lucide-react'
-// React import intentionally omitted; JSX runtime handles it
 import React from 'react'
 
 import type { DeceasedRecords } from '@/types/interment.types'

@@ -1,4 +1,3 @@
-'use client'
 import {
   type ColumnFiltersState,
   type RowSelectionState,
@@ -13,14 +12,11 @@ import {
 } from '@tanstack/react-table'
 import { ArrowRightIcon, SearchIcon } from 'lucide-react'
 import React from 'react'
-
 import type { LotOwners } from '@/types/interment.types'
-
 import { DataTable } from '@/components/data-table/data-table'
 import { DataTableToolbar } from '@/components/data-table/data-table-toolbar'
 import { Card } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
-
 import { lotOwnerColumns } from '../columns/LotOwnersColumns'
 
 interface LotOwnersTableProps {
@@ -67,7 +63,7 @@ export default function LotOwnersTable({ data }: LotOwnersTableProps) {
   return (
     <Card className="p-4">
       <DataTableToolbar table={table}>
-        <div className="*:not-first:mt-2">
+        <div className="flex w-full flex-col justify-between gap-2 sm:flex-row">
           <div className="relative">
             <Input
               className="peer h-8 ps-9 pe-9"

@@ -1,4 +1,3 @@
-'use client'
 import {
   type ColumnFiltersState,
   type RowSelectionState,
@@ -12,7 +11,7 @@ import {
   type Row,
 } from '@tanstack/react-table'
 import { ArrowRightIcon, SearchIcon } from 'lucide-react'
-import * as React from 'react'
+import React from 'react'
 
 import type { DeceasedRecords } from '@/types/interment.types'
 
@@ -67,7 +66,7 @@ export default function DeceasedRecordsTable({ data }: DeceasedRecordsTableProps
   return (
     <Card className="p-4">
       <DataTableToolbar table={table}>
-        <div className="*:not-first:mt-2">
+        <div className="flex w-full flex-col justify-between gap-2 sm:flex-row">
           <div className="relative">
             <Input
               className="peer h-8 ps-9 pe-9"

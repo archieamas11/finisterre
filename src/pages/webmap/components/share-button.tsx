@@ -12,9 +12,10 @@ interface ShareButtonProps {
   size?: React.ComponentProps<typeof Button>['size']
   iconClassName?: string
   children?: React.ReactNode
+  side?: 'top' | 'right' | 'bottom' | 'left'
 }
 
-export function ShareButton({ coords, location, className, variant, size, iconClassName, children }: ShareButtonProps) {
+export function ShareButton({ coords, location, className, variant, size, iconClassName, children, side = 'right' }: ShareButtonProps) {
   const ShareButton = (
     <ShareDialog
       coords={coords}
@@ -37,7 +38,7 @@ export function ShareButton({ coords, location, className, variant, size, iconCl
       <TooltipTrigger asChild>
         <div>{ShareButton}</div>
       </TooltipTrigger>
-      <TooltipContent side="right">Share this marker location</TooltipContent>
+      <TooltipContent side={side}>Share this marker location</TooltipContent>
     </Tooltip>
   )
 }

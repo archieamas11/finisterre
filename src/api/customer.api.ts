@@ -3,6 +3,7 @@ import { api } from './axiosInstance'
 export interface LotInfo {
   niche_number: string | number | null
   plot_id: number | null
+  coordinates?: [number, number] | null
   block: string | null
   lot_plot_id: number | null
   category: string | null

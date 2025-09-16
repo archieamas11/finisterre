@@ -1,13 +1,13 @@
 import { useQueryClient } from '@tanstack/react-query'
 import { motion } from 'framer-motion'
-import { ChevronsUpDown, Check, Heart } from 'lucide-react'
-import { Crown, Phone, User, Mail, Save, X } from 'lucide-react'
+import { Heart } from 'lucide-react'
+import { Crown, Phone, User, Mail } from 'lucide-react'
 import { useState, useContext } from 'react'
 import { BsFillPatchCheckFill } from 'react-icons/bs'
 import { ImLibrary } from 'react-icons/im'
 import { toast } from 'sonner'
 
-import type { Customer } from '@/api/customer.api'
+// import type { Customer } from '@/api/customer.api'
 import type { ConvertedMarker } from '@/types/map.types'
 import type { nicheData } from '@/types/niche.types'
 
@@ -15,9 +15,9 @@ import { ErrorMessage } from '@/components/ErrorMessage'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { CardContent, CardHeader, CardTitle, Card } from '@/components/ui/card'
-import { CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList, Command } from '@/components/ui/command'
+// import { CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList, Command } from '@/components/ui/command'
 import { DialogDescription, DialogContent, DialogHeader, DialogTitle, Dialog } from '@/components/ui/dialog'
-import { PopoverContent, PopoverTrigger, Popover } from '@/components/ui/popover'
+// import { PopoverContent, PopoverTrigger, Popover } from '@/components/ui/popover'
 import { Skeleton } from '@/components/ui/skeleton'
 import { LocateContext } from '@/contexts/MapContext'
 import { useCustomers } from '@/hooks/customer-hooks/customer.hooks'
@@ -30,6 +30,7 @@ import { calculateYearsBuried } from '@/utils/date.utils'
 import CreateDeceased from './columbarium-dialogs/CreateDeceasedPage'
 import { ShareButton } from '@/pages/webmap/components/share-button'
 import GetDirectionButton from '@/pages/webmap/components/get-direction-button'
+import CustomerSelectForm from '@/components/customers/CustomerSelectForm'
 
 interface ColumbariumPopupProps {
   marker: ConvertedMarker
@@ -38,14 +39,12 @@ interface ColumbariumPopupProps {
 }
 
 export default function ColumbariumPopup({ marker, onDirectionClick, isDirectionLoading = false }: ColumbariumPopupProps) {
-  const { data: customersData, isLoading: isLoadingCustomers } = useCustomers()
-  const customers = customersData || []
+  // Keep customers in cache fresh for the selector
+  useCustomers()
   const [selectedNiche, setSelectedNiche] = useState<nicheData | null>(null)
   const [isDetailOpen, setIsDetailOpen] = useState(false)
   const [showCustomerCombo, setShowCustomerCombo] = useState(false)
-  const [comboOpen, setComboOpen] = useState(false)
   const [selectedCustomer, setSelectedCustomer] = useState<string>('')
-  const [isReservationStep, setIsReservationStep] = useState(false)
   const [isSaving, setIsSaving] = useState(false)
   const rows = parseInt(marker.rows)
   const cols = parseInt(marker.columns)
@@ -55,22 +54,15 @@ export default function ColumbariumPopup({ marker, onDirectionClick, isDirection
   // Get search context for highlighting searched niche
   const locateContext = useContext(LocateContext)
 
-  const handleCustomerSelect = (customerId: string) => {
-    console.log('👤 Customer selected:', customerId)
-    setSelectedCustomer(customerId)
-    setComboOpen(false)
-    setIsReservationStep(true)
-  }
-
   const handleCancelReservation = () => {
     console.log('❌ Reservation cancelled')
     setSelectedCustomer('')
     setShowCustomerCombo(false)
-    setIsReservationStep(false)
   }
 
-  const handleSaveReservation = async () => {
-    if (!selectedNiche || !selectedCustomer) {
+  const handleSaveReservation = async (customerId?: string) => {
+    const customerToUse = customerId ?? selectedCustomer
+    if (!selectedNiche || !customerToUse) {
       toast.error('Missing required data for reservation')
       return
     }
@@ -80,7 +72,7 @@ export default function ColumbariumPopup({ marker, onDirectionClick, isDirection
     const lotOwnerData = {
       selected: 1,
       plot_id: marker.plot_id,
-      customer_id: selectedCustomer,
+      customer_id: customerToUse,
       niche_number: selectedNiche.niche_number,
     }
 
@@ -389,92 +381,14 @@ export default function ColumbariumPopup({ marker, onDirectionClick, isDirection
 
                   {/* Customer combobox shown when Reserve is clicked */}
                   {showCustomerCombo && (
-                    <div className="bg-muted/50 mt-4 rounded-lg border p-4">
-                      <h4 className="text-muted-foreground mb-3 text-sm font-medium">Select Customer for Reservation</h4>
-
-                      {!isReservationStep ? (
-                        <Popover onOpenChange={setComboOpen} open={comboOpen}>
-                          <PopoverTrigger asChild>
-                            <Button
-                              className="w-full justify-between"
-                              disabled={isLoadingCustomers}
-                              aria-expanded={comboOpen}
-                              variant="outline"
-                              role="combobox"
-                            >
-                              {selectedCustomer
-                                ? (() => {
-                                    const customer = customers.find((c: Customer) => c.customer_id === selectedCustomer)
-                                    return customer
-                                      ? `${customer.first_name} ${customer.last_name} | ID: ${customer.customer_id}`
-                                      : 'Select a customer'
-                                  })()
-                                : isLoadingCustomers
-                                  ? 'Loading customers...'
-                                  : 'Select a customer'}
-                              <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-                            </Button>
-                          </PopoverTrigger>
-                          <PopoverContent className="w-107 p-0">
-                            <Command>
-                              <CommandInput placeholder="Search customer..." className="h-9" />
-                              <CommandList>
-                                <CommandEmpty>{isLoadingCustomers ? 'Loading customers...' : 'No customer found.'}</CommandEmpty>
-                                <CommandGroup>
-                                  {customers.map((customer: Customer) => (
-                                    <CommandItem
-                                      value={`${customer.first_name} ${customer.last_name} ${customer.customer_id}`}
-                                      onSelect={() => {
-                                        handleCustomerSelect(customer.customer_id)
-                                      }}
-                                      key={customer.customer_id}
-                                    >
-                                      {customer.first_name} {customer.last_name} | ID: {customer.customer_id}
-                                      <Check
-                                        className={cn('ml-auto h-4 w-4', selectedCustomer === customer.customer_id ? 'opacity-100' : 'opacity-0')}
-                                      />
-                                    </CommandItem>
-                                  ))}
-                                </CommandGroup>
-                              </CommandList>
-                            </Command>
-                          </PopoverContent>
-                        </Popover>
-                      ) : (
-                        // 🎯 Show selected customer and action buttons
-                        <div className="space-y-3">
-                          <div className="bg-background rounded-lg border p-3">
-                            <p className="text-sm font-medium">Selected Customer:</p>
-                            <p className="text-muted-foreground text-sm">
-                              {(() => {
-                                const customer = customers.find((c: Customer) => c.customer_id === selectedCustomer)
-                                return customer ? `${customer.first_name} ${customer.last_name} (ID: ${customer.customer_id})` : 'Unknown Customer'
-                              })()}
-                            </p>
-                          </div>
-
-                          <div className="flex gap-2">
-                            <Button
-                              onClick={() => {
-                                handleCancelReservation()
-                                setShowCustomerCombo(false)
-                              }}
-                              disabled={isSaving}
-                              className="flex-1"
-                              variant="destructive"
-                              size="sm"
-                            >
-                              <X className="mr-1 h-4 w-4" />
-                              Cancel
-                            </Button>
-                            <Button onClick={handleSaveReservation} disabled={isSaving} className="flex-1" size="sm">
-                              <Save className="mr-1 h-4 w-4" />
-                              {isSaving ? 'Saving...' : 'Save'}
-                            </Button>
-                          </div>
-                        </div>
-                      )}
-                    </div>
+                    <CustomerSelectForm
+                      title="Select Customer for Reservation"
+                      onCancel={handleCancelReservation}
+                      isSaving={isSaving}
+                      onSave={(customerId) => {
+                        handleSaveReservation(customerId)
+                      }}
+                    />
                   )}
                 </>
               )}

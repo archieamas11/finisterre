@@ -52,7 +52,7 @@ function buildStatusCircleIcon(color: string) {
 }
 
 //  Helper: popup content for columbarium vs single plot
-function renderPopupContent(marker: ConvertedMarker, backgroundColor: string, popupCloseTick: number) {
+function renderPopupContent(marker: ConvertedMarker, backgroundColor: string) {
   const isColumbarium = !!(marker.rows && marker.columns)
   if (isColumbarium) {
     return (
@@ -65,7 +65,7 @@ function renderPopupContent(marker: ConvertedMarker, backgroundColor: string, po
   }
   return (
     <Popup className="leaflet-theme-popup" closeButton={false} offset={[2, 10]} minWidth={600} maxWidth={600}>
-      <SinglePlotLocations backgroundColor={backgroundColor} marker={marker} popupCloseTick={popupCloseTick} />
+      <SinglePlotLocations backgroundColor={backgroundColor} marker={marker} />
     </Popup>
   )
 }
@@ -249,8 +249,6 @@ export default function AdminMapLayout() {
     }
   }, [])
 
-  // Track popup close events to reset child UI (like comboboxes)
-  const [popupCloseTick, setPopupCloseTick] = useState(0)
   // Function to handle popup opening - invalidate cache for fresh data
   const handlePopupOpen = (plot_id: string) => {
     // Invalidate the specific plot details cache when popup opens
@@ -389,9 +387,8 @@ export default function AdminMapLayout() {
                           onEditComplete={onEditComplete}
                           onSaveSuccess={() => setSelectedPlotForEdit(null)}
                           onPopupOpen={() => handlePopupOpen(marker.plot_id)}
-                          onPopupClose={() => setPopupCloseTick((t) => t + 1)}
                         >
-                          {renderPopupContent(marker, backgroundColor, popupCloseTick)}
+                          {renderPopupContent(marker, backgroundColor)}
                         </EditableMarker>
                       )
                     })}
@@ -427,9 +424,8 @@ export default function AdminMapLayout() {
                         onEditComplete={onEditComplete}
                         onSaveSuccess={() => setSelectedPlotForEdit(null)}
                         onPopupOpen={() => handlePopupOpen(marker.plot_id)}
-                        onPopupClose={() => setPopupCloseTick((t) => t + 1)}
                       >
-                        {renderPopupContent(marker, backgroundColor, popupCloseTick)}
+                        {renderPopupContent(marker, backgroundColor)}
                       </EditableMarker>
                     )
                   })}

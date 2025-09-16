@@ -1,7 +1,6 @@
 import { Capacitor } from '@capacitor/core'
-import { Suspense } from 'react'
+import { Suspense, useLayoutEffect } from 'react'
 import React from 'react'
-import { useEffect } from 'react'
 import { ErrorBoundary } from 'react-error-boundary'
 import { BrowserRouter, Routes, Route, Navigate, useNavigate, useLocation } from 'react-router-dom'
 
@@ -35,8 +34,8 @@ function AppRoutes() {
   const navigate = useNavigate()
   const location = useLocation()
 
-  useEffect(() => {
-    // Only redirect native platforms to their specific landing pages when on root path
+  useLayoutEffect(() => {
+    // Redirect native platforms to their specific landing pages when first loaded the app
     if (Capacitor.isNativePlatform() && location.pathname === '/') {
       const platform = Capacitor.getPlatform()
       if (platform === 'android') {
@@ -45,7 +44,6 @@ function AppRoutes() {
         navigate('/landing-ios', { replace: true })
       }
     }
-    // Web users can navigate freely between all routes
   }, [navigate, location.pathname])
 
   return (
@@ -107,7 +105,7 @@ function AppRoutes() {
             <Route element={<AdminControlPanel />} path="control-panel" />
           </Route>
 
-          {/* Catch all unmatched routes */}
+          {/* Catch all invalid routes */}
           <Route element={<Navigate to="/" />} path="*" />
         </Routes>
       </ErrorBoundary>

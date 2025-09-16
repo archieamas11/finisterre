@@ -1,3 +1,5 @@
+import { AiFillEye } from 'react-icons/ai'
+import { HiLibrary } from 'react-icons/hi'
 import { Printer } from 'lucide-react'
 import React from 'react'
 import { BiMessageSquareEdit } from 'react-icons/bi'
@@ -10,6 +12,8 @@ import { Button } from '@/components/ui/button'
 import { Sheet, SheetContent } from '@/components/ui/sheet'
 import CustomerForm from '@/pages/admin/interment/customer/CustomerForm'
 import { calculateYearsBuried } from '@/utils/date.utils'
+import GetDirectionButton from '@/pages/webmap/components/get-direction-button'
+import { ShareButton } from '@/pages/webmap/components/share-button'
 
 interface ViewCustomerDialogProps {
   open: boolean
@@ -75,25 +79,91 @@ function DeceasedInfoCard({ deceased }: { deceased: LocalDeceasedInfo }) {
 
 // Component for rendering combined property and deceased information
 function PropertyDeceasedCard({ lot }: { lot: LotInfo }) {
+  // Normalize to [lat, lng]. If incoming is [lng, lat], swap based on value ranges.
+  const toLatLng = React.useCallback((coords?: unknown): [number, number] | null => {
+    if (coords == null) return null
+
+    // Helper: extract numeric tokens from input (array, object, or string)
+    const extractNumbers = (input: unknown): number[] => {
+      if (Array.isArray(input))
+        return input
+          .slice(0, 2)
+          .map((v) => (typeof v === 'string' ? parseFloat(v) : Number(v)))
+          .filter((n) => !Number.isNaN(n))
+      if (typeof input === 'object') {
+        const o = input as Record<string, unknown>
+        if (o.lat !== undefined && o.lng !== undefined) return [Number(o.lat), Number(o.lng)].filter((n) => !Number.isNaN(n))
+        if (o.latitude !== undefined && o.longitude !== undefined) return [Number(o.latitude), Number(o.longitude)].filter((n) => !Number.isNaN(n))
+        if (o.x !== undefined && o.y !== undefined) return [Number(o.y), Number(o.x)].filter((n) => !Number.isNaN(n))
+      }
+      if (typeof input === 'string') {
+        const s = input
+          .trim()
+          .replace(/^POINT\s*\(/i, '')
+          .replace(/\)$/, '')
+        // split by comma or whitespace
+        const parts = s.split(/\s*,\s*|\s+/).filter(Boolean)
+        return parts
+          .map((p) => parseFloat(p))
+          .filter((n) => !Number.isNaN(n))
+          .slice(0, 2)
+      }
+      return []
+    }
+
+    const nums = extractNumbers(coords)
+    if (nums.length < 2) return null
+
+    // If first looks like longitude (>90) and second looks like latitude (<=90), swap to [lat, lng]
+    const [a, b] = nums
+    const isLngLat = Math.abs(a) > 90 && Math.abs(b) <= 90
+    return isLngLat ? [b, a] : [a, b]
+  }, [])
+
+  const coordsLatLng = toLatLng(lot.coordinates)
   const hasGraveLot = lot.block != null && lot.block !== '' && lot.lot_plot_id != null
   const hasNiche = lot.category != null && lot.category !== '' && lot.niche_number != null
   const hasDeceased = Array.isArray(lot.deceased_info) && lot.deceased_info.length > 0
+  const locationLabel = hasGraveLot
+    ? `Block ${lot.block ?? ''} Grave ${lot.lot_plot_id ?? ''}`
+    : hasNiche
+      ? `${lot.category ?? ''} ${lot.plot_id ?? ''} Niche ${lot.niche_number ?? ''}`
+      : 'Unknown location'
 
   return (
     <div className="bg-card space-y-4 rounded-lg border p-4">
       {/* Property Information Header */}
       <div className="border-b pb-2">
-        <h4 className="flex items-center gap-2 text-sm font-medium">🏛️ Property Information</h4>
+        <h4 className="flex items-center gap-2 text-sm font-medium">
+          <HiLibrary /> Property Information
+        </h4>
       </div>
 
       {/* Property Details */}
       <div className="space-y-2">
         {hasGraveLot && (
-          <div className="flex items-center gap-3">
-            <div className="bg-primary/10 text-primary rounded p-2 text-sm">🪦</div>
-            <div>
-              <div className="font-medium">Block {lot.block}</div>
-              <div className="text-muted-foreground text-sm">Grave {lot.lot_plot_id}</div>
+          <div className="flex justify-between">
+            <div className="flex gap-2">
+              <div>
+                <div className="font-medium">Block {lot.block}</div>
+                <div className="text-muted-foreground text-sm">Grave {lot.lot_plot_id}</div>
+              </div>
+            </div>
+            <div className="flex gap-2">
+              <GetDirectionButton className="h-8 w-8 rounded-full text-white" title="Navigate" size={'sm'} variant={'outline'} />
+              <Button size={'sm'} variant={'outline'} className="h-8 w-8 rounded-full text-white">
+                <AiFillEye />
+              </Button>
+              {coordsLatLng && (
+                <ShareButton
+                  coords={coordsLatLng}
+                  location={locationLabel}
+                  side="bottom"
+                  className="h-8 w-8 rounded-full"
+                  variant={'outline'}
+                  size={'sm'}
+                />
+              )}
             </div>
           </div>
         )}
@@ -114,7 +184,7 @@ function PropertyDeceasedCard({ lot }: { lot: LotInfo }) {
       {/* Deceased Information Section */}
       <div className="space-y-3">
         <div className="border-b pb-2">
-          <h4 className="flex items-center gap-2 text-sm font-medium">👥 Deceased Information</h4>
+          <h4 className="flex items-center gap-2 text-sm font-medium">Deceased Information</h4>
         </div>
 
         {hasDeceased ? (

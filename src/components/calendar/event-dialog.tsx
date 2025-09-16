@@ -195,7 +195,7 @@ export function EventDialog({ event, isOpen, onClose, onSave, onDelete }: EventD
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
-      <DialogContent className="sm:max-w-[425px]">
+      <DialogContent className="sm:max-w-[1000px]">
         <DialogHeader>
           <DialogTitle>{event?.id ? 'Edit Event' : 'Create Event'}</DialogTitle>
           <DialogDescription className="sr-only">
@@ -203,158 +203,178 @@ export function EventDialog({ event, isOpen, onClose, onSave, onDelete }: EventD
           </DialogDescription>
         </DialogHeader>
         {error && <div className="bg-destructive/15 text-destructive rounded-md px-3 py-2 text-sm">{error}</div>}
-        <div className="grid gap-4 py-4">
-          <div className="*:not-first:mt-1.5">
-            <Label htmlFor="title">Title</Label>
-            <Input id="title" value={title} onChange={(e) => setTitle(e.target.value)} />
-          </div>
 
-          <div className="*:not-first:mt-1.5">
-            <Label htmlFor="description">Description</Label>
-            <Textarea id="description" value={description} onChange={(e) => setDescription(e.target.value)} rows={3} />
-          </div>
-
-          <div className="flex gap-4">
-            <div className="flex-1 *:not-first:mt-1.5">
-              <Label htmlFor="start-date">Start Date</Label>
-              <Popover open={startDateOpen} onOpenChange={setStartDateOpen}>
-                <PopoverTrigger asChild>
-                  <Button
-                    id="start-date"
-                    variant={'outline'}
-                    className={cn(
-                      'group bg-background hover:bg-background border-input w-full justify-between px-3 font-normal outline-offset-0 outline-none focus-visible:outline-[3px]',
-                      !startDate && 'text-muted-foreground',
-                    )}
-                  >
-                    <span className={cn('truncate', !startDate && 'text-muted-foreground')}>
-                      {startDate ? format(startDate, 'PPP') : 'Pick a date'}
-                    </span>
-                    <RiCalendarLine size={16} className="text-muted-foreground/80 shrink-0" aria-hidden="true" />
-                  </Button>
-                </PopoverTrigger>
-                <PopoverContent className="w-auto p-2" align="start">
-                  <Calendar
-                    mode="single"
-                    selected={startDate}
-                    defaultMonth={startDate}
-                    onSelect={(date) => {
-                      if (date) {
-                        setStartDate(date)
-                        // If end date is before the new start date, update it to match the start date
-                        if (isBefore(endDate, date)) {
-                          setEndDate(date)
-                        }
-                        setError(null)
-                        setStartDateOpen(false)
-                      }
-                    }}
-                  />
-                </PopoverContent>
-              </Popover>
-            </div>
-
-            {!allDay && (
-              <div className="min-w-28 *:not-first:mt-1.5">
-                <Label htmlFor="start-time">Start Time</Label>
-                <Select value={startTime} onValueChange={setStartTime}>
-                  <SelectTrigger id="start-time">
-                    <SelectValue placeholder="Select time" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {timeOptions.map((option) => (
-                      <SelectItem key={option.value} value={option.value}>
-                        {option.label}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+        {/* Two-column layout: leftColumn = title + description, rightColumn = rest of form */}
+        <div className="py-4">
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-stretch">
+            {/* Left column */}
+            <div className="flex min-h-0 flex-col sm:w-1/2">
+              <div className="*:not-first:mt-1.5">
+                <Label htmlFor="title">Title</Label>
+                <Input id="title" value={title} onChange={(e) => setTitle(e.target.value)} />
               </div>
-            )}
-          </div>
 
-          <div className="flex gap-4">
-            <div className="flex-1 *:not-first:mt-1.5">
-              <Label htmlFor="end-date">End Date</Label>
-              <Popover open={endDateOpen} onOpenChange={setEndDateOpen}>
-                <PopoverTrigger asChild>
-                  <Button
-                    id="end-date"
-                    variant={'outline'}
-                    className={cn(
-                      'group bg-background hover:bg-background border-input w-full justify-between px-3 font-normal outline-offset-0 outline-none focus-visible:outline-[3px]',
-                      !endDate && 'text-muted-foreground',
-                    )}
-                  >
-                    <span className={cn('truncate', !endDate && 'text-muted-foreground')}>{endDate ? format(endDate, 'PPP') : 'Pick a date'}</span>
-                    <RiCalendarLine size={16} className="text-muted-foreground/80 shrink-0" aria-hidden="true" />
-                  </Button>
-                </PopoverTrigger>
-                <PopoverContent className="w-auto p-2" align="start">
-                  <Calendar
-                    mode="single"
-                    selected={endDate}
-                    defaultMonth={endDate}
-                    disabled={{ before: startDate }}
-                    onSelect={(date) => {
-                      if (date) {
-                        setEndDate(date)
-                        setError(null)
-                        setEndDateOpen(false)
-                      }
-                    }}
-                  />
-                </PopoverContent>
-              </Popover>
-            </div>
-
-            {!allDay && (
-              <div className="min-w-28 *:not-first:mt-1.5">
-                <Label htmlFor="end-time">End Time</Label>
-                <Select value={endTime} onValueChange={setEndTime}>
-                  <SelectTrigger id="end-time">
-                    <SelectValue placeholder="Select time" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {timeOptions.map((option) => (
-                      <SelectItem key={option.value} value={option.value}>
-                        {option.label}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-            )}
-          </div>
-
-          <div className="flex items-center gap-2">
-            <Checkbox id="all-day" checked={allDay} onCheckedChange={(checked) => setAllDay(checked === true)} />
-            <Label htmlFor="all-day">All day</Label>
-          </div>
-
-          <div className="*:not-first:mt-1.5">
-            <Label htmlFor="location">Location</Label>
-            <Input id="location" value={location} onChange={(e) => setLocation(e.target.value)} />
-          </div>
-          <fieldset className="space-y-4">
-            <legend className="text-foreground text-sm leading-none font-medium">Etiquette</legend>
-            <RadioGroup
-              className="flex gap-1.5"
-              defaultValue={colorOptions[0]?.value}
-              value={color}
-              onValueChange={(value: EventColor) => setColor(value)}
-            >
-              {colorOptions.map((colorOption) => (
-                <RadioGroupItem
-                  key={colorOption.value}
-                  id={`color-${colorOption.value}`}
-                  value={colorOption.value}
-                  aria-label={colorOption.label}
-                  className={cn('size-6 shadow-none', colorOption.bgClass, colorOption.borderClass)}
+              {/* Make the left column a flex column and let the textarea stretch to match right column height on larger screens */}
+              <div className="mt-3 flex min-h-0 flex-1 flex-col">
+                <Label htmlFor="description">Description</Label>
+                <Textarea
+                  id="description"
+                  value={description}
+                  onChange={(e) => setDescription(e.target.value)}
+                  className="mt-3 min-h-0 flex-1 resize-none"
+                  rows={3}
                 />
-              ))}
-            </RadioGroup>
-          </fieldset>
+              </div>
+            </div>
+
+            {/* Right column */}
+            <div className="flex min-h-0 flex-col gap-4 sm:w-1/2">
+              <div className="flex gap-4">
+                <div className="flex-1 *:not-first:mt-1.5">
+                  <Label htmlFor="start-date">Start Date</Label>
+                  <Popover open={startDateOpen} onOpenChange={setStartDateOpen}>
+                    <PopoverTrigger asChild>
+                      <Button
+                        id="start-date"
+                        variant={'outline'}
+                        className={cn(
+                          'group bg-background hover:bg-background border-input w-full justify-between px-3 font-normal outline-offset-0 outline-none focus-visible:outline-[3px]',
+                          !startDate && 'text-muted-foreground',
+                        )}
+                      >
+                        <span className={cn('truncate', !startDate && 'text-muted-foreground')}>
+                          {startDate ? format(startDate, 'PPP') : 'Pick a date'}
+                        </span>
+                        <RiCalendarLine size={16} className="text-muted-foreground/80 shrink-0" aria-hidden="true" />
+                      </Button>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-auto p-2" align="start">
+                      <Calendar
+                        mode="single"
+                        selected={startDate}
+                        defaultMonth={startDate}
+                        onSelect={(date) => {
+                          if (date) {
+                            setStartDate(date)
+                            // If end date is before the new start date, update it to match the start date
+                            if (isBefore(endDate, date)) {
+                              setEndDate(date)
+                            }
+                            setError(null)
+                            setStartDateOpen(false)
+                          }
+                        }}
+                      />
+                    </PopoverContent>
+                  </Popover>
+                </div>
+
+                {!allDay && (
+                  <div className="min-w-28 *:not-first:mt-1.5">
+                    <Label htmlFor="start-time">Start Time</Label>
+                    <Select value={startTime} onValueChange={setStartTime}>
+                      <SelectTrigger id="start-time">
+                        <SelectValue placeholder="Select time" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {timeOptions.map((option) => (
+                          <SelectItem key={option.value} value={option.value}>
+                            {option.label}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                )}
+              </div>
+
+              <div className="flex gap-4">
+                <div className="flex-1 *:not-first:mt-1.5">
+                  <Label htmlFor="end-date">End Date</Label>
+                  <Popover open={endDateOpen} onOpenChange={setEndDateOpen}>
+                    <PopoverTrigger asChild>
+                      <Button
+                        id="end-date"
+                        variant={'outline'}
+                        className={cn(
+                          'group bg-background hover:bg-background border-input w-full justify-between px-3 font-normal outline-offset-0 outline-none focus-visible:outline-[3px]',
+                          !endDate && 'text-muted-foreground',
+                        )}
+                      >
+                        <span className={cn('truncate', !endDate && 'text-muted-foreground')}>
+                          {endDate ? format(endDate, 'PPP') : 'Pick a date'}
+                        </span>
+                        <RiCalendarLine size={16} className="text-muted-foreground/80 shrink-0" aria-hidden="true" />
+                      </Button>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-auto p-2" align="start">
+                      <Calendar
+                        mode="single"
+                        selected={endDate}
+                        defaultMonth={endDate}
+                        disabled={{ before: startDate }}
+                        onSelect={(date) => {
+                          if (date) {
+                            setEndDate(date)
+                            setError(null)
+                            setEndDateOpen(false)
+                          }
+                        }}
+                      />
+                    </PopoverContent>
+                  </Popover>
+                </div>
+
+                {!allDay && (
+                  <div className="min-w-28 *:not-first:mt-1.5">
+                    <Label htmlFor="end-time">End Time</Label>
+                    <Select value={endTime} onValueChange={setEndTime}>
+                      <SelectTrigger id="end-time">
+                        <SelectValue placeholder="Select time" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {timeOptions.map((option) => (
+                          <SelectItem key={option.value} value={option.value}>
+                            {option.label}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                )}
+              </div>
+
+              <div className="flex items-center gap-2">
+                <Checkbox id="all-day" checked={allDay} onCheckedChange={(checked) => setAllDay(checked === true)} />
+                <Label htmlFor="all-day">All day</Label>
+              </div>
+
+              <div className="*:not-first:mt-1.5">
+                <Label htmlFor="location">Location</Label>
+                <Input id="location" value={location} onChange={(e) => setLocation(e.target.value)} />
+              </div>
+
+              <fieldset className="space-y-4">
+                <legend className="text-foreground text-sm leading-none font-medium">Etiquette</legend>
+                <RadioGroup
+                  className="flex gap-1.5"
+                  defaultValue={colorOptions[0]?.value}
+                  value={color}
+                  onValueChange={(value: EventColor) => setColor(value)}
+                >
+                  {colorOptions.map((colorOption) => (
+                    <RadioGroupItem
+                      key={colorOption.value}
+                      id={`color-${colorOption.value}`}
+                      value={colorOption.value}
+                      aria-label={colorOption.label}
+                      className={cn('size-6 shadow-none', colorOption.bgClass, colorOption.borderClass)}
+                    />
+                  ))}
+                </RadioGroup>
+              </fieldset>
+            </div>
+          </div>
         </div>
         <DialogFooter className="flex-row sm:justify-between">
           {event?.id && (

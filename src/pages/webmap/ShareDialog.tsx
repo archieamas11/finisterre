@@ -75,7 +75,8 @@ export function ShareDialog({
 
   // Build share link aligning with navigation parser (?from=lat,lng&to=lat,lng)
   const shareLink = useMemo(() => {
-    const base = `${window.location.origin}${window.location.pathname}`
+    // const base = `${window.location.origin}${window.location.pathname}`
+    const base = `${window.location.origin}/map/`
     const toParam = `to=${coords[0].toFixed(6)},${coords[1].toFixed(6)}`
     if (currentLocation) {
       const fromParam = `from=${currentLocation[0].toFixed(6)},${currentLocation[1].toFixed(6)}`
