@@ -86,7 +86,7 @@ export function DeceasedSection({ owner, deceased, isLoading }: CombinedSectionP
               const interment = person.dead_interment ?? ''
               const yearsBuried = calculateYearsBuried(interment)
               return (
-                <div className="grid-col-2 mb-2 grid rounded-lg border px-2 text-xs">
+                <div key={person.deceased_id} className="grid-col-2 mb-2 grid rounded-lg border px-2 text-xs">
                   <div className="flex items-center justify-between">
                     <p className="truncate text-xs font-semibold">{person.dead_fullname}</p>
                     <span className="text-muted-foreground text-xs">#{person.deceased_id}</span>

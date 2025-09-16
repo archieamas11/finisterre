@@ -1,9 +1,10 @@
-import { useState, useCallback, useEffect, useMemo } from 'react'
+import { useState, useCallback, useEffect, useMemo, useRef } from 'react'
 import { SearchIcon, X, ArrowRightIcon, MapPin, Loader2, Search, AlertCircle } from 'lucide-react'
 import { AnimatePresence, motion } from 'framer-motion'
 import { Input } from '@/components/ui/input'
 import { cn } from '@/lib/utils'
 import { useQuery } from '@tanstack/react-query'
+import { useHotkeys } from 'react-hotkeys-hook'
 import { adminSearch } from '@/api/admin.api'
 import type { AdminSearchItem } from '@/types/search.types'
 
@@ -19,6 +20,7 @@ export function AdminSearchBar({ className, onSearch, onSelectResult }: AdminSea
   const [query, setQuery] = useState('')
   const [isSearching, setIsSearching] = useState(false)
   const [debounced, setDebounced] = useState('')
+  const rootRef = useRef<HTMLDivElement | null>(null)
 
   // debounce input by 250ms
   useEffect(() => {
@@ -86,8 +88,57 @@ export function AdminSearchBar({ className, onSearch, onSelectResult }: AdminSea
     if (e.key === 'Escape') setQuery('')
   }, [])
 
+  // Clear the results when clicking outside the component
+  useEffect(() => {
+    const onClick = (e: MouseEvent) => {
+      if (!rootRef.current) return
+      // if dropdown not active, nothing to do
+      if (debounced.length < 1) return
+      if (rootRef.current.contains(e.target as Node)) return
+      setQuery('')
+    }
+    window.addEventListener('click', onClick)
+    return () => window.removeEventListener('click', onClick)
+  }, [debounced])
+
+  // Allow Escape to close when dropdown is active using react-hotkeys-hook
+  useHotkeys(
+    'escape',
+    (event) => {
+      if (debounced.length < 1) return
+      event.preventDefault()
+      setQuery('')
+    },
+    { enabled: debounced.length >= 1 },
+    [debounced],
+  )
+
+  // Add custom scrollbar styles
+  useEffect(() => {
+    const style = document.createElement('style')
+    style.textContent = `
+      .custom-scrollbar::-webkit-scrollbar {
+        width: 4px;
+      }
+      .custom-scrollbar::-webkit-scrollbar-track {
+        background: transparent;
+      }
+      .custom-scrollbar::-webkit-scrollbar-thumb {
+        background: #ccc;
+        border-radius: 2px;
+      }
+      .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+        background: #aaa;
+      }
+    `
+    document.head.appendChild(style)
+    return () => {
+      document.head.removeChild(style)
+    }
+  }, [])
+
   return (
-    <div className={cn('relative w-full', className)}>
+    <div ref={rootRef} className={cn('relative w-full', className)}>
       <form onSubmit={handleSubmit} className="flex w-full gap-1" role="search" aria-label="Admin lot search">
         <div className="relative flex-1">
           <Input
@@ -144,7 +195,7 @@ export function AdminSearchBar({ className, onSearch, onSelectResult }: AdminSea
               </div>
             )}
             {!isError && (
-              <div className="max-h-80 overflow-auto">
+              <div className="custom-scrollbar max-h-80 overflow-auto">
                 {isFetching && results.length === 0 && (
                   <div className="flex flex-col items-center justify-center gap-4 py-12">
                     <div className="relative">
@@ -182,6 +233,7 @@ export function AdminSearchBar({ className, onSearch, onSelectResult }: AdminSea
                   </div>
                 )}
                 {results.length > 0 && (
+                  // result list
                   <div>
                     <div className="bg-card/90 sticky top-0 z-10 border-b px-4 py-3">
                       <div className="flex items-center justify-between">

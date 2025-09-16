@@ -2,8 +2,8 @@ import { useMutation, useQueryClient } from '@tanstack/react-query'
 import L from 'leaflet'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { Marker } from 'react-leaflet'
-import { useMapEvents } from 'react-leaflet'
 import { toast } from 'sonner'
+import { useHotkeys } from 'react-hotkeys-hook'
 
 import { updatePlotCoordinates } from '@/api/plots.api'
 import type { ConvertedMarker } from '@/types/map.types'
@@ -240,19 +240,27 @@ export default function EditableMarker({
     onEditComplete()
   }, [position, onEditComplete])
 
-  // Handle keyboard events (unchanged)
-  useMapEvents({
-    keydown(e: L.LeafletKeyboardEvent) {
+  // Handle keyboard shortcuts using react-hotkeys-hook
+  // Attach Enter -> savePosition and Escape -> cancelEditing, but only when this marker is selected
+  useHotkeys(
+    'enter, escape',
+    (event) => {
+      // Only handle when this marker is selected
       if (!isSelected) return
-      if (e.originalEvent.key === 'Enter') {
-        e.originalEvent.preventDefault()
-        savePosition()
-      } else if (e.originalEvent.key === 'Escape') {
-        e.originalEvent.preventDefault()
+      // Use the KeyboardEvent.key which is well-typed
+      const key = (event as KeyboardEvent).key
+      if (key === 'Enter') {
+        event.preventDefault()
+        void savePosition()
+      } else if (key === 'Escape') {
+        event.preventDefault()
         cancelEditing()
       }
     },
-  })
+    // enable the hotkey only when this marker is selected
+    { enabled: isSelected },
+    [isSelected, savePosition, cancelEditing],
+  )
 
   // Setup dragging behavior (unchanged)
   useEffect(() => {
