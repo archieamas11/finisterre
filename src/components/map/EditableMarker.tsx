@@ -20,6 +20,8 @@ interface EditableMarkerProps {
   onSaveSuccess?: () => void
   onPopupOpen?: () => void
   onPopupClose?: () => void
+  autoOpenPlotId?: string | null
+  registerMarkerRef?: (plotId: string, marker: L.Marker | null) => void
 }
 
 export default function EditableMarker({
@@ -34,6 +36,8 @@ export default function EditableMarker({
   onSaveSuccess,
   onPopupOpen,
   onPopupClose,
+  autoOpenPlotId,
+  registerMarkerRef,
 }: EditableMarkerProps) {
   const markerRef = useRef<L.Marker | null>(null)
   const isDraggingRef = useRef(false)
@@ -64,6 +68,17 @@ export default function EditableMarker({
       }
     }
   }, [localPosition])
+
+  // Register/unregister marker in parent registry when ref is available/cleanup
+  useEffect(() => {
+    const m = markerRef.current
+    if (registerMarkerRef) {
+      registerMarkerRef(plotId, m ?? null)
+    }
+    return () => {
+      if (registerMarkerRef) registerMarkerRef(plotId, null)
+    }
+  }, [plotId, registerMarkerRef])
 
   // Selected plot marker style to edit
   useEffect(() => {
@@ -281,6 +296,74 @@ export default function EditableMarker({
     }
   }, [isSelected, isEditable, savePosition])
 
+  // Auto-open popup when autoOpenPlotId matches this marker's plotId
+  useEffect(() => {
+    const marker = markerRef.current
+    if (!autoOpenPlotId) return
+    if (!marker) {
+      console.log('[EditableMarker] auto-open skipped: no marker ref', { plotId, autoOpenPlotId, isEditable })
+      return
+    }
+    if (autoOpenPlotId !== plotId) {
+      // not for this marker
+      return
+    }
+    if (isEditable) {
+      console.log('[EditableMarker] auto-open skipped (edit mode active)', { plotId })
+      return
+    }
+
+    let cancelled = false
+    let attempts = 0
+
+    const tryOpen = () => {
+      if (cancelled) return
+      const popup = marker.getPopup?.()
+      // Wait until popup is bound (child <Popup> mounted) and marker is on map
+      const onMap = Boolean((marker as any)._map)
+      console.log('[EditableMarker] tryOpen', { plotId, attempts, hasPopup: Boolean(popup), onMap })
+      if (!popup || !onMap) {
+        attempts += 1
+        if (attempts < 15) {
+          // retry ~15 times over ~1.5s total
+          window.setTimeout(tryOpen, 100)
+        }
+        return
+      }
+
+      try {
+        if (marker.isPopupOpen()) {
+          console.log('[EditableMarker] popup already open → invoking onPopupOpen', { plotId })
+          onPopupOpen?.()
+        } else {
+          console.log('[EditableMarker] opening popup', { plotId })
+          marker.openPopup()
+          // Fallback: if still not open after a short tick, try firing click
+          window.setTimeout(() => {
+            if (!marker.isPopupOpen()) {
+              console.log('[EditableMarker] openPopup had no effect, firing click()', { plotId })
+              try {
+                marker.fire('click')
+              } catch {}
+            }
+          }, 80)
+        }
+      } catch {
+        // no-op
+      }
+    }
+
+    // If marker is already on map, try shortly; also try when marker is added
+    const immediate = window.setTimeout(tryOpen, 120)
+    marker.once('add', tryOpen)
+
+    return () => {
+      cancelled = true
+      window.clearTimeout(immediate)
+      marker.off('add', tryOpen)
+    }
+  }, [autoOpenPlotId, plotId, isEditable, onPopupOpen])
+
   // Handle marker click
   const handleMarkerClick = useCallback(() => {
     // Prevent click during drag
@@ -299,19 +382,31 @@ export default function EditableMarker({
 
   // Event handlers
   const eventHandlers = useMemo(() => {
-    const handlers: Record<string, (...args: unknown[]) => void> = {
-      click: handleMarkerClick,
+    const handlers: Record<string, () => void> = {
+      click: function () {
+        console.log('[EditableMarker] click plot', plotId, 'editable', isEditable, 'selected', isSelected)
+        handleMarkerClick()
+      },
     }
     // Only add popup handlers when not in edit mode
     if (!isEditable) {
-      if (onPopupOpen) handlers.popupopen = onPopupOpen
-      if (onPopupClose) handlers.popupclose = onPopupClose
+      if (onPopupOpen)
+        handlers.popupopen = function () {
+          console.log('[EditableMarker] popupopen plot', plotId)
+          onPopupOpen()
+        }
+      if (onPopupClose)
+        handlers.popupclose = function () {
+          console.log('[EditableMarker] popupclose plot', plotId)
+          onPopupClose()
+        }
     }
     return handlers
   }, [handleMarkerClick, isEditable, onPopupOpen, onPopupClose])
 
   return (
     <Marker ref={markerRef} position={localPosition} icon={markerIcon} eventHandlers={eventHandlers} draggable={isSelected && isEditable}>
+      {/* Debug render log removed to avoid bundler parse issues */}
       {/* Only render popup content when not in editable mode */}
       {!isEditable && children}
     </Marker>

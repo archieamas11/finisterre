@@ -19,14 +19,14 @@ interface CustomClusterManagerProps {
     onDirectionClick: (coordinates: [number, number]) => void
     block: string
   }>
-  // 🔍 Search related props
+  // Search related props
   searchResult: any | null
   highlightedNiche: string | null
-  // 👤 User plots
+  // User plots
   userMarkers?: ConvertedMarker[]
 }
 
-// ⚡️ Calculate centroid of marker group for cluster positioning
+// Calculate centroid of marker group for cluster positioning
 function calculateCentroid(markers: ConvertedMarker[]): [number, number] {
   if (markers.length === 0) return [0, 0]
 
@@ -43,7 +43,7 @@ function calculateCentroid(markers: ConvertedMarker[]): [number, number] {
 
 // Removed viewport pruning to prevent popup loss when marker scrolls off-screen.
 
-// 🎯 Custom cluster marker that shows group summary and handles clicks
+// Custom cluster marker that shows group summary and handles clicks
 interface CustomClusterMarkerProps {
   groupKey: string
   markers: ConvertedMarker[]
@@ -95,7 +95,7 @@ const CustomClusterMarker = memo(({ groupKey, markers, onClusterClick }: CustomC
 
 CustomClusterMarker.displayName = 'CustomClusterMarker'
 
-// 🎯 Component that renders markers for selected group with viewport optimization
+// Component that renders markers for selected group with viewport optimization
 interface SelectiveGroupMarkersProps {
   groupKey: string
   markers: ConvertedMarker[]
@@ -111,7 +111,6 @@ interface SelectiveGroupMarkersProps {
 
 const SelectiveGroupMarkers = memo(
   ({ groupKey, markers, onDirectionClick, isDirectionLoading, PlotMarkersComponent }: SelectiveGroupMarkersProps) => {
-    // Simpler: always render all markers for the group to keep popups persistent off-screen.
     const block = useMemo(() => (groupKey.startsWith('block:') ? groupKey.split('block:')[1] : ''), [groupKey])
     return <PlotMarkersComponent markers={markers} isDirectionLoading={isDirectionLoading} onDirectionClick={onDirectionClick} block={block} />
   },
@@ -119,7 +118,7 @@ const SelectiveGroupMarkers = memo(
 
 SelectiveGroupMarkers.displayName = 'SelectiveGroupMarkers'
 
-// 🎯 Main cluster manager component
+// Main cluster manager component
 const CustomClusterManager = memo(
   ({
     markersByGroup,
@@ -133,10 +132,10 @@ const CustomClusterManager = memo(
     highlightedNiche: _highlightedNiche,
     userMarkers,
   }: CustomClusterManagerProps) => {
-    // 🔍 Check if we're in search mode with results
+    // Check if we're in search mode with results
     const isSearchActive = searchResult?.success && searchResult.data
 
-    // 🎯 Handle cluster click - now uses external handler
+    // Handle cluster click - now uses external handler
     const handleClusterClick = useCallback(
       (groupKey: string) => {
         onClusterClick(groupKey)
@@ -144,9 +143,9 @@ const CustomClusterManager = memo(
       [onClusterClick],
     )
 
-    // 🎯 Render cluster icons based on view mode and selection
+    // Render cluster icons based on view mode and selection
     const renderClusters = useMemo(() => {
-      // 🔍 If search is active or in user-plots mode, don't show clusters
+      // If search is active or in user-plots mode, don't show clusters
       if (isSearchActive || clusterViewMode === 'user-plots') {
         return null
       }
@@ -167,9 +166,9 @@ const CustomClusterManager = memo(
       return null
     }, [markersByGroup, clusterViewMode, selectedGroups, handleClusterClick, isSearchActive])
 
-    // 🎯 Render markers for selected groups, search results, or user plots
+    // Render markers for selected groups, search results, or user plots
     const renderSelectedGroups = useMemo(() => {
-      // � If in user-plots mode, show user-owned plots without clustering
+      // If in user-plots mode, show user-owned plots without clustering
       if (clusterViewMode === 'user-plots' && userMarkers && userMarkers.length > 0) {
         return (
           <SelectiveGroupMarkers
@@ -183,7 +182,7 @@ const CustomClusterManager = memo(
         )
       }
 
-      // �🔍 If search is active, render only the search result
+      // If search is active, render only the search result
       if (isSearchActive && searchResult.data) {
         const { plot_id } = searchResult.data
 

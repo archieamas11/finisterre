@@ -81,6 +81,43 @@ export default function AdminMapLayout() {
   const [mapInstance, setMapInstance] = useState<L.Map | null>(null)
   const [autoOpenPlotId, setAutoOpenPlotId] = useState<string | null>(null)
   const [highlightedNiche, setHighlightedNiche] = useState<string | null>(null)
+  const [activeSearchMarker, setActiveSearchMarker] = useState<ConvertedMarker | null>(null)
+  // Admin add/edit state (restored)
+  const [isAddingMarker, setIsAddingMarker] = useState(false)
+  const [selectedCoordinates, setSelectedCoordinates] = useState<[number, number] | null>(null)
+  const [showAddDialog, setShowAddDialog] = useState(false)
+  const [isEditingMarker, setIsEditingMarker] = useState(false)
+  const [selectedPlotForEdit, setSelectedPlotForEdit] = useState<string | null>(null)
+  const locateRef = useRef<(() => void) | null>(null)
+  const requestLocate = () => {
+    if (locateRef.current) locateRef.current()
+  }
+  // Guide overlay + bounds + reset view (restored)
+  const [guide4Data, setGuide4Data] = useState<GeoJSON.GeoJSON | null>(null)
+  const bounds = useMemo(
+    () =>
+      [
+        [10.248073279164613, 123.79742173990627],
+        [10.249898252065757, 123.79838766292835],
+      ] as [[number, number], [number, number]],
+    [],
+  )
+  const resetView = useCallback(() => {
+    if (mapInstance) {
+      const centerLat = (bounds[0][0] + bounds[1][0]) / 2
+      const centerLng = (bounds[0][1] + bounds[1][1]) / 2
+      mapInstance.flyTo([centerLat, centerLng], 18)
+    }
+  }, [mapInstance, bounds])
+  const markerRegistryRef = useRef<Record<string, L.Marker | null>>({})
+  const registerMarkerRef = useCallback((plotId: string, marker: L.Marker | null) => {
+    markerRegistryRef.current[plotId] = marker
+    if (marker) {
+      marker.on('popupopen', function () {
+        console.log('[AdminMapLayout] marker popupopen for plot', plotId)
+      })
+    }
+  }, [])
 
   const searchLot = useCallback(
     async (lotId: string) => {
@@ -99,18 +136,40 @@ export default function AdminMapLayout() {
     [markers, mapInstance],
   )
 
-  // Handle click from search results list
+  // Handle click from search results list (restored)
   const handleSelectSearchResult = useCallback(
     (item: AdminSearchItem) => {
-      const marker = markers.find((m: ConvertedMarker) => m.plot_id === String(item.plot_id))
-      if (!marker || !mapInstance) return
+      console.log('[AdminMapLayout] select result', { item })
+      // Ensure we are not in edit mode so popups can render
+      if (isEditingMarker) {
+        console.log('[AdminMapLayout] exiting edit mode for popup open')
+        setIsEditingMarker(false)
+        setSelectedPlotForEdit(null)
+        document.body.classList.remove('edit-marker-mode')
+      }
+
+      const marker = markers.find((m: ConvertedMarker) => String(m.plot_id) === String(item.plot_id))
+      if (!marker) {
+        console.log('[AdminMapLayout] marker not found for plot_id', item.plot_id, 'available markers:', markers.length)
+        return
+      }
 
       const targetPlotId = String(item.plot_id)
       const targetNiche = item.niche_number ? String(item.niche_number) : null
 
       const openTargetPopup = () => {
+        console.log('[AdminMapLayout] openTargetPopup', { targetPlotId, targetNiche })
         setHighlightedNiche(targetNiche)
+        setActiveSearchMarker(marker)
         setAutoOpenPlotId(targetPlotId)
+      }
+
+      // Show popup immediately, even if the map isn't ready yet.
+      openTargetPopup()
+
+      if (!mapInstance) {
+        console.log('[AdminMapLayout] mapInstance not ready yet; will skip flyTo for now')
+        return
       }
 
       const desiredZoom = 20
@@ -119,18 +178,18 @@ export default function AdminMapLayout() {
       const center = mapInstance.getCenter()
       const isAtPosition = Math.abs(center.lat - lat) < 1e-6 && Math.abs(center.lng - lng) < 1e-6
 
-      // If we're already at or beyond the desired zoom and centered, open immediately
       if (currentZoom >= desiredZoom && isAtPosition) {
+        console.log('[AdminMapLayout] already centered at zoom, opening immediately')
         openTargetPopup()
         return
       }
 
-      // Otherwise, wait for moveend; also set a fallback in case the event doesn't fire
       let fired = false
       const onMoveEnd = () => {
         if (fired) return
         fired = true
         mapInstance.off('moveend', onMoveEnd)
+        console.log('[AdminMapLayout] moveend fired → opening popup')
         openTargetPopup()
       }
       mapInstance.on('moveend', onMoveEnd)
@@ -138,41 +197,28 @@ export default function AdminMapLayout() {
         if (fired) return
         fired = true
         mapInstance.off('moveend', onMoveEnd)
+        console.log('[AdminMapLayout] moveend fallback → opening popup')
         openTargetPopup()
       }, 750)
 
-      // Center and zoom; clustering is disabled at 20 so marker exists after moveend
+      console.log('[AdminMapLayout] flyTo', { position: marker.position, desiredZoom })
       mapInstance.flyTo(marker.position, desiredZoom, { animate: true })
     },
-    [markers, mapInstance],
+    [markers, mapInstance, isEditingMarker],
   )
 
-  const [guide4Data, setGuide4Data] = useState<GeoJSON.GeoJSON | null>(null)
-  const bounds = useMemo(
-    () =>
-      [
-        [10.248073279164613, 123.79742173990627],
-        [10.249898252065757, 123.79838766292835],
-      ] as [[number, number], [number, number]],
-    [],
-  )
-
-  const resetView = useCallback(() => {
-    if (mapInstance) {
-      const centerLat = (bounds[0][0] + bounds[1][0]) / 2
-      const centerLng = (bounds[0][1] + bounds[1][1]) / 2
-      mapInstance.flyTo([centerLat, centerLng], 18)
+  // If activeSearchMarker was set before mapInstance became available, perform the fly when possible
+  useEffect(() => {
+    if (!activeSearchMarker || !mapInstance) return
+    const desiredZoom = 20
+    const [lat, lng] = activeSearchMarker.position
+    const center = mapInstance.getCenter()
+    const isAtPosition = Math.abs(center.lat - lat) < 1e-6 && Math.abs(center.lng - lng) < 1e-6
+    if (!isAtPosition || mapInstance.getZoom() < desiredZoom) {
+      console.log('[AdminMapLayout] post-ready flyTo', { position: activeSearchMarker.position, desiredZoom })
+      mapInstance.flyTo(activeSearchMarker.position, desiredZoom, { animate: true })
     }
-  }, [mapInstance, bounds])
-  const [isAddingMarker, setIsAddingMarker] = useState(false)
-  const [selectedCoordinates, setSelectedCoordinates] = useState<[number, number] | null>(null)
-  const [showAddDialog, setShowAddDialog] = useState(false)
-  const [isEditingMarker, setIsEditingMarker] = useState(false)
-  const [selectedPlotForEdit, setSelectedPlotForEdit] = useState<string | null>(null)
-  const locateRef = useRef<(() => void) | null>(null)
-  const requestLocate = () => {
-    if (locateRef.current) locateRef.current()
-  }
+  }, [activeSearchMarker, mapInstance])
 
   const toggleAddMarker = () => {
     setIsAddingMarker((prev) => {
@@ -352,23 +398,34 @@ export default function AdminMapLayout() {
           <MapStats />
           <AddMarkerInstructions isVisible={isAddingMarker} />
           <EditMarkerInstructions isVisible={isEditingMarker} step={selectedPlotForEdit ? 'edit' : 'select'} />
-          <MapContainer
-            className="h-full w-full rounded-lg"
-            markerZoomAnimation={true}
-            scrollWheelZoom={true}
-            fadeAnimation={true}
-            zoomControl={false}
-            bounds={bounds}
-            maxZoom={25}
-            zoom={18}
-            transform3DLimit={0}
-            inertia={true}
-            inertiaDeceleration={3000}
-            inertiaMaxSpeed={1000}
-            easeLinearity={0.25}
-            worldCopyJump={false}
-            maxBoundsViscosity={1.0}
-          >
+          <MapContainer className="h-full w-full rounded-lg" zoomControl={false} bounds={bounds} maxZoom={25} zoom={18}>
+            {/* Floating popup for search result to ensure it opens reliably */}
+            {activeSearchMarker && (
+              <Popup
+                className="leaflet-theme-popup"
+                closeButton={false}
+                offset={[2, 10]}
+                minWidth={activeSearchMarker.rows && activeSearchMarker.columns ? 450 : 600}
+                maxWidth={activeSearchMarker.rows && activeSearchMarker.columns ? undefined : 600}
+                position={activeSearchMarker.position}
+                eventHandlers={{
+                  add: () => handlePopupOpen(activeSearchMarker.plot_id),
+                  remove: () => {
+                    setActiveSearchMarker(null)
+                    setHighlightedNiche(null)
+                    setAutoOpenPlotId(null)
+                  },
+                }}
+              >
+                {activeSearchMarker.rows && activeSearchMarker.columns ? (
+                  <div className="w-full p-2">
+                    <ColumbariumPopup marker={activeSearchMarker} highlightedNiche={highlightedNiche ?? undefined} />
+                  </div>
+                ) : (
+                  <SinglePlotLocations backgroundColor={getCategoryBackgroundColor(activeSearchMarker.category)} marker={activeSearchMarker} />
+                )}
+              </Popup>
+            )}
             <TileLayer
               url="https://services.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"
               maxNativeZoom={18}
@@ -438,6 +495,8 @@ export default function AdminMapLayout() {
                           onEditComplete={onEditComplete}
                           onSaveSuccess={() => setSelectedPlotForEdit(null)}
                           onPopupOpen={() => handlePopupOpen(marker.plot_id)}
+                          autoOpenPlotId={autoOpenPlotId}
+                          registerMarkerRef={registerMarkerRef}
                           // If this marker is targeted by search, open its popup once
                           onPopupClose={() => {
                             if (autoOpenPlotId === marker.plot_id) {
@@ -482,6 +541,8 @@ export default function AdminMapLayout() {
                         onEditComplete={onEditComplete}
                         onSaveSuccess={() => setSelectedPlotForEdit(null)}
                         onPopupOpen={() => handlePopupOpen(marker.plot_id)}
+                        autoOpenPlotId={autoOpenPlotId}
+                        registerMarkerRef={registerMarkerRef}
                         onPopupClose={() => {
                           if (autoOpenPlotId === marker.plot_id) {
                             setAutoOpenPlotId(null)

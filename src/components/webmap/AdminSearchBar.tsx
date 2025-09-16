@@ -115,7 +115,8 @@ export function AdminSearchBar({ className, onSearch, onSelectResult }: AdminSea
                     className={cn('hover:bg-accent hover:text-accent-foreground cursor-pointer px-3 py-2 text-sm')}
                     onClick={() => {
                       onSelectResult?.(item)
-                      setQuery('') // Clear search after selection
+                      console.log('Selected search item:', item)
+                      setQuery('')
                     }}
                   >
                     <div className="font-medium">{primary}</div>
