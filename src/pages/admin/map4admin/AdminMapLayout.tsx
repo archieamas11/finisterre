@@ -240,7 +240,7 @@ export default function AdminMapLayout() {
         const json = (await res.json()) as GeoJSON.GeoJSON
         if (mounted) setGuide4Data(json)
       } catch {
-        // 🧯 Optional layer load failure ignored (non-critical visual enhancement)
+        // Optional layer load failure ignored (non-critical visual enhancement)
       }
     }
     load()
@@ -357,7 +357,7 @@ export default function AdminMapLayout() {
               />
             )}
 
-            {/* 🎯 Map click handler for adding markers */}
+            {/* Map click handler for adding markers */}
             <MapClickHandler isAddingMarker={isAddingMarker} onMapClick={onMapClick} />
             <MainEntranceMarkers />
             <ChapelMarkers />
@@ -434,7 +434,7 @@ export default function AdminMapLayout() {
             })}
           </MapContainer>
         </div>
-        {/* 📝 Add Plot Dialog */}
+        {/* Add Plot Dialog */}
         <AddPlotMarkerDialog open={showAddDialog} onOpenChange={onDialogClose} coordinates={selectedCoordinates} onDoneAdd={onAddDone} />
       </LocateContext.Provider>
     </div>

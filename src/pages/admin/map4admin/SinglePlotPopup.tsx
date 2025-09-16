@@ -108,12 +108,20 @@ export default function SinglePlotLocations({ marker, popupCloseTick }: PlotLoca
   }, [popupCloseTick])
 
   const openAddFlow = useCallback(() => {
+    // If the plot already has two or more deceased, prevent creating more
+    const existingCount = Array.isArray(deceasedList) ? deceasedList.filter(Boolean).length : 0
+    if (existingCount >= 2) {
+      toast.error('This plot already reached the maximum of 2 bodies.')
+      return
+    }
+
     if (!ownerData) {
       setShowCustomerCombo(true)
       return
     }
+
     setIsDeceasedDialogOpen(true)
-  }, [ownerData])
+  }, [ownerData, deceasedList])
 
   // selection is handled by the reusable component
 

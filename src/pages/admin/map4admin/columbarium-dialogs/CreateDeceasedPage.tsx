@@ -40,7 +40,7 @@ export default function CreateDeceased({ lotId, onSuccess }: CreateDeceasedProps
       <Button className="flex-1" onClick={() => setOpen(true)} size="sm">
         Add Deceased Record
       </Button>
-      <CreateDeceasedRecordDialog onOpenChange={setOpen} isPending={isPending} onSubmit={handleSubmit} open={open} mode="add" />
+      <CreateDeceasedRecordDialog onOpenChange={setOpen} isPending={isPending} onSubmit={handleSubmit} open={open} />
     </>
   )
 }

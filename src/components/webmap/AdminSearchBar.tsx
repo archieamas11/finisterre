@@ -9,7 +9,7 @@ interface AdminSearchBarProps {
 }
 
 // Admin variant of the public SearchToggle.
-// 🔎 Currently performs a simple callback invocation; map focusing logic can be wired later.
+// Currently performs a simple callback invocation; map focusing logic can be wired later.
 export function AdminSearchBar({ className, onSearch }: AdminSearchBarProps) {
   const [query, setQuery] = useState('')
   const [isSearching, setIsSearching] = useState(false)
