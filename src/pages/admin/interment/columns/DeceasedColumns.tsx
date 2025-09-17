@@ -1,6 +1,6 @@
 import type { ColumnDef } from '@tanstack/react-table'
 
-import { MoreHorizontal, Archive } from 'lucide-react'
+import { MoreHorizontal, Archive, MapPin } from 'lucide-react'
 import React from 'react'
 
 import type { DeceasedRecords } from '@/types/interment.types'
@@ -18,6 +18,7 @@ import {
 } from '@/components/ui/dropdown-menu'
 import { capitalizeWords } from '@/lib/stringUtils'
 import { calculateYearsBuried } from '@/utils/date.utils'
+import { AiOutlineUser } from 'react-icons/ai'
 
 const IndeterminateCheckbox = React.forwardRef<HTMLInputElement, React.InputHTMLAttributes<HTMLInputElement> & { indeterminate?: boolean }>(
   ({ indeterminate, ...props }, ref) => {
@@ -65,27 +66,31 @@ export const deceasedRecordsColumns: ColumnDef<DeceasedRecords>[] = [
   {
     header: ({ column }) => <DataTableColumnHeader column={column} title="Deceased Name" />,
     accessorKey: 'dead_fullname',
-    cell: ({ row }) =>
-      row.original.dead_fullname ? (
-        row.original.dead_fullname
-      ) : (
-        <Badge variant="secondary" asChild={false}>
-          <span>N/A</span>
-        </Badge>
-      ),
+    cell: ({ row }) => {
+      return (
+        <div className="flex items-center gap-2">
+          <div className="bg-muted flex h-6 w-6 items-center justify-center rounded-full text-sm font-medium">
+            <AiOutlineUser size={14} />
+          </div>
+          <span>{row.original.dead_fullname}</span>
+        </div>
+      )
+    },
     meta: { label: 'Deceased Name' },
   },
   {
     header: ({ column }) => <DataTableColumnHeader column={column} title="kin" />,
     accessorKey: 'full_name',
-    cell: ({ row }) =>
-      row.original.full_name ? (
-        row.original.full_name
-      ) : (
-        <Badge variant="secondary" asChild={false}>
-          <span>N/A</span>
-        </Badge>
-      ),
+    cell: ({ row }) => {
+      return (
+        <div className="flex items-center gap-2">
+          <div className="bg-muted flex h-6 w-6 items-center justify-center rounded-full text-sm font-medium">
+            <AiOutlineUser size={14} />
+          </div>
+          <span>{row.original.full_name}</span>
+        </div>
+      )
+    },
     meta: { label: 'Kin Name' },
   },
   {
@@ -97,19 +102,28 @@ export const deceasedRecordsColumns: ColumnDef<DeceasedRecords>[] = [
         : row.category && row.niche_number
           ? `${capitalizeWords(row.category)} • Niche ${row.niche_number}`
           : null,
+
     cell: ({ row }) => {
-      // Show block/plot if present, else category/niche_id, else N/A badge
       if (row.original.block && row.original.plot_id) {
-        return `Block ${row.original.block} • Grave ${row.original.plot_id}`
-      } else if (row.original.category && row.original.niche_number) {
-        return `${capitalizeWords(row.original.category)} • Niche ${row.original.niche_number}`
-      } else {
         return (
-          <Badge variant="secondary" asChild={false}>
-            <span>N/A</span>
-          </Badge>
+          <div className="flex items-center gap-2">
+            <div className="bg-muted flex h-6 w-6 items-center justify-center rounded-full text-sm font-medium">
+              <MapPin size={14} />
+            </div>
+            Block {row.original.block} • Grave {row.original.plot_id}
+          </div>
+        )
+      } else if (row.original.category && row.original.niche_number) {
+        return (
+          <div className="flex items-center gap-2">
+            <div className="bg-muted flex h-6 w-6 items-center justify-center rounded-full text-sm font-medium">
+              <MapPin size={14} />
+            </div>
+            {row.original.category} {row.original.plot_id} • Niche {row.original.niche_number}
+          </div>
         )
       }
+      return null
     },
     meta: { label: 'Buried Location' },
   },
