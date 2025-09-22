@@ -45,15 +45,13 @@ export default function PlotLocations({ marker, backgroundColor, onDirectionClic
               onClick={onDirectionClick}
               style={backgroundColor ? { background: backgroundColor } : {}}
             />
-            {!import.meta.env.PROD && (
-              <ShareButton
-                coords={[marker.position[0], marker.position[1]]}
-                location={marker.location}
-                className="h-8 w-8 rounded-full"
-                variant={'default'}
-                size={'icon'}
-              />
-            )}
+            <ShareButton
+              coords={[marker.position[0], marker.position[1]]}
+              location={marker.location}
+              className="h-8 w-8 rounded-full"
+              variant={'default'}
+              size={'icon'}
+            />
           </div>
         </div>
       </div>
