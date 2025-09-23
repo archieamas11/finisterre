@@ -29,9 +29,11 @@ const PublicMap = React.lazy(() => import('@/pages/webmap/PublicWebMap'))
 import LandingLayout from '@/layout/LandingLayout'
 import { isNativePlatform } from '@/utils/platform.utils'
 const NewsAndUpdates = React.lazy(() => import('@/pages/admin/news/NewsAndUpdates'))
+const NotFound = React.lazy(() => import('@/pages/NotFound'))
 
 function RootLanding() {
   const location = useLocation()
+  // Redirect to /landing-android if on native platform otherwise show web landing
   // Only perform redirect when exactly at root and native
   if (location.pathname === '/' && isNativePlatform()) {
     return <Navigate to="/landing-android" replace />
@@ -100,7 +102,7 @@ function AppRoutes() {
           </Route>
 
           {/* Catch all invalid routes */}
-          <Route element={<Navigate to="/" />} path="*" />
+          <Route element={<NotFound />} path="*" />
         </Routes>
       </ErrorBoundary>
     </Suspense>

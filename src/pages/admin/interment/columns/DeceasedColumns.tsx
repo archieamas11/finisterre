@@ -16,9 +16,9 @@ import {
   DropdownMenuItem,
   DropdownMenu,
 } from '@/components/ui/dropdown-menu'
-import { capitalizeWords } from '@/lib/stringUtils'
 import { calculateYearsBuried } from '@/utils/date.utils'
 import { AiOutlineUser } from 'react-icons/ai'
+import { ucwords } from '@/lib/format'
 
 const IndeterminateCheckbox = React.forwardRef<HTMLInputElement, React.InputHTMLAttributes<HTMLInputElement> & { indeterminate?: boolean }>(
   ({ indeterminate, ...props }, ref) => {
@@ -100,7 +100,7 @@ export const deceasedRecordsColumns: ColumnDef<DeceasedRecords>[] = [
       row.block && row.plot_id
         ? `Block ${row.block} • Grave ${row.plot_id}`
         : row.category && row.niche_number
-          ? `${capitalizeWords(row.category)} • Niche ${row.niche_number}`
+          ? `${ucwords(row.category)} • Niche ${row.niche_number}`
           : null,
 
     cell: ({ row }) => {
