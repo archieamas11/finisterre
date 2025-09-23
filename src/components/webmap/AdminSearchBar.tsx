@@ -148,7 +148,9 @@ export function AdminSearchBar({ className, onSearch, onSelectResult }: AdminSea
             onChange={(e) => setQuery(e.target.value)}
             onKeyDown={handleKeyDown}
             disabled={isSearching}
-            aria-label="Search lot (admin)"
+            aria-label="Search lot"
+            autoComplete="off"
+            name="search"
           />
           <div className="text-muted-foreground/80 pointer-events-none absolute inset-y-0 start-0 flex items-center justify-center ps-3">
             <SearchIcon size={16} />
