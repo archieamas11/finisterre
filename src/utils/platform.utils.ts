@@ -25,7 +25,23 @@ export const isIOS = (): boolean => {
  * @returns true if running on Android or iOS, false if running on web
  */
 export const isNativePlatform = (): boolean => {
-  return Capacitor.isNativePlatform()
+  // Use getPlatform because it is stable across Capacitor versions.
+  // Some builds report false for Capacitor.isNativePlatform() early in lifecycle.
+  const platform = Capacitor.getPlatform()
+  if (platform === 'android' || platform === 'ios') return true
+  // Heuristic fallbacks if Capacitor failed to classify yet.
+  if (typeof window !== 'undefined') {
+    interface CapacitorWindow {
+      Capacitor?: { platform?: string; isNative?: boolean }
+    }
+    const w = window as unknown as CapacitorWindow
+    // Capacitor v5/v6 may expose a native bridge object on Android/iOS
+    if (w.Capacitor?.platform === 'android' || w.Capacitor?.platform === 'ios') return true
+    if (w.Capacitor?.isNative) return true
+    // URL scheme used by Capacitor
+    if (window.location.protocol === 'capacitor:') return true
+  }
+  return false
 }
 
 /**

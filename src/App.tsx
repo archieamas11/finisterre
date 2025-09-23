@@ -1,8 +1,7 @@
-import { Capacitor } from '@capacitor/core'
-import { Suspense, useLayoutEffect } from 'react'
+import { Suspense } from 'react'
 import React from 'react'
 import { ErrorBoundary } from 'react-error-boundary'
-import { BrowserRouter, Routes, Route, Navigate, useNavigate, useLocation } from 'react-router-dom'
+import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom'
 
 import { RequireAdmin, RequireAuth, RequireUser } from '@/authRoutes'
 import Spinner from '@/components/ui/spinner'
@@ -25,28 +24,22 @@ const AdminIntermentLotOwnersPage = React.lazy(() => import('@/pages/admin/inter
 const AdminIntermentCustomerPage = React.lazy(() => import('@/pages/admin/interment/customer/CustomersLayout'))
 const AdminLayout = React.lazy(() => import('@/layout/AdminLayout'))
 const UserLayout = React.lazy(() => import('@/layout/UserLayout'))
-const AndroidLandingPage = React.lazy(() => import('@/pages/android/AndroidLandingPage'))
-const IosLandingPage = React.lazy(() => import('@/pages/ios/iosLandingPage'))
+const AndroidLayout = React.lazy(() => import('@/pages/android/AndroidLayout'))
 const PublicMap = React.lazy(() => import('@/pages/webmap/PublicWebMap'))
 import LandingLayout from '@/layout/LandingLayout'
+import { isNativePlatform } from '@/utils/platform.utils'
 const NewsAndUpdates = React.lazy(() => import('@/pages/admin/news/NewsAndUpdates'))
 
-function AppRoutes() {
-  const navigate = useNavigate()
+function RootLanding() {
   const location = useLocation()
+  // Only perform redirect when exactly at root and native
+  if (location.pathname === '/' && isNativePlatform()) {
+    return <Navigate to="/landing-android" replace />
+  }
+  return <LandingLayout />
+}
 
-  useLayoutEffect(() => {
-    // Redirect native platforms to their specific landing pages when first loaded the app
-    if (Capacitor.isNativePlatform() && location.pathname === '/') {
-      const platform = Capacitor.getPlatform()
-      if (platform === 'android') {
-        navigate('/landing-android', { replace: true })
-      } else if (platform === 'ios') {
-        navigate('/landing-ios', { replace: true })
-      }
-    }
-  }, [navigate, location.pathname])
-
+function AppRoutes() {
   return (
     <Suspense
       fallback={
@@ -58,15 +51,14 @@ function AppRoutes() {
       <ErrorBoundary FallbackComponent={ErrorFallback}>
         <Routes>
           {/* Public Routes */}
-          <Route path="/" element={<LandingLayout />} />
+          <Route path="/" element={<RootLanding />} />
           <Route path="/map" element={<PublicMap />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/forgot-password" element={<ForgotPassword />} />
           <Route path="/reset-password" element={<ResetPassword />} />
           <Route path="/logout" element={<Logout />} />
           <Route path="/unauthorized" element={<UnauthorizedPage />} />
-          <Route path="/landing-android" element={<AndroidLandingPage />} />
-          <Route path="/landing-ios" element={<IosLandingPage />} />
+          <Route path="/landing-android" element={<AndroidLayout />} />
 
           {/* User Protected Routes */}
           <Route
