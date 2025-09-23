@@ -491,7 +491,7 @@ export default function CemeteryShowcase() {
                 initial={{ opacity: 0, scale: 0.95 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ duration: 0.3 }}
-                className="max-h-[90vh] w-auto rounded-xl object-contain shadow-2xl"
+                className="max-h-[90vh] w-auto rounded-xl border-8 object-contain shadow-2xl"
               />
               <div className="absolute inset-0 flex items-center justify-between">
                 <Button
