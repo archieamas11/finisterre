@@ -5,6 +5,8 @@ import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-route
 
 import { RequireAdmin, RequireAuth, RequireUser } from '@/authRoutes'
 import Spinner from '@/components/ui/spinner'
+import LandingLayout from '@/layout/LandingLayout'
+import { isNativePlatform } from '@/utils/platform.utils'
 const ErrorFallback = React.lazy(() => import('@/components/ErrorFallback'))
 const LoginPage = React.lazy(() => import('@/auth/LoginPage'))
 const Logout = React.lazy(() => import('@/auth/Logout'))
@@ -26,8 +28,6 @@ const AdminLayout = React.lazy(() => import('@/layout/AdminLayout'))
 const UserLayout = React.lazy(() => import('@/layout/UserLayout'))
 const AndroidLayout = React.lazy(() => import('@/pages/android/AndroidLayout'))
 const PublicMap = React.lazy(() => import('@/pages/webmap/PublicWebMap'))
-import LandingLayout from '@/layout/LandingLayout'
-import { isNativePlatform } from '@/utils/platform.utils'
 const NewsAndUpdates = React.lazy(() => import('@/pages/admin/news/NewsAndUpdates'))
 const NotFound = React.lazy(() => import('@/pages/NotFound'))
 
