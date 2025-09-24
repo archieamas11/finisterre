@@ -32,13 +32,13 @@ const NavItemExpanded = ({
       <SidebarMenuItem>
         <CollapsibleTrigger asChild>
           {item.subItems ? (
-            <SidebarMenuButton isActive={isActive(item.url, item.subItems)} disabled={item.comingSoon} tooltip={item.title}>
+            <SidebarMenuButton isActive={isActive(item.url, item.subItems)} tooltip={item.title}>
               {item.icon && <item.icon />}
               <span>{item.title}</span>
               <ChevronRight className="ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
             </SidebarMenuButton>
           ) : (
-            <SidebarMenuButton aria-disabled={item.comingSoon} isActive={isActive(item.url)} tooltip={item.title} asChild>
+            <SidebarMenuButton isActive={isActive(item.url)} tooltip={item.title} asChild>
               <Link target={item.newTab ? '_blank' : undefined} to={item.url}>
                 {item.icon && <item.icon />}
                 <span>{item.title}</span>
@@ -51,7 +51,7 @@ const NavItemExpanded = ({
             <SidebarMenuSub>
               {item.subItems.map((subItem) => (
                 <SidebarMenuSubItem key={subItem.title}>
-                  <SidebarMenuSubButton aria-disabled={subItem.comingSoon} isActive={isActive(subItem.url)} asChild>
+                  <SidebarMenuSubButton isActive={isActive(subItem.url)} asChild>
                     <Link target={subItem.newTab ? '_blank' : undefined} to={subItem.url}>
                       {subItem.icon && <subItem.icon />}
                       <span>{subItem.title}</span>
@@ -72,7 +72,7 @@ const NavItemCollapsed = ({ item, isActive }: { isActive: (url: string, subItems
     <SidebarMenuItem key={item.title}>
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <SidebarMenuButton isActive={isActive(item.url, item.subItems)} disabled={item.comingSoon} tooltip={item.title}>
+          <SidebarMenuButton isActive={isActive(item.url, item.subItems)} tooltip={item.title}>
             {item.icon && <item.icon />}
             <span>{item.title}</span>
             <ChevronRight />
@@ -81,13 +81,7 @@ const NavItemCollapsed = ({ item, isActive }: { isActive: (url: string, subItems
         <DropdownMenuContent className="w-50 space-y-1" align="start" side="right">
           {item.subItems?.map((subItem) => (
             <DropdownMenuItem key={subItem.title} asChild>
-              <SidebarMenuSubButton
-                aria-disabled={subItem.comingSoon}
-                className="focus-visible:ring-0"
-                isActive={isActive(subItem.url)}
-                key={subItem.title}
-                asChild
-              >
+              <SidebarMenuSubButton className="focus-visible:ring-0" isActive={isActive(subItem.url)} asChild>
                 <Link target={subItem.newTab ? '_blank' : undefined} to={subItem.url}>
                   {subItem.icon && <subItem.icon className="[&>svg]:text-sidebar-foreground" />}
                   <span>{subItem.title}</span>
@@ -126,7 +120,7 @@ export function NavMain({ items }: NavMainProps) {
             if (!item.subItems) {
               return (
                 <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton isActive={isItemActive(item.url)} aria-disabled={item.comingSoon} tooltip={item.title} asChild>
+                  <SidebarMenuButton isActive={isItemActive(item.url)} tooltip={item.title} asChild>
                     <Link target={item.newTab ? '_blank' : undefined} to={item.url}>
                       {item.icon && <item.icon />}
                       <span>{item.title}</span>

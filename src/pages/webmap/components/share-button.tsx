@@ -16,7 +16,11 @@ interface ShareButtonProps {
 }
 
 export function ShareButton({ coords, location, className, variant, size, iconClassName, children, side = 'right' }: ShareButtonProps) {
-  const ShareButton = (
+  const isMobile = useIsMobile()
+
+  if (import.meta.env.PROD) return null
+
+  const shareDialog = (
     <ShareDialog
       coords={coords}
       location={location}
@@ -29,14 +33,14 @@ export function ShareButton({ coords, location, className, variant, size, iconCl
     </ShareDialog>
   )
 
-  if (useIsMobile()) {
-    return ShareButton
+  if (isMobile) {
+    return shareDialog
   }
 
   return (
     <Tooltip>
       <TooltipTrigger asChild>
-        <div>{ShareButton}</div>
+        <div>{shareDialog}</div>
       </TooltipTrigger>
       <TooltipContent side={side}>Share this marker location</TooltipContent>
     </Tooltip>

@@ -1,4 +1,4 @@
-import { type LucideIcon, CalendarDays, PaintBucket, MonitorCog, MapIcon, User, Home, Notebook, LayoutGrid } from 'lucide-react'
+import { type LucideIcon, CalendarDays, PaintBucket, MonitorCog, MapIcon, User, Home, Notebook, LayoutGrid, Newspaper } from 'lucide-react'
 
 export interface NavMainItem {
   url: string
@@ -6,7 +6,6 @@ export interface NavMainItem {
   isNew?: boolean
   newTab?: boolean
   icon?: LucideIcon
-  comingSoon?: boolean
   subItems?: NavSubItem[]
 }
 
@@ -16,7 +15,6 @@ export interface NavSubItem {
   isNew?: boolean
   newTab?: boolean
   icon?: LucideIcon
-  comingSoon?: boolean
 }
 
 export interface NavGroup {
@@ -70,11 +68,15 @@ export const adminSidebarItems: NavGroup[] = [
         title: 'Control Panel',
         url: '/admin/control-panel',
       },
-      // {
-      //   title: 'News & Announcements',
-      //   icon: Newspaper,
-      //   url: '/admin/news',
-      // },
+      ...(!import.meta.env.PROD
+        ? [
+            {
+              title: 'News & Announcements',
+              icon: Newspaper,
+              url: '/admin/news',
+            },
+          ]
+        : []),
     ],
   },
 ]
