@@ -65,7 +65,7 @@ function renderPopupContent(marker: ConvertedMarker, backgroundColor: string, hi
     )
   }
   return (
-    <Popup className="leaflet-theme-popup" closeButton={false} offset={[2, 3]} minWidth={600} maxWidth={600}>
+    <Popup className="leaflet-theme-popup" closeButton={false} offset={[1, 3]} minWidth={600} maxWidth={600}>
       <SinglePlotLocations backgroundColor={backgroundColor} marker={marker} />
     </Popup>
   )
