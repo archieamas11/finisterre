@@ -5,7 +5,6 @@ A modern, comprehensive cemetery management system designed to streamline record
 ## Table of Contents
 
 - [Finisterre Gardenz](#finisterre-gardenz)
-  - [Table of Contents](#table-of-contents)
   - [Project Overview](#project-overview)
   - [Tech Stack](#tech-stack)
   - [Getting Started](#getting-started)
