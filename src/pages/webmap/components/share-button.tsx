@@ -18,8 +18,6 @@ interface ShareButtonProps {
 export function ShareButton({ coords, location, className, variant, size, iconClassName, children, side = 'right' }: ShareButtonProps) {
   const isMobile = useIsMobile()
 
-  if (import.meta.env.PROD) return null
-
   const shareDialog = (
     <ShareDialog
       coords={coords}
