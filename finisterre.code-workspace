@@ -9,5 +9,6 @@
   ],
   "settings": {
     "hide-files.files": [],
+    "liveServer.settings.multiRootWorkspaceName": "finisterre_backend",
   },
 }

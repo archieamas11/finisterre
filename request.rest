@@ -2,5 +2,5 @@ POST https://api.finisterre.site/admin/admin_search.php
 Content-Type: application/json
 
 {
-    "search": "pedro"
+    "search": ""
 }

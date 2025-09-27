@@ -40,7 +40,7 @@ This project is built with a modern, robust tech stack:
 | **Routing**   | [React Router](https://reactrouter.com/)                                                                                              |
 | **Mobile**    | [Capacitor](https://capacitorjs.com/)                                                                                                 |
 | **Mapping**   | [React Leaflet](https://react-leaflet.js.org/)                                                                                        |
-| **Backend**   |[PHP](https://github.com/archieamas11/finisterre_backend/)                                                                   |
+| **Backend**   | [PHP](https://github.com/archieamas11/finisterre_backend/)                                                                            |
 | **Tooling**   | [pnpm](https://pnpm.io/), [ESLint](https://eslint.org/), [Prettier](https://prettier.io/), [Husky](https://typicode.github.io/husky/) |
 | **Testing**   | [Vitest](https://vitest.dev/)                                                                                                         |
 
