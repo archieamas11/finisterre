@@ -42,6 +42,7 @@ const categoryIcons: Record<NewsItem['category'], React.ElementType> = {
 export const newsColumns: ColumnDef<NewsItem>[] = [
   {
     id: 'select',
+    size: 1,
     header: ({ table: tbl }) => (
       <IndeterminateCheckbox
         aria-label="Select all rows"
@@ -58,11 +59,10 @@ export const newsColumns: ColumnDef<NewsItem>[] = [
         onChange={row.getToggleSelectedHandler()}
       />
     ),
-    size: 10,
   },
   {
     accessorKey: 'title',
-    size: 2,
+    size: 20,
     header: ({ column }) => <DataTableColumnHeader column={column} title="Title" />,
     cell: ({ row }) => {
       const news = row.original
@@ -78,7 +78,7 @@ export const newsColumns: ColumnDef<NewsItem>[] = [
               <span className="text-foreground line-clamp-1 font-semibold" title={news.title}>
                 {news.title}
               </span>
-              {news.excerpt ? <span className="text-muted-foreground line-clamp-2 text-xs">{news.excerpt}</span> : null}
+              {news.excerpt ? <span className="text-muted-foreground line-clamp-2 w-80 text-xs">{news.excerpt}</span> : null}
             </div>
           </div>
         </div>
@@ -88,6 +88,7 @@ export const newsColumns: ColumnDef<NewsItem>[] = [
   },
   {
     accessorKey: 'category',
+    size: 10,
     header: ({ column }) => <DataTableColumnHeader column={column} title="Category" />,
     filterFn: (row, _id, value) => {
       const selected = Array.isArray(value) ? value : []

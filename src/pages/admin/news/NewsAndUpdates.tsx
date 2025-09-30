@@ -12,9 +12,7 @@ export default function NewsAndUpdates() {
         </div>
         <p className="text-muted-foreground text-lg">Create, schedule, and review every story shared with the Finisterre community.</p>
       </div>
-      <div className="w-full">
-        <NewsTablePage />
-      </div>
+      <NewsTablePage />
     </div>
   )
 }
