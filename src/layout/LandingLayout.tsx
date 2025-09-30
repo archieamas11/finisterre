@@ -6,6 +6,7 @@ import { PulsatingButton } from '@/components/pulsating-button'
 import Spinner from '@/components/ui/spinner'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
 import { HeaderSection } from '@/pages/landing/section/HeaderSection'
+import PublicNewsAnnouncement from '@/pages/landing/section/News&Announcement'
 
 const HeroSection = lazy(() => import('@/pages/landing/section/HeroSection'))
 const FAQs = lazy(() => import('@/pages/landing/section/FAQs'))
@@ -57,6 +58,7 @@ export default function LandingLayout() {
             <FeatureSection />
             <Showcase />
             <Testimonials />
+            <PublicNewsAnnouncement />
             <FAQs />
             <Footer />
           </Suspense>

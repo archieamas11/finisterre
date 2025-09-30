@@ -1,4 +1,5 @@
 import { NewspaperIcon } from 'lucide-react'
+import NewsTablePage from './NewsTablePage'
 
 export default function NewsAndUpdates() {
   return (
@@ -9,7 +10,10 @@ export default function NewsAndUpdates() {
           <NewspaperIcon className="text-primary h-6 w-6" strokeWidth={2.5} />
           <h1 className="text-primary text-3xl font-bold">News & Announcement</h1>
         </div>
-        <p className="text-muted-foreground text-lg">View, search, and manage your customer records.</p>
+        <p className="text-muted-foreground text-lg">Create, schedule, and review every story shared with the Finisterre community.</p>
+      </div>
+      <div className="w-full">
+        <NewsTablePage />
       </div>
     </div>
   )
