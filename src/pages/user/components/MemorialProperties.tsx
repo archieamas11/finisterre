@@ -36,7 +36,7 @@ export const MemorialProperties: React.FC<Props> = ({ lot, records, onNavigate }
         <Button
           size="sm"
           variant="ghost"
-          className="mt-1 w-full bg-gradient-to-r from-indigo-500 to-purple-500 text-white shadow hover:from-indigo-600 hover:to-purple-600 sm:w-auto"
+          className="mt-1 w-full bg-[var(--brand-secondary)] text-gray-800 shadow hover:from-indigo-600 hover:to-purple-600 sm:w-auto"
           onClick={() => onNavigate(lot.coordinates)}
         >
           <MapPin className="mr-1 h-4 w-4" /> Navigate

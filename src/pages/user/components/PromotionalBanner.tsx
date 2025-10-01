@@ -58,49 +58,11 @@ export const PromotionalBanner: React.FC<PromotionalBannerProps> = ({
     <section
       aria-label="Latest announcement"
       className={cn(
-        'relative mb-10 overflow-hidden rounded-3xl border border-white/10 bg-gradient-to-br p-0 text-white shadow-2xl shadow-black/50 dark:border-white/20',
+        'relative mb-10 overflow-hidden rounded-3xl border bg-[var(--brand-primary)] p-0 text-white shadow-2xl shadow-black/50',
         variantStyles[variant],
         className,
       )}
     >
-      {/* Enhanced animated background pattern */}
-      <div className="absolute inset-0 opacity-40 mix-blend-overlay">
-        <div className="absolute inset-0 animate-pulse bg-gradient-to-r from-transparent via-white/15 to-transparent" />
-        <div
-          className="absolute inset-0 opacity-30"
-          style={{
-            backgroundImage: 'radial-gradient(circle at 25% 25%, rgba(255,255,255,0.6), transparent 70%)',
-          }}
-        />
-        {/* Additional gradient overlay for depth */}
-        <div className="absolute inset-0 bg-gradient-to-br from-white/10 via-transparent to-black/20" />
-      </div>
-
-      {/* Enhanced floating particles effect */}
-      <div className="absolute inset-0 overflow-hidden">
-        <div
-          className="absolute top-1/4 left-1/4 h-3 w-3 animate-bounce rounded-full bg-white/30 shadow-lg"
-          style={{ animationDelay: '0s', animationDuration: '3s' }}
-        />
-        <div
-          className="absolute top-1/3 right-1/3 h-2 w-2 animate-bounce rounded-full bg-white/40 shadow-md"
-          style={{ animationDelay: '1s', animationDuration: '4s' }}
-        />
-        <div
-          className="absolute bottom-1/4 left-1/2 h-2.5 w-2.5 animate-bounce rounded-full bg-white/35 shadow-lg"
-          style={{ animationDelay: '2s', animationDuration: '3.5s' }}
-        />
-        <div
-          className="absolute top-1/2 right-1/4 h-1.5 w-1.5 animate-bounce rounded-full bg-white/50 shadow-sm"
-          style={{ animationDelay: '0.5s', animationDuration: '2.5s' }}
-        />
-      </div>
-
-      {/* Subtle mesh pattern overlay */}
-      <div className="absolute inset-0 opacity-20">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_1px_1px,rgba(255,255,255,0.3)_1px,transparent_0)] bg-[length:20px_20px]" />
-      </div>
-
       <div className={cn('relative z-10 flex flex-col items-start gap-6 px-8', sizeStyles[size], 'md:flex-row md:items-center md:justify-between')}>
         <div className="max-w-2xl space-y-4">
           {/* Enhanced Badge */}
