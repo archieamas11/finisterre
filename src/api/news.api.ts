@@ -16,7 +16,7 @@ export async function getNewsList(params: GetNewsParams = {}): Promise<NewsListR
     const res = await api.post<NewsListResponse>('news/get_news.php', params)
     return res.data
   } catch (error) {
-    console.error('❌ Failed to fetch news list:', error)
+    console.error('Failed to fetch news list:', error)
     throw error
   }
 }
@@ -40,7 +40,7 @@ export async function createNews(payload: MutateNewsPayload): Promise<NewsMutati
     const res = await api.post<NewsMutationResponse>('news/create_news.php', payload)
     return res.data
   } catch (error) {
-    console.error('❌ Failed to create news item:', error)
+    console.error('Failed to create news item:', error)
     throw error
   }
 }
@@ -50,7 +50,7 @@ export async function updateNews(payload: MutateNewsPayload & { news_id: string 
     const res = await api.post<NewsMutationResponse>('news/update_news.php', payload)
     return res.data
   } catch (error) {
-    console.error('❌ Failed to update news item:', error)
+    console.error('Failed to update news item:', error)
     throw error
   }
 }

@@ -6,7 +6,7 @@ import axios from 'axios'
 // Note: We use Capacitor HTTP for native platforms and axios for web
 // to ensure better compatibility with Android network security policies
 
-// 🗺️ Valhalla routing types
+// Valhalla routing types
 export interface ValhallaLocation {
   lat: number
   lon: number
@@ -69,7 +69,7 @@ export interface ValhallaLeg {
     has_highway: boolean
     has_ferry: boolean
   }
-  shape: string // 📈 Encoded polyline
+  shape: string // Encoded polyline
 }
 
 export interface ValhallaTrip {
@@ -135,11 +135,11 @@ export const MANEUVER_TYPES = {
   29: 'Ferry exit',
 } as const
 
-// 🌐 Default Valhalla server URL - update this to your Valhalla instance
+// Default Valhalla server URL - update this to your Valhalla instance
 const VALHALLA_BASE_URL = import.meta.env.VITE_VALHALLA_URL || 'https://valhalla1.openstreetmap.de'
 
 /**
- * 🚗 Request a route from Valhalla
+ * Request a route from Valhalla
  */
 export async function getValhallaRoute(request: ValhallaRouteRequest): Promise<ValhallaRouteResponse> {
   try {
@@ -147,7 +147,7 @@ export async function getValhallaRoute(request: ValhallaRouteRequest): Promise<V
 
     // � Use Capacitor HTTP for native platforms, axios for web
     if (Capacitor.isNativePlatform()) {
-      console.log('🚀 Using Capacitor HTTP for Valhalla request on native platform')
+      console.log('Using Capacitor HTTP for Valhalla request on native platform')
 
       const response = await CapacitorHttp.request({
         method: 'POST',
@@ -166,14 +166,14 @@ export async function getValhallaRoute(request: ValhallaRouteRequest): Promise<V
 
       return response.data
     } else {
-      console.log('🌐 Using axios for Valhalla request on web platform')
+      console.log('Using axios for Valhalla request on web platform')
 
-      // 🌐 Use axios directly for web platform to avoid baseURL conflicts
+      // Use axios directly for web platform to avoid baseURL conflicts
       const response = await axios.post(url, request, {
         headers: {
           'Content-Type': 'application/json',
         },
-        // 🕐 Extended timeout for routing calculations
+        // Extended timeout for routing calculations
         timeout: 30000,
       })
 
@@ -185,7 +185,7 @@ export async function getValhallaRoute(request: ValhallaRouteRequest): Promise<V
       code?: string
       message?: string
     }
-    console.error('🚫 Valhalla route request failed:', err)
+    console.error('Valhalla route request failed:', err)
 
     if (err.response?.data) {
       const msg = String(err.response.data.error_message ?? err.response.data.message ?? 'Unknown error')
@@ -201,25 +201,25 @@ export async function getValhallaRoute(request: ValhallaRouteRequest): Promise<V
 }
 
 /**
- * 📍 Decode Valhalla polyline to Leaflet coordinates
+ * Decode Valhalla polyline to Leaflet coordinates
  */
 export function decodePolyline(encodedPolyline: string, precision: number = 6): [number, number][] {
   try {
     const decoded = polyline.decode(encodedPolyline, precision)
-    // ⚠️ Polyline library returns [lat, lng], Leaflet expects [lat, lng] - no swap needed
+    // Polyline library returns [lat, lng], Leaflet expects [lat, lng] - no swap needed
     return decoded
   } catch (error: unknown) {
     const err = error as Error
-    console.error('🚫 Failed to decode polyline:', err.message)
+    console.error('Failed to decode polyline:', err.message)
     throw new Error(`Failed to decode route polyline: ${err.message}`)
   }
 }
 
 /**
- * 🧭 Calculate distance between two points using Haversine formula
+ * Calculate distance between two points using Haversine formula
  */
 export function calculateDistance(lat1: number, lon1: number, lat2: number, lon2: number): number {
-  const R = 6371 // 🌍 Earth's radius in kilometers
+  const R = 6371 // Earth's radius in kilometers
   const dLat = ((lat2 - lat1) * Math.PI) / 180
   const dLon = ((lon2 - lon1) * Math.PI) / 180
   const a =
@@ -227,21 +227,21 @@ export function calculateDistance(lat1: number, lon1: number, lat2: number, lon2
     Math.cos((lat1 * Math.PI) / 180) * Math.cos((lat2 * Math.PI) / 180) * Math.sin(dLon / 2) * Math.sin(dLon / 2)
   const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a))
   const distance = R * c
-  return distance * 1000 // 📏 Convert to meters
+  return distance * 1000 // Convert to meters
 }
 
 /**
- * 🎯 Check if user is off the route
+ * Check if user is off the route
  */
 export function isOffRoute(
   userLat: number,
   userLon: number,
   routeCoordinates: [number, number][],
-  threshold: number = 50, // 📏 meters
+  threshold: number = 50, // meters
 ): boolean {
   if (routeCoordinates.length === 0) return true
 
-  // 🔍 Find the closest point on the route
+  // Find the closest point on the route
   let minDistance = Infinity
 
   for (const [routeLat, routeLon] of routeCoordinates) {
@@ -255,7 +255,7 @@ export function isOffRoute(
 }
 
 /**
- * 🗺️ Create a simple route request for pedestrian navigation
+ * Create a simple route request for pedestrian navigation
  */
 export function createPedestrianRouteRequest(from: { lat: number; lon: number }, to: { lat: number; lon: number }): ValhallaRouteRequest {
   return {
@@ -274,7 +274,7 @@ export function createPedestrianRouteRequest(from: { lat: number; lon: number },
 }
 
 /**
- * 🚗 Create a route request for driving
+ * Create a route request for driving
  */
 export function createAutoRouteRequest(from: { lat: number; lon: number }, to: { lat: number; lon: number }): ValhallaRouteRequest {
   return {
