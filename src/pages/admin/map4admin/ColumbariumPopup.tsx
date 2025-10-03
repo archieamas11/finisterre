@@ -54,7 +54,7 @@ export default function ColumbariumPopup({ marker, onDirectionClick, isDirection
   // Highlighting relies on prop passed from map layout when navigating from search
 
   const handleCancelReservation = () => {
-    console.log('❌ Reservation cancelled')
+    console.log('Reservation cancelled')
     setSelectedCustomer('')
     setShowCustomerCombo(false)
   }
@@ -87,7 +87,7 @@ export default function ColumbariumPopup({ marker, onDirectionClick, isDirection
       },
       error: (error) => {
         const errorMessage = error instanceof Error ? error.message : 'Unknown error'
-        console.error('❌ Error saving reservation:', error)
+        console.error('Error saving reservation:', error)
         return errorMessage || 'Failed to save reservation'
       },
     })

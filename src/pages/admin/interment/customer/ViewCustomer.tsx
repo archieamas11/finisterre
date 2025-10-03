@@ -1,8 +1,8 @@
 import { RiHeart2Fill } from 'react-icons/ri'
-import { AiFillEye } from 'react-icons/ai'
 import { HiLibrary } from 'react-icons/hi'
 import { Printer } from 'lucide-react'
 import React from 'react'
+import { useNavigate } from 'react-router-dom'
 import { BiMessageSquareEdit } from 'react-icons/bi'
 import type { Customer, LotInfo, DeceasedInfo } from '@/api/customer.api'
 import { editCustomer } from '@/api/customer.api'
@@ -11,9 +11,9 @@ import { Button } from '@/components/ui/button'
 import { Sheet, SheetContent } from '@/components/ui/sheet'
 import CustomerForm from '@/pages/admin/interment/customer/CustomerForm'
 import { calculateYearsBuried } from '@/utils/date.utils'
-import GetDirectionButton from '@/pages/webmap/components/get-direction-button'
 import { ShareButton } from '@/pages/webmap/components/share-button'
 import { formatDate } from '@/lib/format'
+import { ViewCustomerButton } from '@/pages/webmap/components/view-customer-button'
 
 interface ViewCustomerDialogProps {
   open: boolean
@@ -54,7 +54,7 @@ function DeceasedInfoCard({ deceased }: { deceased: DeceasedInfo }) {
 }
 
 // Component for rendering combined property and deceased information
-function PropertyDeceasedCard({ lot }: { lot: LotInfo }) {
+function PropertyDeceasedCard({ lot, onViewMap }: { lot: LotInfo; onViewMap: (lot: LotInfo) => void }) {
   // Normalize to [lat, lng]. If incoming is [lng, lat], swap based on value ranges.
   const toLatLng = React.useCallback((coords?: unknown): [number, number] | null => {
     if (coords == null) return null
@@ -96,6 +96,12 @@ function PropertyDeceasedCard({ lot }: { lot: LotInfo }) {
   }, [])
 
   const coordsLatLng = toLatLng(lot.coordinates)
+  const plotIdentifier = lot.plot_id ?? lot.lot_plot_id
+  const isViewDisabled = plotIdentifier == null
+  const handleViewMap = React.useCallback(() => {
+    if (isViewDisabled) return
+    onViewMap(lot)
+  }, [isViewDisabled, lot, onViewMap])
   const hasGraveLot = lot.block != null && lot.block !== '' && lot.lot_plot_id != null
   const hasNiche = lot.category != null && lot.category !== '' && lot.niche_number != null
   const hasDeceased = Array.isArray(lot.deceased_info) && lot.deceased_info.length > 0
@@ -125,7 +131,7 @@ function PropertyDeceasedCard({ lot }: { lot: LotInfo }) {
                 <div className="text-muted-foreground text-sm">Grave {lot.lot_plot_id}</div>
               </div>
             </div>
-            <PropertyActions coordsLatLng={coordsLatLng} locationLabel={locationLabel} />
+            <PropertyActions coordsLatLng={coordsLatLng} locationLabel={locationLabel} onViewMap={handleViewMap} isViewDisabled={isViewDisabled} />
           </div>
         )}
 
@@ -140,7 +146,7 @@ function PropertyDeceasedCard({ lot }: { lot: LotInfo }) {
                 <div className="text-muted-foreground text-sm">Niche {lot.niche_number}</div>
               </div>
             </div>
-            <PropertyActions coordsLatLng={coordsLatLng} locationLabel={locationLabel} />
+            <PropertyActions coordsLatLng={coordsLatLng} locationLabel={locationLabel} onViewMap={handleViewMap} isViewDisabled={isViewDisabled} />
           </div>
         )}
       </div>
@@ -168,13 +174,27 @@ function PropertyDeceasedCard({ lot }: { lot: LotInfo }) {
   )
 }
 
-function PropertyActions({ coordsLatLng, locationLabel }: { coordsLatLng: [number, number] | null; locationLabel: string }) {
+function PropertyActions({
+  coordsLatLng,
+  locationLabel,
+  onViewMap,
+  isViewDisabled,
+}: {
+  coordsLatLng: [number, number] | null
+  locationLabel: string
+  onViewMap: () => void
+  isViewDisabled: boolean
+}) {
   return (
     <div className="flex gap-2">
-      <GetDirectionButton className="h-8 w-8 rounded-full text-white" title="Navigate" size="sm" variant="outline" />
-      <Button aria-label="View property" size="sm" variant="outline" className="h-8 w-8 rounded-full text-white">
-        <AiFillEye />
-      </Button>
+      <ViewCustomerButton
+        className="h-8 w-8 rounded-full"
+        title="View Customer"
+        size="sm"
+        variant="outline"
+        onClick={onViewMap}
+        disabled={isViewDisabled}
+      />
       {coordsLatLng && (
         <ShareButton coords={coordsLatLng} location={locationLabel} side="bottom" className="h-8 w-8 rounded-full" variant="outline" size="sm" />
       )}
@@ -208,6 +228,27 @@ function InfoItem({ label, value, children }: { label: string; value?: string | 
 
 export default function ViewCustomer({ open, customer, onOpenChange }: ViewCustomerDialogProps) {
   const [editOpen, setEditOpen] = React.useState(false)
+  const navigate = useNavigate()
+
+  const viewOnMap = React.useCallback(
+    (lot: LotInfo) => {
+      const plotIdentifier = lot.plot_id ?? lot.lot_plot_id
+      if (!plotIdentifier) return
+
+      const focusPlotId = String(plotIdentifier)
+      const nicheValue = lot.niche_number
+      const focusNicheNumber = nicheValue != null && nicheValue !== '' ? String(nicheValue) : null
+
+      onOpenChange(false)
+      navigate('/admin/map', {
+        state: {
+          focusPlotId,
+          focusNicheNumber,
+        },
+      })
+    },
+    [navigate, onOpenChange],
+  )
   React.useEffect(() => {
     if (open) setEditOpen(false)
   }, [open])
@@ -316,7 +357,7 @@ export default function ViewCustomer({ open, customer, onOpenChange }: ViewCusto
               {Array.isArray(customer.lot_info) && customer.lot_info.length > 0 ? (
                 <div className="space-y-4">
                   {customer.lot_info.map((lot, idx) => (
-                    <PropertyDeceasedCard key={`${lot.plot_id}-${lot.niche_number}-${idx}`} lot={lot} />
+                    <PropertyDeceasedCard key={`${lot.plot_id}-${lot.niche_number}-${idx}`} lot={lot} onViewMap={viewOnMap} />
                   ))}
                 </div>
               ) : (

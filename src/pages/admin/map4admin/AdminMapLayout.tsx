@@ -9,6 +9,7 @@ import { useHotkeys } from 'react-hotkeys-hook'
 import { useMap } from 'react-leaflet'
 import { MapContainer, TileLayer, Popup, GeoJSON } from 'react-leaflet'
 import MarkerClusterGroup from 'react-leaflet-markercluster'
+import { useLocation, useNavigate } from 'react-router-dom'
 
 import type { ConvertedMarker } from '@/types/map.types'
 
@@ -72,6 +73,8 @@ function renderPopupContent(marker: ConvertedMarker, backgroundColor: string, hi
 }
 
 export default function AdminMapLayout() {
+  const location = useLocation()
+  const navigate = useNavigate()
   const { data: authData } = useAuthQuery()
   const showGuide4 = Boolean(authData?.user?.isAdmin && authData?.user?.username === 'test')
   const { isError, refetch, isLoading, data: plotsData } = usePlots()
@@ -204,6 +207,31 @@ export default function AdminMapLayout() {
     },
     [markers, mapInstance, isEditingMarker],
   )
+
+  // Open specific plot from view customer button (restored)
+  useEffect(() => {
+    const state = location.state as { focusPlotId?: string; focusNicheNumber?: string | null } | null
+    if (!state?.focusPlotId) return
+
+    const matchedMarker = markers.find((marker: ConvertedMarker) => String(marker.plot_id) === String(state.focusPlotId))
+    if (!matchedMarker) return
+
+    const parsedPlotId = Number.parseInt(String(state.focusPlotId), 10)
+    const markerPlotNumber = Number.parseInt(String(matchedMarker.plot_id), 10)
+    const plotIdNumber = Number.isFinite(parsedPlotId) ? parsedPlotId : Number.isFinite(markerPlotNumber) ? markerPlotNumber : 0
+
+    handleSelectSearchResult({
+      lot_id: plotIdNumber,
+      plot_id: plotIdNumber,
+      niche_number: state.focusNicheNumber ?? null,
+      customer_id: null,
+      customer_fullname: null,
+      deceased_ids: null,
+      deceased_names: null,
+    })
+
+    navigate(location.pathname, { replace: true, state: null })
+  }, [handleSelectSearchResult, location.pathname, location.state, markers, navigate])
 
   // If activeSearchMarker was set before mapInstance became available, perform the fly when possible
   useEffect(() => {
@@ -397,7 +425,6 @@ export default function AdminMapLayout() {
           <AddMarkerInstructions isVisible={isAddingMarker} />
           <EditMarkerInstructions isVisible={isEditingMarker} step={selectedPlotForEdit ? 'edit' : 'select'} />
           <MapContainer className="h-full w-full rounded-lg" zoomControl={false} bounds={bounds} maxZoom={25} zoom={18}>
-            {/* Floating popup for search result to ensure it opens reliably */}
             {activeSearchMarker && (
               <Popup
                 className="leaflet-theme-popup"

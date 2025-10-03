@@ -87,35 +87,30 @@ export const customerColumns: ColumnDef<Customer>[] = [
     meta: { label: 'Address' },
   },
   {
-    accessorKey: 'contact_number',
-    header: ({ column }) => <DataTableColumnHeader column={column} title="Phone" />,
+    id: 'contact_info',
+    accessorKey: 'contact_info',
+    header: ({ column }) => <DataTableColumnHeader column={column} title="Contact Information" />,
     cell: ({ row }) => {
       return (
-        <div className="flex items-center gap-2">
-          <div className="bg-muted flex h-6 w-6 items-center justify-center rounded-full text-sm font-medium">
-            <Phone size={14} />
+        <div className="flex flex-col gap-0.5">
+          {/* Phone */}
+          <div className="flex items-center gap-2">
+            <div className="bg-muted flex h-4 w-4 items-center justify-center rounded-full text-sm font-medium">
+              <Phone size={8} />
+            </div>
+            <span className="text-xs">{row.original.contact_number}</span>
           </div>
-          <span>{row.original.contact_number}</span>
+          {/* Email */}
+          <div className="flex items-center gap-2">
+            <div className="bg-muted flex h-4 w-4 items-center justify-center rounded-full text-sm font-medium">
+              <Mail size={8} />
+            </div>
+            <span className="text-xs">{row.original.email}</span>
+          </div>
         </div>
       )
     },
-    meta: { label: 'Phone Number' },
-  },
-  {
-    accessorKey: 'email',
-    header: ({ column }) => <DataTableColumnHeader column={column} title="Email" />,
-    enableSorting: true,
-    cell: ({ row }) => {
-      return (
-        <div className="flex items-center gap-2">
-          <div className="bg-muted flex h-6 w-6 items-center justify-center rounded-full text-sm font-medium">
-            <Mail size={14} />
-          </div>
-          <span>{row.original.email}</span>
-        </div>
-      )
-    },
-    meta: { label: 'Email' },
+    meta: { label: 'Contact Information' },
   },
   {
     id: 'lot_count',
