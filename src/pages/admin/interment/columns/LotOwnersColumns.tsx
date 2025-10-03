@@ -118,22 +118,22 @@ export const lotOwnerColumns: ColumnDef<LotOwners>[] = [
       const status = row.original.lot_status
       if (status === 'active') {
         return (
-          <Badge variant="outline" className="border-amber-500" asChild={false}>
-            <span className="text-xs text-amber-600">Active</span>
+          <Badge className="bg-yellow-200 text-yellow-800">
+            <span className="text-xs text-yellow-800">Active</span>
           </Badge>
         )
       }
       if (status === 'canceled') {
         return (
-          <Badge variant="destructive" asChild={false}>
-            <span className="text-xs text-red-600">Canceled</span>
+          <Badge className="bg-rose-200 text-rose-800" asChild={false}>
+            <span className="text-xs text-rose-800">Canceled</span>
           </Badge>
         )
       }
       if (status === 'completed') {
         return (
-          <Badge variant="outline" className="bg-green-500 text-white" asChild={false}>
-            <span className="text-xs">Completed</span>
+          <Badge className="bg-emerald-200 text-emerald-800" asChild={false}>
+            <span className="text-xs text-emerald-800">Completed</span>
           </Badge>
         )
       }
