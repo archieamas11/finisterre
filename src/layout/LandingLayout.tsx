@@ -1,19 +1,16 @@
-import { Suspense, lazy } from 'react'
 import { FaFacebookMessenger } from 'react-icons/fa'
 import { Link } from 'react-router-dom'
 
 import { PulsatingButton } from '@/components/pulsating-button'
-import Spinner from '@/components/ui/spinner'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
 import { HeaderSection } from '@/pages/landing/section/HeaderSection'
 import PublicNewsAnnouncement from '@/pages/landing/section/News&Announcement'
-
-const HeroSection = lazy(() => import('@/pages/landing/section/HeroSection'))
-const FAQs = lazy(() => import('@/pages/landing/section/FAQs'))
-const Showcase = lazy(() => import('@/pages/landing/section/Showcase'))
-const Footer = lazy(() => import('@/pages/landing/section/Footer'))
-const FeatureSection = lazy(() => import('@/pages/landing/section/FeatureSection'))
-const Testimonials = lazy(() => import('@/components/mvpblocks/Testimonials'))
+import HeroSection from '@/pages/landing/section/HeroSection'
+import FAQs from '@/pages/landing/section/FAQs'
+import Showcase from '@/pages/landing/section/Showcase'
+import Footer from '@/pages/landing/section/Footer'
+import FeatureSection from '@/pages/landing/section/FeatureSection'
+import Testimonials from '@/components/mvpblocks/Testimonials'
 
 export default function LandingLayout() {
   return (
@@ -47,21 +44,13 @@ export default function LandingLayout() {
           </div>
         </div>
         <main className="flex-1">
-          <Suspense
-            fallback={
-              <div className="flex h-screen w-full items-center justify-center">
-                <Spinner className="text-black" />
-              </div>
-            }
-          >
-            <HeroSection />
-            <FeatureSection />
-            <Showcase />
-            <Testimonials />
-            <PublicNewsAnnouncement />
-            <FAQs />
-            <Footer />
-          </Suspense>
+          <HeroSection />
+          <FeatureSection />
+          <Showcase />
+          <Testimonials />
+          <PublicNewsAnnouncement />
+          <FAQs />
+          <Footer />
         </main>
       </div>
     </div>

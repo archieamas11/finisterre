@@ -1,6 +1,6 @@
 import type { ColumnDef } from '@tanstack/react-table'
 
-import { CalendarDays, Clock, Megaphone, Newspaper, Star, User } from 'lucide-react'
+import { Archive, CalendarDays, Clock, Megaphone, MoreHorizontal, Newspaper, Star, User } from 'lucide-react'
 import React from 'react'
 
 import { DataTableColumnHeader } from '@/components/data-table/data-table-column-header'
@@ -8,6 +8,15 @@ import { Badge } from '@/components/ui/badge'
 import { cn } from '@/lib/utils'
 import { formatDate } from '@/lib/format'
 import type { NewsItem } from '@/types/news.types'
+import { Button } from '@/components/ui/button'
+import {
+  DropdownMenuSeparator,
+  DropdownMenuContent,
+  DropdownMenuTrigger,
+  DropdownMenuLabel,
+  DropdownMenuItem,
+  DropdownMenu,
+} from '@/components/ui/dropdown-menu'
 
 const IndeterminateCheckbox = React.forwardRef<HTMLInputElement, React.InputHTMLAttributes<HTMLInputElement> & { indeterminate?: boolean }>(
   ({ indeterminate, ...props }, ref) => {
@@ -199,5 +208,38 @@ export const newsColumns: ColumnDef<NewsItem>[] = [
       )
     },
     meta: { label: 'Last Updated' },
+  },
+  {
+    id: 'actions',
+    size: 10,
+    enableHiding: false,
+    cell: ({ row }) => {
+      if (!row?.original) return null
+      return (
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button className="h-8 w-8 p-0" variant="ghost">
+              <span className="sr-only">Open menu</span>
+              <MoreHorizontal />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent className="z-50" align="end">
+            <DropdownMenuLabel>Actions</DropdownMenuLabel>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem>View News</DropdownMenuItem>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem
+              onClick={() => {
+                alert('Archive clicked')
+              }}
+              className="text-red-600 hover:bg-red-100"
+            >
+              <Archive className="mr-2 h-4 w-4 text-red-600" />
+              Archive
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      )
+    },
   },
 ]

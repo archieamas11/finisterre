@@ -24,6 +24,8 @@ import { cn } from '@/lib/utils'
 
 import { newsColumns } from './columns/NewsColumns'
 import { Button } from '@/components/ui/button'
+import CreateNewsDialog from './modal/CreateNewsDialog'
+
 interface NewsTableProps {
   data: NewsItem[]
 }
@@ -33,6 +35,7 @@ export default function NewsTable({ data }: NewsTableProps) {
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([])
   const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({})
   const [rowSelection, setRowSelection] = React.useState<RowSelectionState>({})
+  const [isCreateDialogOpen, setIsCreateDialogOpen] = React.useState(false)
 
   const [globalFilter, setGlobalFilter] = React.useState('')
   const globalFilterFn = React.useCallback((row: Row<NewsItem>, _columnId: string, filterValue: string) => {
@@ -50,23 +53,29 @@ export default function NewsTable({ data }: NewsTableProps) {
     return haystack.some((val) => val.includes(needle))
   }, [])
 
-  const table = useReactTable<NewsItem>({
+  const table = useReactTable({
     data,
-    globalFilterFn,
-    onSortingChange: setSorting,
     columns: newsColumns,
-    getCoreRowModel: getCoreRowModel(),
-    onRowSelectionChange: setRowSelection,
-    onGlobalFilterChange: setGlobalFilter,
-    getSortedRowModel: getSortedRowModel(),
-    onColumnFiltersChange: setColumnFilters,
-    getFilteredRowModel: getFilteredRowModel(),
-    onColumnVisibilityChange: setColumnVisibility,
-    getPaginationRowModel: getPaginationRowModel(),
     state: {
       sorting,
+      columnFilters,
+      columnVisibility,
       rowSelection,
       globalFilter,
+    },
+    globalFilterFn,
+    enableRowSelection: true,
+    onRowSelectionChange: setRowSelection,
+    onSortingChange: setSorting,
+    onColumnFiltersChange: setColumnFilters,
+    onColumnVisibilityChange: setColumnVisibility,
+    onGlobalFilterChange: setGlobalFilter,
+    getCoreRowModel: getCoreRowModel(),
+    getFilteredRowModel: getFilteredRowModel(),
+    getPaginationRowModel: getPaginationRowModel(),
+    getSortedRowModel: getSortedRowModel(),
+    initialState: {
+      sorting,
       columnFilters,
       columnVisibility,
     },
@@ -118,8 +127,8 @@ export default function NewsTable({ data }: NewsTableProps) {
         ))}
       </div>
       <DataTableToolbar table={table}>
-        <div className="flex w-full flex-col justify-between gap-2 sm:flex-row">
-          <div className="relative">
+        <div className="flex min-w-0 flex-1 flex-col justify-between gap-2 sm:flex-row">
+          <div className="relative flex-1">
             <Input
               className="peer h-8 ps-9 pe-9"
               value={globalFilter}
@@ -142,7 +151,7 @@ export default function NewsTable({ data }: NewsTableProps) {
             </button>
           </div>
           <div>
-            <Button variant="outline" size={'sm'} onClick={() => alert('Create News is clicked')}>
+            <Button variant="outline" size={'sm'} onClick={() => setIsCreateDialogOpen(true)}>
               Create News
             </Button>
           </div>
@@ -150,6 +159,8 @@ export default function NewsTable({ data }: NewsTableProps) {
       </DataTableToolbar>
 
       <DataTable table={table} />
+
+      <CreateNewsDialog open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen} />
     </Card>
   )
 }
