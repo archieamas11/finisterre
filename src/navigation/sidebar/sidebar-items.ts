@@ -63,20 +63,20 @@ export const adminSidebarItems: NavGroup[] = [
         icon: CalendarDays,
         url: '/admin/bookings',
       },
+      // ...(!import.meta.env.PROD
+      //   ? [
+      {
+        title: 'News & Announcements',
+        icon: Newspaper,
+        url: '/admin/news',
+      },
+      //   ]
+      // : []),
       {
         icon: MonitorCog,
         title: 'Control Panel',
         url: '/admin/control-panel',
       },
-      ...(!import.meta.env.PROD
-        ? [
-            {
-              title: 'News & Announcements',
-              icon: Newspaper,
-              url: '/admin/news',
-            },
-          ]
-        : []),
     ],
   },
 ]
