@@ -41,7 +41,6 @@ export default function AdminUsersTable() {
           setData(res.users ?? [])
         }
       } catch (err) {
-        // ignore — backend endpoint may not exist yet
         console.error(err)
       }
     }
@@ -86,6 +85,9 @@ export default function AdminUsersTable() {
             <div className="text-muted-foreground/80 pointer-events-none absolute inset-y-0 start-0 flex items-center justify-center ps-3 peer-disabled:opacity-50">
               <SearchIcon size={16} />
             </div>
+            <Button type="button" variant="outline" size="sm" onClick={() => alert('Add user functionality not implemented yet.')}>
+              Add New User
+            </Button>
             <Button type="button" variant="outline" size="sm" onClick={() => window.print()}>
               <PrinterIcon size={16} className="me-1" />
               Print
