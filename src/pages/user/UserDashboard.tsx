@@ -98,14 +98,13 @@ export default function UserDashboard({ onPlotNavigate }: UserDashboardProps) {
 
   return (
     <div className="px-4 py-8 md:py-8 lg:container lg:mx-auto lg:max-w-7xl lg:px-4 lg:py-8">
-      {/* Promotional Banner */}
+      {/* Welcome Banner */}
       <PromotionalBanner
-        title="Grand Opening: New Memorial Garden & Reflection Pathway"
-        description="Experience a renewed space for remembrance. Explore landscaped pathways, quiet seating alcoves, and enhanced wayfinding now available to all families."
-        imageSrc="https://picsum.photos/seed/memorial-garden/600/400"
-        imageAlt="New memorial garden pathway with landscaped greenery"
-        badgeText="Announcement"
-        buttonText="Learn More"
+        title="Welcome to Finisterre Memorial Park"
+        description="We are honored to provide a peaceful place of remembrance. Explore our map, locate plots, and discover new features designed to guide and support every family."
+        imageSrc="https://picsum.photos/seed/welcome-banner/600/400"
+        imageAlt="Scenic view of memorial park with trees and pathway"
+        buttonText="Get Started"
         variant="royal"
         size="md"
       />

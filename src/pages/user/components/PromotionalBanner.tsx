@@ -1,4 +1,4 @@
-import { Megaphone, ArrowRight, Sparkles } from 'lucide-react'
+import { ArrowRight } from 'lucide-react'
 import React from 'react'
 
 import { Button } from '@/components/ui/button'
@@ -9,7 +9,6 @@ type PromotionalBannerProps = {
   description: string
   imageSrc?: string
   imageAlt?: string
-  badgeText?: string
   buttonText?: string
   onButtonClick?: () => void
   className?: string
@@ -39,7 +38,6 @@ export const PromotionalBanner: React.FC<PromotionalBannerProps> = ({
   description,
   imageSrc,
   imageAlt = 'Promotional banner image',
-  badgeText = 'Announcement',
   buttonText = 'Learn More',
   onButtonClick,
   className,
@@ -65,13 +63,6 @@ export const PromotionalBanner: React.FC<PromotionalBannerProps> = ({
     >
       <div className={cn('relative z-10 flex flex-col items-start gap-6 px-8', sizeStyles[size], 'md:flex-row md:items-center md:justify-between')}>
         <div className="max-w-2xl space-y-4">
-          {/* Enhanced Badge */}
-          <div className="inline-flex items-center gap-2 rounded-full border border-white/30 bg-white/15 px-4 py-2 text-xs font-medium tracking-wide shadow-lg backdrop-blur-md">
-            <Megaphone className="h-4 w-4 text-white" aria-hidden="true" />
-            <span className="text-white">{badgeText}</span>
-            <Sparkles className="h-3 w-3 animate-pulse text-yellow-300" aria-hidden="true" />
-          </div>
-
           {/* Enhanced Title */}
           <h1 className="animate-fade-in text-2xl leading-tight font-bold tracking-tight text-white drop-shadow-2xl sm:text-3xl lg:text-4xl">
             {title}
