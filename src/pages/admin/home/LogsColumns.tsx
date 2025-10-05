@@ -49,7 +49,7 @@ export const logsColumns: ColumnDef<ActivityLog>[] = [
     accessorKey: 'log_id',
     header: ({ column }) => <DataTableColumnHeader column={column} title="ID" />,
     meta: { label: 'ID' },
-    size: 60,
+    size: 10,
   },
   {
     id: 'user',

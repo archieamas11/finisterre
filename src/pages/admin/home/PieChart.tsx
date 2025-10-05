@@ -2,6 +2,7 @@ import { PrinterIcon } from 'lucide-react'
 import React from 'react'
 import { Pie, PieChart, Cell } from 'recharts'
 
+import { getChambersStats, getSerenityStatsByBlock, type MapStatsResponse } from '@/api/map-stats.api'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { type ChartConfig, ChartContainer, ChartStyle, ChartTooltip, ChartTooltipContent } from '@/components/ui/chart'
@@ -9,18 +10,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 
 export const description = 'Plot status distribution per category'
 
-// Mock data - keep for now. Replace with API integration when available.
-const plotData = {
-  serenity: {
-    all: { Available: 420, Occupied: 320, Reserved: 60 },
-    A: { Available: 110, Occupied: 70, Reserved: 10 },
-    B: { Available: 90, Occupied: 80, Reserved: 15 },
-    C: { Available: 100, Occupied: 90, Reserved: 20 },
-    D: { Available: 120, Occupied: 80, Reserved: 15 },
-  },
-  columbarium: { Available: 180, Occupied: 260, Reserved: 40 },
-  memorial: { Available: 60, Occupied: 200, Reserved: 20 },
-}
+// Mock data for columbarium only - will be replaced when data is available
+const columbariumMockData = { Available: 180, Occupied: 260, Reserved: 40 }
 
 const COLORS: Record<string, string> = {
   Available: '#047857',
@@ -57,13 +48,70 @@ export function ChartPieInteractive() {
   const id = 'plots-pie-grid'
   const [serenityBlock, setSerenityBlock] = React.useState<string>('all')
 
-  const serenityData = React.useMemo(() => toPieArray(plotData.serenity[serenityBlock as keyof typeof plotData.serenity]), [serenityBlock])
-  const columbariumData = React.useMemo(() => toPieArray(plotData.columbarium), [])
-  const memorialData = React.useMemo(() => toPieArray(plotData.memorial), [])
+  // State for real data from API
+  const [serenityStats, setSerenityStats] = React.useState<MapStatsResponse | null>(null)
+  const [memorialStats, setMemorialStats] = React.useState<MapStatsResponse | null>(null)
+  const [loading, setLoading] = React.useState(true)
+
+  // Fetch data on mount and when serenityBlock changes
+  React.useEffect(() => {
+    async function fetchData() {
+      try {
+        setLoading(true)
+        const [serenityRes, memorialRes] = await Promise.all([getSerenityStatsByBlock(serenityBlock), getChambersStats()])
+        setSerenityStats(serenityRes)
+        setMemorialStats(memorialRes)
+      } catch (error) {
+        console.error('Failed to fetch plot stats:', error)
+      } finally {
+        setLoading(false)
+      }
+    }
+    fetchData()
+  }, [serenityBlock])
+
+  // Convert API response to pie chart format
+  const serenityData = React.useMemo(() => {
+    if (!serenityStats) return []
+    return toPieArray({
+      Available: serenityStats.available,
+      Occupied: serenityStats.occupied,
+      Reserved: serenityStats.reserved,
+    })
+  }, [serenityStats])
+
+  const columbariumData = React.useMemo(() => toPieArray(columbariumMockData), [])
+
+  const memorialData = React.useMemo(() => {
+    if (!memorialStats) return []
+    return toPieArray({
+      Available: memorialStats.available,
+      Occupied: memorialStats.occupied,
+      Reserved: memorialStats.reserved,
+    })
+  }, [memorialStats])
 
   const serenityTotal = serenityData.reduce((s, d) => s + d.value, 0)
   const columbariumTotal = columbariumData.reduce((s, d) => s + d.value, 0)
   const memorialTotal = memorialData.reduce((s, d) => s + d.value, 0)
+
+  // Show loading state
+  if (loading && !serenityStats && !memorialStats) {
+    return (
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        {[1, 2, 3].map((i) => (
+          <Card key={i} className="flex flex-col shadow-sm">
+            <CardHeader>
+              <div className="bg-muted h-4 w-32 animate-pulse rounded" />
+            </CardHeader>
+            <CardContent className="flex flex-1 items-center justify-center">
+              <div className="bg-muted h-64 w-64 animate-pulse rounded-full" />
+            </CardContent>
+          </Card>
+        ))}
+      </div>
+    )
+  }
 
   // Reusable legend component for each card
   const Legend = ({ data }: { data: { name: string; value: number }[] }) => (

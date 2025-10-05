@@ -36,3 +36,14 @@ export async function getSerenityStats(): Promise<MapStatsResponse> {
   }
   return normalized
 }
+
+export async function getSerenityStatsByBlock(block?: string): Promise<MapStatsResponse> {
+  const blockParam = block && block !== 'all' ? `?block=${encodeURIComponent(block)}` : ''
+  const res = await api.get(`map-stats/get_serenity_by_block.php${blockParam}`)
+  const payload = res?.data?.data ?? res?.data
+  const normalized = normalizeStatsPayload(payload)
+  if (Number.isNaN(normalized.total)) {
+    throw new Error('Invalid serenity stats response')
+  }
+  return normalized
+}
