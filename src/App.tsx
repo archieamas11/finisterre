@@ -30,6 +30,7 @@ const AndroidLayout = React.lazy(() => import('@/pages/android/AndroidLayout'))
 const PublicMap = React.lazy(() => import('@/pages/webmap/PublicWebMap'))
 const NewsAndUpdates = React.lazy(() => import('@/pages/admin/news/NewsAndUpdates'))
 const NotFound = React.lazy(() => import('@/pages/NotFound'))
+const About = React.lazy(() => import('@/pages/landing/section/About'))
 
 function RootLanding() {
   const location = useLocation()
@@ -61,6 +62,7 @@ function AppRoutes() {
           <Route path="/logout" element={<Logout />} />
           <Route path="/unauthorized" element={<UnauthorizedPage />} />
           <Route path="/landing-android" element={<AndroidLayout />} />
+          <Route path="/about" element={<About />} />
 
           {/* User Protected Routes */}
           <Route

@@ -493,13 +493,13 @@ export default function CemeteryShowcase() {
                 transition={{ duration: 0.3 }}
                 className="max-h-[90vh] w-auto rounded-xl border-8 object-contain shadow-2xl"
               />
-              <div className="absolute inset-0 flex items-center justify-between">
+              <div className="absolute inset-0 flex items-center justify-between p-5">
                 <Button
                   variant="ghost"
                   size="icon"
                   onClick={prevImage}
                   aria-label="Previous image"
-                  className="ml-2 h-12 w-12 rounded-full bg-black/30 text-white hover:bg-black/50"
+                  className="bg-primary/50 text-primary-foreground ml-2 h-12 w-12 rounded-full"
                 >
                   <ChevronLeft className="h-6 w-6" />
                 </Button>
@@ -508,7 +508,7 @@ export default function CemeteryShowcase() {
                   size="icon"
                   onClick={nextImage}
                   aria-label="Next image"
-                  className="mr-2 h-12 w-12 rounded-full bg-black/30 text-white hover:bg-black/50"
+                  className="bg-primary/50 text-primary-foreground mr-2 h-12 w-12 rounded-full"
                 >
                   <ChevronRight className="h-6 w-6" />
                 </Button>

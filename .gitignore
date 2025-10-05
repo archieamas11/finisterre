@@ -23,9 +23,7 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
-.github/*
-!.github/instructions/
-!.github/instructions/*
+.github/chatmodes
 docs
 testsprite_tests
 request.rest
