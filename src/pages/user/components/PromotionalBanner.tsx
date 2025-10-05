@@ -56,7 +56,7 @@ export const PromotionalBanner: React.FC<PromotionalBannerProps> = ({
     <section
       aria-label="Latest announcement"
       className={cn(
-        'relative mb-10 overflow-hidden rounded-3xl border bg-[var(--brand-primary)] p-0 text-white shadow-2xl shadow-black/50',
+        'relative mb-10 overflow-hidden rounded-3xl bg-[var(--brand-primary)] p-0 text-white shadow-lg',
         variantStyles[variant],
         className,
       )}
