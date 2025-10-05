@@ -211,7 +211,7 @@ export default function EditableMarker({
       }
     },
     onSuccess: () => {
-      // ✅ Keep edit session active; return to select mode
+      // Keep edit session active; return to select mode
       onSaveSuccess?.()
     },
   })

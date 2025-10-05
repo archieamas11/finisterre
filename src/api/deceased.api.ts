@@ -26,6 +26,22 @@ export async function editDeceasedRecords(data: DeceasedRecords) {
   }
 }
 
+export async function updateDeceasedStatus(deceasedId: string | number, status: string) {
+  try {
+    const payload = {
+      deceased_id: deceasedId,
+      status,
+    }
+    console.log('Updating deceased status:', payload)
+    const res = await api.post('deceased-records/edit_deceased.php', payload)
+    console.log('Deceased status updated successfully:', res.data)
+    return res.data
+  } catch (error) {
+    console.error('Failed to update deceased status:', error)
+    throw error
+  }
+}
+
 export async function getDeceasedRecords() {
   try {
     console.log('Fetching all deceased records')

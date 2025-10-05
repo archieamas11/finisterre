@@ -1,21 +1,12 @@
 import type { ColumnDef } from '@tanstack/react-table'
 
-import { MoreHorizontal, Archive, MapPin } from 'lucide-react'
+import { MapPin } from 'lucide-react'
 import React from 'react'
 
 import type { DeceasedRecords } from '@/types/interment.types'
 
 import { DataTableColumnHeader } from '@/components/data-table/data-table-column-header'
 import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
-import {
-  DropdownMenuSeparator,
-  DropdownMenuContent,
-  DropdownMenuTrigger,
-  DropdownMenuLabel,
-  DropdownMenuItem,
-  DropdownMenu,
-} from '@/components/ui/dropdown-menu'
 import { calculateYearsBuried } from '@/utils/date.utils'
 import { AiOutlineUser } from 'react-icons/ai'
 import { ucwords } from '@/lib/format'
@@ -145,38 +136,5 @@ export const deceasedRecordsColumns: ColumnDef<DeceasedRecords>[] = [
     id: 'years_buried',
     cell: ({ row }) => calculateYearsBuried(row.original.dead_interment),
     meta: { label: 'Years Buried' },
-  },
-  {
-    id: 'actions',
-    size: 10,
-    enableHiding: false,
-    cell: ({ row }) => {
-      if (!row?.original) return null
-      return (
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button className="h-8 w-8 p-0" variant="ghost">
-              <span className="sr-only">Open menu</span>
-              <MoreHorizontal />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent className="z-50" align="end">
-            <DropdownMenuLabel>Actions</DropdownMenuLabel>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem>View deceased</DropdownMenuItem>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem
-              onClick={() => {
-                alert('Archive clicked')
-              }}
-              className="text-red-600 hover:bg-red-100"
-            >
-              <Archive className="mr-2 h-4 w-4 text-red-600" />
-              Archive
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
-      )
-    },
   },
 ]

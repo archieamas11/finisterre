@@ -1,6 +1,6 @@
 import type { ColumnDef } from '@tanstack/react-table'
 
-import { Archive, MapPin, MoreHorizontal } from 'lucide-react'
+import { MapPin } from 'lucide-react'
 import React from 'react'
 import { AiOutlineUser } from 'react-icons/ai'
 
@@ -8,15 +8,6 @@ import type { LotOwners } from '@/types/interment.types'
 
 import { DataTableColumnHeader } from '@/components/data-table/data-table-column-header'
 import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu'
 
 const IndeterminateCheckbox = React.forwardRef<HTMLInputElement, React.InputHTMLAttributes<HTMLInputElement> & { indeterminate?: boolean }>(
   ({ indeterminate, ...props }, ref) => {
@@ -123,7 +114,7 @@ export const lotOwnerColumns: ColumnDef<LotOwners>[] = [
           </Badge>
         )
       }
-      if (status === 'canceled') {
+      if (status === 'cancelled') {
         return (
           <Badge className="bg-rose-200 text-rose-800" asChild={false}>
             <span className="text-xs text-rose-800">Canceled</span>
@@ -151,36 +142,6 @@ export const lotOwnerColumns: ColumnDef<LotOwners>[] = [
         { label: 'Canceled', value: 'canceled' },
         { label: 'Completed', value: 'completed' },
       ],
-    },
-  },
-  {
-    id: 'actions',
-    size: 10,
-    enableHiding: false,
-    cell: ({ row }) => {
-      if (!row?.original) return null
-      return (
-        <>
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button className="h-8 w-8 p-0" variant="ghost">
-                <span className="sr-only">Open menu</span>
-                <MoreHorizontal />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent className="z-50" align="end">
-              <DropdownMenuLabel>Actions</DropdownMenuLabel>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem>View lot owner</DropdownMenuItem>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem onClick={() => navigator.clipboard.writeText(row.original.customer_id)} className="text-red-600 hover:bg-red-100">
-                <Archive className="mr-2 h-4 w-4 text-red-600" />
-                Archive
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-        </>
-      )
     },
   },
 ]

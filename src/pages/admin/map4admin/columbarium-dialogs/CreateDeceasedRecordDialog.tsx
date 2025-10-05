@@ -53,13 +53,6 @@ export function CreateDeceasedRecordDialog({ open, onOpenChange, onSubmit: propO
         dead_interment: values.dead_interment,
         created_at: currentTime,
         updated_at: currentTime,
-        dead_citizenship: '',
-        dead_bio: '',
-        dead_civil_status: '',
-        dead_relationship: '',
-        dead_message: '',
-        dead_profile_link: '',
-        dead_gender: '',
       }
       await propOnSubmit(payload)
       form.reset()

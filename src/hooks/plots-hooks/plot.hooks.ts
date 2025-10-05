@@ -44,10 +44,6 @@ export function usePlots() {
       const r = await getPlots()
       return r.plots ?? []
     },
-    staleTime: 0, // Always consider data stale for immediate refetch when invalidated
-    gcTime: 5 * 60 * 1000, // 5 minutes garbage collection time
-    refetchOnWindowFocus: true,
-    refetchOnMount: true,
   })
 }
 

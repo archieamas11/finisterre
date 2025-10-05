@@ -1,12 +1,15 @@
 import { api } from './axiosInstance'
 
 export interface LotInfo {
+  lot_id: number | string | null
   niche_number: string | number | null
   plot_id: number | null
   coordinates?: [number, number] | null
   block: string | null
   lot_plot_id: number | null
   category: string | null
+  lot_status: 'active' | 'completed' | 'cancelled' | 'canceled' | null
+  niche_status?: 'available' | 'occupied' | 'reserved' | null
   deceased_info: DeceasedInfo[]
 }
 
@@ -15,6 +18,7 @@ export interface DeceasedInfo {
   dead_fullname: string | null
   dead_date_death: string | null
   dead_interment: string | null
+  status: string | null
 }
 
 export type Customer = {

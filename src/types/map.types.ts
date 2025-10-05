@@ -40,7 +40,7 @@ export interface plots {
   coordinates: [number, number]
 }
 
-// 🆕 Interface for creating new plots
+// Interface for creating new plots
 export interface CreatePlotRequest {
   block: string
   category: string
@@ -48,10 +48,10 @@ export interface CreatePlotRequest {
   status?: string
 }
 
-// 🏛️ Marker types for different plot categories
+// Marker types for different plot categories
 export type MarkerType = 'Serenity Lawn' | 'Columbarium' | 'Memorial Chambers'
 
-// 🌿 Serenity Lawn plot request
+// Serenity Lawn plot request
 export interface CreateSerenityLawnRequest {
   block: string
   category: string
@@ -59,7 +59,7 @@ export interface CreateSerenityLawnRequest {
   status?: string
 }
 
-// 🏛️ Memorial Chambers plot request
+// Memorial Chambers plot request
 export interface CreateMemorialChambersRequest {
   rows: string
   columns: string
@@ -67,7 +67,7 @@ export interface CreateMemorialChambersRequest {
   status?: string
 }
 
-// 🏺 Columbarium plot request
+// Columbarium plot request
 export interface CreateColumbariumRequest {
   rows: string
   columns: string
@@ -75,7 +75,7 @@ export interface CreateColumbariumRequest {
   status?: string
 }
 
-// 🔧 Map utility functions
+// Map utility functions
 export const convertPlotToMarker = (plot: {
   dead_fullname?: string
   dead_interment?: string
@@ -96,7 +96,7 @@ export const convertPlotToMarker = (plot: {
   rows: string
   is_owned?: boolean
 }): ConvertedMarker => {
-  // 📍 Parse coordinates from database format "lng, lat" to [lat, lng]
+  // Parse coordinates from database format "lng, lat" to [lat, lng]
   const [lng, lat] = plot.coordinates.split(', ').map(Number)
 
   return {
@@ -128,7 +128,7 @@ export const convertPlotToMarker = (plot: {
   }
 }
 
-// 🎨 Get background color based on plot category
+// Get background color based on plot category
 export const getCategoryBackgroundColor = (category: string): string => {
   switch (category.toLowerCase()) {
     case 'columbarium':
@@ -148,7 +148,7 @@ export const getCategoryBackgroundColor = (category: string): string => {
   }
 }
 
-// 🟢 Get status color for map markers
+// Get status color for map markers
 export const getStatusColor = (status: string): string => {
   switch (status) {
     case 'available':
@@ -162,7 +162,7 @@ export const getStatusColor = (status: string): string => {
   }
 }
 
-// 🔍 Search result interface for lot search
+// Search result interface for lot search
 export interface LotSearchResult {
   success: boolean
   message: string
