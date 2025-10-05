@@ -1,6 +1,6 @@
 import type { ColumnDef } from '@tanstack/react-table'
 
-import { BadgeCheckIcon, PencilIcon, TrashIcon, ArchiveIcon, LogInIcon, PlusIcon } from 'lucide-react'
+import { BadgeCheckIcon, PencilIcon, TrashIcon, ArchiveIcon, LogInIcon, PlusIcon, MoreHorizontal } from 'lucide-react'
 import { AiOutlineUser } from 'react-icons/ai'
 
 import type { ActivityLog } from '@/api/logs.api'
@@ -8,6 +8,15 @@ import type { ActivityLog } from '@/api/logs.api'
 import { DataTableColumnHeader } from '@/components/data-table/data-table-column-header'
 import { Badge } from '@/components/ui/badge'
 import { ucwords } from '@/lib/format'
+import {
+  DropdownMenu,
+  DropdownMenuTrigger,
+  DropdownMenuContent,
+  DropdownMenuLabel,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+} from '@/components/ui/dropdown-menu'
+import { Button } from '@/components/ui/button'
 const actionConfig = {
   add: {
     icon: PlusIcon,
@@ -120,5 +129,31 @@ export const logsColumns: ColumnDef<ActivityLog>[] = [
     },
     enableSorting: true,
     meta: { label: 'When' },
+  },
+  {
+    id: 'actions',
+    size: 10,
+    enableHiding: false,
+    cell: () => (
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <Button className="h-8 w-8 p-0" variant="ghost">
+            <span className="sr-only">Open menu</span>
+            <MoreHorizontal />
+          </Button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent className="z-50" align="end">
+          <DropdownMenuLabel>Actions</DropdownMenuLabel>
+          <DropdownMenuSeparator />
+          <DropdownMenuItem
+            onClick={() => {
+              alert('View log feature coming soon!')
+            }}
+          >
+            View Log
+          </DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
+    ),
   },
 ]
