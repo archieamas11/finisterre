@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom'
 import { PulsatingButton } from '@/components/pulsating-button'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
 import { HeaderSection } from '@/pages/landing/section/HeaderSection'
-import PublicNewsAnnouncement from '@/pages/landing/section/News&Announcement'
+// import PublicNewsAnnouncement from '@/pages/landing/section/News&Announcement'
 import HeroSection from '@/pages/landing/section/HeroSection'
 import FAQs from '@/pages/landing/section/FAQs'
 import Showcase from '@/pages/landing/section/Showcase'
@@ -48,7 +48,7 @@ export default function LandingLayout() {
           <FeatureSection />
           <Showcase />
           <Testimonials />
-          <PublicNewsAnnouncement />
+          {/* <PublicNewsAnnouncement /> */}
           <FAQs />
           <Footer />
         </main>
