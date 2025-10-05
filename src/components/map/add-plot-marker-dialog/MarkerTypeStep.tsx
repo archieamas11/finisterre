@@ -39,9 +39,9 @@ export function MarkerTypeStep({ onCancel, onContinue }: MarkerTypeStepProps) {
                   </SelectTrigger>
                 </FormControl>
                 <SelectContent>
-                  <SelectItem value="Serenity Lawn">🌿 Serenity Lawn</SelectItem>
-                  <SelectItem value="Columbarium">🏺 Columbarium</SelectItem>
-                  <SelectItem value="Memorial Chambers">🏛️ Memorial Chambers</SelectItem>
+                  <SelectItem value="Serenity Lawn">Serenity Lawn</SelectItem>
+                  <SelectItem value="Columbarium">Columbarium</SelectItem>
+                  <SelectItem value="Memorial Chambers">Memorial Chambers</SelectItem>
                 </SelectContent>
               </Select>
               <FormMessage />
