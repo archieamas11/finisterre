@@ -165,6 +165,7 @@ export default function MapPage({ onBack, initialDirection }: { onBack?: () => v
     ],
     [],
   )
+
   // Dynamic React Query and offline-aware hook
   const { isLoading: rqLoading, data: plotsDataRQ } = usePlots()
   const { data: offlinePlots, isLoading: offlineLoading } = useMarkersOffline()
@@ -220,8 +221,6 @@ export default function MapPage({ onBack, initialDirection }: { onBack?: () => v
   const stateRef = useRef(state)
   stateRef.current = state
 
-  // (navigationStartedRef removed; replaced by signature-based guard later)
-
   // Konsta Notification state for native platforms
   const [konstaNotificationOpen, setKonstaNotificationOpen] = useState(false)
   const [konstaNotificationProps, setKonstaNotificationProps] = useState<{
@@ -250,10 +249,6 @@ export default function MapPage({ onBack, initialDirection }: { onBack?: () => v
     },
     { clearOnDefault: true },
   )
-
-  useEffect(() => {
-    window.scrollTo(0, 0)
-  }, [])
 
   // Hold reference to Leaflet map for reset
   const [mapInstance, setMapInstance] = useState<L.Map | null>(null)
@@ -416,6 +411,22 @@ export default function MapPage({ onBack, initialDirection }: { onBack?: () => v
     handleDirectionClick([a, b])
   }, [query.to, handleDirectionClick, isNavigating])
 
+  // When nuqs query params are present (from/to) and map is ready, request a locate
+  // This centers the map on the user's location so that navigation or query-based actions
+  // have the user's position available. Avoid triggering while actively navigating.
+  useEffect(() => {
+    // Only act when map is initialized and we have either to/from params
+    if (!mapInstance) return
+    if (isNavigating) return
+
+    const hasNavParam = Boolean(query.to || query.from)
+    if (!hasNavParam) return
+
+    // Request locate with a standard zoom. The requestLocate function already guards
+    // against redundant actions (it checks isTracking / currentLocation).
+    void requestLocate()
+  }, [mapInstance, query.to, query.from, requestLocate, isNavigating])
+
   // Stabilize initialDirection-based navigation (avoid duplicate triggers on same coords)
   const lastInitDirRef = useRef<string | null>(null)
   useEffect(() => {
@@ -475,7 +486,7 @@ export default function MapPage({ onBack, initialDirection }: { onBack?: () => v
             // If there's a niche number, highlight it
             if (niche_number) dispatch({ type: 'SET_HIGHLIGHTED_NICHE', niche: niche_number })
 
-            // 🎯 Set auto popup for this plot and center map
+            // Set auto popup for this plot and center map
             dispatch({ type: 'SET_AUTO_POPUP', plotId: String(plot_id) })
 
             // Use coordinates from search result or fallback to marker position
@@ -511,7 +522,7 @@ export default function MapPage({ onBack, initialDirection }: { onBack?: () => v
           }
         }
       } catch (error) {
-        console.error('🔍 Search error:', error)
+        console.error('Search error:', error)
         const errorMessage = 'Failed to search lot. Please try again.'
         if (isNativePlatform()) {
           setKonstaNotificationProps({
@@ -538,7 +549,7 @@ export default function MapPage({ onBack, initialDirection }: { onBack?: () => v
     dispatch({ type: 'RESET_GROUPS' })
   }, [])
 
-  // 🎯 Grouped markers (memoized) & available groups for dropdown
+  // Grouped markers (memoized) & available groups for dropdown
   const markersByGroup = useMemo(() => groupMarkersByKey(markers), [markers])
   const availableGroups = useMemo(
     () =>
@@ -575,7 +586,7 @@ export default function MapPage({ onBack, initialDirection }: { onBack?: () => v
     }
   }, [locationError, routingError])
 
-  // 👤 Show only user-owned plots
+  // Show only user-owned plots
   const showUserPlotsOnly = useCallback(() => {
     dispatch({ type: 'SHOW_USER_PLOTS' })
   }, [])

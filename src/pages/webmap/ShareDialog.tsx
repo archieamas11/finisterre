@@ -86,8 +86,27 @@ export function ShareDialog({
   }, [coords, currentLocation])
 
   const shortenUrl = useCallback(async (url: string) => {
-    const response = await axios.get(`https://tinyurl.com/api-create.php?url=${encodeURIComponent(url)}`)
-    return response.data as string
+    const apiKey = import.meta.env.VITE_TINYURL_API_URL as string | undefined
+    if (!apiKey) return url // Fallback: just return original link if no key configured
+
+    try {
+      const response = await axios.post(
+        'https://api.tinyurl.com/create',
+        { url, domain: 'tinyurl.com' },
+        {
+          headers: {
+            Authorization: `Bearer ${apiKey}`,
+            'Content-Type': 'application/json',
+            Accept: 'application/json',
+          },
+        },
+      )
+      const tiny = response.data?.data?.tiny_url
+      return typeof tiny === 'string' ? tiny : url
+    } catch (err) {
+      console.warn('TinyURL shorten failed, using original URL', err)
+      return url
+    }
   }, [])
 
   const { data: shortenedLink, isFetching: isShortening } = useQuery({
