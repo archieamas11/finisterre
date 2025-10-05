@@ -11,7 +11,7 @@ type StatCardProps = {
 }
 
 export const StatCard: React.FC<StatCardProps> = ({ title, value, description, icon: Icon, colorClass = '' }) => (
-  <Card className={`group relative overflow-hidden border-0 bg-gradient-to-br ${colorClass} shadow-lg`}>
+  <Card className={`group relative overflow-hidden border-0 bg-gradient-to-br ${colorClass} shadow-sm`}>
     <div className="absolute inset-0 bg-gradient-to-r from-blue-500/5 to-indigo-500/5"></div>
     <CardHeader className="flex items-center justify-between pb-3">
       <CardTitle className="text-sm font-semibold text-slate-600 dark:text-slate-300">{title}</CardTitle>

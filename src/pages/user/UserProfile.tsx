@@ -1,4 +1,4 @@
-import { User, Mail, Phone, Calendar, Edit3, Shield, Heart, TrendingUp, Award, Camera } from 'lucide-react'
+import { User, Mail, Phone, Calendar, Edit3, Shield, Heart, TrendingUp, Award } from 'lucide-react'
 import { BiLogOut } from 'react-icons/bi'
 
 import { Avatar, AvatarFallback } from '@/components/ui/avatar'
@@ -90,7 +90,7 @@ export default memo(function UserProfile() {
       )}
 
       {/* Profile Header */}
-      <div className="mb-6 overflow-hidden rounded-xl bg-gradient-to-br from-white to-slate-50/50 p-6 shadow-xl sm:mb-8 dark:from-slate-900 dark:to-slate-800/50">
+      <div className="mb-6 overflow-hidden rounded-xl bg-gradient-to-br from-white to-slate-50/50 p-6 shadow-sm sm:mb-8 dark:from-slate-900 dark:to-slate-800/50">
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           {/* Avatar Section */}
           <div className="flex items-center gap-4">
@@ -109,18 +109,6 @@ export default memo(function UserProfile() {
                   </AvatarFallback>
                 )}
               </Avatar>
-              <Button
-                size="sm"
-                variant="outline"
-                className="absolute -right-1 -bottom-1 h-7 w-7 rounded-full border-2 border-white p-0 shadow-sm sm:h-8 sm:w-8"
-                onClick={() => {
-                  console.log('Upload avatar')
-                }}
-                aria-label="Upload profile picture"
-                title="Change profile picture"
-              >
-                <Camera className="h-3 w-3 sm:h-4 sm:w-4" aria-hidden="true" />
-              </Button>
             </div>
             <div className="min-w-0 flex-1">
               <h1 className="text-xl font-bold text-slate-900 sm:text-2xl dark:text-white">
@@ -182,7 +170,7 @@ export default memo(function UserProfile() {
           Profile Statistics
         </h2>
         <div className="grid grid-cols-2 gap-3 sm:grid-cols-4 lg:grid-cols-4">
-          <Card className="bg-gradient-to-br from-blue-50 to-indigo-50 shadow-sm transition-all duration-200 hover:shadow-md dark:from-blue-950/50 dark:to-indigo-950/50">
+          <Card className="bg-gradient-to-br from-blue-50 to-indigo-50 shadow-sm transition-all duration-200 dark:from-blue-950/50 dark:to-indigo-950/50">
             <CardContent className="p-4">
               <div className="flex items-center gap-3">
                 <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-blue-50 dark:bg-blue-900/20">
@@ -253,7 +241,7 @@ export default memo(function UserProfile() {
 
       {/* Profile Information */}
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
-        <Card className="bg-gradient-to-br from-white to-slate-50/50 shadow-xl dark:from-slate-900 dark:to-slate-800/50">
+        <Card className="bg-gradient-to-br from-white to-slate-50/50 shadow-sm dark:from-slate-900 dark:to-slate-800/50">
           <CardHeader className="pb-4">
             <CardTitle className="flex items-center gap-2 text-lg">
               <User className="h-5 w-5" />
@@ -307,7 +295,7 @@ export default memo(function UserProfile() {
             </div>
           </CardContent>
         </Card>
-        <Card className="bg-gradient-to-br from-white to-slate-50/50 shadow-xl dark:from-slate-900 dark:to-slate-800/50">
+        <Card className="bg-gradient-to-br from-white to-slate-50/50 shadow-sm dark:from-slate-900 dark:to-slate-800/50">
           <CardHeader className="pb-4">
             <CardTitle className="flex items-center gap-2 text-lg">
               <Shield className="h-5 w-5" />

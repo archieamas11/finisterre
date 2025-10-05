@@ -153,7 +153,7 @@ export default function UserDashboard({ onPlotNavigate }: UserDashboardProps) {
       <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
         {/* Left Column - Combined Lots and Memorials (2/3 width) */}
         <div className="lg:col-span-2">
-          <Card className="border-0 bg-gradient-to-br from-white to-slate-50/50 shadow-xl dark:from-slate-900 dark:to-slate-800/50">
+          <Card className="border-0 bg-gradient-to-br from-white to-slate-50/50 shadow-sm dark:from-slate-900 dark:to-slate-800/50">
             <CardHeader className="pb-6">
               <CardTitle className="text-2xl font-bold text-slate-900 dark:text-white">Your Memorial Properties</CardTitle>
               <CardDescription className="text-slate-600 dark:text-slate-400">Your owned plots and connected memorials</CardDescription>
@@ -185,7 +185,7 @@ export default function UserDashboard({ onPlotNavigate }: UserDashboardProps) {
 
         {/* Right Column - Announcements (1/3 width) */}
         <div id="announcements-section" className={cn('lg:col-span-1', isNativePlatform() && 'hidden')}>
-          <Card className="border-0 bg-gradient-to-br from-white to-slate-50/50 shadow-xl dark:from-slate-900 dark:to-slate-800/50">
+          <Card className="border-0 bg-gradient-to-br from-white to-slate-50/50 shadow-sm dark:from-slate-900 dark:to-slate-800/50">
             <CardHeader className="pb-4">
               <CardTitle className="text-xl font-bold text-slate-900 dark:text-white">Recent Announcements</CardTitle>
               <CardDescription className="text-slate-600 dark:text-slate-400">Latest news and updates</CardDescription>
