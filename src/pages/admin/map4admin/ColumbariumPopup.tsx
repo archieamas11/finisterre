@@ -27,7 +27,7 @@ import CreateDeceased from './columbarium-dialogs/CreateDeceasedPage'
 import { ShareButton } from '@/pages/webmap/components/share-button'
 import GetDirectionButton from '@/pages/webmap/components/get-direction-button'
 import CustomerSelectForm from '@/components/customers/CustomerSelectForm'
-import { ucwords } from '../../../lib/format'
+import { ucwords } from '@/lib/format'
 
 interface ColumbariumPopupProps {
   marker: ConvertedMarker
@@ -138,10 +138,10 @@ export default function ColumbariumPopup({ marker, onDirectionClick, isDirection
           </h3>
           <div className="text-secondary-foreground flex gap-2 text-sm">
             <span>
-              <span className="font-medium">Rows:</span> {marker.rows}
+              <span className="font-medium">Rows:</span> {marker.columns}
             </span>
             <span>
-              <span className="font-medium">Columns:</span> {marker.columns}
+              <span className="font-medium">Columns:</span> {marker.rows}
             </span>
             <span>
               <span className="font-medium">Total:</span> {rows * cols} niches

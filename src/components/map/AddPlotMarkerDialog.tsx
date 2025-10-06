@@ -22,30 +22,30 @@ interface AddPlotMarkerDialogProps {
 
 export default function AddPlotMarkerDialog({ open, onOpenChange, coordinates, onDoneAdd, onCancelAdd }: AddPlotMarkerDialogProps) {
   const [selectedMarkerType, setSelectedMarkerType] = useState<MarkerType | null>(null)
-  // 🧭 Inner dialog controls the second step (type-specific form)
+  // Inner dialog controls the second step (type-specific form)
   const [innerOpen, setInnerOpen] = useState(false)
 
-  // 🧹 Reset all forms
+  // Reset all forms
   const resetAllForms = () => {
     setSelectedMarkerType(null)
     setInnerOpen(false)
   }
 
-  // 🎯 Handle marker type selection and move to next step
+  // Handle marker type selection and move to next step
   const onMarkerTypeSelect = (type: MarkerType) => {
     setSelectedMarkerType(type)
     setInnerOpen(true)
   }
 
-  // 🚫 Handle cancel - clear forms and close
+  // Handle cancel - clear forms and close
   const onCancel = () => {
     resetAllForms()
-    // 🔔 Notify parent that the add session was explicitly cancelled
+    // Notify parent that the add session was explicitly cancelled
     onCancelAdd?.()
     onOpenChange(false)
   }
 
-  // 🚫 Handle dialog close - reset forms and state
+  // Handle dialog close - reset forms and state
   const onDialogOpenChange = (nextOpen: boolean) => {
     if (nextOpen === open) return
     if (!nextOpen) {
@@ -56,7 +56,7 @@ export default function AddPlotMarkerDialog({ open, onOpenChange, coordinates, o
 
   return (
     <>
-      {/* 🎯 First dialog: choose marker type */}
+      {/* First dialog: choose marker type */}
       <Dialog open={open} onOpenChange={onDialogOpenChange}>
         <DialogContent>
           <DialogHeader>
@@ -67,7 +67,7 @@ export default function AddPlotMarkerDialog({ open, onOpenChange, coordinates, o
         </DialogContent>
       </Dialog>
 
-      {/* 🎨 Second dialog (nested): type-specific form */}
+      {/* Second dialog (nested): type-specific form */}
       <Dialog open={innerOpen} onOpenChange={setInnerOpen}>
         <DialogContent>
           <DialogHeader>
@@ -88,7 +88,7 @@ export default function AddPlotMarkerDialog({ open, onOpenChange, coordinates, o
               onCancel={onCancel}
               onDone={() => {
                 resetAllForms()
-                // ✅ Inform parent to resume add mode after successful save
+                // Inform parent to resume add mode after successful save
                 onDoneAdd?.()
                 onOpenChange(false)
               }}

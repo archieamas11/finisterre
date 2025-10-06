@@ -36,7 +36,7 @@ export function ColumbariumStep({ coordinates, onBack, onCancel, onDone }: Colum
           <div className="col-span-6">
             <FormField
               control={form.control}
-              name="rows"
+              name="columns"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Rows</FormLabel>
@@ -51,7 +51,7 @@ export function ColumbariumStep({ coordinates, onBack, onCancel, onDone }: Colum
           <div className="col-span-6">
             <FormField
               control={form.control}
-              name="columns"
+              name="rows"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Columns</FormLabel>
