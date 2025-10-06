@@ -220,7 +220,7 @@ export default function ContactUs() {
                     />
                     <Button
                       type="submit"
-                      className="w-full rounded-lg bg-[var(--brand-primary)] font-semibold text-white hover:bg-[var(--brand-primary)]/90"
+                      className="mt-10 h-12 w-full rounded-lg bg-[var(--brand-primary)] font-semibold text-white hover:bg-[var(--brand-primary)]/90"
                     >
                       Send Message
                     </Button>
