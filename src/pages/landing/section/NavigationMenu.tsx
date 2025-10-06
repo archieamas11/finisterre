@@ -11,6 +11,8 @@ import {
   ArrowLeftRightIcon,
 } from 'lucide-react'
 import * as React from 'react'
+import { useEffect, useState } from 'react'
+import { Link } from 'react-router-dom'
 
 import { Button } from '@/components/ui/button'
 import {
@@ -37,25 +39,25 @@ const products: NavItem[] = [
   {
     icon: TreesIcon,
     title: 'Serenity Lawn',
-    href: '#products',
+    href: '/#showcase-section',
     description: 'Double-depth in-ground burial plot with marble marker and well-manicured grass.',
   },
   {
     icon: LayersIcon,
     title: 'Columbarium (Niche)',
-    href: '#products',
+    href: '/#showcase-section',
     description: 'Best-in-class burial unit crafted with premium concrete and marble markers.',
   },
   {
     icon: BoneIcon,
     title: 'Bone Chamber & Ash Vault',
-    href: '#products',
+    href: '/#showcase-section',
     description: 'Concrete repository for bone and ash remains at the upper park level with garden views.',
   },
   {
     icon: Building2Icon,
     title: 'Family Estate',
-    href: '#products',
+    href: '/#showcase-section',
     description: 'A sacred way to honor family—an estate of your own.',
   },
 ]
@@ -65,19 +67,19 @@ const coreServices: NavItem[] = [
   {
     icon: MapPinIcon,
     title: 'Interment',
-    href: '#services',
+    href: '/#showcase-section',
     description: 'Complete interment services with modern equipment and dignified care.',
   },
   {
     icon: ArrowLeftRightIcon,
     title: 'Transfer & Reburial',
-    href: '#services',
+    href: '/#showcase-section',
     description: 'Careful relocation of remains including documentation and coordination.',
   },
   {
     icon: ClockIcon,
     title: 'Exhumation & Reburial',
-    href: '#services',
+    href: '/#showcase-section',
     description: 'For fresh, skeletal, and cinerary remains handled with utmost respect.',
   },
 ]
@@ -184,7 +186,7 @@ export function NavigationMenuSection() {
               })}
               asChild
             >
-              <Link to="/">Home</Link>
+              <Link to="/#hero">Home</Link>
             </NavigationMenuLink>
           </NavigationMenuItem>
           <NavigationMenuItem>
@@ -262,7 +264,7 @@ export function NavigationMenuSection() {
               })}
               asChild
             >
-              <Link to="#contact">Contact</Link>
+              <Link to="/#contact">Contact</Link>
             </NavigationMenuLink>
           </NavigationMenuItem>
         </NavigationMenuList>
@@ -291,7 +293,7 @@ export function NavigationMenuSection() {
               </SheetHeader>
               <div className="flex flex-1 flex-col overflow-y-auto">
                 <nav className="py-2">
-                  <MobileMenuItem onSelect={handleMobileMenuClose} title="Home" href="/" />
+                  <MobileMenuItem onSelect={handleMobileMenuClose} title="Home" href="/#hero" />
                   <MobileMenuItem title="Products" href="#">
                     <div className="bg-background py-2">
                       <div className="px-6 py-2">
@@ -327,7 +329,7 @@ export function NavigationMenuSection() {
                     </div>
                   </MobileMenuItem>
                   <MobileMenuItem onSelect={handleMobileMenuClose} title="About" href="/about" />
-                  <MobileMenuItem onSelect={handleMobileMenuClose} title="Contact" href="#contact" />
+                  <MobileMenuItem onSelect={handleMobileMenuClose} title="Contact" href="/#contact" />
                 </nav>
               </div>
             </SheetContent>

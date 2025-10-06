@@ -1,6 +1,6 @@
 import { AnimatePresence, motion } from 'framer-motion'
 import { ChevronUp, Minimize2, Maximize2, X } from 'lucide-react'
-import { useState, useCallback } from 'react'
+import { useState, useCallback, memo } from 'react'
 import { BiSolidChurch } from 'react-icons/bi'
 import { FaToilet } from 'react-icons/fa'
 import { GiOpenGate } from 'react-icons/gi'
@@ -19,17 +19,17 @@ interface LegendItem {
   shape?: 'circle' | 'square' | 'diamond'
 }
 
-interface LegendSection {
-  title: string
-  items: LegendItem[]
-  key: keyof typeof initialOpenSections
-}
-
 const initialOpenSections = {
   categories: true,
   status: true,
   facilities: true,
 } as const
+
+interface LegendSection {
+  title: string
+  items: LegendItem[]
+  key: keyof typeof initialOpenSections
+}
 
 // Animation variants
 const cardVariants = {
@@ -81,36 +81,36 @@ const buttonVariants = {
   },
 }
 
-export default function WebmapLegend() {
+const categories: LegendItem[] = [
+  { key: 'serenity', label: 'Serenity Lawn', color: '#FFFF', shape: 'circle' },
+  { key: 'columbarium', label: 'Columbarium', color: '#FFFF', shape: 'diamond' },
+  { key: 'chambers', label: 'Memorial Chambers', color: '#FFFF', shape: 'square' },
+]
+
+const statuses: LegendItem[] = [
+  { key: 'available', label: 'Available', color: getStatusColor('available') },
+  { key: 'occupied', label: 'Occupied', color: getStatusColor('occupied') },
+  { key: 'reserved', label: 'Reserved', color: getStatusColor('reserved') },
+  { key: 'your-plot', label: 'Your Plot', color: '#2563EB' },
+]
+
+const facilities: LegendItem[] = [
+  { key: 'comfort-room', label: 'Comfort Room', color: '#059669', icon: <FaToilet className="h-3.5 w-3.5" /> },
+  { key: 'parking', label: 'Parking', color: '#2563EB', icon: <MdLocalParking className="h-3.5 w-3.5" /> },
+  { key: 'main-entrance', label: 'Main Entrance', color: '#000000', icon: <GiOpenGate className="h-3.5 w-3.5" /> },
+  { key: 'chapel', label: 'Chapel', color: '#FF9800', icon: <BiSolidChurch className="h-3.5 w-3.5" /> },
+]
+
+const legendSections: LegendSection[] = [
+  { title: 'Categories', items: categories, key: 'categories' },
+  { title: 'Status', items: statuses, key: 'status' },
+  { title: 'Facilities', items: facilities, key: 'facilities' },
+]
+
+function WebmapLegendComponent() {
   const [openSections, setOpenSections] = useState(initialOpenSections)
   const [isMinimized, setIsMinimized] = useState(false)
   const [isCollapsed, setIsCollapsed] = useState(false)
-
-  const categories: LegendItem[] = [
-    { key: 'serenity', label: 'Serenity Lawn', color: '#FFFF', shape: 'circle' },
-    { key: 'columbarium', label: 'Columbarium', color: '#FFFF', shape: 'diamond' },
-    { key: 'chambers', label: 'Memorial Chambers', color: '#FFFF', shape: 'square' },
-  ]
-
-  const statuses: LegendItem[] = [
-    { key: 'available', label: 'Available', color: getStatusColor('available') },
-    { key: 'occupied', label: 'Occupied', color: getStatusColor('occupied') },
-    { key: 'reserved', label: 'Reserved', color: getStatusColor('reserved') },
-    { key: 'your-plot', label: 'Your Plot', color: '#2563EB' },
-  ]
-
-  const facilities: LegendItem[] = [
-    { key: 'comfort-room', label: 'Comfort Room', color: '#059669', icon: <FaToilet className="h-3.5 w-3.5" /> },
-    { key: 'parking', label: 'Parking', color: '#2563EB', icon: <MdLocalParking className="h-3.5 w-3.5" /> },
-    { key: 'main-entrance', label: 'Main Entrance', color: '#000000', icon: <GiOpenGate className="h-3.5 w-3.5" /> },
-    { key: 'chapel', label: 'Chapel', color: '#FF9800', icon: <BiSolidChurch className="h-3.5 w-3.5" /> },
-  ]
-
-  const sections: LegendSection[] = [
-    { title: 'Categories', items: categories, key: 'categories' },
-    { title: 'Status', items: statuses, key: 'status' },
-    { title: 'Facilities', items: facilities, key: 'facilities' },
-  ]
 
   const toggleSection = useCallback((section: keyof typeof initialOpenSections) => {
     setOpenSections((prev) => ({
@@ -196,10 +196,10 @@ export default function WebmapLegend() {
                   transition={{ duration: 0.3, ease: 'easeInOut' }}
                 >
                   <CardContent className="p-0">
-                    {sections.map((section, index) => (
+                    {legendSections.map((section, index) => (
                       <motion.div
                         key={section.key}
-                        className={cn('border-border', { 'border-b': index < sections.length - 1 })}
+                        className={cn('border-border', { 'border-b': index < legendSections.length - 1 })}
                         initial={{ opacity: 0, y: 10 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: index * 0.1, duration: 0.3, ease: 'easeOut' }}
@@ -289,3 +289,7 @@ export default function WebmapLegend() {
     </div>
   )
 }
+
+export const WebmapLegend = memo(WebmapLegendComponent)
+
+export default WebmapLegend

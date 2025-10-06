@@ -1,5 +1,6 @@
 'use client'
 import { Star } from 'lucide-react'
+import { memo } from 'react'
 
 import { Marquee } from '@/components/ui/marquee'
 import { cn } from '@/lib/utils'
@@ -7,6 +8,8 @@ import { cn } from '@/lib/utils'
 export function Highlight({ children, className }: { children: React.ReactNode; className?: string }) {
   return <span className={cn('rounded-md bg-[var(--brand-primary)] px-1.5 py-0.5 font-semibold text-gray-100', className)}>{children}</span>
 }
+
+const stars = [...Array(5)].map((_, i) => <Star key={i} className="h-4 w-4 fill-yellow-400 text-yellow-400" />)
 
 export interface TestimonialCardProps {
   name: string
@@ -34,14 +37,12 @@ export function TestimonialCard({ description, name, img, role, className, ...pr
         </div>
       </div>
       <blockquote className="mt-4 text-base text-gray-700">{description}</blockquote>
-      <div className="mt-4 flex items-center gap-1">
-        {[...Array(5)].map((_, i) => (
-          <Star key={i} className="h-4 w-4 fill-yellow-400 text-yellow-400" />
-        ))}
-      </div>
+      <div className="mt-4 flex items-center gap-1">{stars}</div>
     </figure>
   )
 }
+
+const MemoizedTestimonialCard = memo(TestimonialCard)
 
 const testimonials = [
   {
@@ -127,12 +128,12 @@ export default function Testimonials() {
             <div className="[mask-image:linear-gradient(to_left,transparent,black_0%,black_80%,transparent)]">
               <Marquee pauseOnHover className="[--duration:60s]">
                 {testimonials.map((testimonial) => (
-                  <TestimonialCard key={testimonial.name} {...testimonial} className="w-80 bg-white/50" />
+                  <MemoizedTestimonialCard key={testimonial.name} {...testimonial} className="w-80 bg-white/50" />
                 ))}
               </Marquee>
               <Marquee reverse pauseOnHover className="[--duration:60s]">
                 {testimonials.map((testimonial) => (
-                  <TestimonialCard key={testimonial.name} {...testimonial} className="w-80 bg-white/50" />
+                  <MemoizedTestimonialCard key={testimonial.name} {...testimonial} className="w-80 bg-white/50" />
                 ))}
               </Marquee>
             </div>

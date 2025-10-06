@@ -54,7 +54,9 @@ function AppRoutes() {
       <ErrorBoundary FallbackComponent={ErrorFallback}>
         <Routes>
           {/* Public Routes */}
-          <Route path="/" element={<RootLanding />} />
+          <Route path="/" element={<RootLanding />}>
+            <Route path="about" element={<About />} />
+          </Route>
           <Route path="/map" element={<PublicMap />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/forgot-password" element={<ForgotPassword />} />
@@ -62,7 +64,6 @@ function AppRoutes() {
           <Route path="/logout" element={<Logout />} />
           <Route path="/unauthorized" element={<UnauthorizedPage />} />
           <Route path="/landing-android" element={<AndroidLayout />} />
-          <Route path="/about" element={<About />} />
 
           {/* User Protected Routes */}
           <Route

@@ -70,7 +70,7 @@ const FeatureCard = ({ feature }: { feature: Feature }) => {
       </CardContent>
       <div
         className={cn(
-          'absolute -right-1/4 -bottom-1/4 z-0 h-1/2 w-1/2 rounded-full opacity-10 transition-all duration-500 group-hover:scale-[2.5]',
+          'absolute -right-1/4 -bottom-1/4 z-0 h-1/2 w-1/2 rounded-full bg-gradient-to-br opacity-10 transition-all duration-500 group-hover:scale-[2.5]',
           feature.color,
         )}
       />

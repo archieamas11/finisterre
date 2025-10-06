@@ -1,5 +1,6 @@
+import { useEffect } from 'react'
 import { FaFacebookMessenger } from 'react-icons/fa'
-import { Link } from 'react-router-dom'
+import { Link, Outlet, useLocation } from 'react-router-dom'
 
 import { PulsatingButton } from '@/components/pulsating-button'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
@@ -11,8 +12,44 @@ import Showcase from '@/pages/landing/section/Showcase'
 import Footer from '@/pages/landing/section/Footer'
 import FeatureSection from '@/pages/landing/section/FeatureSection'
 import Testimonials from '@/components/mvpblocks/Testimonials'
+import ContactUs from '@/pages/landing/section/ContactUs'
+
+function LandingHome() {
+  return (
+    <>
+      <HeroSection />
+      <FeatureSection />
+      <Showcase />
+      <Testimonials />
+      {/* <PublicNewsAnnouncement /> */}
+      <FAQs />
+      <ContactUs />
+    </>
+  )
+}
 
 export default function LandingLayout() {
+  const location = useLocation()
+  const isNestedRoute = location.pathname !== '/'
+
+  // Handle hash navigation (scroll to section when hash changes)
+  useEffect(() => {
+    if (location.hash) {
+      const id = location.hash.replace('#', '')
+      const element = document.getElementById(id)
+      if (element) {
+        setTimeout(() => {
+          element.scrollIntoView({ behavior: 'smooth', block: 'start' })
+        }, 100)
+      }
+    } else {
+      // Scroll to top when navigating without hash (both landing and nested routes)
+      setTimeout(() => {
+        window.scrollTo({ top: 0, behavior: 'smooth' })
+      }, 100)
+    }
+  }, [location])
+
   return (
     <div className="landing-page-root relative min-h-screen w-full bg-transparent">
       <div className="aurora-background pointer-events-none fixed inset-0 -z-10" aria-hidden="true" />
@@ -44,15 +81,12 @@ export default function LandingLayout() {
           </div>
         </div>
         <main className="flex-1">
-          <HeroSection />
-          <FeatureSection />
-          <Showcase />
-          <Testimonials />
-          {/* <PublicNewsAnnouncement /> */}
-          <FAQs />
+          {isNestedRoute ? <Outlet /> : <LandingHome />}
           <Footer />
         </main>
       </div>
     </div>
   )
 }
+
+export { LandingHome }

@@ -30,16 +30,13 @@ import ParkingMarkers from '@/pages/webmap/ParkingMarkers'
 import PetersRockMarkers from '@/pages/webmap/PeterRock'
 import PlaygroundMarkers from '@/pages/webmap/PlaygroundMarkers'
 import PlotMarkers from '@/pages/webmap/PlotMarkers'
-import WebmapLegend from '@/pages/webmap/WebmapLegend'
+import { WebmapLegend } from '@/pages/webmap/WebmapLegend'
 import WebMapNavs from '@/pages/webmap/WebMapNavs'
 import { convertPlotToMarker } from '@/types/map.types'
 import { isNativePlatform } from '@/utils/platform.utils'
 
-const UserLocationMarker = lazy(() =>
-  import('@/components/map/UserLocationMarker').then((module) => ({
-    default: module.UserLocationMarker,
-  })),
-)
+import { UserLocationMarker } from '@/components/map/UserLocationMarker'
+
 const NavigationInstructions = lazy(() => import('@/components/map/NavigationInstructions'))
 
 const DefaultIcon = L.icon({
@@ -714,8 +711,8 @@ export default function MapPage({ onBack, initialDirection }: { onBack?: () => v
                   totalTime={totalTime || undefined}
                   rerouteCount={rerouteCount}
                 />
-                {!(route && routeCoordinates.length > 0) && <UserLocationMarker userLocation={currentLocation} />}
               </Suspense>
+              {!(route && routeCoordinates.length > 0) && <UserLocationMarker userLocation={currentLocation} />}
             </MapContainer>
           </div>
         </LocateContext.Provider>

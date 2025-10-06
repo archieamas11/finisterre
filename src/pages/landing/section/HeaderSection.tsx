@@ -33,13 +33,14 @@ export const HeaderSection: FC = () => {
       aria-label="Main Navigation"
     >
       <Link
-        to="/"
+        to="/#hero"
         className={cn('focus:ring-primary flex items-center gap-2 rounded-md font-bold focus:ring-2 focus:ring-offset-2 focus:outline-none', {
           'text-black': scrolled,
           'text-white': !scrolled,
         })}
         aria-label="Go to homepage"
       >
+        {/* logo */}
         <img src="/favicon.svg" className="h-6 w-6" alt="Home Logo" />
         <span className="hidden md:inline">Finisterre</span>
       </Link>

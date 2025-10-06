@@ -32,43 +32,45 @@ export default function Footer() {
       <h2 id="footer-heading" className="sr-only">
         Footer
       </h2>
-      <div className="mx-auto max-w-7xl px-6 py-16 sm:py-24 lg:px-8 lg:py-15">
+      <div className="mx-auto max-w-7xl px-6 py-16 sm:py-24">
         <div className="xl:grid xl:grid-cols-3 xl:gap-8">
           <div className="space-y-8">
-            <Link to="/" className="flex items-center gap-2 font-bold">
+            <Link to="/#hero" className="flex items-center gap-2 font-bold">
               <img src="/favicon.svg" alt="Finisterre" className="h-6 w-6" />
               <span className="text-xl text-[var(--brand-primary)]">Finisterre Gardenz</span>
             </Link>
             <p className="text-base leading-6 text-gray-600">
-              Providing dignified cemetery management solutions with compassion, technology, and respect for sacred spaces.
+              The Finisterre brand stands for the most exquisitely designed memorial estates in Cebu. It is master-planned by the world-renowned
+              <span className="font-bold text-[var(--brand-primary)]"> PALAFOX ASSOCIATES</span> and developed by one of the country’s top mining and
+              development company, the <span className="font-bold text-[var(--brand-primary)]">ANSECA Development Corporation.</span>
             </p>
             <div className="flex space-x-6">
-              <a href="#" className="hover:text-primary text-[var(--brand-primary)]">
+              <a href="#" className="text-[var(--brand-primary)]">
                 <span className="sr-only">Facebook</span>
                 <Facebook className="h-6 w-6" />
               </a>
-              <a href="#" className="hover:text-primary text-[var(--brand-primary)]">
+              <a href="#" className="text-[var(--brand-primary)]">
                 <span className="sr-only">Twitter</span>
                 <Twitter className="h-6 w-6" />
               </a>
-              <a href="#" className="hover:text-primary text-[var(--brand-primary)]">
+              <a href="#" className="text-[var(--brand-primary)]">
                 <span className="sr-only">Instagram</span>
                 <Instagram className="h-6 w-6" />
               </a>
-              <a href="#" className="hover:text-primary text-[var(--brand-primary)]">
+              <a href="#" className="text-[var(--brand-primary)]">
                 <span className="sr-only">LinkedIn</span>
                 <Linkedin className="h-6 w-6" />
               </a>
             </div>
           </div>
-          <div className="mt-16 grid grid-cols-2 gap-8 xl:col-span-2 xl:mt-0">
+          <div className="mt-16 grid grid-cols-2 xl:col-span-2 xl:mt-0">
             <div className="md:grid md:grid-cols-2 md:gap-8">
               <div>
                 <h3 className="text-sm leading-6 font-semibold text-[var(--brand-primary)]">Solutions</h3>
                 <ul role="list" className="mt-6 space-y-4">
                   {footerLinks.solutions.map((item) => (
                     <li key={item.name}>
-                      <a href={item.href} className="hover:text-primary text-sm leading-6 text-gray-600">
+                      <a href={item.href} className="text-sm leading-6 text-gray-600">
                         {item.name}
                       </a>
                     </li>
@@ -80,7 +82,7 @@ export default function Footer() {
                 <ul role="list" className="mt-6 space-y-4">
                   {footerLinks.support.map((item) => (
                     <li key={item.name}>
-                      <a href={item.href} className="hover:text-primary text-sm leading-6 text-gray-600">
+                      <a href={item.href} className="text-sm leading-6 text-gray-600">
                         {item.name}
                       </a>
                     </li>
@@ -94,7 +96,7 @@ export default function Footer() {
                 <ul role="list" className="mt-6 space-y-4">
                   {footerLinks.company.map((item) => (
                     <li key={item.name}>
-                      <a href={item.href} className="hover:text-primary text-sm leading-6 text-gray-600">
+                      <a href={item.href} className="text-sm leading-6 text-gray-600">
                         {item.name}
                       </a>
                     </li>
@@ -106,7 +108,7 @@ export default function Footer() {
                 <ul role="list" className="mt-6 space-y-4">
                   {footerLinks.legal.map((item) => (
                     <li key={item.name}>
-                      <a href={item.href} className="hover:text-primary text-sm leading-6 text-gray-600">
+                      <a href={item.href} className="text-sm leading-6 text-gray-600">
                         {item.name}
                       </a>
                     </li>

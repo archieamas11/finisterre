@@ -35,7 +35,7 @@ export default function HeroSection() {
   const shouldReduceMotion = useReducedMotion()
 
   return (
-    <section className="relative flex min-h-screen items-center justify-center overflow-hidden">
+    <section className="relative flex min-h-screen items-center justify-center overflow-hidden" id="hero">
       <div className="absolute inset-0 z-0 [mask-image:linear-gradient(to_bottom,transparent,black_0%,black_40%,transparent)]">
         {/* Background video: muted autoplay loop with a local poster and source element for better browser handling */}
         <video

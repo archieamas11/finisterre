@@ -56,7 +56,7 @@ export default function FAQs() {
             <h2 className="text-3xl font-bold tracking-tight text-[var(--brand-primary)] sm:text-4xl">Frequently Asked Questions</h2>
             <p className="mt-4 text-lg leading-7 text-gray-600">
               Can’t find the answer you’re looking for? Reach out to our{' '}
-              <Link to="#contact" className="hover:text-primary/80 font-semibold text-[var(--brand-primary)]">
+              <Link to="#contact" className="font-semibold text-[var(--brand-primary)]">
                 customer support
               </Link>
               <span> team.</span>
