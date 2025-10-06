@@ -2,7 +2,7 @@ import { useQuery } from '@tanstack/react-query'
 import { Menu, X } from 'lucide-react'
 import { useState, useEffect, useRef } from 'react'
 
-import { getChambersStats, getSerenityStats } from '@/api/map-stats.api'
+import { getChambersStats, getSerenityStats, getColumbariumStats } from '@/api/map-stats.api'
 import { ErrorMessage } from '@/components/ErrorMessage'
 import { Badge } from '@/components/ui/badge'
 import { Card } from '@/components/ui/card'
@@ -35,10 +35,20 @@ export default function MapStats() {
     staleTime: 60_000,
   })
 
-  const isLoading = isSerenityLoading || isChambersLoading
-  const hasError = Boolean(serenityError || chambersError)
+  const {
+    data: columbarium,
+    isLoading: isColumbariumLoading,
+    error: columbariumError,
+  } = useQuery({
+    queryKey: ['map-stats', 'columbarium'],
+    queryFn: getColumbariumStats,
+    staleTime: 60_000,
+  })
 
-  // Build location data from API responses (exclude Columbarium)
+  const isLoading = isSerenityLoading || isChambersLoading || isColumbariumLoading
+  const hasError = Boolean(serenityError || chambersError || columbariumError)
+
+  // Build location data from API responses
   const locationData = [
     {
       id: 'serenity',
@@ -89,6 +99,31 @@ export default function MapStats() {
         },
       ],
       total: chambers?.total ?? (chambers?.available ?? 0) + (chambers?.occupied ?? 0) + (chambers?.reserved ?? 0),
+    },
+    {
+      id: 'columbarium',
+      name: 'Columbarium',
+      stats: [
+        {
+          label: 'Available',
+          value: columbarium?.available ?? 0,
+          color: 'text-green-600',
+          bgColor: 'bg-green-100 dark:bg-green-900/30',
+        },
+        {
+          label: 'Occupied',
+          value: columbarium?.occupied ?? 0,
+          color: 'text-red-600',
+          bgColor: 'bg-red-100 dark:bg-red-900/30',
+        },
+        {
+          label: 'Reserved',
+          value: columbarium?.reserved ?? 0,
+          color: 'text-yellow-600',
+          bgColor: 'bg-yellow-100 dark:bg-yellow-900/30',
+        },
+      ],
+      total: columbarium?.total ?? (columbarium?.available ?? 0) + (columbarium?.occupied ?? 0) + (columbarium?.reserved ?? 0),
     },
   ]
 
@@ -162,7 +197,7 @@ export default function MapStats() {
         {/* Location Tabs */}
         <div className="px-2 pb-2">
           <Tabs defaultValue="serenity" className="w-full">
-            <TabsList className="dark:bg-background mb-2 grid h-auto w-full grid-cols-2 gap-1 rounded-lg bg-gray-100 p-1">
+            <TabsList className="dark:bg-background mb-2 grid h-auto w-full grid-cols-3 gap-1 rounded-lg bg-gray-100 p-1">
               {locationData.map((location) => (
                 <TabsTrigger
                   key={location.id}

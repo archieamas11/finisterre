@@ -27,6 +27,7 @@ import CreateDeceased from './columbarium-dialogs/CreateDeceasedPage'
 import { ShareButton } from '@/pages/webmap/components/share-button'
 import GetDirectionButton from '@/pages/webmap/components/get-direction-button'
 import CustomerSelectForm from '@/components/customers/CustomerSelectForm'
+import { ucwords } from '../../../lib/format'
 
 interface ColumbariumPopupProps {
   marker: ConvertedMarker
@@ -133,7 +134,7 @@ export default function ColumbariumPopup({ marker, onDirectionClick, isDirection
       <div className="bg-background dark:bg-muted mb-2 flex h-full items-center justify-between rounded-lg border p-3">
         <div>
           <h3 className="text-accent-foreground flex items-center gap-2 text-lg font-bold">
-            <ImLibrary /> Chamber {marker.plot_id}
+            <ImLibrary /> {ucwords(marker.category)} {marker.plot_id}
           </h3>
           <div className="text-secondary-foreground flex gap-2 text-sm">
             <span>
@@ -174,7 +175,7 @@ export default function ColumbariumPopup({ marker, onDirectionClick, isDirection
           style={{
             fontSize: '20px',
             scrollbarWidth: 'thin',
-            gridTemplateColumns: `repeat(${Math.min(cols, 9)}, minmax(0, 1fr))`,
+            gridTemplateColumns: `repeat(${Math.min(cols, 10)}, minmax(0, 1fr))`,
           }}
           className="bg-background dark:bg-muted grid w-full gap-1 rounded-lg border p-2"
         >

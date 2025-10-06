@@ -2,7 +2,7 @@ import { PrinterIcon } from 'lucide-react'
 import React from 'react'
 import { Pie, PieChart, Cell } from 'recharts'
 
-import { getChambersStats, getSerenityStatsByBlock, type MapStatsResponse } from '@/api/map-stats.api'
+import { getChambersStats, getColumbariumStats, getSerenityStatsByBlock, type MapStatsResponse } from '@/api/map-stats.api'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { type ChartConfig, ChartContainer, ChartStyle, ChartTooltip, ChartTooltipContent } from '@/components/ui/chart'
@@ -10,8 +10,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 
 export const description = 'Plot status distribution per category'
 
-// Mock data for columbarium only - will be replaced when data is available
-const columbariumMockData = { Available: 180, Occupied: 260, Reserved: 40 }
+// Removed mock columbarium data; now using real API stats
 
 const COLORS: Record<string, string> = {
   Available: '#047857',
@@ -51,6 +50,7 @@ export function ChartPieInteractive() {
   // State for real data from API
   const [serenityStats, setSerenityStats] = React.useState<MapStatsResponse | null>(null)
   const [memorialStats, setMemorialStats] = React.useState<MapStatsResponse | null>(null)
+  const [columbariumStats, setColumbariumStats] = React.useState<MapStatsResponse | null>(null)
   const [loading, setLoading] = React.useState(true)
 
   // Fetch data on mount and when serenityBlock changes
@@ -58,9 +58,14 @@ export function ChartPieInteractive() {
     async function fetchData() {
       try {
         setLoading(true)
-        const [serenityRes, memorialRes] = await Promise.all([getSerenityStatsByBlock(serenityBlock), getChambersStats()])
+        const [serenityRes, memorialRes, columbariumRes] = await Promise.all([
+          getSerenityStatsByBlock(serenityBlock),
+          getChambersStats(),
+          getColumbariumStats(),
+        ])
         setSerenityStats(serenityRes)
         setMemorialStats(memorialRes)
+        setColumbariumStats(columbariumRes)
       } catch (error) {
         console.error('Failed to fetch plot stats:', error)
       } finally {
@@ -80,7 +85,14 @@ export function ChartPieInteractive() {
     })
   }, [serenityStats])
 
-  const columbariumData = React.useMemo(() => toPieArray(columbariumMockData), [])
+  const columbariumData = React.useMemo(() => {
+    if (!columbariumStats) return []
+    return toPieArray({
+      Available: columbariumStats.available,
+      Occupied: columbariumStats.occupied,
+      Reserved: columbariumStats.reserved,
+    })
+  }, [columbariumStats])
 
   const memorialData = React.useMemo(() => {
     if (!memorialStats) return []
