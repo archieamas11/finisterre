@@ -9,6 +9,18 @@ import { ThemeProvider } from '@/components/provider/theme-provider.tsx'
 import { Toaster } from '@/components/ui/sonner.tsx'
 
 import App from './App.tsx'
+
+// PERF: load react-scan only during local development for render performance insights
+if (import.meta.env.DEV) {
+  import('react-scan')
+    .then(({ scan }) => {
+      scan({
+        enabled: true,
+        log: true,
+      })
+    })
+    .catch(() => {})
+}
 const queryClient = new QueryClient()
 const LazyReactQueryDevtools = React.lazy(() =>
   import('@tanstack/react-query-devtools').then((mod) => ({
