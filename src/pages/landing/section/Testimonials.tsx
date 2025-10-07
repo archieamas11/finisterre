@@ -115,7 +115,7 @@ const testimonials = [
 
 export default function Testimonials() {
   return (
-    <section className="relative overflow-hidden sm:py-32">
+    <section id="testimonials" aria-labelledby="testimonials-heading">
       <div className="mx-auto w-full sm:w-[85%] md:w-[80%] lg:w-[75%] xl:w-full">
         <div className="mx-auto max-w-3xl text-center">
           <h2 className="text-4xl font-bold tracking-tight text-[var(--brand-primary)] sm:text-5xl">What Families Are Saying</h2>

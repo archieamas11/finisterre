@@ -80,8 +80,8 @@ const FeatureCard = ({ feature }: { feature: Feature }) => {
 
 const FeatureSection = () => {
   return (
-    <section className="py-24 sm:py-32">
-      <div className="mx-auto max-w-7xl px-6 lg:px-8">
+    <section id="features" aria-labelledby="features-heading">
+      <div className="landing-page-wrapper">
         <div className="mx-auto max-w-3xl text-center">
           <h2 className="text-4xl font-bold tracking-tight text-[var(--brand-primary)] sm:text-5xl">Why Choose Finisterre</h2>
           <p className="mx-auto mt-6 max-w-2xl text-lg leading-8 text-gray-800">

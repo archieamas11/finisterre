@@ -79,8 +79,8 @@ export default function ContactUs() {
   }
 
   return (
-    <section id="contact" className="py-24 sm:py-32" aria-labelledby="contact-heading">
-      <div className="mx-auto max-w-7xl px-6 lg:px-20">
+    <section id="contact" aria-labelledby="contact-heading">
+      <div className="landing-page-wrapper">
         <div className="mx-auto mb-16 max-w-3xl text-center">
           <h2 id="contact-heading" className="text-4xl font-bold tracking-tight text-[var(--brand-primary)] sm:text-5xl">
             We'd Love to Hear From You

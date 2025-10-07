@@ -41,8 +41,8 @@ export default function About() {
     <div className="relative overflow-hidden">
       <div className="absolute top-0 right-0 left-0 z-10 h-32 bg-gradient-to-b from-black/45 to-transparent"></div>
       {/* Core Values Section */}
-      <section className="py-24 sm:py-28">
-        <div className="mx-auto max-w-7xl px-6 lg:px-8">
+      <section id="about" aria-labelledby="about-heading">
+        <div className="landing-page-wrapper">
           <div className="mx-auto mb-16 max-w-3xl text-center">
             <h2 className="mb-6 text-4xl font-bold tracking-tight text-[var(--brand-primary)] sm:text-5xl">Our Core Values</h2>
             <p className="text-lg leading-8 text-gray-800">The principles that guide us in serving you with dedication and compassion</p>

@@ -11,19 +11,21 @@ import FAQs from '@/pages/landing/section/FAQs'
 import Showcase from '@/pages/landing/section/Showcase'
 import Footer from '@/pages/landing/section/Footer'
 import FeatureSection from '@/pages/landing/section/FeatureSection'
-import Testimonials from '@/components/mvpblocks/Testimonials'
+import Testimonials from '@/pages/landing/section/Testimonials'
 import ContactUs from '@/pages/landing/section/ContactUs'
+import Products from '@/pages/landing/section/Products'
 
 function LandingHome() {
   return (
     <>
       <HeroSection />
       <FeatureSection />
+      <Products />
       <Showcase />
       <Testimonials />
       {/* <PublicNewsAnnouncement /> */}
-      <FAQs />
       <ContactUs />
+      <FAQs />
     </>
   )
 }

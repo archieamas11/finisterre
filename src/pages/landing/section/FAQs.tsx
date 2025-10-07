@@ -49,8 +49,8 @@ const faqItems: FAQItem[] = [
 
 export default function FAQs() {
   return (
-    <section className="py-24 sm:py-32">
-      <div className="mx-auto max-w-7xl px-6 lg:px-8">
+    <section id="faqs" aria-labelledby="faqs-heading">
+      <div className="landing-page-wrapper">
         <div className="grid grid-cols-1 gap-x-8 gap-y-16 lg:grid-cols-3">
           <div className="lg:col-span-1">
             <h2 className="text-3xl font-bold tracking-tight text-[var(--brand-primary)] sm:text-4xl">Frequently Asked Questions</h2>
