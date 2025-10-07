@@ -88,7 +88,7 @@ export const customerColumns: ColumnDef<Customer>[] = [
   },
   {
     id: 'contact_info',
-    accessorKey: 'contact_info',
+    accessorFn: (row) => `${row.contact_number || ''} ${row.email || ''}`.trim(),
     header: ({ column }) => <DataTableColumnHeader column={column} title="Contact Information" />,
     cell: ({ row }) => {
       return (

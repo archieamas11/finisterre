@@ -1,4 +1,4 @@
-import { type LucideIcon, CalendarDays, PaintBucket, MonitorCog, MapIcon, User, Home, Notebook, LayoutGrid, Newspaper } from 'lucide-react'
+import { type LucideIcon, LibraryBig, CalendarDays, PaintBucket, MonitorCog, MapIcon, User, Home, LayoutGrid, Newspaper } from 'lucide-react'
 
 export interface NavMainItem {
   url: string
@@ -35,7 +35,7 @@ export const adminSidebarItems: NavGroup[] = [
         icon: LayoutGrid,
       },
       {
-        icon: Notebook,
+        icon: LibraryBig,
         title: 'Interment Setup',
         url: '/admin/interment-setup',
         subItems: [

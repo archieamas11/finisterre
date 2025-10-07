@@ -10,18 +10,21 @@ import {
   useReactTable,
   type Row,
 } from '@tanstack/react-table'
-import { ArrowRightIcon, SearchIcon } from 'lucide-react'
-import React from 'react'
+import { ArrowRightIcon, SearchIcon, PrinterIcon, ImportIcon } from 'lucide-react'
+import React, { useRef } from 'react'
+import { useReactToPrint } from 'react-to-print'
 
 import type { Customer } from '@/api/customer.api'
 
 import { DataTable } from '@/components/data-table/data-table'
 import { DataTableToolbar } from '@/components/data-table/data-table-toolbar'
+import { PrintableTable } from '@/components/printable-table'
 import { Card } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { customerColumns } from '@/pages/admin/interment/columns/CustomerColumns'
 
 import CreateCustomer from './CreateCustomer'
+import { Button } from '@/components/ui/button'
 
 interface CustomersTableProps {
   data: Customer[]
@@ -34,6 +37,8 @@ export default function CustomersTable({ data }: CustomersTableProps) {
   const [rowSelection, setRowSelection] = React.useState<RowSelectionState>({})
 
   const [globalFilter, setGlobalFilter] = React.useState('')
+  const contentRef = useRef<HTMLDivElement>(null)
+  const reactToPrintFn = useReactToPrint({ contentRef })
   const globalFilterFn = React.useCallback((row: Row<Customer>, _columnId: string, filterValue: string) => {
     if (!filterValue) return true
     const q = String(filterValue).toLowerCase().trim()
@@ -95,10 +100,29 @@ export default function CustomersTable({ data }: CustomersTableProps) {
               <ArrowRightIcon size={16} aria-hidden="true" />
             </button>
           </div>
+          <Button size={'sm'} variant="outline" onClick={reactToPrintFn}>
+            <PrinterIcon />
+            Print
+          </Button>
+          <Button size={'sm'} variant={'outline'} onClick={() => alert('Not yet implemented!')}>
+            <ImportIcon /> Import
+          </Button>
           <CreateCustomer />
         </div>
       </DataTableToolbar>
       <DataTable table={table} />
+
+      {/* Hidden printable table content */}
+      <PrintableTable
+        ref={contentRef}
+        table={table}
+        title="Customer Records Report"
+        subtitle="Finisterre Cemetery Management System"
+        customHeaders={{
+          full_name: 'Full Name',
+          contact_info: 'Contact Information',
+        }}
+      />
     </Card>
   )
 }

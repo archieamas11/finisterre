@@ -1,5 +1,5 @@
 import { useQueryClient, useMutation } from '@tanstack/react-query'
-import { Plus } from 'lucide-react'
+import { SquarePlus } from 'lucide-react'
 import React from 'react'
 import { toast } from 'sonner'
 
@@ -51,7 +51,7 @@ export default function CreateCustomer() {
   return (
     <div className="items-right flex flex-row justify-end">
       <Button onClick={() => setOpen(true)} variant="outline" size="sm">
-        <Plus />
+        <SquarePlus />
         Add Customer
       </Button>
       <CustomerForm onOpenChange={setOpen} isPending={isPending} onSubmit={handleSubmit} open={open} mode="add" />

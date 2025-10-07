@@ -1,10 +1,8 @@
 import type { Row } from '@tanstack/react-table'
-
 import { Archive, MoreHorizontal } from 'lucide-react'
-import React from 'react'
-
+import React, { useRef } from 'react'
+import { useReactToPrint } from 'react-to-print'
 import type { Customer } from '@/api/customer.api'
-
 import { Button } from '@/components/ui/button'
 import {
   DropdownMenu,
@@ -16,10 +14,14 @@ import {
 } from '@/components/ui/dropdown-menu'
 import EditCustomerDialog from '@/pages/admin/interment/customer/UpdateCustomer'
 import ViewCustomerDialog from '@/pages/admin/interment/customer/ViewCustomer'
+import { PrintableCustomerDetails } from '@/pages/admin/interment/customer/components'
 
 export default function CustomerActionsCell({ row }: { row: Row<Customer> }) {
   const [open, setOpen] = React.useState(false)
   const [viewOpen, setViewOpen] = React.useState(false)
+  const contentRef = useRef<HTMLDivElement>(null)
+  const reactToPrintFn = useReactToPrint({ contentRef })
+
   if (!row?.original) return null
   return (
     <>
@@ -47,6 +49,7 @@ export default function CustomerActionsCell({ row }: { row: Row<Customer> }) {
           >
             View Customer
           </DropdownMenuItem>
+          <DropdownMenuItem onClick={reactToPrintFn}>Quick Print</DropdownMenuItem>
           <DropdownMenuSeparator />
           <DropdownMenuItem onClick={() => navigator.clipboard.writeText(String(row.original.customer_id))} className="text-red-600 hover:bg-red-100">
             <Archive className="mr-2 h-4 w-4 text-red-600" />
@@ -56,6 +59,9 @@ export default function CustomerActionsCell({ row }: { row: Row<Customer> }) {
       </DropdownMenu>
       <EditCustomerDialog customer={row.original} onOpenChange={setOpen} open={open} />
       <ViewCustomerDialog onOpenChange={setViewOpen} customer={row.original} open={viewOpen} />
+
+      {/* Hidden printable content for Quick Print */}
+      <PrintableCustomerDetails ref={contentRef} customer={row.original} />
     </>
   )
 }
