@@ -60,10 +60,6 @@ export const getLogsColumns = (users: { username: string }[]): ColumnDef<Activit
     meta: {
       label: 'User',
       variant: 'select',
-      // NOTE: Column meta is shared across all rows. Don't reference `row` here.
-      // If you want per-table filter options (e.g. unique usernames), compute
-      // them outside this column definition and pass them in via props or
-      // import a helper that derives options from the data source.
       options: [...new Set(users.map((u) => u.username))].map((username) => ({
         label: ucwords(username),
         value: username,

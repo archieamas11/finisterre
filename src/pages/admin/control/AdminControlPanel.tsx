@@ -1,8 +1,7 @@
-import { ArchiveIcon, Settings, FileText, BellOff, Shield, User, Bell } from 'lucide-react'
+import { BellOff, Shield, Bell } from 'lucide-react'
 import { useState } from 'react'
 
-import { Button } from '@/components/ui/button'
-import { CardContent, CardHeader, CardFooter, CardTitle, Card } from '@/components/ui/card'
+import { CardContent, CardHeader, CardTitle, Card } from '@/components/ui/card'
 import { Switch } from '@/components/ui/switch'
 import AdminUsersTable from '@/pages/admin/home/AdminUsersTable'
 
@@ -72,7 +71,7 @@ export default function AdminControlPanel() {
       </header>
 
       {/* Stats Cards */}
-      <div className="mb-4 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+      {/* <div className="mb-4 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <Card className="bg-card text-card-foreground border-border shadow-sm transition-shadow duration-300 hover:shadow-lg">
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
@@ -132,10 +131,9 @@ export default function AdminControlPanel() {
             </div>
           </CardContent>
         </Card>
-      </div>
-
+      </div> */}
       {/* Control Cards */}
-      <div className="mb-4 grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
+      {/* <div className="mb-4 grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
         <Card className="bg-card text-card-foreground border-border shadow-sm transition-shadow duration-300 hover:shadow-lg">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">User Management</CardTitle>
@@ -195,7 +193,7 @@ export default function AdminControlPanel() {
             </Button>
           </CardFooter>
         </Card>
-      </div>
+      </div> */}
       {/* Admin Users Table */}
       <AdminUsersTable />
     </div>

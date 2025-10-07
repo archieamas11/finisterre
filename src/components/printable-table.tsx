@@ -85,19 +85,30 @@ export const PrintableTable = React.forwardRef<HTMLDivElement, PrintableTablePro
         val = row.original[columnId as keyof typeof row.original] || ''
       }
 
-      // If value looks like an epoch timestamp (number or numeric string), format to local date/time
-      if (typeof val === 'number' && Number.isFinite(val)) {
-        // Treat large numbers (> 1e11) as milliseconds, else seconds
-        const asMs = val > 1e11 ? val : val * 1000
+      // Attempt to format ONLY plausible epoch timestamps (avoid converting simple IDs/counts to dates)
+      const isPlausibleEpoch = (num: number) => {
+        // Accept seconds range: 2000-01-01 -> 2100-01-01
+        const SEC_MIN = 946684800 // 2000-01-01
+        const SEC_MAX = 4102444800 // 2100-01-01
+        // Accept milliseconds range: same dates * 1000
+        const MS_MIN = SEC_MIN * 1000
+        const MS_MAX = SEC_MAX * 1000
+        return (num >= SEC_MIN && num <= SEC_MAX) || (num >= MS_MIN && num <= MS_MAX)
+      }
+
+      if (typeof val === 'number' && Number.isFinite(val) && isPlausibleEpoch(val)) {
+        const asMs = val > 1e12 ? val : val * 1000 // if already ms keep, else treat as seconds
         const d = new Date(asMs)
         if (!isNaN(d.getTime())) return d.toLocaleString()
       }
 
       if (typeof val === 'string' && /^\d{10,13}$/.test(val)) {
         const num = Number(val)
-        const asMs = num > 1e11 ? num : num * 1000
-        const d = new Date(asMs)
-        if (!isNaN(d.getTime())) return d.toLocaleString()
+        if (isPlausibleEpoch(num)) {
+          const asMs = num > 1e12 ? num : num * 1000
+          const d = new Date(asMs)
+          if (!isNaN(d.getTime())) return d.toLocaleString()
+        }
       }
 
       return val

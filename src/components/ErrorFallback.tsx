@@ -21,10 +21,12 @@ const ErrorFallback: React.FC<ErrorFallbackProps> = ({ error, resetErrorBoundary
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-4 text-center">
-        <details className="text-left">
-          <summary className="text-muted-foreground hover:text-foreground cursor-pointer text-sm">Error Details</summary>
-          <pre className="bg-muted mt-2 max-h-32 overflow-auto rounded p-2 text-xs">{error.message}</pre>
-        </details>
+        {!import.meta.env.PROD && (
+          <details className="text-left">
+            <summary className="text-muted-foreground hover:text-foreground cursor-pointer text-sm">Error Details</summary>
+            <pre className="bg-muted mt-2 max-h-32 overflow-auto rounded p-2 text-xs">{error.message}</pre>
+          </details>
+        )}
         <Button onClick={resetErrorBoundary} className="w-full">
           <RefreshCw className="h-4 w-4" />
           Try Again

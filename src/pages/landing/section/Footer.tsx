@@ -40,11 +40,12 @@ export default function Footer() {
               <span className="text-xl text-[var(--brand-primary)]">Finisterre Gardenz</span>
             </Link>
             <p className="text-base leading-6 text-gray-600">
-              The Finisterre brand stands for the most exquisitely designed memorial estates in Cebu. It is master-planned by the world-renowned
-              <span className="font-bold text-[var(--brand-primary)]"> PALAFOX ASSOCIATES</span> and developed by one of the country’s top mining and
-              development company, the <span className="font-bold text-[var(--brand-primary)]">ANSECA Development Corporation.</span>
+              The Finisterre brand stands for the most exquisitely designed memorial estates in Cebu.
             </p>
-            <div className="flex space-x-6">
+            <Link to="/about" className="font-bold text-[var(--brand-primary)]">
+              Learn more
+            </Link>
+            <div className="mt-10 flex space-x-6">
               <a href="#" className="text-[var(--brand-primary)]">
                 <span className="sr-only">Facebook</span>
                 <Facebook className="h-6 w-6" />
