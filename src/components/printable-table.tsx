@@ -59,8 +59,8 @@ export const PrintableTable = React.forwardRef<HTMLDivElement, PrintableTablePro
       )
     })
 
-    // Get all rows from the table (not just current page)
-    const allRows = table.getCoreRowModel().rows
+    // Get all filtered and sorted rows from the table (not just the current page)
+    const allRows = table.getSortedRowModel().rows
 
     // Helper function to get cell value for printing
     const getCellValue = (row: any, columnId: string) => {
@@ -69,18 +69,38 @@ export const PrintableTable = React.forwardRef<HTMLDivElement, PrintableTablePro
 
       const columnDef = column.columnDef
 
-      // Use accessorFn if available
+      // Use meta.print if available (allows columns to expose a printable string)
+      if ('meta' in columnDef && (columnDef as any).meta?.print) {
+        const printVal = (columnDef as any).meta.print
+        return typeof printVal === 'function' ? printVal(row.original, row.index) : printVal
+      }
+
+      // Resolve value using accessorFn/accessorKey/fallback
+      let val: any = ''
       if ('accessorFn' in columnDef && columnDef.accessorFn) {
-        return columnDef.accessorFn(row.original, row.index)
+        val = columnDef.accessorFn(row.original, row.index)
+      } else if ('accessorKey' in columnDef && columnDef.accessorKey) {
+        val = row.original[columnDef.accessorKey as keyof typeof row.original]
+      } else {
+        val = row.original[columnId as keyof typeof row.original] || ''
       }
 
-      // Use accessorKey if available
-      if ('accessorKey' in columnDef && columnDef.accessorKey) {
-        return row.original[columnDef.accessorKey as keyof typeof row.original]
+      // If value looks like an epoch timestamp (number or numeric string), format to local date/time
+      if (typeof val === 'number' && Number.isFinite(val)) {
+        // Treat large numbers (> 1e11) as milliseconds, else seconds
+        const asMs = val > 1e11 ? val : val * 1000
+        const d = new Date(asMs)
+        if (!isNaN(d.getTime())) return d.toLocaleString()
       }
 
-      // Use id as fallback
-      return row.original[columnId as keyof typeof row.original] || ''
+      if (typeof val === 'string' && /^\d{10,13}$/.test(val)) {
+        const num = Number(val)
+        const asMs = num > 1e11 ? num : num * 1000
+        const d = new Date(asMs)
+        if (!isNaN(d.getTime())) return d.toLocaleString()
+      }
+
+      return val
     }
 
     // Get column header label

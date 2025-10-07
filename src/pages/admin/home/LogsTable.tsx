@@ -21,8 +21,10 @@ import { DataTableToolbar } from '@/components/data-table/data-table-toolbar'
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
+import { useReactToPrint } from 'react-to-print'
+import { PrintableTable } from '@/components/printable-table'
 
-import { logsColumns } from './LogsColumns'
+import { getLogsColumns } from './LogsColumns'
 
 interface LogsTableProps {
   data: ActivityLog[]
@@ -34,6 +36,16 @@ export default function LogsTable({ data }: LogsTableProps) {
   const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({})
   const [rowSelection, setRowSelection] = React.useState<RowSelectionState>({})
   const [globalFilter, setGlobalFilter] = React.useState('')
+  const contentRef = React.useRef<HTMLDivElement>(null)
+
+  const columns = React.useMemo(() => {
+    const users = [...new Set(data.map((item) => item.username).filter(Boolean) as string[])].map((username) => ({
+      username,
+    }))
+    return getLogsColumns(users)
+  }, [data])
+
+  const reactToPrintFn = useReactToPrint({ contentRef })
 
   const globalFilterFn = React.useCallback((row: Row<ActivityLog>, _columnId: string, filterValue: string) => {
     if (!filterValue) return true
@@ -51,7 +63,7 @@ export default function LogsTable({ data }: LogsTableProps) {
   const table = useReactTable<ActivityLog>({
     data,
     globalFilterFn,
-    columns: logsColumns,
+    columns,
     onSortingChange: setSorting,
     getCoreRowModel: getCoreRowModel(),
     onRowSelectionChange: setRowSelection,
@@ -86,7 +98,7 @@ export default function LogsTable({ data }: LogsTableProps) {
             <div className="text-muted-foreground/80 pointer-events-none absolute inset-y-0 start-0 flex items-center justify-center ps-3 peer-disabled:opacity-50">
               <SearchIcon size={16} />
             </div>
-            <Button type="button" variant="outline" size="sm" onClick={() => window.print()}>
+            <Button type="button" variant="outline" size="sm" onClick={reactToPrintFn}>
               <PrinterIcon size={16} className="me-1" />
               Print
             </Button>
@@ -94,6 +106,9 @@ export default function LogsTable({ data }: LogsTableProps) {
         </div>
       </DataTableToolbar>
       <DataTable table={table} />
+
+      {/* Hidden printable table content */}
+      <PrintableTable ref={contentRef} table={table} title="Activity Logs Report" subtitle="Finisterre Cemetery Management System" />
     </Card>
   )
 }

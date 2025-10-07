@@ -20,6 +20,8 @@ import { DataTableToolbar } from '@/components/data-table/data-table-toolbar'
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
+import { useReactToPrint } from 'react-to-print'
+import { PrintableTable } from '@/components/printable-table'
 
 import { adminUsersColumns } from './AdminUsersColumns'
 
@@ -31,6 +33,8 @@ export default function AdminUsersTable() {
   const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({})
   const [rowSelection, setRowSelection] = React.useState<RowSelectionState>({})
   const [globalFilter, setGlobalFilter] = React.useState('')
+  const contentRef = useRef<HTMLDivElement>(null)
+  const reactToPrintFn = useReactToPrint({ contentRef })
 
   React.useEffect(() => {
     let mounted = true
@@ -88,14 +92,17 @@ export default function AdminUsersTable() {
             <Button type="button" variant="outline" size="sm" onClick={() => alert('Add user functionality not implemented yet.')}>
               Add New User
             </Button>
-            <Button type="button" variant="outline" size="sm" onClick={() => window.print()}>
-              <PrinterIcon size={16} className="me-1" />
+            <Button size={'sm'} variant="outline" onClick={reactToPrintFn}>
+              <PrinterIcon />
               Print
             </Button>
           </div>
         </div>
       </DataTableToolbar>
       <DataTable table={table} />
+
+      {/* Hidden printable table content */}
+      <PrintableTable ref={contentRef} table={table} title="Logs Records Report" subtitle="Finisterre Cemetery Management System" />
     </Card>
   )
 }

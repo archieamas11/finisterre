@@ -8,6 +8,7 @@ import type { ActivityLog } from '@/api/logs.api'
 import { DataTableColumnHeader } from '@/components/data-table/data-table-column-header'
 import { Badge } from '@/components/ui/badge'
 import { ucwords } from '@/lib/format'
+
 // dropdown actions handled in LogActionsCell
 import LogActionsCell from './LogActionsCell'
 const actionConfig = {
@@ -37,7 +38,7 @@ const actionConfig = {
     className: '',
   },
 }
-export const logsColumns: ColumnDef<ActivityLog>[] = [
+export const getLogsColumns = (users: { username: string }[]): ColumnDef<ActivityLog>[] => [
   {
     accessorKey: 'log_id',
     header: ({ column }) => <DataTableColumnHeader column={column} title="ID" />,
@@ -56,7 +57,18 @@ export const logsColumns: ColumnDef<ActivityLog>[] = [
         {ucwords(row.original.username ?? '')}
       </span>
     ),
-    meta: { label: 'User' },
+    meta: {
+      label: 'User',
+      variant: 'select',
+      // NOTE: Column meta is shared across all rows. Don't reference `row` here.
+      // If you want per-table filter options (e.g. unique usernames), compute
+      // them outside this column definition and pass them in via props or
+      // import a helper that derives options from the data source.
+      options: [...new Set(users.map((u) => u.username))].map((username) => ({
+        label: ucwords(username),
+        value: username,
+      })),
+    },
   },
   {
     accessorKey: 'action',
@@ -121,7 +133,24 @@ export const logsColumns: ColumnDef<ActivityLog>[] = [
       return <span title={String(row.original.created_at)}>{fmt}</span>
     },
     enableSorting: true,
-    meta: { label: 'When' },
+    filterFn: (row, _columnId, filterValue) => {
+      if (!filterValue) return true
+      const rowDate = new Date(row.getValue('created_at'))
+      const filterDate = new Date(filterValue)
+      return (
+        rowDate.getFullYear() === filterDate.getFullYear() &&
+        rowDate.getMonth() === filterDate.getMonth() &&
+        rowDate.getDate() === filterDate.getDate()
+      )
+    },
+    meta: {
+      label: 'When',
+      variant: 'date',
+      print: (row: ActivityLog) => {
+        const d = new Date(row.created_at)
+        return isNaN(d.getTime()) ? String(row.created_at) : d.toLocaleString()
+      },
+    } as never,
   },
   { id: 'actions', size: 10, enableHiding: false, cell: ({ row }) => <LogActionsCell row={row} /> },
 ]
