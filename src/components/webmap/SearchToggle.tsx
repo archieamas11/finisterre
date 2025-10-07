@@ -1,5 +1,5 @@
 import { SearchIcon, X, ArrowRightIcon } from 'lucide-react'
-import { useCallback, useRef } from 'react'
+import { useCallback, useRef, memo } from 'react'
 import { Input } from '@/components/ui/input'
 import { cn } from '@/lib/utils'
 import { isNativePlatform } from '@/utils/platform.utils'
@@ -18,7 +18,7 @@ interface SearchToggleProps {
   className?: string
 }
 
-export default function SearchToggle({ context, className }: SearchToggleProps) {
+function SearchToggle({ context, className }: SearchToggleProps) {
   const containerRef = useRef<HTMLDivElement>(null)
 
   const handleSearchSubmit = useCallback(
@@ -28,7 +28,7 @@ export default function SearchToggle({ context, className }: SearchToggleProps) 
         await context.searchLot(context.searchQuery)
       }
     },
-    [context],
+    [context.searchQuery, context.searchLot],
   )
 
   const handleSearchInputKeyDown = useCallback(
@@ -39,12 +39,12 @@ export default function SearchToggle({ context, className }: SearchToggleProps) 
         context.searchLot(context.searchQuery)
       }
     },
-    [context],
+    [context.setSearchQuery, context.searchLot, context.searchQuery],
   )
 
   const handleClearSearch = useCallback(() => {
     context.clearSearch()
-  }, [context])
+  }, [context.clearSearch])
 
   return (
     <div ref={containerRef} className={cn('relative w-full', className)}>
@@ -103,3 +103,13 @@ export default function SearchToggle({ context, className }: SearchToggleProps) 
     </div>
   )
 }
+
+// Memoize SearchToggle to prevent re-renders
+export default memo(SearchToggle, (prevProps, nextProps) => {
+  // Only re-render if search-related context properties change
+  return (
+    prevProps.context.searchQuery === nextProps.context.searchQuery &&
+    prevProps.context.isSearching === nextProps.context.isSearching &&
+    prevProps.className === nextProps.className
+  )
+})

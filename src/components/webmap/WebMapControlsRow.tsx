@@ -1,7 +1,7 @@
 import { MdFamilyRestroom } from 'react-icons/md'
 import { useLocation } from 'react-router-dom'
 import { Locate, Home, ArrowLeft, Info } from 'lucide-react'
-import { useState } from 'react'
+import { useState, memo, useCallback } from 'react'
 import { toast } from 'sonner'
 import { isNativePlatform } from '@/utils/platform.utils'
 
@@ -21,11 +21,11 @@ interface WebMapControlsRowProps {
   onLegendClick?: () => void
 }
 
-export default function WebMapControlsRow({ context, onBack, onLegendClick }: WebMapControlsRowProps) {
+function WebMapControlsRow({ context, onBack, onLegendClick }: WebMapControlsRowProps) {
   const location = useLocation()
   const [showLoginModal, setShowLoginModal] = useState(false)
 
-  const handleMyPlotsClick = () => {
+  const handleMyPlotsClick = useCallback(() => {
     if (!isAuthenticated()) {
       setShowLoginModal(true)
       return
@@ -38,7 +38,7 @@ export default function WebMapControlsRow({ context, onBack, onLegendClick }: We
         toast.info('No owned plots or records found')
       }
     }
-  }
+  }, [context])
 
   const ArrowLeftIcon = <ArrowLeft className="h-6 w-6" />
   const LocateIcon = <Locate className="h-6 w-6" />
@@ -194,3 +194,24 @@ export default function WebMapControlsRow({ context, onBack, onLegendClick }: We
     </div>
   )
 }
+
+// Memoize to prevent re-renders when parent state changes
+export default memo(WebMapControlsRow, (prevProps, nextProps) => {
+  // Only re-render if context properties that affect the controls change
+  const prevCtx = prevProps.context as WebMapContext | null
+  const nextCtx = nextProps.context as WebMapContext | null
+
+  if (!prevCtx && !nextCtx) return true
+  if (!prevCtx || !nextCtx) return false
+
+  // Check if relevant properties changed
+  const clusterViewModeChanged = 'clusterViewMode' in prevCtx && 'clusterViewMode' in nextCtx && prevCtx.clusterViewMode !== nextCtx.clusterViewMode
+
+  const userPlotsCountChanged =
+    'userOwnedPlotsCount' in prevCtx && 'userOwnedPlotsCount' in nextCtx && prevCtx.userOwnedPlotsCount !== nextCtx.userOwnedPlotsCount
+
+  // Check if callbacks changed (shouldn't normally, but good to check)
+  const callbacksChanged = prevProps.onBack !== nextProps.onBack || prevProps.onLegendClick !== nextProps.onLegendClick
+
+  return !clusterViewModeChanged && !userPlotsCountChanged && !callbacksChanged
+})
