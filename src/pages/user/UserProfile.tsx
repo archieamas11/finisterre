@@ -1,20 +1,23 @@
 import { User, Mail, Phone, Calendar, Edit3, Shield, Heart, TrendingUp, Award } from 'lucide-react'
+import { memo, useMemo, useState } from 'react'
 import { BiLogOut } from 'react-icons/bi'
 
 import { Avatar, AvatarFallback } from '@/components/ui/avatar'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Progress } from '@/components/ui/progress'
 import { Skeleton } from '@/components/ui/skeleton'
 import { useLogout } from '@/hooks/useLogout'
 import { useMe } from '@/hooks/useMe'
 import { useMyCustomer } from '@/hooks/useMyCustomer'
 import { isNativePlatform } from '@/utils/platform.utils'
 
+import EditProfileDialog from './dialog/EditProfileDialog'
+
 export default memo(function UserProfile() {
   const { user: meUser, isLoading: isMeLoading, isError: isMeError } = useMe()
   const { customer, isLoading: isCustomerLoading, isError: isCustomerError } = useMyCustomer()
+  const [editDialogOpen, setEditDialogOpen] = useState(false)
 
   const isLoading = isMeLoading || isCustomerLoading
   const hasError = isMeError || isCustomerError
@@ -60,14 +63,12 @@ export default memo(function UserProfile() {
   const fullName = computed.fullName
   const initials = computed.initials
   const profileCompletion = computed.completionPercentage
-  const hasCompleteProfile = computed.hasCompleteProfile
   const memberSinceYear = computed.memberSinceYear
   const memberSinceDate = computed.memberSinceDate
   const { performLogout, isPending } = useLogout()
 
   const handleEditProfile = () => {
-    // TODO: Implement edit profile functionality
-    console.log('Edit profile clicked')
+    setEditDialogOpen(true)
   }
 
   return (
@@ -138,30 +139,6 @@ export default memo(function UserProfile() {
             </Button>
           </div>
         </div>
-
-        {/* Profile Completion */}
-        <div className="mt-6 rounded-lg bg-slate-50 p-4 dark:bg-slate-800/30">
-          <div className="flex items-center justify-between text-sm">
-            <span className="font-medium text-slate-700 dark:text-slate-300">Profile Completion</span>
-            <div className="flex items-center gap-2">
-              <span className="font-bold text-slate-900 dark:text-white" aria-label={`Profile ${profileCompletion}% complete`}>
-                {profileCompletion}%
-              </span>
-              {hasCompleteProfile && (
-                <Badge
-                  variant="secondary"
-                  className="bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200"
-                  aria-label="Profile is complete"
-                >
-                  Complete
-                </Badge>
-              )}
-            </div>
-          </div>
-          <div role="progressbar" aria-valuenow={profileCompletion} aria-valuemin={0} aria-valuemax={100} aria-label="Profile completion progress">
-            <Progress value={profileCompletion} className="mt-2 h-2" />
-          </div>
-        </div>
       </div>
 
       {/* Stats Cards */}
@@ -194,9 +171,9 @@ export default memo(function UserProfile() {
                 </div>
                 <div className="min-w-0 flex-1">
                   <p className="text-lg font-bold text-green-600 dark:text-green-400" aria-label={`Profile ${profileCompletion}% complete`}>
-                    {profileCompletion}%
+                    {customer?.lot_info?.length ?? 0}
                   </p>
-                  <p className="text-xs text-slate-600 dark:text-slate-400">Complete</p>
+                  <p className="text-xs text-slate-600 dark:text-slate-400">Owned Lots</p>
                 </div>
               </div>
             </CardContent>
@@ -368,6 +345,9 @@ export default memo(function UserProfile() {
           </Button>
         )}
       </div>
+
+      {/* Edit Profile Dialog */}
+      <EditProfileDialog open={editDialogOpen} customer={customer} onOpenChange={setEditDialogOpen} />
     </div>
   )
 })
