@@ -1,6 +1,5 @@
-import { LogOutIcon, MoonIcon, SunIcon, LayoutDashboard } from 'lucide-react'
-import { useTheme } from 'next-themes'
-import { useEffect, useState, useMemo, useCallback, memo } from 'react'
+import { LogOutIcon, LayoutDashboard } from 'lucide-react'
+import { useMemo, useCallback, memo } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
 
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
