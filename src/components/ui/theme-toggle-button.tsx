@@ -1,5 +1,3 @@
-'use client'
-
 import { MoonIcon, SunIcon } from 'lucide-react'
 import { useTheme } from 'next-themes'
 import React from 'react'
@@ -9,6 +7,7 @@ import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from './tooltip'
+import { DropdownMenuItem } from '@/components/ui/dropdown-menu'
 
 interface ThemeToggleAnimationProps {
   variant?: AnimationVariant
@@ -16,7 +15,6 @@ interface ThemeToggleAnimationProps {
   url?: string
   className?: string
   size?: 'sm' | 'md' | 'lg'
-  /** Whether to display a dynamic text label (Dark mode / Light mode). */
   showTitle?: boolean
 }
 
@@ -126,10 +124,6 @@ export function ThemeToggleButton({
     </div>
   )
 }
-
-// Menu-item variant: renders a proper DropdownMenuItem with icon + label matching other menu entries
-// Keeps animation behavior consistent with button version
-import { DropdownMenuItem } from '@/components/ui/dropdown-menu'
 
 interface ThemeToggleMenuItemProps extends Omit<ThemeToggleAnimationProps, 'size'> {
   iconSize?: number
