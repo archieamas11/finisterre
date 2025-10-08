@@ -79,13 +79,13 @@ export default function ContactUs() {
   }
 
   return (
-    <section id="contact" aria-labelledby="contact-heading">
+    <section id="contact" aria-labelledby="contact-heading" className="mt-20">
       <div className="landing-page-wrapper">
         <div className="mx-auto mb-16 max-w-3xl text-center">
-          <h2 id="contact-heading" className="text-4xl font-bold tracking-tight text-[var(--brand-primary)] sm:text-5xl">
+          <h2 id="contact-heading" className="landing-title">
             We'd Love to Hear From You
           </h2>
-          <p className="mx-auto mt-6 max-w-2xl text-lg leading-8 text-gray-800">
+          <p className="landing-subtitle">
             Have questions about our memorial estates or need assistance? Send us a message or reach us through any of the channels below.
           </p>
         </div>

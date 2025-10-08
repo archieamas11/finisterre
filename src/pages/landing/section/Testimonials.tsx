@@ -115,11 +115,11 @@ const testimonials = [
 
 export default function Testimonials() {
   return (
-    <section id="testimonials" aria-labelledby="testimonials-heading">
+    <section id="testimonials" aria-labelledby="testimonials-heading" className="mt-20">
       <div className="mx-auto w-full sm:w-[85%] md:w-[80%] lg:w-[75%] xl:w-full">
         <div className="mx-auto max-w-3xl text-center">
-          <h2 className="text-4xl font-bold tracking-tight text-[var(--brand-primary)] sm:text-5xl">What Families Are Saying</h2>
-          <p className="mt-6 text-lg leading-8 text-gray-800">
+          <h2 className="landing-title">What Families Are Saying</h2>
+          <p className="landing-subtitle max-w-2xl">
             Don't just take our word for it. Here's what families in our community are saying about our memorial park.
           </p>
         </div>

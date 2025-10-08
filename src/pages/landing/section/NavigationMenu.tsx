@@ -181,7 +181,7 @@ export function NavigationMenuSection() {
           <NavigationMenuItem>
             <NavigationMenuLink
               className={cn(navigationMenuTriggerStyle(), 'bg-transparent', {
-                'text-black': scrolled,
+                'text-[var(--brand-primary)]': scrolled,
                 'text-white': !scrolled,
               })}
               asChild
@@ -192,7 +192,7 @@ export function NavigationMenuSection() {
           <NavigationMenuItem>
             <NavigationMenuTrigger
               className={cn(navigationMenuTriggerStyle(), 'bg-transparent', {
-                'text-black': scrolled,
+                'text-[var(--brand-primary)]': scrolled,
                 'text-white': !scrolled,
               })}
             >
@@ -226,7 +226,7 @@ export function NavigationMenuSection() {
           <NavigationMenuItem>
             <NavigationMenuTrigger
               className={cn(navigationMenuTriggerStyle(), 'bg-transparent', {
-                'text-black': scrolled,
+                'text-[var(--brand-primary)]': scrolled,
                 'text-white': !scrolled,
               })}
             >
@@ -248,7 +248,7 @@ export function NavigationMenuSection() {
           <NavigationMenuItem>
             <NavigationMenuLink
               className={cn(navigationMenuTriggerStyle(), 'bg-transparent', {
-                'text-black': scrolled,
+                'text-[var(--brand-primary)]': scrolled,
                 'text-white': !scrolled,
               })}
               asChild
@@ -259,7 +259,7 @@ export function NavigationMenuSection() {
           <NavigationMenuItem>
             <NavigationMenuLink
               className={cn(navigationMenuTriggerStyle(), 'bg-transparent', {
-                'text-black': scrolled,
+                'text-[var(--brand-primary)]': scrolled,
                 'text-white': !scrolled,
               })}
               asChild
@@ -278,7 +278,7 @@ export function NavigationMenuSection() {
               <Button className="absolute left-12" variant="ghost" size="icon" type="button">
                 <MenuIcon
                   className={cn('h-6 w-6', {
-                    'text-black': scrolled,
+                    'text-[var(--brand-primary)]': scrolled,
                     'text-white': !scrolled,
                   })}
                 />

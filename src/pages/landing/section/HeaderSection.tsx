@@ -35,7 +35,7 @@ export const HeaderSection: FC = () => {
       <Link
         to="/#hero"
         className={cn('focus:ring-primary flex items-center gap-2 rounded-md font-bold focus:ring-2 focus:ring-offset-2 focus:outline-none', {
-          'text-black': scrolled,
+          'text-[var(--brand-primary)]': scrolled,
           'text-white': !scrolled,
         })}
         aria-label="Go to homepage"
@@ -54,7 +54,7 @@ export const HeaderSection: FC = () => {
             asChild
             type="button"
             className={cn('rounded-full bg-transparent transition-colors', {
-              'border-black bg-transparent dark:border-black dark:text-black': scrolled,
+              'border-black bg-transparent dark:border-[var(--brand-primary)] dark:text-[var(--brand-primary)]': scrolled,
               'bg-transparent text-white dark:text-white': !scrolled,
             })}
             aria-label="Login"

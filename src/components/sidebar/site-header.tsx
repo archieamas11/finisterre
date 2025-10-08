@@ -49,7 +49,7 @@ export function SiteHeader({ breadcrumbItem }: SiteHeaderProps) {
           </BreadcrumbList>
         </Breadcrumb>
         <div className="ml-auto flex items-center gap-1">
-          <ThemeToggleButton start="top-right" variant="circle-blur" />
+          <ThemeToggleButton start="top-right" variant="circle-blur" className="border" />
           <Notification />
         </div>
       </div>

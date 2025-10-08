@@ -1,6 +1,6 @@
-import { ShieldCheck, TrendingUp, Medal, Wrench, MapIcon, Leaf, ArrowRight } from 'lucide-react'
+import { ShieldCheck, TrendingUp, Medal, Wrench, MapIcon, Leaf } from 'lucide-react'
+import { motion } from 'framer-motion'
 
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { cn } from '@/lib/utils'
 
 interface Feature {
@@ -49,49 +49,53 @@ const features: Feature[] = [
   },
 ]
 
-const FeatureCard = ({ feature }: { feature: Feature }) => {
+const FeatureCard = ({ feature, index }: { feature: Feature; index: number }) => {
   const Icon = feature.icon
 
   return (
-    <Card className="group relative flex transform-gpu flex-col overflow-hidden border-white/50 bg-white/50 transition-all duration-300 hover:-translate-y-2 hover:shadow-2xl">
-      <CardHeader className="relative z-10 pb-4">
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      whileInView={{
+        opacity: 1,
+        y: 0,
+        transition: { delay: index * 0.05, duration: 0.3, ease: 'easeOut' },
+      }}
+      viewport={{ once: true, amount: 0.5 }}
+      className="group relative flex transform-gpu flex-col overflow-hidden rounded-2xl bg-white/40 p-6 backdrop-blur-md transition-all duration-300"
+    >
+      <div className="absolute inset-x-0 top-0 h-48 bg-gradient-to-b from-white/[0.03] to-transparent" />
+      <div className="relative z-10">
         <div className={cn('mb-4 flex h-12 w-12 items-center justify-center rounded-lg bg-gradient-to-br text-white shadow-md', feature.color)}>
           <Icon className="h-6 w-6" />
         </div>
-        <CardTitle className="text-xl font-bold text-[var(--brand-primary)]">{feature.title}</CardTitle>
-      </CardHeader>
-
-      <CardContent className="relative z-10 flex flex-grow flex-col">
-        <CardDescription className="mb-6 flex-grow text-gray-600">{feature.description}</CardDescription>
-
-        <a href="#" className="inline-flex items-center font-medium text-gray-500 transition-all duration-300">
-          Learn more <ArrowRight className="ml-2 h-4 w-4 text-gray-500 transition-transform duration-300 group-hover:translate-x-1" />
-        </a>
-      </CardContent>
+        <h3 className="text-lg font-semibold text-[var(--brand-primary)]">{feature.title}</h3>
+        <p className="mt-2 text-sm text-neutral-500">{feature.description}</p>
+      </div>
+      <div className="pointer-events-none absolute inset-0 rounded-2xl bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-white/5 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
       <div
         className={cn(
           'absolute -right-1/4 -bottom-1/4 z-0 h-1/2 w-1/2 rounded-full bg-gradient-to-br opacity-10 transition-all duration-500 group-hover:scale-[2.5]',
           feature.color,
         )}
       />
-    </Card>
+    </motion.div>
   )
 }
 
 const FeatureSection = () => {
   return (
-    <section id="features" aria-labelledby="features-heading">
+    <section id="features" aria-labelledby="features-heading" className="mt-20">
       <div className="landing-page-wrapper">
-        <div className="mx-auto max-w-3xl text-center">
-          <h2 className="text-4xl font-bold tracking-tight text-[var(--brand-primary)] sm:text-5xl">Why Choose Finisterre</h2>
-          <p className="mx-auto mt-6 max-w-2xl text-lg leading-8 text-gray-800">
+        <div className="mx-auto max-w-2xl text-center">
+          <h2 className="landing-title">Why Choose Finisterre</h2>
+          <p className="landing-subtitle">
             A sacred place inspired by El Camino de Santiago, providing peace, dignity, and beauty for generations to come.
           </p>
         </div>
 
-        <div className="mx-auto mt-16 grid max-w-2xl grid-cols-1 gap-8 sm:mt-20 lg:mx-0 lg:max-w-none lg:grid-cols-3">
+        <div className="mx-auto mt-16 grid max-w-2xl grid-cols-1 gap-4 sm:mt-20 lg:mx-0 lg:max-w-none lg:grid-cols-3">
           {features.map((feature, index) => (
-            <FeatureCard key={index} feature={feature} />
+            <FeatureCard key={feature.title} feature={feature} index={index} />
           ))}
         </div>
       </div>

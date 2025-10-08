@@ -17,6 +17,7 @@ import {
 import { useLogout } from '@/hooks/useLogout'
 import { ucwords } from '@/lib/format'
 import { getInitials } from '@/utils/avatar'
+import { ThemeToggleMenuItem } from '@/components/ui/theme-toggle-button'
 
 interface ProfileUser {
   avatar: string
@@ -29,19 +30,6 @@ function ProfileMenu({ user }: { user: ProfileUser }) {
   const { performLogout, isPending } = useLogout()
   const navigate = useNavigate()
   const location = useLocation()
-  const { theme, setTheme, resolvedTheme } = useTheme()
-  const [isMounted, setIsMounted] = useState(false)
-
-  useEffect(() => {
-    setIsMounted(true)
-  }, [])
-
-  const current = (theme === 'system' ? resolvedTheme : theme) as 'light' | 'dark' | undefined
-  const isDark = current === 'dark'
-
-  const onToggleTheme = useCallback(() => {
-    setTheme(isDark ? 'light' : 'dark')
-  }, [isDark, setTheme])
 
   const dashboardPath = useMemo(() => (user.isAdmin ? '/admin' : '/user'), [user.isAdmin])
   const onDashboard = location.pathname.startsWith(dashboardPath)
@@ -77,17 +65,8 @@ function ProfileMenu({ user }: { user: ProfileUser }) {
               <span>Dashboard</span>
             </DropdownMenuItem>
           )}
-
-          <DropdownMenuItem onClick={onToggleTheme} disabled={!isMounted} aria-label="Toggle theme">
-            {isMounted && isDark ? (
-              <SunIcon size={16} className="opacity-60" aria-hidden="true" />
-            ) : (
-              <MoonIcon size={16} className="opacity-60" aria-hidden="true" />
-            )}
-            <span>{isMounted ? (isDark ? 'Light Mode' : 'Dark Mode') : 'Change Theme'}</span>
-          </DropdownMenuItem>
         </DropdownMenuGroup>
-        <DropdownMenuSeparator />
+        <DropdownMenuGroup>{!onDashboard && <ThemeToggleMenuItem variant="circle-blur" start="top-right" showTitle />}</DropdownMenuGroup>
         <DropdownMenuItem className="text-destructive" onClick={() => performLogout()} disabled={isPending} aria-label="Logout">
           <LogOutIcon className="text-destructive" />
           <span>Logout</span>

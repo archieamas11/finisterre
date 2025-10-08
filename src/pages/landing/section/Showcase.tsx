@@ -285,18 +285,18 @@ export default function CemeteryShowcase() {
   return (
     <section id="showcase-section" aria-labelledby="showcase-heading">
       <div className="landing-page-wrapper">
-        <div className="mx-auto max-w-3xl text-center">
-          <h2 id="showcase-heading" className="text-4xl font-bold tracking-tight text-[var(--brand-primary)] sm:text-5xl">
+        <div className="mx-auto max-w-4xl text-center">
+          <h2 id="showcase-heading" className="landing-title">
             A Sacred Place of Natural Beauty
           </h2>
-          <p className="mt-6 text-lg leading-8 text-gray-800">
+          <p className="landing-subtitle">
             Discover the serene landscape and thoughtful design that makes our cemetery a peaceful sanctuary for remembrance and reflection.
           </p>
         </div>
 
         <div className="mt-16">
           <div className="mb-8 flex flex-col items-center justify-between gap-4 sm:flex-row">
-            <h3 className="text-2xl font-semibold text-black">Gallery</h3>
+            <h3 className="text-2xl font-semibold text-[var(--brand-primary)]">Gallery</h3>
             <div className="no-scrollbar w-full overflow-x-auto sm:w-auto">
               <Tabs
                 defaultValue={activeFilter}
