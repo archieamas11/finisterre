@@ -1,4 +1,4 @@
-import { User, Mail, Phone, Calendar, Edit3, Shield, Heart, TrendingUp, Award } from 'lucide-react'
+import { User, Mail, Phone, Calendar, Edit3, Shield, Heart, TrendingUp, Award, KeyRound } from 'lucide-react'
 import { memo, useMemo, useState } from 'react'
 import { BiLogOut } from 'react-icons/bi'
 
@@ -12,12 +12,14 @@ import { useMe } from '@/hooks/useMe'
 import { useMyCustomer } from '@/hooks/useMyCustomer'
 import { isNativePlatform } from '@/utils/platform.utils'
 
+import ChangePasswordDialog from './dialog/ChangePasswordDialog'
 import EditProfileDialog from './dialog/EditProfileDialog'
 
 export default memo(function UserProfile() {
   const { user: meUser, isLoading: isMeLoading, isError: isMeError } = useMe()
   const { customer, isLoading: isCustomerLoading, isError: isCustomerError } = useMyCustomer()
   const [editDialogOpen, setEditDialogOpen] = useState(false)
+  const [changePasswordDialogOpen, setChangePasswordDialogOpen] = useState(false)
 
   const isLoading = isMeLoading || isCustomerLoading
   const hasError = isMeError || isCustomerError
@@ -336,6 +338,13 @@ export default memo(function UserProfile() {
               </div>
               <span className="text-sm font-semibold text-slate-600 dark:text-slate-400">Today</span>
             </div>
+
+            <div className="pt-3">
+              <Button onClick={() => setChangePasswordDialogOpen(true)} variant="outline" className="w-full" aria-label="Change password">
+                <KeyRound className="mr-2 h-4 w-4" />
+                Change Password
+              </Button>
+            </div>
           </CardContent>
         </Card>
         {isNativePlatform() && (
@@ -348,6 +357,9 @@ export default memo(function UserProfile() {
 
       {/* Edit Profile Dialog */}
       <EditProfileDialog open={editDialogOpen} customer={customer} onOpenChange={setEditDialogOpen} />
+
+      {/* Change Password Dialog */}
+      <ChangePasswordDialog open={changePasswordDialogOpen} onOpenChange={setChangePasswordDialogOpen} />
     </div>
   )
 })

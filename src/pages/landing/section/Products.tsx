@@ -126,9 +126,7 @@ export default function Products() {
               {/* Content Container */}
               <div className="flex flex-1 flex-col justify-between p-6 sm:p-8">
                 <div className="flex-1 space-y-3">
-                  <h3 className="text-xl font-bold text-slate-900 transition-colors duration-200 group-hover:text-[var(--brand-primary)] sm:text-2xl">
-                    {product.name}
-                  </h3>
+                  <h3 className="text-xl font-bold text-[var(--brand-primary)] transition-colors duration-200 sm:text-2xl">{product.name}</h3>
                   <p className="text-sm leading-relaxed text-slate-600 sm:text-base">{product.description}</p>
                 </div>
               </div>
@@ -156,8 +154,7 @@ export default function Products() {
                   variant="secondary"
                   size="lg"
                   className={cn(
-                    'bg-white font-semibold text-slate-900',
-                    'hover:scale-105 hover:bg-slate-100 hover:shadow-xl',
+                    'bg-[var(--brand-secondary)] font-semibold text-slate-900 dark:bg-[var(--brand-secondary)]',
                     'transition-all duration-200',
                     'px-8 py-6 text-base',
                   )}
@@ -175,7 +172,6 @@ export default function Products() {
                   size="lg"
                   className={cn(
                     'border-2 border-white/30 bg-white/5 text-white backdrop-blur-sm',
-                    'hover:scale-105 hover:border-white/50 hover:bg-white/10',
                     'transition-all duration-200',
                     'px-8 py-6 text-base',
                   )}

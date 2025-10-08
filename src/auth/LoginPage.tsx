@@ -19,7 +19,7 @@ import { isNativePlatform, isAndroid, isIOS } from '@/utils/platform.utils'
 
 const FormSchema = z.object({
   remember: z.boolean().optional(),
-  password: z.string().min(4, { message: 'Password must be at least 4 characters.' }),
+  password: z.string().min(3, { message: 'Password must be at least 4 characters.' }),
   username: z.string().min(2, { message: 'Property ID must be at least 2 characters.' }),
 })
 

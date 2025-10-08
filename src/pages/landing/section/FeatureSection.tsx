@@ -2,6 +2,7 @@ import { ShieldCheck, TrendingUp, Medal, Wrench, MapIcon, Leaf } from 'lucide-re
 import { motion } from 'framer-motion'
 
 import { cn } from '@/lib/utils'
+import { Highlighter } from '@/components/ui/highlighter'
 
 interface Feature {
   icon: React.ElementType
@@ -61,7 +62,7 @@ const FeatureCard = ({ feature, index }: { feature: Feature; index: number }) =>
         transition: { delay: index * 0.05, duration: 0.3, ease: 'easeOut' },
       }}
       viewport={{ once: true, amount: 0.5 }}
-      className="group relative flex transform-gpu flex-col overflow-hidden rounded-2xl bg-white/40 p-6 backdrop-blur-md transition-all duration-300"
+      className="group relative flex transform-gpu flex-col overflow-hidden rounded-2xl bg-white/40 p-6 backdrop-blur-md transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl"
     >
       <div className="absolute inset-x-0 top-0 h-48 bg-gradient-to-b from-white/[0.03] to-transparent" />
       <div className="relative z-10">
@@ -89,7 +90,11 @@ const FeatureSection = () => {
         <div className="mx-auto max-w-2xl text-center">
           <h2 className="landing-title">Why Choose Finisterre</h2>
           <p className="landing-subtitle">
-            A sacred place inspired by El Camino de Santiago, providing peace, dignity, and beauty for generations to come.
+            A sacred place inspired by{' '}
+            <Highlighter action="underline" color="#FF9800">
+              El Camino de Santiago
+            </Highlighter>
+            , providing peace, dignity, and beauty for generations to come.
           </p>
         </div>
 

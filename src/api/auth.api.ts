@@ -53,6 +53,37 @@ export async function forgotPassword(username: string) {
   return res.data
 }
 
+export interface ChangePasswordPayload {
+  current_password: string
+  new_password: string
+}
+
+export interface ChangePasswordResponse {
+  success: boolean
+  message: string
+}
+
+export async function changePassword(payload: ChangePasswordPayload): Promise<ChangePasswordResponse> {
+  try {
+    const res = await api.post<ChangePasswordResponse>('auth/change_password.php', payload)
+    console.log('Change password response:', res.data)
+    return res.data
+  } catch (error) {
+    console.error('Change password error:', error)
+    const err = error as { response?: { data?: ChangePasswordResponse } }
+
+    // If we have a structured response from the backend, use it
+    if (err.response?.data) {
+      return err.response.data
+    }
+
+    return {
+      success: false,
+      message: 'Failed to change password. Please try again.',
+    }
+  }
+}
+
 // Fetch current authenticated user (decoded from JWT)
 export interface MeResponse {
   success: boolean
