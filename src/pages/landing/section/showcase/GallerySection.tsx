@@ -39,7 +39,7 @@ export function GallerySection({ onImageClick }: GallerySectionProps) {
 
   return (
     <div className="mt-16">
-      <div className="mb-2 flex h-20 flex-col items-center justify-between gap-4 sm:flex-row">
+      <div className="mb-2 flex flex-col items-center justify-between gap-4 sm:flex-row">
         <div>
           <p className="text-2xl font-semibold text-[var(--brand-primary)]">Gallery</p>
           <p className="text-sm text-gray-400">Explore our beautiful memorial spaces</p>
@@ -53,15 +53,15 @@ export function GallerySection({ onImageClick }: GallerySectionProps) {
             className="w-full"
             aria-label="Gallery category filter"
           >
-            <TabsList className="flex flex-nowrap justify-center gap-3 rounded-full border border-amber-400 bg-gray-100/50 text-gray-50 sm:justify-end">
+            <TabsList className="flex flex-nowrap justify-center gap-3 rounded-full bg-[var(--brand-primary)]/10 py-0.5 backdrop-blur sm:justify-end">
               {CATEGORIES.map((category) => (
                 <TabsTrigger
                   key={category.id}
                   value={category.id}
                   className={cn(
-                    'rounded-md px-3 py-1 text-sm font-medium whitespace-nowrap',
-                    'text-gray-500 dark:text-gray-500',
-                    'data-[state=active]:dark:text-foreground rounded-full data-[state=active]:bg-[var(--brand-primary)] data-[state=active]:text-white data-[state=active]:dark:bg-[var(--brand-primary)]',
+                    'rounded-full text-sm font-medium whitespace-nowrap',
+                    'px-5 text-gray-500 dark:text-gray-500',
+                    'rounded-full data-[state=active]:bg-[var(--brand-secondary)] data-[state=active]:text-[var(--brand-primary)] data-[state=active]:dark:bg-[var(--brand-secondary)] data-[state=active]:dark:text-[var(--brand-primary)]',
                   )}
                 >
                   {category.label}

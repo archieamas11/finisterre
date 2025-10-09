@@ -9,6 +9,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Textarea } from '@/components/ui/textarea'
 import { Clock, MessageCircle, Phone, PhoneCall, Voicemail } from 'lucide-react'
+import { sendContactMessage, type ContactPayload } from '@/api/contact.api'
 
 // Subject options (will be mapped to Select). Can be extended later.
 const SUBJECT_OPTIONS = [
@@ -59,21 +60,25 @@ export default function ContactUs() {
   })
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
-    const simulatedSubmit = async () => {
-      // Simulate latency (e.g., API call)
-      await new Promise((res) => setTimeout(res, 800))
-      // Replace with real request later
-      return values
-    }
     try {
-      await toast.promise(simulatedSubmit(), {
+      const payload: ContactPayload = {
+        first_name: values.first_name,
+        last_name: values.last_name,
+        email: values.email,
+        phone_number: values.phone_number || undefined,
+        subject: values.subject,
+        message: values.message,
+      }
+      const promise = sendContactMessage(payload)
+      await toast.promise(promise, {
         loading: 'Sending message...',
-        success: 'Message sent! We will get back to you soon.',
-        error: 'Failed to send. Please try again.',
+        success: (res) => (res?.success ? 'Message sent! We will get back to you soon.' : res?.message || 'Failed to send'),
+        error: (err) => err?.message || 'Failed to send. Please try again.',
       })
+
+      // If success, reset the form
       form.reset()
     } catch (error) {
-      // error already handled by toast.promise
       console.error('Submit error', error)
     }
   }
