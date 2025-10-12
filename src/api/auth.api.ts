@@ -4,7 +4,7 @@ export interface LoginResponse {
   token?: string
   message: string
   success: boolean
-  isAdmin?: boolean
+  role?: 'admin' | 'staff' | 'user'
 }
 
 export async function loginUser(username: string, password: string): Promise<LoginResponse> {
@@ -92,7 +92,7 @@ export interface MeResponse {
     user_id: number | null
     customer_id?: number | null
     username: string | null
-    isAdmin: boolean
+    role: 'admin' | 'staff' | 'user'
     iat: number | null
     exp: number | null
   }

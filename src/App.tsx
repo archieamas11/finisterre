@@ -34,8 +34,6 @@ const About = React.lazy(() => import('@/pages/landing/section/About'))
 
 function RootLanding() {
   const location = useLocation()
-  // Redirect to /landing-android if on native platform otherwise show web landing
-  // Only perform redirect when exactly at root and native
   if (location.pathname === '/' && isNativePlatform()) {
     return <Navigate to="/landing-android" replace />
   }

@@ -8,7 +8,7 @@ interface MeResponse {
   user?: {
     user_id: number | null
     username: string | null
-    isAdmin: boolean
+    role: 'admin' | 'staff' | 'user'
     iat: number | null
     exp: number | null
   }
@@ -40,7 +40,7 @@ export function useAuthQuery() {
         user: {
           user_id: payload.user_id ?? null,
           username: payload.username ?? null,
-          isAdmin: !!payload.isAdmin,
+          role: (payload.role as 'admin' | 'staff' | 'user') ?? 'user',
           iat: payload.iat ?? null,
           exp: payload.exp ?? null,
         },

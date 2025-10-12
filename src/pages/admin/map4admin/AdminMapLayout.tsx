@@ -76,7 +76,7 @@ export default function AdminMapLayout() {
   const location = useLocation()
   const navigate = useNavigate()
   const { data: authData } = useAuthQuery()
-  const showGuide4 = Boolean(authData?.user?.isAdmin && authData?.user?.username === 'test')
+  const showGuide4 = Boolean(authData?.user?.role === 'admin' && authData?.user?.username === 'test')
   const { isError, refetch, isLoading, data: plotsData } = usePlots()
   const queryClient = useQueryClient()
   const markers = useMemo(() => (plotsData ? plotsData.map(convertPlotToMarker) : []), [plotsData])
@@ -85,7 +85,6 @@ export default function AdminMapLayout() {
   const [autoOpenPlotId, setAutoOpenPlotId] = useState<string | null>(null)
   const [highlightedNiche, setHighlightedNiche] = useState<string | null>(null)
   const [activeSearchMarker, setActiveSearchMarker] = useState<ConvertedMarker | null>(null)
-  // Admin add/edit state (restored)
   const [isAddingMarker, setIsAddingMarker] = useState(false)
   const [selectedCoordinates, setSelectedCoordinates] = useState<[number, number] | null>(null)
   const [showAddDialog, setShowAddDialog] = useState(false)
@@ -95,7 +94,6 @@ export default function AdminMapLayout() {
   const requestLocate = () => {
     if (locateRef.current) locateRef.current()
   }
-  // Guide overlay + bounds + reset view (restored)
   const [guide4Data, setGuide4Data] = useState<GeoJSON.GeoJSON | null>(null)
   const bounds = useMemo(
     () =>
@@ -139,7 +137,7 @@ export default function AdminMapLayout() {
     [markers, mapInstance],
   )
 
-  // Handle click from search results list (restored)
+  // Handle click from search results list
   const handleSelectSearchResult = useCallback(
     (item: AdminSearchItem) => {
       console.log('[AdminMapLayout] select result', { item })

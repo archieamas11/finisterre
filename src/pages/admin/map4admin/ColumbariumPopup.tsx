@@ -20,7 +20,7 @@ import { useCustomers } from '@/hooks/customer-hooks/customer.hooks'
 import { useCreateLotOwner } from '@/hooks/lot-owner-hooks/useCreateLotOwner'
 import { useNichesByPlot } from '@/hooks/plots-hooks/niche.hooks'
 import { cn } from '@/lib/utils'
-import { isAdmin } from '@/utils/auth.utils'
+import { getRole } from '@/utils/auth.utils'
 import { calculateYearsBuried } from '@/utils/date.utils'
 
 import CreateDeceased from './columbarium-dialogs/CreateDeceasedPage'
@@ -97,7 +97,7 @@ export default function ColumbariumPopup({ marker, onDirectionClick, isDirection
   const { error, isLoading, refetch, data: nicheData = [] } = useNichesByPlot(marker.plot_id, rows, cols)
 
   const handleNicheClick = (niche: nicheData) => {
-    if (isAdmin()) {
+    if (getRole() === 'admin') {
       setSelectedNiche(niche)
       setIsDetailOpen(true)
     } else {
@@ -149,7 +149,7 @@ export default function ColumbariumPopup({ marker, onDirectionClick, isDirection
           </div>
         </div>
         {/* Only show directions button if NOT admin */}
-        {!isAdmin() && (
+        {getRole() !== 'admin' && (
           <div className="flex gap-2">
             <GetDirectionButton
               className="text-primary-foreground h-12 w-12 rounded-full"

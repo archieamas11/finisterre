@@ -120,11 +120,11 @@ export default memo(function UserProfile() {
               <p className="text-sm text-slate-600 dark:text-slate-400">Manage your account information</p>
               <div className="mt-2 flex flex-wrap gap-2">
                 <Badge
-                  variant={meUser?.isAdmin ? 'default' : 'secondary'}
+                  variant={meUser?.role === 'admin' ? 'default' : 'secondary'}
                   className="text-xs"
-                  aria-label={meUser?.isAdmin ? 'Administrator role' : 'User role'}
+                  aria-label={meUser?.role === 'admin' ? 'Administrator role' : meUser?.role === 'staff' ? 'Staff role' : 'User role'}
                 >
-                  {meUser?.isAdmin ? 'Administrator' : 'User'}
+                  {meUser?.role === 'admin' ? 'Administrator' : meUser?.role === 'staff' ? 'Staff' : 'User'}
                 </Badge>
                 <Badge variant="outline" className="text-xs">
                   Active
@@ -188,11 +188,8 @@ export default memo(function UserProfile() {
                   <Shield className="h-4 w-4 text-purple-600 dark:text-purple-400" />
                 </div>
                 <div className="min-w-0 flex-1">
-                  <p
-                    className="text-lg font-bold text-purple-600 dark:text-purple-400"
-                    aria-label={`Account type: ${meUser?.isAdmin ? 'Administrator' : 'User'}`}
-                  >
-                    {meUser?.isAdmin ? 'Admin' : 'User'}
+                  <p className="text-lg font-bold text-purple-600 dark:text-purple-400" aria-label={`Account type: ${meUser?.role ?? 'User'}`}>
+                    {meUser?.role === 'admin' ? 'Admin' : meUser?.role === 'staff' ? 'Staff' : 'User'}
                   </p>
                   <p className="text-xs text-slate-600 dark:text-slate-400">Account</p>
                 </div>
@@ -293,8 +290,8 @@ export default memo(function UserProfile() {
                   <p className="text-xs text-slate-600 dark:text-slate-400">Your current role</p>
                 </div>
               </div>
-              <Badge variant={meUser?.isAdmin ? 'default' : 'secondary'} className="text-xs">
-                {meUser?.isAdmin ? 'Administrator' : 'User'}
+              <Badge variant={meUser?.role === 'admin' ? 'default' : 'secondary'} className="text-xs">
+                {meUser?.role === 'admin' ? 'Administrator' : meUser?.role === 'staff' ? 'Staff' : 'User'}
               </Badge>
             </div>
 

@@ -23,7 +23,9 @@ export interface NavGroup {
   items: NavMainItem[]
 }
 
-export const getSidebarItems = (isAdmin: number): NavGroup[] => {
+export type UserRole = 'admin' | 'staff' | 'user'
+
+export const getSidebarItems = (role: UserRole): NavGroup[] => {
   const items: NavMainItem[] = [
     {
       title: 'Home',
@@ -70,7 +72,7 @@ export const getSidebarItems = (isAdmin: number): NavGroup[] => {
       : []),
   ]
 
-  if (isAdmin === 1) {
+  if (role === 'admin') {
     items.push({
       icon: MonitorCog,
       title: 'Control Panel',
@@ -81,7 +83,7 @@ export const getSidebarItems = (isAdmin: number): NavGroup[] => {
   return [
     {
       id: 1,
-      label: 'Admin Dashboard',
+      label: role === 'admin' ? 'Admin Dashboard' : role === 'staff' ? 'Staff Dashboard' : 'Dashboard',
       items,
     },
   ]
@@ -89,12 +91,12 @@ export const getSidebarItems = (isAdmin: number): NavGroup[] => {
 
 export function findSidebarItemByPath(
   pathname: string,
-  isAdmin: number,
+  role: UserRole,
 ): {
   mainItem: NavMainItem
   subItem?: NavSubItem
 } | null {
-  const groups = getSidebarItems(isAdmin)
+  const groups = getSidebarItems(role)
   for (const group of groups) {
     for (const mainItem of group.items) {
       if (mainItem.url === pathname) {

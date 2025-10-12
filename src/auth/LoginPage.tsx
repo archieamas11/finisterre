@@ -40,12 +40,12 @@ export default function LoginPage() {
   React.useEffect(() => {
     const hasToken = !!localStorage.getItem('token')
     if (hasToken && isSuccess && data?.success) {
-      const admin = !!data?.user?.isAdmin
+      const role = data?.user?.role
 
       if (isNativePlatform()) {
         navigate(isIOS() ? '/landing-ios' : '/landing-android', { replace: true })
       } else {
-        navigate(admin ? '/admin' : '/user', { replace: true })
+        navigate(role === 'user' ? '/user' : '/admin', { replace: true })
       }
     }
   }, [data, isSuccess, navigate])
@@ -57,7 +57,7 @@ export default function LoginPage() {
 
       if (res.success) {
         localStorage.setItem('token', res.token!)
-        localStorage.setItem('isAdmin', res.isAdmin ? '1' : '0')
+        if (res.role) localStorage.setItem('role', res.role)
 
         setAuthFromToken()
 
@@ -71,10 +71,9 @@ export default function LoginPage() {
           } else {
             navigate('/landing-android')
           }
-        } else if (res.isAdmin) {
-          navigate('/admin')
         } else {
-          navigate('/user')
+          // admin and staff go to /admin; user goes to /user
+          navigate(res.role === 'user' ? '/user' : '/admin')
         }
       } else {
         form.setValue('password', '')

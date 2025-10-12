@@ -10,7 +10,6 @@ import { Toaster } from '@/components/ui/sonner.tsx'
 
 import App from './App.tsx'
 
-// PERF: load react-scan only during local development for render performance insights
 if (import.meta.env.DEV) {
   import('react-scan')
     .then(({ scan }) => {

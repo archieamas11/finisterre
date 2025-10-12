@@ -14,20 +14,20 @@ export const RequireAuth = ({ children }: { children: React.ReactNode }) => {
 }
 
 export const RequireAdmin = ({ children }: { children: React.ReactNode }) => {
-  const { isAdmin, isAuthenticated, isLoading } = useAuth()
+  const { role, isAuthenticated, isLoading } = useAuth()
   const location = useLocation()
   if (isLoading) return null
-  if (!isAuthenticated || !isAdmin) {
+  if (!isAuthenticated || (role !== 'admin' && role !== 'staff')) {
     return <Navigate state={{ from: location }} to="/unauthorized" replace />
   }
   return <>{children}</>
 }
 
 export const RequireUser = ({ children }: { children: React.ReactNode }) => {
-  const { isAdmin, isAuthenticated, isLoading } = useAuth()
+  const { role, isAuthenticated, isLoading } = useAuth()
   const location = useLocation()
   if (isLoading) return null
-  if (!isAuthenticated || isAdmin) {
+  if (!isAuthenticated || role !== 'user') {
     return <Navigate state={{ from: location }} to="/unauthorized" replace />
   }
   return <>{children}</>

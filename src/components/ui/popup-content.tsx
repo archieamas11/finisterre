@@ -4,7 +4,7 @@ import { Maximize2 } from 'lucide-react'
 import React, { cloneElement, isValidElement } from 'react'
 import { renderToStaticMarkup } from 'react-dom/server'
 import { Marker, Popup } from 'react-leaflet'
-import { isAdmin } from '@/utils/auth.utils'
+import { getRole } from '@/utils/auth.utils'
 import { CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Dialog, DialogContent, DialogTrigger } from '@/components/ui/dialog'
 import { cn } from '@/lib/utils'
@@ -204,7 +204,7 @@ function FinisterreMarkers({ items, onDirectionClick, isDirectionLoading = false
               }
               return <SimplePopup title={itemData.title} description={itemData.description} />
             })()}
-            {!isAdmin() && (
+            {getRole() !== 'admin' && (
               <div className="mt-1 flex gap-2">
                 <GetDirectionButton
                   label="Get Direction"
