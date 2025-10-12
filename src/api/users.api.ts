@@ -13,7 +13,6 @@ export interface UserDashboardData {
   customer_id?: number | null
 }
 
-// Raw backend response before transformation
 export interface UserDashboardRawData {
   connected_memorials: number
   active_lots: number
@@ -27,6 +26,44 @@ export async function getUsers(params: { isAdmin?: number } = {}) {
   const res = await api.post('users/get_users.php', params)
   return res.data as {
     users: UserData[]
+  }
+}
+
+export interface CreateUserPayload {
+  username: string
+  password: string
+  role: 'admin' | 'staff'
+}
+
+export async function createUser(payload: CreateUserPayload) {
+  const res = await api.post('users/create_user.php', payload)
+  return res.data as {
+    success: boolean
+    message: string
+    user: UserData
+  }
+}
+
+export interface UpdateUserPayload {
+  user_id: number
+  username?: string
+  role?: 'admin' | 'staff'
+}
+
+export async function updateUser(payload: UpdateUserPayload) {
+  const res = await api.post('users/update_user.php', payload)
+  return res.data as {
+    success: boolean
+    message: string
+    user?: UserData
+  }
+}
+
+export async function archiveUser(user_id: number) {
+  const res = await api.post('users/archive_user.php', { user_id })
+  return res.data as {
+    success: boolean
+    message: string
   }
 }
 
