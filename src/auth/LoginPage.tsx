@@ -37,7 +37,6 @@ export default function LoginPage() {
     },
   })
 
-  // Redirect if already authenticated
   React.useEffect(() => {
     const hasToken = !!localStorage.getItem('token')
     if (hasToken && isSuccess && data?.success) {
@@ -57,24 +56,19 @@ export default function LoginPage() {
       const res = await loginUser(formData.username, formData.password)
 
       if (res.success) {
-        // Save token and role
         localStorage.setItem('token', res.token!)
         localStorage.setItem('isAdmin', res.isAdmin ? '1' : '0')
 
-        // Prime query cache from token to avoid race when redirecting
         setAuthFromToken()
 
-        // Show success toast then navigate
         toast.success(`Welcome back, ${formData.username}!`)
 
-        // Redirect based on platform and user role
         if (isNativePlatform()) {
           if (isAndroid()) {
             navigate('/landing-android')
           } else if (isIOS()) {
             navigate('/landing-ios')
           } else {
-            // Fallback for other native platforms
             navigate('/landing-android')
           }
         } else if (res.isAdmin) {
@@ -83,7 +77,6 @@ export default function LoginPage() {
           navigate('/user')
         }
       } else {
-        // Set backend error to form state
         form.setValue('password', '')
         if (res.message === 'User not found') {
           form.setError('username', {
@@ -102,7 +95,6 @@ export default function LoginPage() {
         }
       }
     } catch {
-      // Network or unexpected errors
       toast.error('Something went wrong. Please try again later.')
     } finally {
       setIsLoading(false)
@@ -118,7 +110,6 @@ export default function LoginPage() {
             to="/"
             aria-label="Back to home"
             onClick={(e) => {
-              // ensure touch taps trigger navigation reliably on mobile
               e.preventDefault()
               navigate('/')
             }}

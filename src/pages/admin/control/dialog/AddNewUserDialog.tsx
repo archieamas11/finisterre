@@ -10,7 +10,7 @@ import { toast } from 'sonner'
 
 const createSchema = z.object({
   username: z.string().min(3, 'Username must be at least 3 characters'),
-  password: z.string().min(6, 'Password must be at least 6 characters'),
+  password: z.string().min(4, 'Password must be at least 4 characters'),
   role: z.enum(['admin', 'staff'], { message: 'Please select a role' }),
 })
 
@@ -18,7 +18,7 @@ const editSchema = z.object({
   user_id: z.number(),
   username: z.string().min(3, 'Username must be at least 3 characters'),
   role: z.enum(['admin', 'staff'], { message: 'Please select a role' }),
-  password: z.string().min(6, 'Password must be at least 6 characters').optional().or(z.literal('')),
+  password: z.string().min(4, 'Password must be at least 4 characters').optional().or(z.literal('')),
 })
 
 type CreateForm = z.infer<typeof createSchema>

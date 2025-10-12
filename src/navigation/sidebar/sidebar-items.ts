@@ -1,4 +1,4 @@
-import { type LucideIcon, LibraryBig, CalendarDays, PaintBucket, MonitorCog, MapIcon, User, Home, LayoutGrid, Newspaper } from 'lucide-react'
+import { type LucideIcon, LibraryBig, CalendarDays, MonitorCog, MapIcon, LayoutGrid, Newspaper } from 'lucide-react'
 
 export interface NavMainItem {
   url: string
@@ -23,101 +23,73 @@ export interface NavGroup {
   items: NavMainItem[]
 }
 
-// Admin sidebar items
-export const adminSidebarItems: NavGroup[] = [
-  {
-    id: 1,
-    label: 'Admin Dashboard',
-    items: [
-      {
-        title: 'Home',
-        url: '/admin',
-        icon: LayoutGrid,
-      },
-      {
-        icon: LibraryBig,
-        title: 'Interment Setup',
-        url: '/admin/interment-setup',
-        subItems: [
+export const getSidebarItems = (isAdmin: number): NavGroup[] => {
+  const items: NavMainItem[] = [
+    {
+      title: 'Home',
+      url: '/admin',
+      icon: LayoutGrid,
+    },
+    {
+      icon: LibraryBig,
+      title: 'Interment Setup',
+      url: '/admin/interment-setup',
+      subItems: [
+        {
+          title: 'Customers',
+          url: '/admin/interment-setup/customers',
+        },
+        {
+          title: 'Lot Owners',
+          url: '/admin/interment-setup/lot-owners',
+        },
+        {
+          title: 'Deceased Records',
+          url: '/admin/interment-setup/deceased-records',
+        },
+      ],
+    },
+    {
+      title: 'Map',
+      icon: MapIcon,
+      url: '/admin/map',
+    },
+    {
+      title: 'Event Calendar',
+      icon: CalendarDays,
+      url: '/admin/bookings',
+    },
+    ...(!import.meta.env.PROD
+      ? [
           {
-            title: 'Customers',
-            url: '/admin/interment-setup/customers',
+            title: 'News & Announcements',
+            icon: Newspaper,
+            url: '/admin/news',
           },
-          {
-            title: 'Lot Owners',
-            url: '/admin/interment-setup/lot-owners',
-          },
-          {
-            title: 'Deceased Records',
-            url: '/admin/interment-setup/deceased-records',
-          },
-        ],
-      },
-      {
-        title: 'Map',
-        icon: MapIcon,
-        url: '/admin/map',
-      },
-      {
-        title: 'Event Calendar',
-        icon: CalendarDays,
-        url: '/admin/bookings',
-      },
-      ...(!import.meta.env.PROD
-        ? [
-            {
-              title: 'News & Announcements',
-              icon: Newspaper,
-              url: '/admin/news',
-            },
-          ]
-        : []),
-      {
-        icon: MonitorCog,
-        title: 'Control Panel',
-        url: '/admin/control-panel',
-      },
-    ],
-  },
-]
+        ]
+      : []),
+  ]
 
-// User sidebar items
-export const userSidebarItems: NavGroup[] = [
-  {
-    id: 1,
-    label: 'User Dashboard',
-    items: [
-      {
-        icon: Home,
-        url: '/user',
-        title: 'Home',
-      },
-      {
-        icon: User,
-        title: 'My Profile',
-        url: '/user/profile',
-      },
-      {
-        icon: PaintBucket,
-        title: 'My Services',
-        url: '/user/services',
-      },
-      {
-        title: 'Map',
-        icon: MapIcon,
-        url: '/user/map',
-      },
-    ],
-  },
-]
+  if (isAdmin === 1) {
+    items.push({
+      icon: MonitorCog,
+      title: 'Control Panel',
+      url: '/admin/control-panel',
+    })
+  }
 
-export const getSidebarItems = (isAdmin: boolean): NavGroup[] => {
-  return isAdmin ? adminSidebarItems : userSidebarItems
+  return [
+    {
+      id: 1,
+      label: 'Admin Dashboard',
+      items,
+    },
+  ]
 }
 
 export function findSidebarItemByPath(
   pathname: string,
-  isAdmin: boolean,
+  isAdmin: number,
 ): {
   mainItem: NavMainItem
   subItem?: NavSubItem
