@@ -5,7 +5,7 @@ import { SheetClose } from '@/components/ui/sheet'
 import ReactMarkdown from 'react-markdown'
 import { toast } from 'sonner'
 import { GlobeIcon, MessageCirclePlusIcon, TrashIcon, XIcon, ArrowRightIcon } from 'lucide-react'
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import Spinner from '@/components/ui/spinner'
 import remarkGfm from 'remark-gfm'
 
@@ -24,6 +24,25 @@ type Message = {
 }
 
 type Suggestion = { question: string; subtitle?: string }
+
+type HasQuestion = { question?: string }
+
+const normalizeQuestion = (value?: string) => {
+  if (!value) return ''
+  return value.replace(/\s+/g, ' ').trim().toLowerCase()
+}
+
+const dedupeQuestions = <T extends HasQuestion>(items: T[], asked: Set<string>) => {
+  const seen = new Set<string>()
+  return items.filter((item) => {
+    const normalized = normalizeQuestion(item.question)
+    if (!normalized) return false
+    if (asked.has(normalized)) return false
+    if (seen.has(normalized)) return false
+    seen.add(normalized)
+    return true
+  })
+}
 
 function getErrorMessage(err: unknown): string {
   if (err instanceof Error) return err.message
@@ -150,6 +169,19 @@ export default function Chatbot() {
     }, 60000)
     return () => window.clearInterval(id)
   }, [])
+
+  const askedQuestions = useMemo(() => {
+    const set = new Set<string>()
+    messages.forEach((message) => {
+      if (message.sender === 'user') {
+        const normalized = normalizeQuestion(message.text)
+        if (normalized) set.add(normalized)
+      }
+    })
+    return set
+  }, [messages])
+
+  const filteredIntroSuggestions = useMemo(() => dedupeQuestions(suggestions, askedQuestions), [suggestions, askedQuestions])
 
   const testConnection = async () => {
     try {
@@ -345,7 +377,7 @@ export default function Chatbot() {
               </h2>
               <p className="mt-2 text-xl font-bold sm:text-2xl">How can I help you today?</p>
               <div className="mt-6 w-full space-y-3">
-                {suggestions.map((s, i) => (
+                {filteredIntroSuggestions.map((s, i) => (
                   <button
                     key={i}
                     onClick={() => sendMsg(s.question)}
@@ -364,61 +396,64 @@ export default function Chatbot() {
           )}
 
           {/* Conversation */}
-          {messages.map((m, i) => (
-            <div key={i} className={m.sender === 'user' ? 'flex justify-end' : 'flex justify-start'}>
-              <div
-                className={
-                  m.sender === 'user'
-                    ? 'max-w-[85%] rounded-lg bg-[var(--brand-primary)] px-3 py-2 text-white shadow sm:max-w-[80%]'
-                    : m.sender === 'bot'
-                      ? 'bg-muted max-w-[85%] rounded-lg px-3 py-2 shadow sm:max-w-[80%]'
-                      : 'text-muted-foreground max-w-[90%] text-xs'
-                }
-              >
-                {m.sender !== 'system' && <div className="mb-1 text-[10px] opacity-70">{m.sender === 'user' ? 'You' : 'Finisbot'}</div>}
-                <div className="leading-relaxed whitespace-pre-wrap">
-                  {m.isTyping ? (
-                    <div className="typing-dots" aria-live="polite" aria-label="Assistant is typing">
-                      <span />
-                      <span />
-                      <span />
+          {messages.map((m, i) => {
+            const filteredSources = dedupeQuestions(m.sources ?? [], askedQuestions)
+            return (
+              <div key={i} className={m.sender === 'user' ? 'flex justify-end' : 'flex justify-start'}>
+                <div
+                  className={
+                    m.sender === 'user'
+                      ? 'max-w-[85%] rounded-lg bg-[var(--brand-primary)] px-3 py-2 text-white shadow sm:max-w-[80%]'
+                      : m.sender === 'bot'
+                        ? 'bg-muted max-w-[85%] rounded-lg px-3 py-2 shadow sm:max-w-[80%]'
+                        : 'text-muted-foreground max-w-[90%] text-xs'
+                  }
+                >
+                  {m.sender !== 'system' && <div className="mb-1 text-[10px] opacity-70">{m.sender === 'user' ? 'You' : 'Finisbot'}</div>}
+                  <div className="leading-relaxed whitespace-pre-wrap">
+                    {m.isTyping ? (
+                      <div className="typing-dots" aria-live="polite" aria-label="Assistant is typing">
+                        <span />
+                        <span />
+                        <span />
+                      </div>
+                    ) : (
+                      <ReactMarkdown
+                        remarkPlugins={[remarkGfm]}
+                        components={{
+                          a: ({ ...props }) => (
+                            <a {...props} href={props.href} target="_blank" rel="noopener noreferrer" className="text-blue-500 underline" />
+                          ),
+                        }}
+                      >
+                        {m.text}
+                      </ReactMarkdown>
+                    )}
+                  </div>
+                  {filteredSources.length > 0 && (
+                    <div className="mt-5">
+                      <div className="text-muted-foreground mb-1 text-[10px] tracking-wide uppercase">Suggested replies</div>
+                      <ul className="relative flex w-full flex-wrap gap-2">
+                        {filteredSources.map((s, j) => (
+                          <li key={j} className="w-full">
+                            <button
+                              type="button"
+                              onClick={() => sendMsg(s.question)}
+                              className="bg-secondary min-h-[40px] w-full cursor-pointer rounded-md border px-3 py-2 text-left text-xs break-words whitespace-normal shadow-sm"
+                              title={`Relevance score: ${s.score}`}
+                              disabled={busy}
+                            >
+                              {s.question}
+                            </button>
+                          </li>
+                        ))}
+                      </ul>
                     </div>
-                  ) : (
-                    <ReactMarkdown
-                      remarkPlugins={[remarkGfm]}
-                      components={{
-                        a: ({ ...props }) => (
-                          <a {...props} href={props.href} target="_blank" rel="noopener noreferrer" className="text-blue-500 underline" />
-                        ),
-                      }}
-                    >
-                      {m.text}
-                    </ReactMarkdown>
                   )}
                 </div>
-                {m.sources && m.sources.length > 0 && (
-                  <div className="mt-5">
-                    <div className="text-muted-foreground mb-1 text-[10px] tracking-wide uppercase">Suggested replies</div>
-                    <ul className="relative flex w-full flex-wrap gap-2">
-                      {m.sources.map((s, j) => (
-                        <li key={j} className="w-full">
-                          <button
-                            type="button"
-                            onClick={() => sendMsg(s.question)}
-                            className="bg-secondary min-h-[40px] w-full cursor-pointer rounded-md border px-3 py-2 text-left text-xs break-words whitespace-normal shadow-sm"
-                            title={`Relevance score: ${s.score}`}
-                            disabled={busy}
-                          >
-                            {s.question}
-                          </button>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                )}
               </div>
-            </div>
-          ))}
+            )
+          })}
         </div>
       </CardContent>
       <CardFooter className="">
