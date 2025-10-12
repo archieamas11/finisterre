@@ -4,11 +4,34 @@ import { useState } from 'react'
 import { CardContent, CardHeader, CardTitle, Card } from '@/components/ui/card'
 import { Switch } from '@/components/ui/switch'
 import AdminUsersTable from '@/pages/admin/control/AdminUsersTable'
+import { useUsers } from '@/hooks/user-hooks/useUsers'
+import { DataTableSkeleton } from '@/components/data-table/data-table-skeleton'
+import { ErrorMessage } from '@/components/ErrorMessage'
 
 export default function AdminControlPanel() {
   const [maintenanceMode, setMaintenanceMode] = useState(false)
   const [sendNotifications, setSendNotifications] = useState(true)
   const [receiveNotifications, setReceiveNotifications] = useState(true)
+
+  const { isError, isPending, data: users, refetch } = useUsers()
+  const isLoading = isPending
+
+  if (isLoading && !users) {
+    return (
+      <Card className="p-4">
+        <DataTableSkeleton columnCount={9} filterCount={1} />
+      </Card>
+    )
+  }
+  if (isError || !users) {
+    return (
+      <ErrorMessage
+        message="Failed to load customer data. Please check your connection and try again."
+        onRetry={() => refetch()}
+        showRetryButton={true}
+      />
+    )
+  }
 
   return (
     <div className="min-h-screen md:p-6">
@@ -69,8 +92,7 @@ export default function AdminControlPanel() {
           </CardContent>
         </Card>
       </header>
-      {/* Admin Users Table */}
-      <AdminUsersTable />
+      <AdminUsersTable data={users} />
     </div>
   )
 }

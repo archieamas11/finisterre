@@ -9,12 +9,9 @@ import {
   getCoreRowModel,
   useReactTable,
 } from '@tanstack/react-table'
-import { SearchIcon, PrinterIcon } from 'lucide-react'
+import { SearchIcon, PrinterIcon, PlusIcon } from 'lucide-react'
 import React from 'react'
 
-import type { UserData } from '@/types/user.types'
-
-import { getUsers } from '@/api/users.api'
 import { DataTable } from '@/components/data-table/data-table'
 import { DataTableToolbar } from '@/components/data-table/data-table-toolbar'
 import { Button } from '@/components/ui/button'
@@ -22,39 +19,31 @@ import { Card } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { useReactToPrint } from 'react-to-print'
 import { PrintableTable } from '@/components/printable-table'
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 
 import { adminUsersColumns } from './AdminUsersColumns'
+import AddNewUserDialog from './dialog/AddNewUserDialog'
+import { type UserData } from '@/types/user.types'
 
-export default function AdminUsersTable() {
-  const [data, setData] = React.useState<UserData[]>([])
+interface UsersTableProps {
+  data: UserData[]
+}
 
+export default function AdminUsersTable({ data }: UsersTableProps) {
+  const [isDialogOpen, setIsDialogOpen] = React.useState(false)
   const [sorting, setSorting] = React.useState<SortingState>([])
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([])
   const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({})
   const [rowSelection, setRowSelection] = React.useState<RowSelectionState>({})
   const [globalFilter, setGlobalFilter] = React.useState('')
-  const contentRef = useRef<HTMLDivElement>(null)
+  const contentRef = React.useRef<HTMLDivElement>(null)
   const reactToPrintFn = useReactToPrint({ contentRef })
 
-  React.useEffect(() => {
-    let mounted = true
-    async function load() {
-      try {
-        const res = await getUsers({ isAdmin: 1 })
-        if (mounted && res) {
-          setData(res.users ?? [])
-        }
-      } catch (err) {
-        console.error(err)
-      }
-    }
-    load()
-    return () => {
-      mounted = false
-    }
-  }, [])
+  const onUserCreated = () => {
+    setIsDialogOpen(false)
+  }
 
-  const table = useReactTable<UserData>({
+  const table = useReactTable({
     data,
     columns: adminUsersColumns,
     onSortingChange: setSorting,
@@ -89,7 +78,17 @@ export default function AdminUsersTable() {
             <div className="text-muted-foreground/80 pointer-events-none absolute inset-y-0 start-0 flex items-center justify-center ps-3 peer-disabled:opacity-50">
               <SearchIcon size={16} />
             </div>
-            <Button type="button" variant="outline" size="sm" onClick={() => alert('Add user functionality not implemented yet.')}>
+            <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+              <DialogContent className="sm:max-w-[600px]">
+                <DialogHeader>
+                  <DialogTitle>Add New User</DialogTitle>
+                  <DialogDescription>Create a new user account with admin or staff privileges.</DialogDescription>
+                </DialogHeader>
+                <AddNewUserDialog onSuccess={onUserCreated} onClose={() => setIsDialogOpen(false)} />
+              </DialogContent>
+            </Dialog>
+            <Button type="button" variant="outline" size="sm" onClick={() => setIsDialogOpen(true)}>
+              <PlusIcon className="h-4 w-4" />
               Add New User
             </Button>
             <Button size={'sm'} variant="outline" onClick={reactToPrintFn}>
@@ -102,7 +101,7 @@ export default function AdminUsersTable() {
       <DataTable table={table} />
 
       {/* Hidden printable table content */}
-      <PrintableTable ref={contentRef} table={table} title="Logs Records Report" subtitle="Finisterre Cemetery Management System" />
+      <PrintableTable ref={contentRef} table={table} title="Users Records Report" subtitle="Finisterre Cemetery Management System" />
     </Card>
   )
 }

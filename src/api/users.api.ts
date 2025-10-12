@@ -47,6 +47,7 @@ export async function createUser(payload: CreateUserPayload) {
 export interface UpdateUserPayload {
   user_id: number
   username?: string
+  password?: string
   role?: 'admin' | 'staff'
 }
 
@@ -60,7 +61,7 @@ export async function updateUser(payload: UpdateUserPayload) {
 }
 
 export async function archiveUser(user_id: number) {
-  const res = await api.post('users/archive_user.php', { user_id })
+  const res = await api.post('users/archive_user.php', { user_id, isArchive: 1 })
   return res.data as {
     success: boolean
     message: string

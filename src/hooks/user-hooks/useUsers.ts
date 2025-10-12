@@ -1,6 +1,4 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import { toast } from 'sonner'
-
 import type { UserData } from '@/types/user.types'
 import { getUsers, createUser, type CreateUserPayload, updateUser, archiveUser, type UpdateUserPayload } from '@/api/users.api'
 
@@ -11,7 +9,6 @@ export function useUsers(params: { isAdmin?: number } = {}) {
       const response = await getUsers(params)
       return response.users ?? []
     },
-    staleTime: 5 * 60 * 1000,
   })
 }
 
@@ -22,13 +19,8 @@ export function useCreateUser() {
     mutationFn: (payload: CreateUserPayload) => createUser(payload),
     onSuccess: (data) => {
       if (data.success) {
-        queryClient.invalidateQueries({ queryKey: ['users'] })
-        toast.success('User created successfully!')
+        queryClient.refetchQueries({ queryKey: ['users'] })
       }
-    },
-    onError: (error: Error & { response?: { data?: { message?: string } } }) => {
-      const errorMessage = error?.response?.data?.message || 'Failed to create user. Please try again.'
-      toast.error(errorMessage)
     },
   })
 }
@@ -40,14 +32,8 @@ export function useUpdateUser() {
     mutationFn: (payload: UpdateUserPayload) => updateUser(payload),
     onSuccess: (data) => {
       if (data.success) {
-        queryClient.invalidateQueries({ queryKey: ['users'] })
-        queryClient.invalidateQueries({ queryKey: ['user', 'dashboard'] })
-        toast.success('User updated successfully!')
+        queryClient.refetchQueries({ queryKey: ['users'] })
       }
-    },
-    onError: (error: Error & { response?: { data?: { message?: string } } }) => {
-      const errorMessage = error?.response?.data?.message || 'Failed to update user. Please try again.'
-      toast.error(errorMessage)
     },
   })
 }
@@ -59,14 +45,8 @@ export function useArchiveUser() {
     mutationFn: (user_id: number) => archiveUser(user_id),
     onSuccess: (data) => {
       if (data.success) {
-        queryClient.invalidateQueries({ queryKey: ['users'] })
-        queryClient.invalidateQueries({ queryKey: ['user', 'dashboard'] })
-        toast.success('User archived successfully!')
+        queryClient.refetchQueries({ queryKey: ['users'] })
       }
-    },
-    onError: (error: Error & { response?: { data?: { message?: string } } }) => {
-      const errorMessage = error?.response?.data?.message || 'Failed to archive user. Please try again.'
-      toast.error(errorMessage)
     },
   })
 }
