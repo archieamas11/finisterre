@@ -19,11 +19,9 @@ export default function AdminLayout() {
       navigate('/login')
       return
     }
-    // Only admin and staff can access /admin routes; users go to /user
     if (role === 'user') navigate('/user')
   }, [navigate, role])
 
-  // Find the current main/sub item for breadcrumb
   const breadcrumbItem = useMemo(() => findSidebarItemByPath(location.pathname, role), [location.pathname, role])
 
   return (
