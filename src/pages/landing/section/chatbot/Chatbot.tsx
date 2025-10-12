@@ -41,7 +41,7 @@ export default function Chatbot() {
   const [suggestions, setSuggestions] = useState<Suggestion[]>([])
   const scrollerRef = useRef<HTMLDivElement | null>(null)
   // const API = import.meta.env.VITE_CHATBOT_API_URL as string
-  const API = 'http://localhost/finisterre_backend/chatbot.php'
+  const API = 'https://api.finisterre.site/chatbot.php'
 
   type IndexStatus = 'idle' | 'building' | 'built'
   const [indexStatus, setIndexStatus] = useState<IndexStatus>('idle')
