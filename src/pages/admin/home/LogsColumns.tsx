@@ -9,7 +9,6 @@ import { DataTableColumnHeader } from '@/components/data-table/data-table-column
 import { Badge } from '@/components/ui/badge'
 import { ucwords } from '@/lib/format'
 
-// dropdown actions handled in LogActionsCell
 import LogActionsCell from './LogActionsCell'
 const actionConfig = {
   add: {
@@ -38,6 +37,7 @@ const actionConfig = {
     className: '',
   },
 }
+
 export const getLogsColumns = (users: { username: string }[]): ColumnDef<ActivityLog>[] => [
   {
     accessorKey: 'log_id',

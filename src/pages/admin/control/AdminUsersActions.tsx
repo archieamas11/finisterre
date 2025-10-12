@@ -64,7 +64,7 @@ export default function AdminUsersActions({ row }: AdminUsersActionsProps) {
             user={{
               user_id: row.original.user_id as number,
               username: row.original.username,
-              role: row.original.isAdmin === 1 ? 'admin' : 'staff',
+              role: row.original.role as 'admin' | 'staff',
             }}
             onSuccess={() => setIsEditOpen(false)}
             onClose={() => setIsEditOpen(false)}

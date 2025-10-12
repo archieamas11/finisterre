@@ -8,7 +8,8 @@ import { Badge } from '@/components/ui/badge'
 import { ucwords } from '@/lib/format'
 import AdminUsersActions from './AdminUsersActions'
 
-export const adminUsersColumns: ColumnDef<UserData>[] = [
+// export const adminUsersColumns: ColumnDef<UserData>[] = [
+export const adminUsersColumns = (users: { role: string }[]): ColumnDef<UserData>[] => [
   {
     accessorKey: 'user_id',
     header: ({ column }) => <DataTableColumnHeader column={column} title="ID" />,
@@ -31,16 +32,24 @@ export const adminUsersColumns: ColumnDef<UserData>[] = [
     meta: { label: 'Username' },
   },
   {
-    accessorKey: 'isAdmin',
+    accessorKey: 'role',
     header: ({ column }) => <DataTableColumnHeader column={column} title="Role" />,
-    cell: ({ row }) => <Badge variant="outline">{row.original.isAdmin === 1 ? 'Admin' : row.original.isAdmin === 2 ? 'Staff' : ''}</Badge>,
+    cell: ({ row }) => <Badge variant="outline">{row.original.role}</Badge>,
+    // meta: {
+    //   label: 'Role',
+    //   variant: 'select',
+    //   options: [
+    //     { label: 'Admin', value: 'admin' },
+    //     { label: 'Staff', value: 'staff' },
+    //   ],
+    // },
     meta: {
       label: 'Role',
       variant: 'select',
-      options: [
-        { label: 'Admin', value: 'admin' },
-        { label: 'Staff', value: 'staff' },
-      ],
+      options: [...new Set(users.map((u) => u.role))].map((role) => ({
+        label: ucwords(role),
+        value: role,
+      })),
     },
   },
   {

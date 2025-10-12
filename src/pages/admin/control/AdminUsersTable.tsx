@@ -45,7 +45,7 @@ export default function AdminUsersTable({ data }: UsersTableProps) {
 
   const table = useReactTable({
     data,
-    columns: adminUsersColumns,
+    columns: adminUsersColumns(data),
     onSortingChange: setSorting,
     getCoreRowModel: getCoreRowModel(),
     onRowSelectionChange: setRowSelection,
