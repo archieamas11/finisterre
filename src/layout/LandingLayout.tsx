@@ -74,7 +74,7 @@ export default function LandingLayout() {
                       <FaFacebookMessenger className="text-white" />
                     </PulsatingButton>
                   </SheetTrigger>
-                  <SheetContent forceMount showClose={false}>
+                  <SheetContent forceMount showClose={false} className="rounded-none border-none">
                     <Chatbot />
                   </SheetContent>
                 </Sheet>

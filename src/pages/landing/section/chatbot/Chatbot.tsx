@@ -42,6 +42,7 @@ export default function Chatbot() {
   const scrollerRef = useRef<HTMLDivElement | null>(null)
   // const API = import.meta.env.VITE_CHATBOT_API_URL as string
   const API = 'https://api.finisterre.site/chatbot.php'
+  // const API = 'http://localhost/finisterre_backend/chatbot.php'
 
   type IndexStatus = 'idle' | 'building' | 'built'
   const [indexStatus, setIndexStatus] = useState<IndexStatus>('idle')
@@ -163,9 +164,9 @@ export default function Chatbot() {
         gen_model: string
         embed_model: string
       }
-      toast.success(`Successfully connected to chatbot API. Models: ${data.gen_model}, ${data.embed_model}`)
+      toast.success(`Successfully connected to chatbot API. Models: ${data.gen_model}, ${data.embed_model}`, { duration: 1000 })
     } catch (e) {
-      toast.error(`Connection test failed: ${getErrorMessage(e)}`)
+      toast.error(`Connection test failed: ${getErrorMessage(e)}`, { duration: 1000 })
     } finally {
       setBusy(false)
     }
@@ -180,7 +181,7 @@ export default function Chatbot() {
         throw new Error(`HTTP ${res.status}: ${errData.error || 'Unknown error'}`)
       }
       const data = (await res.json()) as { count: number; embed_model: string }
-      toast.success(`Index built: ${data.count} items (model: ${data.embed_model})`)
+      toast.success(`Index built: ${data.count} items (model: ${data.embed_model})`, { duration: 1000 })
       try {
         sessionStorage.setItem(INDEX_BUILT_KEY, String(Date.now()))
       } catch {
@@ -189,7 +190,7 @@ export default function Chatbot() {
       setIndexStatus('built')
     } catch (e) {
       setIndexStatus('idle')
-      toast.error(`Index build failed: ${getErrorMessage(e)}`)
+      toast.error(`Index build failed: ${getErrorMessage(e)}`, { duration: 1000 })
     }
   }
 
@@ -282,7 +283,7 @@ export default function Chatbot() {
   const showIntro = messages.length === 0
 
   return (
-    <Card className="h-full overflow-hidden">
+    <Card className="h-full overflow-hidden rounded-none border-0">
       {/* Inline styles for typing animation to keep change local */}
       <style>{`
         .typing-dots{display:inline-flex;gap:4px;align-items:center}
@@ -307,7 +308,7 @@ export default function Chatbot() {
           >
             <span>Index</span>
             {indexStatus === 'building' ? (
-              <Spinner />
+              <Spinner className="h-2 w-2" />
             ) : indexStatus === 'built' ? (
               <span className="h-2 w-2 rounded-full bg-green-500" aria-label="Index ready" />
             ) : (
