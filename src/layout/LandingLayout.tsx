@@ -1,6 +1,6 @@
 import { useEffect } from 'react'
 import { FaFacebookMessenger } from 'react-icons/fa'
-import { Link, Outlet, useLocation } from 'react-router-dom'
+import { Outlet, useLocation } from 'react-router-dom'
 
 import { PulsatingButton } from '@/components/pulsating-button'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
@@ -14,6 +14,8 @@ import FeatureSection from '@/pages/landing/section/FeatureSection'
 import Testimonials from '@/pages/landing/section/Testimonials'
 import ContactUs from '@/pages/landing/section/ContactUs'
 import Products from '@/pages/landing/section/Products'
+import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet'
+import Chatbot from '@/pages/landing/section/chatbot/Chatbot'
 
 function LandingHome() {
   return (
@@ -57,29 +59,28 @@ export default function LandingLayout() {
       <div className="aurora-background pointer-events-none fixed inset-0 -z-10" aria-hidden="true" />
       <div className="relative z-10">
         <HeaderSection />
-        {/* Floating message us button */}
         <div className="group">
           <div className="fixed right-22 bottom-9 z-999">
             <span className="rounded-full bg-white px-4 py-2 text-[var(--brand-primary)] shadow-lg transition-opacity duration-300 group-hover:opacity-0">
-              Message Us!
+              Chat with Finisbot!
             </span>
           </div>
           <div className="fixed right-4 bottom-4 z-999">
-            <Link
-              to="https://www.facebook.com/finisterregardenz/"
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label="Contact us on Facebook Messenger"
-            >
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <PulsatingButton className="h-15 w-15 rounded-full bg-[var(--brand-primary)] shadow-lg">
-                    <FaFacebookMessenger className="text-white" />
-                  </PulsatingButton>
-                </TooltipTrigger>
-                <TooltipContent>Facebook Messenger</TooltipContent>
-              </Tooltip>
-            </Link>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Sheet>
+                  <SheetTrigger asChild>
+                    <PulsatingButton className="h-15 w-15 rounded-full bg-[var(--brand-primary)] shadow-lg">
+                      <FaFacebookMessenger className="text-white" />
+                    </PulsatingButton>
+                  </SheetTrigger>
+                  <SheetContent forceMount showClose={false}>
+                    <Chatbot />
+                  </SheetContent>
+                </Sheet>
+              </TooltipTrigger>
+              <TooltipContent>Finisbot Chabot</TooltipContent>
+            </Tooltip>
           </div>
         </div>
         <main className="flex-1">
