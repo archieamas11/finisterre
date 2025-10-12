@@ -35,14 +35,6 @@ export const adminUsersColumns = (users: { role: string }[]): ColumnDef<UserData
     accessorKey: 'role',
     header: ({ column }) => <DataTableColumnHeader column={column} title="Role" />,
     cell: ({ row }) => <Badge variant="outline">{row.original.role}</Badge>,
-    // meta: {
-    //   label: 'Role',
-    //   variant: 'select',
-    //   options: [
-    //     { label: 'Admin', value: 'admin' },
-    //     { label: 'Staff', value: 'staff' },
-    //   ],
-    // },
     meta: {
       label: 'Role',
       variant: 'select',
