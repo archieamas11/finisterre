@@ -6,6 +6,7 @@ import ReactMarkdown from 'react-markdown'
 import { toast } from 'sonner'
 import { GlobeIcon, MessageCirclePlusIcon, TrashIcon, XIcon, ArrowRightIcon } from 'lucide-react'
 import { useEffect, useRef, useState } from 'react'
+import Spinner from '@/components/ui/spinner'
 
 const STORAGE_KEY = 'chatbot:messages'
 const LAST_ACTIVE_KEY = 'chatbot:lastActive'
@@ -295,31 +296,27 @@ export default function Chatbot() {
         /* Hide scrollbar */
         .scrollbar-hide::-webkit-scrollbar { display: none; }
         .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
-        /* index status styles */
-        .status-dot{width:10px;height:10px;border-radius:9999px;display:inline-block}
-        .index-spinner{width:12px;height:12px;border-radius:9999px;border:2px solid rgba(0,0,0,0.25);border-top-color: var(--brand-primary);animation: spin 0.9s linear infinite}
-        @keyframes spin{to{transform: rotate(360deg);}}
       `}</style>
       <CardHeader className="flex flex-col items-center justify-between gap-2 sm:flex-row">
         <CardTitle className="text-lg">Finisbot</CardTitle>
         <div className="flex flex-wrap items-center justify-center gap-2 sm:justify-end">
-          <Button onClick={testConnection} disabled={busy} variant="ghost" size="icon">
-            <GlobeIcon />
-          </Button>
           {/* Index status indicator */}
           <div
-            className="text-muted-foreground flex items-center gap-2 rounded-md border bg-white px-2 py-1 text-xs"
+            className="text-muted-foreground bg-secondary flex items-center gap-2 rounded-md border px-2 py-1 text-xs"
             title={indexStatus === 'building' ? 'Building index' : indexStatus === 'built' ? 'Index ready' : 'Index not built'}
           >
             <span>Index</span>
             {indexStatus === 'building' ? (
-              <span className="index-spinner" aria-live="polite" aria-label="Building index" />
+              <Spinner />
             ) : indexStatus === 'built' ? (
-              <span className="status-dot" style={{ backgroundColor: '#22c55e' }} aria-label="Index ready" />
+              <span className="h-2 w-2 rounded-full bg-green-500" aria-label="Index ready" />
             ) : (
-              <span className="status-dot" style={{ backgroundColor: '#ef4444' }} aria-label="Index not built" />
+              <span className="h-2 w-2 rounded-full bg-red-600" aria-label="Index not built" />
             )}
           </div>
+          <Button onClick={testConnection} disabled={busy} variant="ghost" size="icon">
+            <GlobeIcon />
+          </Button>
           <Button onClick={clearSessionStorage} disabled={busy} variant="ghost" size="icon">
             <TrashIcon />
           </Button>
@@ -339,7 +336,7 @@ export default function Chatbot() {
             <div className="mx-auto flex max-w-md flex-col items-center py-4 text-center sm:py-8">
               {/* Logo/Avatar placeholder */}
               <div className="mb-4 grid h-16 w-16 place-items-center rounded-full bg-[var(--brand-primary)]/50 p-3 text-2xl">
-                <img src="/icon.png" alt="" />
+                <img src="/favicon-96x96.png" alt="" />
               </div>
               <h2 className="text-xl font-semibold">
                 Hello there <span className="inline-block">👋</span>
@@ -370,9 +367,9 @@ export default function Chatbot() {
               <div
                 className={
                   m.sender === 'user'
-                    ? 'max-w-[85%] rounded-2xl bg-[var(--brand-primary)] px-3 py-2 text-white shadow sm:max-w-[80%]'
+                    ? 'max-w-[85%] rounded-lg bg-[var(--brand-primary)] px-3 py-2 text-white shadow sm:max-w-[80%]'
                     : m.sender === 'bot'
-                      ? 'bg-muted max-w-[85%] rounded-2xl px-3 py-2 shadow sm:max-w-[80%]'
+                      ? 'bg-muted max-w-[85%] rounded-lg px-3 py-2 shadow sm:max-w-[80%]'
                       : 'text-muted-foreground max-w-[90%] text-xs'
                 }
               >
@@ -413,13 +410,13 @@ export default function Chatbot() {
           ))}
         </div>
       </CardContent>
-      <CardFooter className="p-3 sm:p-4">
+      <CardFooter className="">
         <div className="relative flex w-full flex-col">
           <div>
             <Textarea
               value={input}
               onChange={(e) => setInput(e.target.value)}
-              className="bg-secondary min-h-20 w-full resize-none rounded-xl border-2 border-[var(--brand-primary)] p-4 pr-16 sm:min-h-40"
+              className="bg-secondary min-h-15 w-full resize-none rounded-xl border-2 border-[var(--brand-primary)] p-4 pr-16 sm:min-h-30"
               placeholder={busy ? 'Working...' : 'Write your question'}
               onKeyDown={(e) => {
                 if (e.key === 'Enter') sendMsg()
