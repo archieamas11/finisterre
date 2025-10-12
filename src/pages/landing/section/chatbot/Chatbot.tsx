@@ -7,6 +7,7 @@ import { toast } from 'sonner'
 import { GlobeIcon, MessageCirclePlusIcon, TrashIcon, XIcon, ArrowRightIcon } from 'lucide-react'
 import { useEffect, useRef, useState } from 'react'
 import Spinner from '@/components/ui/spinner'
+import remarkGfm from 'remark-gfm'
 
 const STORAGE_KEY = 'chatbot:messages'
 const LAST_ACTIVE_KEY = 'chatbot:lastActive'
@@ -374,7 +375,7 @@ export default function Chatbot() {
                       : 'text-muted-foreground max-w-[90%] text-xs'
                 }
               >
-                {m.sender !== 'system' && <div className="mb-1 text-[10px] opacity-70">{m.sender === 'user' ? 'You' : 'Assistant'}</div>}
+                {m.sender !== 'system' && <div className="mb-1 text-[10px] opacity-70">{m.sender === 'user' ? 'You' : 'Finisbot'}</div>}
                 <div className="leading-relaxed whitespace-pre-wrap">
                   {m.isTyping ? (
                     <div className="typing-dots" aria-live="polite" aria-label="Assistant is typing">
@@ -383,7 +384,16 @@ export default function Chatbot() {
                       <span />
                     </div>
                   ) : (
-                    <ReactMarkdown>{m.text}</ReactMarkdown>
+                    <ReactMarkdown
+                      remarkPlugins={[remarkGfm]}
+                      components={{
+                        a: ({ ...props }) => (
+                          <a {...props} href={props.href} target="_blank" rel="noopener noreferrer" className="text-blue-500 underline" />
+                        ),
+                      }}
+                    >
+                      {m.text}
+                    </ReactMarkdown>
                   )}
                 </div>
                 {m.sources && m.sources.length > 0 && (
