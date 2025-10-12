@@ -387,7 +387,7 @@ export default function Chatbot() {
                 </div>
                 {m.sources && m.sources.length > 0 && (
                   <div className="mt-5">
-                    <div className="text-muted-foreground mb-1 text-[10px] tracking-wide uppercase">Suggested next questions</div>
+                    <div className="text-muted-foreground mb-1 text-[10px] tracking-wide uppercase">Suggested replies</div>
                     <ul className="relative flex w-full flex-wrap gap-2">
                       {m.sources.map((s, j) => (
                         <li key={j} className="w-full">
