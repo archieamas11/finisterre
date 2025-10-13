@@ -1,84 +1,87 @@
-'use client'
-
-import { TrendingUp } from 'lucide-react'
+import React from 'react'
 import { Area, AreaChart, CartesianGrid, XAxis } from 'recharts'
+import { useReactToPrint } from 'react-to-print'
 
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { type ChartConfig, ChartContainer, ChartTooltip, ChartTooltipContent } from '@/components/ui/chart'
+import { useLotsMonthlyShare } from '@/hooks/map-stats-hooks/PlotSalesStats'
+import { Button } from '@/components/ui/button'
+import { PrinterIcon } from 'lucide-react'
+import PrintableAreaChart from './components/PrintableAreaChart'
 
-export const description = 'A stacked area chart with expand stacking'
+export const description = 'Monthly distribution of newly created lots by category'
 
-// Updated chartData
-const chartData = [
-  { month: 'January', serenity: 120, columbarium: 90, memorial: 60 },
-  { month: 'February', serenity: 150, columbarium: 110, memorial: 80 },
-  { month: 'March', serenity: 100, columbarium: 95, memorial: 70 },
-  { month: 'April', serenity: 170, columbarium: 130, memorial: 100 },
-  { month: 'May', serenity: 200, columbarium: 140, memorial: 120 },
-  { month: 'June', serenity: 180, columbarium: 150, memorial: 110 },
-]
-
-// Updated chartConfig
 const chartConfig = {
-  serenity: {
-    label: 'Serenity Lawn',
-    color: 'var(--chart-1)',
-  },
-  columbarium: {
-    label: 'Columbarium',
-    color: 'var(--chart-2)',
-  },
-  memorial: {
-    label: 'Memorial Chambers',
-    color: 'var(--chart-3)',
-  },
+  serenity: { label: 'Serenity Lawn', color: 'var(--chart-1)' },
+  columbarium: { label: 'Columbarium', color: 'var(--chart-2)' },
+  memorial: { label: 'Memorial Chambers', color: 'var(--chart-3)' },
 } satisfies ChartConfig
 
 export function ChartAreaStackedExpand() {
+  const { data = [], isPending, isError, error } = useLotsMonthlyShare()
+
+  const latest = data.length ? data[data.length - 1] : undefined
+  const title = 'Lots Distribution'
+  const period = 'Last 12 months'
+  const series = latest
+    ? [
+        { label: 'Serenity Lawn', value: Number(latest.serenity) || 0 },
+        { label: 'Columbarium', value: Number(latest.columbarium) || 0 },
+        { label: 'Memorial Chambers', value: Number(latest.memorial) || 0 },
+      ]
+    : [
+        { label: 'Serenity Lawn', value: 0 },
+        { label: 'Columbarium', value: 0 },
+        { label: 'Memorial Chambers', value: 0 },
+      ]
+  const total = series.reduce((s, p) => s + p.value, 0)
+
+  const printRef = React.useRef<HTMLDivElement>(null)
+  const doPrint = useReactToPrint({ contentRef: printRef, documentTitle: title })
+
   return (
     <Card>
-      <CardHeader>
-        <CardTitle>Sales Comparison - Cemetery Lots</CardTitle>
-        <CardDescription>Serenity Lawn, Columbarium, and Memorial Chambers (Jan - Jun 2025)</CardDescription>
+      <CardHeader className="flex flex-col justify-between sm:flex-row sm:items-center">
+        <div className="space-y-1">
+          <CardTitle>Lots Distribution</CardTitle>
+          <CardDescription>Serenity Lawn • Columbarium • Memorial Chambers — last 12 months</CardDescription>
+        </div>
+        <div>
+          <Button
+            type="button"
+            variant="outline"
+            onClick={doPrint}
+            aria-label="Print chart"
+            size="icon"
+            className="text-muted-foreground hover:text-foreground ml-2"
+          >
+            <PrinterIcon />
+          </Button>
+        </div>
       </CardHeader>
       <CardContent>
+        {/* Hidden printable summary */}
+        <PrintableAreaChart ref={printRef} title={title} description={description} period={period} total={total} series={series} />
         <ChartContainer config={chartConfig}>
-          <AreaChart
-            accessibilityLayer
-            data={chartData}
-            margin={{
-              left: 12,
-              right: 12,
-              top: 12,
-            }}
-            stackOffset="expand"
-          >
+          <AreaChart accessibilityLayer data={data} margin={{ left: 12, right: 12, top: 12 }} stackOffset="expand">
             <CartesianGrid vertical={false} />
-            <XAxis dataKey="month" tickLine={false} axisLine={false} tickMargin={8} tickFormatter={(value) => value.slice(0, 3)} />
+            <XAxis dataKey="month" tickLine={false} axisLine={false} tickMargin={8} tickFormatter={(value) => String(value).slice(0, 3)} />
             <ChartTooltip cursor={false} content={<ChartTooltipContent indicator="line" />} />
-            <Area dataKey="memorial" type="natural" fill="var(--color-memorial)" fillOpacity={0.1} stroke="var(--color-memorial)" stackId="a" />{' '}
+            <Area dataKey="memorial" type="natural" fill="var(--color-memorial)" fillOpacity={0.2} stroke="var(--color-memorial)" stackId="a" />
             <Area
               dataKey="columbarium"
               type="natural"
               fill="var(--color-columbarium)"
-              fillOpacity={0.4}
+              fillOpacity={0.3}
               stroke="var(--color-columbarium)"
               stackId="a"
             />
-            <Area dataKey="serenity" type="natural" fill="var(--color-serenity)" fillOpacity={0.4} stroke="var(--color-serenity)" stackId="a" />
+            <Area dataKey="serenity" type="natural" fill="var(--color-serenity)" fillOpacity={0.35} stroke="var(--color-serenity)" stackId="a" />
           </AreaChart>
         </ChartContainer>
+        {isPending && <div className="text-muted-foreground mt-4 text-xs">Loading…</div>}
+        {isError && !isPending && <div className="text-destructive mt-4 text-xs">{(error as Error).message}</div>}
       </CardContent>
-      <CardFooter>
-        <div className="flex w-full items-start gap-2 text-sm">
-          <div className="grid gap-2">
-            <div className="flex items-center gap-2 leading-none font-medium">
-              Trending up by 5.2% this month <TrendingUp className="h-4 w-4" />
-            </div>
-            <div className="text-muted-foreground flex items-center gap-2 leading-none">January - June 2025</div>
-          </div>
-        </div>
-      </CardFooter>
     </Card>
   )
 }

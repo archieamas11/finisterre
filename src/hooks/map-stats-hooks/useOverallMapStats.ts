@@ -40,6 +40,6 @@ export function useOverallMapStats() {
   return useQuery({
     queryKey: ['map-stats', 'overall'],
     queryFn: fetchOverallStats,
-    staleTime: 60_000, // 1 min
+    staleTime: 60_000,
   })
 }

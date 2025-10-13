@@ -1,5 +1,6 @@
 import { PrinterIcon } from 'lucide-react'
 import React from 'react'
+import { useQuery } from '@tanstack/react-query'
 import { useReactToPrint } from 'react-to-print'
 import { Pie, PieChart, Cell } from 'recharts'
 
@@ -32,33 +33,26 @@ export function ChartPieInteractive() {
   const id = 'plots-pie-grid'
   const [serenityBlock, setSerenityBlock] = React.useState<string>('all')
 
-  // State for real data from API
-  const [serenityStats, setSerenityStats] = React.useState<MapStatsResponse | null>(null)
-  const [memorialStats, setMemorialStats] = React.useState<MapStatsResponse | null>(null)
-  const [columbariumStats, setColumbariumStats] = React.useState<MapStatsResponse | null>(null)
-  const [loading, setLoading] = React.useState(true)
+  const { data: serenityStats, isPending: isSerenityPending } = useQuery<MapStatsResponse>({
+    queryKey: ['map-stats', 'serenity', serenityBlock],
+    queryFn: () => getSerenityStatsByBlock(serenityBlock),
+    placeholderData: (prev: MapStatsResponse | undefined) => prev,
+    staleTime: 60_000,
+  })
 
-  // Fetch data on mount and when serenityBlock changes
-  React.useEffect(() => {
-    async function fetchData() {
-      try {
-        setLoading(true)
-        const [serenityRes, memorialRes, columbariumRes] = await Promise.all([
-          getSerenityStatsByBlock(serenityBlock),
-          getChambersStats(),
-          getColumbariumStats(),
-        ])
-        setSerenityStats(serenityRes)
-        setMemorialStats(memorialRes)
-        setColumbariumStats(columbariumRes)
-      } catch (error) {
-        console.error('Failed to fetch plot stats:', error)
-      } finally {
-        setLoading(false)
-      }
-    }
-    fetchData()
-  }, [serenityBlock])
+  const { data: memorialStats, isPending: isMemorialPending } = useQuery<MapStatsResponse>({
+    queryKey: ['map-stats', 'chambers'],
+    queryFn: () => getChambersStats(),
+    placeholderData: (prev: MapStatsResponse | undefined) => prev,
+    staleTime: 60_000,
+  })
+
+  const { data: columbariumStats, isPending: isColumbariumPending } = useQuery<MapStatsResponse>({
+    queryKey: ['map-stats', 'columbarium'],
+    queryFn: () => getColumbariumStats(),
+    placeholderData: (prev: MapStatsResponse | undefined) => prev,
+    staleTime: 60_000,
+  })
 
   const serenityData = React.useMemo(() => {
     if (!serenityStats) return []
@@ -91,7 +85,6 @@ export function ChartPieInteractive() {
   const columbariumTotal = columbariumData.reduce((s, d) => s + d.value, 0)
   const memorialTotal = memorialData.reduce((s, d) => s + d.value, 0)
 
-  // Print refs and handlers per card
   const serenityRef = React.useRef<HTMLDivElement>(null)
   const memorialRef = React.useRef<HTMLDivElement>(null)
   const columbariumRef = React.useRef<HTMLDivElement>(null)
@@ -100,7 +93,8 @@ export function ChartPieInteractive() {
   const printColumbarium = useReactToPrint({ contentRef: columbariumRef, documentTitle: 'Columbarium' })
   const printMemorial = useReactToPrint({ contentRef: memorialRef, documentTitle: 'Memorial Chambers' })
 
-  if (loading && !serenityStats && !memorialStats) {
+  const loading = (isSerenityPending || isMemorialPending || isColumbariumPending) && !serenityStats && !memorialStats
+  if (loading) {
     return (
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {[1, 2, 3].map((i) => (
@@ -186,7 +180,6 @@ export function ChartPieInteractive() {
           </div>
 
           <Legend data={data} />
-          {/* Hidden printable content for this card */}
           {printRef ? (
             <PrintablePieChart
               ref={printRef}

@@ -1,13 +1,17 @@
 'use client'
 import * as React from 'react'
+import { useReactToPrint } from 'react-to-print'
 import { Area, AreaChart, CartesianGrid, ResponsiveContainer, XAxis } from 'recharts'
 
-import { getLotsTimeSeries, type LotsTimeSeriesPoint } from '@/api/map-stats.api'
+import { useLotsTimeSeries } from '@/hooks/map-stats-hooks/ChartStats'
 import { Card, CardAction, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { ChartContainer, ChartTooltip, ChartTooltipContent, type ChartConfig } from '@/components/ui/chart'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group'
 import { useIsMobile } from '@/hooks/use-mobile'
+import { Button } from '@/components/ui/button'
+import { PrinterIcon } from 'lucide-react'
+import PrintableAreaChart from './components/PrintableAreaChart'
 
 export const description = 'Interactive chart of new lots created per day by category'
 
@@ -16,56 +20,48 @@ type Range = '7d' | '30d' | '90d' | '1y'
 const chartConfig = {
   serenity: {
     label: 'Serenity (Ground Lots)',
-    color: 'hsl(var(--chart-1))',
+    color: 'var(--chart-1)',
   },
   columbarium: {
     label: 'Columbarium',
-    color: 'hsl(var(--chart-2))',
+    color: 'var(--chart-2)',
   },
   chambers: {
     label: 'Chambers',
-    color: 'hsl(var(--chart-3))',
+    color: 'var(--chart-3)',
   },
 } satisfies ChartConfig
 
 export function ChartAreaInteractive() {
   const isMobile = useIsMobile()
   const [timeRange, setTimeRange] = React.useState<Range>('90d')
-  const [data, setData] = React.useState<LotsTimeSeriesPoint[]>([])
-  const [isLoading, setIsLoading] = React.useState(false)
-  const [error, setError] = React.useState<string | null>(null)
+  const { data: queryData, isPending, isError, error } = useLotsTimeSeries(timeRange)
+  const data = queryData ?? []
 
   React.useEffect(() => {
     if (isMobile) setTimeRange('7d')
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isMobile])
 
-  React.useEffect(() => {
-    let isMounted = true
-    setIsLoading(true)
-    setError(null)
-    getLotsTimeSeries(timeRange)
-      .then((res) => {
-        if (isMounted) setData(res)
-      })
-      .catch((e: unknown) => {
-        if (isMounted) setError(e instanceof Error ? e.message : 'Failed to load data')
-      })
-      .finally(() => {
-        if (isMounted) setIsLoading(false)
-      })
-    return () => {
-      isMounted = false
-    }
-  }, [timeRange])
-
-  const title = 'New Lots Created'
   const descLong = timeRange === '1y' ? 'Last 12 months' : timeRange === '90d' ? 'Last 90 days' : timeRange === '30d' ? 'Last 30 days' : 'Last 7 days'
+
+  // Prepare printable summary as totals over the selected range (more meaningful than just the last day)
+  const serenitySum = data.reduce((s, d) => s + (Number((d as any).serenity) || 0), 0)
+  const columbariumSum = data.reduce((s, d) => s + (Number((d as any).columbarium) || 0), 0)
+  const chambersSum = data.reduce((s, d) => s + (Number((d as any).chambers) || 0), 0)
+
+  const series = [
+    { label: 'Serenity (Ground Lots)', value: serenitySum },
+    { label: 'Columbarium', value: columbariumSum },
+    { label: 'Chambers', value: chambersSum },
+  ]
+  const total = serenitySum + columbariumSum + chambersSum
+  const printRef = React.useRef<HTMLDivElement>(null)
+  const doPrint = useReactToPrint({ contentRef: printRef, documentTitle: `New Lots Created — ${descLong}` })
 
   return (
     <Card className="@container/card flex h-full flex-col">
       <CardHeader>
-        <CardTitle>{title}</CardTitle>
+        <CardTitle>New Lots Created</CardTitle>
         <CardDescription>
           <span className="hidden @[540px]/card:block">Daily counts by category • {descLong}</span>
           <span className="@[540px]/card:hidden">{descLong}</span>
@@ -83,48 +79,63 @@ export function ChartAreaInteractive() {
             <ToggleGroupItem value="30d">Last 30 days</ToggleGroupItem>
             <ToggleGroupItem value="7d">Last 7 days</ToggleGroupItem>
           </ToggleGroup>
-          <Select onValueChange={(v) => setTimeRange(v as Range)} value={timeRange}>
-            <SelectTrigger
-              className="flex w-40 **:data-[slot=select-value]:block **:data-[slot=select-value]:truncate @[767px]/card:hidden"
-              aria-label="Select range"
-              size="sm"
+          <div className="flex flex-col sm:flex-row sm:items-center">
+            <Select onValueChange={(v) => setTimeRange(v as Range)} value={timeRange}>
+              <SelectTrigger
+                className="flex min-h-9 w-40 **:data-[slot=select-value]:block **:data-[slot=select-value]:truncate @[767px]/card:hidden"
+                aria-label="Select range"
+                size="sm"
+              >
+                <SelectValue placeholder="Last 90 days" />
+              </SelectTrigger>
+              <SelectContent className="rounded-xl">
+                <SelectItem className="rounded-lg" value="1y">
+                  Last year
+                </SelectItem>
+                <SelectItem className="rounded-lg" value="90d">
+                  Last 90 days
+                </SelectItem>
+                <SelectItem className="rounded-lg" value="30d">
+                  Last 30 days
+                </SelectItem>
+                <SelectItem className="rounded-lg" value="7d">
+                  Last 7 days
+                </SelectItem>
+              </SelectContent>
+            </Select>
+
+            <Button
+              type="button"
+              variant="outline"
+              onClick={doPrint}
+              aria-label="Print chart"
+              size="icon"
+              className="text-muted-foreground hover:text-foreground ml-2"
             >
-              <SelectValue placeholder="Last 90 days" />
-            </SelectTrigger>
-            <SelectContent className="rounded-xl">
-              <SelectItem className="rounded-lg" value="1y">
-                Last year
-              </SelectItem>
-              <SelectItem className="rounded-lg" value="90d">
-                Last 90 days
-              </SelectItem>
-              <SelectItem className="rounded-lg" value="30d">
-                Last 30 days
-              </SelectItem>
-              <SelectItem className="rounded-lg" value="7d">
-                Last 7 days
-              </SelectItem>
-            </SelectContent>
-          </Select>
+              <PrinterIcon />
+            </Button>
+          </div>
         </CardAction>
       </CardHeader>
       <CardContent className="min-h-0 flex-1 px-2 pt-4 sm:px-6 sm:pt-6">
+        {/* Hidden printable summary */}
+        <PrintableAreaChart ref={printRef} title="New Lots Created" description={description} period={descLong} total={total} series={series} />
         <div className="relative h-full min-h-0 w-full">
           <ChartContainer className="h-full min-h-0 w-full" config={chartConfig}>
             <ResponsiveContainer width="100%" height="100%">
               <AreaChart data={data}>
                 <defs>
                   <linearGradient id="fillSerenity" x1="0" y1="0" x2="0" y2="1">
-                    <stop stopColor="var(--chart-1)" stopOpacity={0.9} offset="5%" />
-                    <stop stopColor="var(--chart-1)" stopOpacity={0.08} offset="95%" />
+                    <stop stopColor="var(--color-serenity)" stopOpacity={0.9} offset="5%" />
+                    <stop stopColor="var(--color-serenity)" stopOpacity={0.08} offset="95%" />
                   </linearGradient>
                   <linearGradient id="fillColumbarium" x1="0" y1="0" x2="0" y2="1">
-                    <stop stopColor="var(--chart-2)" stopOpacity={0.8} offset="5%" />
-                    <stop stopColor="var(--chart-2)" stopOpacity={0.08} offset="95%" />
+                    <stop stopColor="var(--color-columbarium)" stopOpacity={0.8} offset="5%" />
+                    <stop stopColor="var(--color-columbarium)" stopOpacity={0.08} offset="95%" />
                   </linearGradient>
                   <linearGradient id="fillChambers" x1="0" y1="0" x2="0" y2="1">
-                    <stop stopColor="var(--chart-3)" stopOpacity={0.8} offset="5%" />
-                    <stop stopColor="var(--chart-3)" stopOpacity={0.08} offset="95%" />
+                    <stop stopColor="var(--color-chambers)" stopOpacity={0.8} offset="5%" />
+                    <stop stopColor="var(--color-chambers)" stopOpacity={0.08} offset="95%" />
                   </linearGradient>
                 </defs>
                 <CartesianGrid vertical={false} />
@@ -157,8 +168,8 @@ export function ChartAreaInteractive() {
               </AreaChart>
             </ResponsiveContainer>
           </ChartContainer>
-          {isLoading && <div className="text-muted-foreground absolute inset-0 flex items-center justify-center text-xs">Loading…</div>}
-          {error && !isLoading && <div className="text-destructive absolute inset-0 flex items-center justify-center text-xs">{error}</div>}
+          {isPending && <div className="text-muted-foreground absolute inset-0 flex items-center justify-center text-xs">Loading…</div>}
+          {isError && !isPending && <div className="text-destructive absolute inset-0 flex items-center justify-center text-xs">{error.message}</div>}
         </div>
       </CardContent>
     </Card>

@@ -24,7 +24,6 @@ export default function UserDashboard() {
       <div className="mt-4">
         <ChartPieInteractive />
       </div>
-      {/* Recent Activity */}
       {isAdmin && (
         <section aria-labelledby="recent-activity-title" className="bg-background mt-5 rounded-lg border p-4 shadow-sm" role="region">
           <div className="mb-2 flex items-center justify-between">
