@@ -1,7 +1,6 @@
-import * as React from 'react'
 import type { Row } from '@tanstack/react-table'
-import { MoreHorizontal, Printer } from 'lucide-react'
-
+import { MoreHorizontal } from 'lucide-react'
+import React from 'react'
 import type { ActivityLog } from '@/api/logs.api'
 import { Button } from '@/components/ui/button'
 import {
@@ -13,12 +12,19 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import { ViewLog } from './dialog/ViewLogs'
+import { useReactToPrint } from 'react-to-print'
+import PrintableLogDetails from './components/PrintableLogDetails'
 
 interface LogActionsCellProps {
   row: Row<ActivityLog>
 }
 
 export default function LogActionsCell({ row }: LogActionsCellProps) {
+  const contentRef = React.useRef<HTMLDivElement>(null)
+  const reactToPrintFn = useReactToPrint({
+    contentRef,
+    documentTitle: `Activity Log #${row?.original?.log_id ?? ''}`,
+  })
   const [viewOpen, setViewOpen] = React.useState(false)
   if (!row?.original) return null
   const log = row.original
@@ -36,34 +42,10 @@ export default function LogActionsCell({ row }: LogActionsCellProps) {
           <DropdownMenuLabel>Actions</DropdownMenuLabel>
           <DropdownMenuSeparator />
           <DropdownMenuItem onClick={() => setViewOpen(true)}>View Log</DropdownMenuItem>
-          <DropdownMenuItem
-            onClick={() => {
-              const win = window.open('', '_blank', 'noopener,noreferrer')
-              if (!win) return
-              const created = new Date(log.created_at)
-              const when = isNaN(created.getTime()) ? log.created_at : created.toLocaleString()
-              const payload = JSON.stringify(
-                {
-                  id: log.log_id,
-                  user: log.username ?? log.user_id,
-                  action: log.action,
-                  target: log.target,
-                  details: log.details,
-                  when,
-                },
-                null,
-                2,
-              )
-              win.document.write(
-                `<!DOCTYPE html><html lang="en"><head><title>Log #${log.log_id}</title><style>body{font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;padding:24px;}h1{font-size:20px;margin:0 0 12px;}pre{background:#f1f5f9;padding:12px;border-radius:6px;font-size:12px;}</style></head><body><h1>Activity Log #${log.log_id}</h1><pre>${payload}</pre><script>window.print()</script></body></html>`,
-              )
-              win.document.close()
-            }}
-          >
-            <Printer className="h-4 w-4" /> Quick Print
-          </DropdownMenuItem>
+          <DropdownMenuItem onClick={reactToPrintFn}>Quick Print</DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
+      <PrintableLogDetails ref={contentRef} log={log} />
       <ViewLog log={log} open={viewOpen} onOpenChange={setViewOpen} />
     </>
   )

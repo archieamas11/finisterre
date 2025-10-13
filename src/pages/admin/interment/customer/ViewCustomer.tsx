@@ -230,8 +230,6 @@ export default function ViewCustomer({ open, customer, onOpenChange }: ViewCusto
           await editCustomer(payload as Customer)
         }}
       />
-
-      {/* Print Layout (hidden, only shows when printing) */}
       <PrintableCustomerDetails ref={contentRef} customer={customerData} />
     </>
   )

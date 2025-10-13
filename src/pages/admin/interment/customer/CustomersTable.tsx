@@ -10,7 +10,7 @@ import {
   useReactTable,
   type Row,
 } from '@tanstack/react-table'
-import { ArrowRightIcon, SearchIcon, PrinterIcon, ImportIcon } from 'lucide-react'
+import { ArrowRightIcon, SearchIcon, PrinterIcon } from 'lucide-react'
 import React, { useRef } from 'react'
 import { useReactToPrint } from 'react-to-print'
 
@@ -25,6 +25,7 @@ import { customerColumns } from '@/pages/admin/interment/columns/CustomerColumns
 
 import CreateCustomer from './CreateCustomer'
 import { Button } from '@/components/ui/button'
+import { ImportFileButton } from '@/components/file-picker'
 
 interface CustomersTableProps {
   data: Customer[]
@@ -52,6 +53,10 @@ export default function CustomersTable({ data }: CustomersTableProps) {
 
     return id.includes(q) || first.includes(q) || middle.includes(q) || last.includes(q) || full.includes(q)
   }, [])
+
+  const handleImport = (file: File) => {
+    console.log('Selected:', file.name)
+  }
 
   const table = useReactTable<Customer>({
     data,
@@ -99,14 +104,12 @@ export default function CustomersTable({ data }: CustomersTableProps) {
               <ArrowRightIcon size={16} aria-hidden="true" />
             </button>
           </div>
+          <CreateCustomer />
           <Button size={'sm'} variant="outline" onClick={reactToPrintFn}>
             <PrinterIcon />
             Print
           </Button>
-          <Button size={'sm'} variant={'outline'} onClick={() => alert('Not yet implemented!')}>
-            <ImportIcon /> Import
-          </Button>
-          <CreateCustomer />
+          <ImportFileButton onFileSelect={handleImport} />
         </div>
       </DataTableToolbar>
       <DataTable table={table} />
