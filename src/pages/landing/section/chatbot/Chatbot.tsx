@@ -1,5 +1,5 @@
 import { Button } from '@/components/ui/button'
-import { Card, CardHeader, CardTitle, CardContent, CardFooter } from '@/components/ui/card'
+import { CardHeader, CardTitle, CardContent, CardFooter } from '@/components/ui/card'
 import { Textarea } from '@/components/ui/textarea'
 import { SheetClose } from '@/components/ui/sheet'
 import ReactMarkdown from 'react-markdown'
@@ -317,7 +317,7 @@ export default function Chatbot() {
   const showIntro = messages.length === 0
 
   return (
-    <Card className="flex h-full flex-col overflow-hidden rounded-none border-0 shadow-sm">
+    <div className="flex h-full flex-col overflow-hidden rounded-none border-0 shadow-sm">
       {/* Inline styles for typing animation to keep change local */}
       <style>{`
         .typing-dots{display:inline-flex;gap:4px;align-items:center}
@@ -348,9 +348,11 @@ export default function Chatbot() {
               <span className="h-2 w-2 rounded-full bg-red-600" aria-label="Index not built" />
             )}
           </div>
-          <Button onClick={testConnection} disabled={busy} variant="ghost" size="icon" className="h-8 w-8">
-            <GlobeIcon className="h-4 w-4" />
-          </Button>
+          {import.meta.env.MODE !== 'production' && (
+            <Button onClick={testConnection} disabled={busy} variant="ghost" size="icon" className="h-8 w-8">
+              <GlobeIcon className="h-4 w-4" />
+            </Button>
+          )}
           <Button onClick={clearSessionStorage} disabled={busy} variant="ghost" size="icon" className="h-8 w-8">
             <TrashIcon className="h-4 w-4" />
           </Button>
@@ -367,7 +369,7 @@ export default function Chatbot() {
       <CardContent className="flex flex-1 flex-col overflow-hidden p-0">
         <div ref={scrollerRef} className="scrollbar-hide flex-1 overflow-y-auto px-4 py-4 sm:px-6">
           {showIntro && (
-            <div className="mx-auto flex max-w-lg flex-col items-center py-8 text-center sm:py-12">
+            <div className="mx-auto flex max-w-lg flex-col items-center py-8 text-center sm:py-4">
               {/* Logo/Avatar placeholder */}
               <div className="bg-primary/10 mb-6 flex h-20 w-20 items-center justify-center rounded-full p-3">
                 <img src="/favicon-96x96.png" alt="Finisbot" className="h-full w-full object-contain" />
@@ -382,7 +384,7 @@ export default function Chatbot() {
                     key={i}
                     onClick={() => sendMsg(s.question)}
                     disabled={busy}
-                    className="group border-border bg-card hover:bg-accent flex w-full cursor-pointer items-start gap-3 rounded-xl border p-4 text-left transition-all hover:shadow-md disabled:opacity-50"
+                    className="group border-border bg-card flex w-full cursor-pointer items-start gap-3 rounded-xl border p-4 text-left transition-all hover:shadow-md disabled:opacity-50"
                   >
                     <div className="bg-primary/10 text-primary group-hover:bg-primary/20 flex h-10 w-10 items-center justify-center rounded-lg">
                       <MessageCirclePlusIcon className="h-5 w-5" />
@@ -457,8 +459,8 @@ export default function Chatbot() {
           </div>
         </div>
       </CardContent>
-      <CardFooter className="border-t px-4 py-4 backdrop-blur sm:px-6">
-        <div className="w-full space-y-3">
+      <CardFooter className="shrink-0 border-t p-4 sm:p-6">
+        <div className="w-full space-y-2">
           <div className="relative">
             <Textarea
               value={input}
@@ -467,7 +469,7 @@ export default function Chatbot() {
                 e.target.style.height = 'auto'
                 e.target.style.height = `${Math.min(e.target.scrollHeight, 200)}px`
               }}
-              className="scrollbar-hide max-h-[200px] min-h-[52px] resize-none py-3 pr-12 leading-relaxed"
+              className="scrollbar-hide max-h-[200px] min-h-[50px] resize-none rounded-lg border py-3 pr-12 leading-relaxed shadow-sm"
               placeholder={busy ? 'Working...' : 'Write your question'}
               onKeyDown={(e) => {
                 if (e.key === 'Enter' && !e.shiftKey) {
@@ -484,7 +486,7 @@ export default function Chatbot() {
               disabled={busy || !input.trim()}
               aria-label="Send message"
               size="icon"
-              className="absolute right-2 bottom-2 h-8 w-8 rounded-lg"
+              className="absolute right-2 bottom-2 h-8 w-8 rounded-full bg-[var(--brand-primary)] transition-colors hover:bg-[var(--brand-primary)]/90 focus:bg-[var(--brand-primary)] dark:bg-[var(--brand-secondary)]"
             >
               <ArrowRightIcon className="h-4 w-4" />
             </Button>
@@ -492,6 +494,6 @@ export default function Chatbot() {
           <div className="text-muted-foreground text-center text-xs">This assistant may produce inaccurate information.</div>
         </div>
       </CardFooter>
-    </Card>
+    </div>
   )
 }
