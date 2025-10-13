@@ -2,7 +2,6 @@ import { useQuery } from '@tanstack/react-query'
 
 import { getDeceasedRecords } from '@/api/deceased.api'
 
-// 1) Query for list
 export function useGetDeceasedRecord() {
   return useQuery({
     queryKey: ['deceased'],

@@ -4,7 +4,7 @@ import DeceasedTablePage from '@/pages/admin/interment/deceased-records/Deceased
 
 export default function AdminIntermentDeceasedPage() {
   return (
-    <div className="space-y-4">
+    <div className="space-y-6">
       <div className="bg-card rounded-lg border p-6 shadow-sm">
         <div className="mb-2 flex items-center gap-3">
           <BsFillSuitHeartFill className="text-primary h-6 w-6" />

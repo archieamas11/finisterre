@@ -10,6 +10,7 @@ import { Badge } from '@/components/ui/badge'
 import { calculateYearsBuried } from '@/utils/date.utils'
 import { AiOutlineUser } from 'react-icons/ai'
 import { ucwords } from '@/lib/format'
+import DeceasedActionCell from './DeceasedActionCell'
 
 const IndeterminateCheckbox = React.forwardRef<HTMLInputElement, React.InputHTMLAttributes<HTMLInputElement> & { indeterminate?: boolean }>(
   ({ indeterminate, ...props }, ref) => {
@@ -131,10 +132,59 @@ export const deceasedRecordsColumns: ColumnDef<DeceasedRecords>[] = [
       ),
   },
   {
-    header: ({ column }) => <DataTableColumnHeader column={column} title="Status" />,
+    header: ({ column }) => <DataTableColumnHeader column={column} title="Years Buried" />,
     size: 10,
     id: 'years_buried',
     cell: ({ row }) => calculateYearsBuried(row.original.dead_interment),
     meta: { label: 'Years Buried' },
+  },
+  {
+    header: ({ column }) => <DataTableColumnHeader column={column} title="Status" />,
+    size: 10,
+    id: 'status',
+    cell: ({ row }) => {
+      const status = row.original.status
+      if (status === 'transferred') {
+        return (
+          <div className="text-center">
+            <Badge className="bg-yellow-200 text-yellow-800">
+              <span className="text-xs text-yellow-800">Transferred</span>
+            </Badge>
+          </div>
+        )
+      }
+      if (status === 'cancelled') {
+        return (
+          <div className="text-center">
+            <Badge className="bg-rose-200 text-rose-800" asChild={false}>
+              <span className="text-xs text-rose-800">Canceled</span>
+            </Badge>
+          </div>
+        )
+      }
+      if (status === 'active') {
+        return (
+          <div className="text-center">
+            <Badge className="bg-emerald-200 text-emerald-800" asChild={false}>
+              <span className="text-xs text-emerald-800">Active</span>
+            </Badge>
+          </div>
+        )
+      }
+      return (
+        <div className="text-center">
+          <Badge variant="outline" asChild={false}>
+            <span>{status}</span>
+          </Badge>
+        </div>
+      )
+    },
+    meta: { label: 'Status' },
+  },
+  {
+    id: 'actions',
+    size: 10,
+    enableHiding: false,
+    cell: ({ row }) => <DeceasedActionCell row={row} />,
   },
 ]

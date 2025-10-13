@@ -8,6 +8,7 @@ import type { LotOwners } from '@/types/interment.types'
 
 import { DataTableColumnHeader } from '@/components/data-table/data-table-column-header'
 import { Badge } from '@/components/ui/badge'
+import LotOwnersActionCell from './LotOwnersActionCell'
 
 const IndeterminateCheckbox = React.forwardRef<HTMLInputElement, React.InputHTMLAttributes<HTMLInputElement> & { indeterminate?: boolean }>(
   ({ indeterminate, ...props }, ref) => {
@@ -143,5 +144,11 @@ export const lotOwnerColumns: ColumnDef<LotOwners>[] = [
         { label: 'Completed', value: 'completed' },
       ],
     },
+  },
+  {
+    id: 'actions',
+    size: 10,
+    enableHiding: false,
+    cell: ({ row }) => <LotOwnersActionCell row={row} />,
   },
 ]

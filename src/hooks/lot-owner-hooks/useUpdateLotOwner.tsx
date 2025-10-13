@@ -9,12 +9,9 @@ export function useEditLotOwner() {
   return useMutation({
     mutationFn: (updatedData: Partial<LotOwners>) => editLotOwner(updatedData),
 
-    // Optimistic update
     onMutate: async (updatedData) => {
       await queryClient.cancelQueries({ queryKey: ['lotOwner'] })
-
       const prevData = queryClient.getQueryData<LotOwners[]>(['lotOwner'])
-
       queryClient.setQueryData<LotOwners[]>(['lotOwner'], (old) =>
         old ? old.map((lot) => (lot.lot_id === updatedData.lot_id ? { ...lot, ...updatedData } : lot)) : [],
       )

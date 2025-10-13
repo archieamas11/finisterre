@@ -35,7 +35,7 @@ export function ImportFileButton({
     <div className={cn('inline-flex items-center', className)}>
       <input type="file" ref={fileInputRef} accept={accept} onChange={handleFileChange} className="hidden" />
       <Button size={size} variant={variant} onClick={handleClick}>
-        {icon && <ImportIcon className="mr-2 h-4 w-4" />}
+        {icon && <ImportIcon className="h-4 w-4" />}
         {label}
       </Button>
     </div>
