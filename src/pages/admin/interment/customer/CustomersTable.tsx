@@ -114,7 +114,6 @@ export default function CustomersTable({ data }: CustomersTableProps) {
       </DataTableToolbar>
       <DataTable table={table} />
 
-      {/* Hidden printable table content */}
       <PrintableTable
         ref={contentRef}
         table={table}

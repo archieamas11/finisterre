@@ -12,7 +12,7 @@ export default function DeceasedTablePage() {
   if (isLoading && !deceasedRecords) {
     return (
       <Card className="p-4">
-        <DataTableSkeleton columnCount={9} filterCount={0} />
+        <DataTableSkeleton columnCount={9} filterCount={1} />
       </Card>
     )
   }

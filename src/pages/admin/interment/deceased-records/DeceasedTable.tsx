@@ -10,15 +10,18 @@ import {
   useReactTable,
   type Row,
 } from '@tanstack/react-table'
-import { ArrowRightIcon, SearchIcon } from 'lucide-react'
-import React from 'react'
+import { ArrowRightIcon, SearchIcon, PrinterIcon } from 'lucide-react'
+import React, { useRef } from 'react'
+import { useReactToPrint } from 'react-to-print'
 
 import type { DeceasedRecords } from '@/types/interment.types'
 
 import { DataTable } from '@/components/data-table/data-table'
 import { DataTableToolbar } from '@/components/data-table/data-table-toolbar'
+import { PrintableTable } from '@/components/printable-table'
 import { Card } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
+import { Button } from '@/components/ui/button'
 
 import { deceasedRecordsColumns } from '../columns/DeceasedColumns'
 
@@ -40,6 +43,9 @@ export default function DeceasedRecordsTable({ data }: DeceasedRecordsTableProps
       (val) => typeof val === 'string' && val.toLowerCase().includes(filterValue.toLowerCase()),
     )
   }, [])
+
+  const contentRef = useRef<HTMLDivElement>(null)
+  const reactToPrintFn = useReactToPrint({ contentRef })
 
   const table = useReactTable<DeceasedRecords>({
     data,
@@ -87,10 +93,16 @@ export default function DeceasedRecordsTable({ data }: DeceasedRecordsTableProps
               <ArrowRightIcon size={16} aria-hidden="true" />
             </button>
           </div>
+          <Button size={'sm'} variant="outline" onClick={reactToPrintFn}>
+            <PrinterIcon />
+            Print
+          </Button>
         </div>
       </DataTableToolbar>
 
       <DataTable table={table} />
+
+      <PrintableTable ref={contentRef} table={table} title="Deceased Records Report" subtitle="Finisterre Cemetery Management System" />
     </Card>
   )
 }

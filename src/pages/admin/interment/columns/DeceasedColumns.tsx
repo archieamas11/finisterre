@@ -141,7 +141,7 @@ export const deceasedRecordsColumns: ColumnDef<DeceasedRecords>[] = [
   {
     header: ({ column }) => <DataTableColumnHeader column={column} title="Status" />,
     size: 10,
-    id: 'status',
+    accessorKey: 'status',
     cell: ({ row }) => {
       const status = row.original.status
       if (status === 'transferred') {
@@ -179,7 +179,15 @@ export const deceasedRecordsColumns: ColumnDef<DeceasedRecords>[] = [
         </div>
       )
     },
-    meta: { label: 'Status' },
+    meta: {
+      label: 'Status',
+      variant: 'select',
+      options: [
+        { label: 'Active', value: 'active' },
+        { label: 'Canceled', value: 'canceled' },
+        { label: 'Transferred', value: 'transferred' },
+      ],
+    },
   },
   {
     id: 'actions',
