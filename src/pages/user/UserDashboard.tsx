@@ -1,5 +1,5 @@
 import { Capacitor } from '@capacitor/core'
-import { CalendarDays, Heart, MapPin } from 'lucide-react'
+import { CalendarDays, Heart, MapPin, BotIcon } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 
 import { ErrorMessage } from '@/components/ErrorMessage'
@@ -17,6 +17,10 @@ import { AnnouncementCard } from './components/AnnouncementCard'
 import { MemorialProperties } from './components/MemorialProperties'
 import { PromotionalBanner } from './components/PromotionalBanner'
 import { StatCard } from './components/StatCard'
+import { Tooltip, TooltipTrigger, TooltipContent } from '@/components/ui/tooltip'
+import { Sheet, SheetTrigger, SheetContent } from '@/components/ui/sheet'
+import { PulsatingButton } from '@/components/pulsating-button'
+import Chatbot from '../landing/section/chatbot/Chatbot'
 
 interface UserDashboardProps {
   onPlotNavigate?: (coordinates?: Coordinates | null) => void
@@ -30,29 +34,22 @@ export default function UserDashboard({ onPlotNavigate }: UserDashboardProps) {
     if (!coordinates) return
     window.scrollTo(0, 0)
 
-    // If parent wants to handle navigation, let it
     if (onPlotNavigate) {
       onPlotNavigate(coordinates)
       return
     }
 
     if (Capacitor.isNativePlatform()) return
-
-    // Normalize coordinates to [lat, lng] for URL param `to=lat,lng`.
-    // Known shapes: [lng, lat] (existing code), [lat, lng], or null.
     let lat: number | null = null
     let lng: number | null = null
 
     try {
       const [a, b] = coordinates
       if (typeof a === 'number' && typeof b === 'number') {
-        // Heuristic: lat is usually between -90 and 90, lng between -180 and 180.
         if (Math.abs(a) <= 90 && Math.abs(b) <= 180 && Math.abs(b) > 90) {
-          // a looks like lat, b looks like lng
           lat = a
           lng = b
         } else {
-          // fallback: treat as [lng, lat]
           lng = a
           lat = b
         }
@@ -66,7 +63,6 @@ export default function UserDashboard({ onPlotNavigate }: UserDashboardProps) {
     navigate(`/user/map?to=${lat},${lng}`)
   }
 
-  // Only show loading spinner if we have no data at all (neither cached nor fresh)
   if (isLoading && !dashboardData) {
     return (
       <div className="flex h-screen w-full items-center justify-center">
@@ -75,7 +71,6 @@ export default function UserDashboard({ onPlotNavigate }: UserDashboardProps) {
     )
   }
 
-  // Only show error if we have no data at all (not even cached data)
   if (error && !dashboardData) {
     const errorMessage = error instanceof Error ? error.message : 'An error occurred while loading dashboard data'
     return <ErrorMessage message={errorMessage} showRetryButton />
@@ -90,7 +85,6 @@ export default function UserDashboard({ onPlotNavigate }: UserDashboardProps) {
   const lots: Lot[] = dashboardData?.lots ?? []
   const deceasedRecords: Deceased[] = dashboardData?.deceased_records ?? []
 
-  // Map each lot to its occupying deceased records (if any)
   const lotsWithRecords: Array<{ lot: Lot; records: Deceased[] }> = lots.map((lot) => ({
     lot,
     records: deceasedRecords.filter((d) => String(d.lot_id) === String(lot.lot_id)),
@@ -98,6 +92,32 @@ export default function UserDashboard({ onPlotNavigate }: UserDashboardProps) {
 
   return (
     <div className="px-4 py-8 md:py-8 lg:container lg:mx-auto lg:max-w-7xl lg:px-4 lg:py-8">
+      {!isNativePlatform() && (
+        <div className="group">
+          <div className="fixed right-22 bottom-9 z-999">
+            <span className="rounded-full bg-white px-4 py-2 text-[var(--brand-primary)] shadow-lg transition-opacity duration-300 group-hover:opacity-0">
+              Chat with Finisbot!
+            </span>
+          </div>
+          <div className="fixed right-4 bottom-4 z-999">
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Sheet>
+                  <SheetTrigger asChild>
+                    <PulsatingButton className="h-15 w-15 rounded-full bg-[var(--brand-primary)] shadow-lg">
+                      <BotIcon className="text-white" />
+                    </PulsatingButton>
+                  </SheetTrigger>
+                  <SheetContent forceMount showClose={false} className="rounded-none border-none">
+                    <Chatbot />
+                  </SheetContent>
+                </Sheet>
+              </TooltipTrigger>
+              <TooltipContent>Finisbot Chabot</TooltipContent>
+            </Tooltip>
+          </div>
+        </div>
+      )}
       {/* Welcome Banner */}
       <PromotionalBanner
         title="Welcome to Finisterre Memorial Park"
@@ -222,8 +242,7 @@ export default function UserDashboard({ onPlotNavigate }: UserDashboardProps) {
                   variant="outline"
                   className="w-full justify-center"
                   onClick={() => {
-                    // TODO: Navigate to full announcements page
-                    console.log('Navigate to all announcements')
+                    navigate('/user/announcements')
                   }}
                 >
                   View All Announcements

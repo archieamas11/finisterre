@@ -15,6 +15,7 @@ const ResetPassword = React.lazy(() => import('@/auth/ResetPassword'))
 const ForgotPassword = React.lazy(() => import('@/auth/ForgotPassword'))
 const UnauthorizedPage = React.lazy(() => import('@/pages/UnauthorizedPage'))
 const UserProfile = React.lazy(() => import('@/pages/user/UserProfile'))
+const UserAnnouncements = React.lazy(() => import('@/pages/user/AnnouncementsPage'))
 const Bookings = React.lazy(() => import('@/pages/admin/bookings/ManageBookings'))
 const AdminDashboard = React.lazy(() => import('@/pages/admin/home/AdminDashboard'))
 const UserDashboard = React.lazy(() => import('@/pages/user/UserDashboard'))
@@ -77,6 +78,7 @@ function AppRoutes() {
             <Route element={<UserDashboard />} index />
             <Route element={<UserProfile />} path="profile" />
             <Route element={<UserMap />} path="map" />
+            <Route element={<UserAnnouncements />} path="announcements" />
           </Route>
 
           {/* Admin Protected Routes */}
