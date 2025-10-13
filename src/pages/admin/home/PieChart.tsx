@@ -1,5 +1,6 @@
 import { PrinterIcon } from 'lucide-react'
 import React from 'react'
+import { useReactToPrint } from 'react-to-print'
 import { Pie, PieChart, Cell } from 'recharts'
 
 import { getChambersStats, getColumbariumStats, getSerenityStatsByBlock, type MapStatsResponse } from '@/api/map-stats.api'
@@ -7,10 +8,9 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { type ChartConfig, ChartContainer, ChartStyle, ChartTooltip, ChartTooltipContent } from '@/components/ui/chart'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import PrintablePieChart from './components/PrintablePieChart'
 
 export const description = 'Plot status distribution per category'
-
-// Removed mock columbarium data; now using real API stats
 
 const COLORS: Record<string, string> = {
   Available: '#047857',
@@ -26,21 +26,6 @@ const chartConfig = {
 
 function toPieArray(obj: Record<string, number>) {
   return Object.entries(obj).map(([name, value]) => ({ name, value }))
-}
-
-function PrintButton({ onClick }: { onClick: () => void }) {
-  return (
-    <Button
-      type="button"
-      variant="outline"
-      onClick={onClick}
-      aria-label="Print chart"
-      size="icon"
-      className="text-muted-foreground hover:text-foreground ml-2"
-    >
-      <PrinterIcon />
-    </Button>
-  )
 }
 
 export function ChartPieInteractive() {
@@ -75,7 +60,6 @@ export function ChartPieInteractive() {
     fetchData()
   }, [serenityBlock])
 
-  // Convert API response to pie chart format
   const serenityData = React.useMemo(() => {
     if (!serenityStats) return []
     return toPieArray({
@@ -107,7 +91,15 @@ export function ChartPieInteractive() {
   const columbariumTotal = columbariumData.reduce((s, d) => s + d.value, 0)
   const memorialTotal = memorialData.reduce((s, d) => s + d.value, 0)
 
-  // Show loading state
+  // Print refs and handlers per card
+  const serenityRef = React.useRef<HTMLDivElement>(null)
+  const memorialRef = React.useRef<HTMLDivElement>(null)
+  const columbariumRef = React.useRef<HTMLDivElement>(null)
+
+  const printSerenity = useReactToPrint({ contentRef: serenityRef, documentTitle: `Serenity Lawn - ${serenityBlock.toUpperCase()}` })
+  const printColumbarium = useReactToPrint({ contentRef: columbariumRef, documentTitle: 'Columbarium' })
+  const printMemorial = useReactToPrint({ contentRef: memorialRef, documentTitle: 'Memorial Chambers' })
+
   if (loading && !serenityStats && !memorialStats) {
     return (
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
@@ -125,7 +117,6 @@ export function ChartPieInteractive() {
     )
   }
 
-  // Reusable legend component for each card
   const Legend = ({ data }: { data: { name: string; value: number }[] }) => (
     <div className="mt-3 flex flex-wrap items-center gap-3" aria-hidden>
       {data.map((d) => (
@@ -137,29 +128,16 @@ export function ChartPieInteractive() {
     </div>
   )
 
-  const renderPieCard = (title: string, desc: string, data: { name: string; value: number }[], total: number, extra?: React.ReactNode) => {
+  const renderPieCard = (
+    title: string,
+    desc: string,
+    data: { name: string; value: number }[],
+    total: number,
+    extra?: React.ReactNode,
+    onPrint?: () => void,
+    printRef?: React.MutableRefObject<HTMLDivElement | null>,
+  ) => {
     const chartId = `${id}-${title.replace(/\s+/g, '-').toLowerCase()}`
-
-    const handlePrint = () => {
-      try {
-        const selector = `[data-chart="${chartId}"]`
-        const card = document.querySelector(selector) as HTMLElement | null
-        if (!card) return
-
-        const chartContainer = card.querySelector('.chart-container, svg, .recharts-surface') as HTMLElement | null
-        const contentToPrint = chartContainer ? chartContainer.outerHTML : card.innerHTML
-
-        const newWindow = window.open('', '_blank', 'noopener,noreferrer,width=900,height=700')
-        if (!newWindow) return
-
-        const html = `<!doctype html><html><head><meta charset="utf-8"/><title>${title} - Print</title><style>body{font-family: Inter, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;margin:0;padding:20px;display:flex;align-items:center;justify-content:center}svg{max-width:95vw;max-height:90vh}</style></head><body><div>${contentToPrint}</div><script>window.onload=function(){setTimeout(()=>{window.print();window.close()},200)}</script></body></html>`
-        newWindow.document.open()
-        newWindow.document.write(html)
-        newWindow.document.close()
-      } catch (err) {
-        console.error(err)
-      }
-    }
 
     return (
       <Card key={chartId} data-chart={chartId} className="flex flex-col shadow-sm">
@@ -172,7 +150,16 @@ export function ChartPieInteractive() {
             </div>
             <div className="ml-auto flex items-center" role="toolbar" aria-label={`${title} actions`}>
               {extra}
-              <PrintButton onClick={handlePrint} />
+              <Button
+                type="button"
+                variant="outline"
+                onClick={onPrint}
+                aria-label="Print chart"
+                size="icon"
+                className="text-muted-foreground hover:text-foreground ml-2"
+              >
+                <PrinterIcon />
+              </Button>
             </div>
           </div>
         </CardHeader>
@@ -199,6 +186,18 @@ export function ChartPieInteractive() {
           </div>
 
           <Legend data={data} />
+          {/* Hidden printable content for this card */}
+          {printRef ? (
+            <PrintablePieChart
+              ref={printRef}
+              title={title}
+              description={desc}
+              data={data}
+              total={total}
+              legendColors={COLORS}
+              metaRight={title === 'Serenity Lawn' ? `Block: ${serenityBlock.toUpperCase()}` : undefined}
+            />
+          ) : null}
         </CardContent>
       </Card>
     )
@@ -223,11 +222,13 @@ export function ChartPieInteractive() {
             <SelectItem value="D">Block D</SelectItem>
           </SelectContent>
         </Select>,
+        printSerenity,
+        serenityRef,
       )}
 
-      {renderPieCard('Columbarium', 'Niches distribution', columbariumData, columbariumTotal)}
+      {renderPieCard('Columbarium', 'Niches distribution', columbariumData, columbariumTotal, undefined, printColumbarium, columbariumRef)}
 
-      {renderPieCard('Memorial Chambers', 'Chambers distribution', memorialData, memorialTotal)}
+      {renderPieCard('Memorial Chambers', 'Chambers distribution', memorialData, memorialTotal, undefined, printMemorial, memorialRef)}
     </div>
   )
 }
