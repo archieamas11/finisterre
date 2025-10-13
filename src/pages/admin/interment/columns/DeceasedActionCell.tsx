@@ -1,5 +1,5 @@
 import type { Row } from '@tanstack/react-table'
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import { MoreHorizontal } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import {
@@ -18,6 +18,8 @@ import { useEditDeceasedStatus } from '@/hooks/deceased-hooks/useEditDeceasedSta
 import { useForm, Controller } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
+import { useReactToPrint } from 'react-to-print'
+import { PrintableDeceasedDetails } from '@/pages/admin/interment/deceased-records/components/PrintableDeceasedDetails'
 
 const statusSchema = z.object({
   status: z.enum(['active', 'transferred', 'cancelled']),
@@ -28,6 +30,8 @@ type StatusForm = z.infer<typeof statusSchema>
 export default function DeceasedActionCell({ row }: { row: Row<DeceasedRecords> }) {
   const record = row?.original
   const [open, setOpen] = useState(false)
+  const contentRef = useRef<HTMLDivElement>(null)
+  const reactToPrintFn = useReactToPrint({ contentRef })
 
   const form = useForm<StatusForm>({
     resolver: zodResolver(statusSchema),
@@ -58,6 +62,7 @@ export default function DeceasedActionCell({ row }: { row: Row<DeceasedRecords> 
           <DropdownMenuLabel>Actions</DropdownMenuLabel>
           <DropdownMenuSeparator />
           <DropdownMenuItem onClick={() => setOpen(true)}>Edit Deceased</DropdownMenuItem>
+          <DropdownMenuItem onClick={reactToPrintFn}>Quick Print</DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
 
@@ -98,6 +103,8 @@ export default function DeceasedActionCell({ row }: { row: Row<DeceasedRecords> 
           </DialogFooter>
         </DialogContent>
       </Dialog>
+      {/* Hidden printable content for Quick Print */}
+      {record && <PrintableDeceasedDetails ref={contentRef} deceased={record} />}
     </>
   )
 }

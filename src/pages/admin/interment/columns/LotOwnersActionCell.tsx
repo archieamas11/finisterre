@@ -1,5 +1,5 @@
 import type { Row } from '@tanstack/react-table'
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import { MoreHorizontal } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import {
@@ -18,6 +18,8 @@ import { useForm, Controller } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { useEditLotStatus } from '@/hooks/lot-owner-hooks/UseUpdateLotOwnerStatus'
+import { useReactToPrint } from 'react-to-print'
+import { PrintableLotOwnerDetails } from '@/pages/admin/interment/lot-owners/components/PrintableLotOwnerDetails'
 
 const lotStatusSchema = z.object({
   lot_status: z.enum(['active', 'completed', 'cancelled']),
@@ -28,6 +30,8 @@ type LotStatusForm = z.infer<typeof lotStatusSchema>
 export default function LotOwnersActionCell({ row }: { row: Row<LotOwners> }) {
   const record = row?.original
   const [open, setOpen] = useState(false)
+  const contentRef = useRef<HTMLDivElement>(null)
+  const reactToPrintFn = useReactToPrint({ contentRef })
 
   const form = useForm<LotStatusForm>({
     resolver: zodResolver(lotStatusSchema),
@@ -58,6 +62,7 @@ export default function LotOwnersActionCell({ row }: { row: Row<LotOwners> }) {
           <DropdownMenuLabel>Actions</DropdownMenuLabel>
           <DropdownMenuSeparator />
           <DropdownMenuItem onClick={() => setOpen(true)}>Edit Lot</DropdownMenuItem>
+          <DropdownMenuItem onClick={reactToPrintFn}>Quick Print</DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
 
@@ -100,6 +105,8 @@ export default function LotOwnersActionCell({ row }: { row: Row<LotOwners> }) {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+      {/* Hidden printable content for Quick Print */}
+      {record && <PrintableLotOwnerDetails ref={contentRef} lotOwner={record} />}
     </>
   )
 }
