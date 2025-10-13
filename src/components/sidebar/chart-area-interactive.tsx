@@ -360,16 +360,16 @@ export function ChartAreaInteractive() {
             <AreaChart data={filteredData}>
               <defs>
                 <linearGradient id="fillSerenityLawn" x1="0" y1="0" x2="0" y2="1">
-                  <stop stopColor="var(--color-serenityLawn)" stopOpacity={1.0} offset="5%" />
-                  <stop stopColor="var(--color-serenityLawn)" stopOpacity={0.1} offset="95%" />
+                  <stop stopColor="var(--chart-1)" stopOpacity={1.0} offset="5%" />
+                  <stop stopColor="var(--chart-1)" stopOpacity={0.1} offset="95%" />
                 </linearGradient>
                 <linearGradient id="fillColumbarium" x1="0" y1="0" x2="0" y2="1">
-                  <stop stopColor="var(--color-columbarium)" stopOpacity={0.8} offset="5%" />
-                  <stop stopColor="var(--color-columbarium)" stopOpacity={0.1} offset="95%" />
+                  <stop stopColor="var(--chart-2)" stopOpacity={0.8} offset="5%" />
+                  <stop stopColor="var(--chart-2)" stopOpacity={0.1} offset="95%" />
                 </linearGradient>
                 <linearGradient id="fillMemorialChambers" x1="0" y1="0" x2="0" y2="1">
-                  <stop stopColor="var(--color-memorialChambers)" stopOpacity={0.8} offset="5%" />
-                  <stop stopColor="var(--color-memorialChambers)" stopOpacity={0.1} offset="95%" />
+                  <stop stopColor="var(--chart-3)" stopOpacity={0.8} offset="5%" />
+                  <stop stopColor="var(--chart-3)" stopOpacity={0.1} offset="95%" />
                 </linearGradient>
               </defs>
               <CartesianGrid vertical={false} />
