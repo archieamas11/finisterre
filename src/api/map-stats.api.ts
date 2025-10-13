@@ -12,7 +12,6 @@ function normalizeStatsPayload(data: unknown): MapStatsResponse {
   const total = Number(payload.total ?? payload.totalPlots ?? 0)
   const occupied = Number(payload.occupied ?? 0)
   const reserved = Number(payload.reserved ?? 0)
-  // If API already provides available, trust it; otherwise derive
   const available = Number(payload.available ?? total - occupied - reserved)
   return { total, available, occupied, reserved }
 }
@@ -56,4 +55,23 @@ export async function getSerenityStatsByBlock(block?: string): Promise<MapStatsR
     throw new Error('Invalid serenity stats response')
   }
   return normalized
+}
+
+export interface LotsTimeSeriesPoint {
+  date: string
+  serenity: number
+  columbarium: number
+  chambers: number
+}
+
+export async function getLotsTimeSeries(range: '7d' | '30d' | '90d' | '1y' = '90d'): Promise<LotsTimeSeriesPoint[]> {
+  const res = await api.get(`map-stats/get_lots_time_series.php?range=${encodeURIComponent(range)}`)
+  const data = (res?.data?.data ?? res?.data?.points ?? res?.data) as unknown
+  if (!Array.isArray(data)) {
+    if (Array.isArray(res?.data?.data)) return res.data.data as LotsTimeSeriesPoint[]
+    if (Array.isArray(res?.data?.points)) return res.data.points as LotsTimeSeriesPoint[]
+    if (Array.isArray(res?.data)) return res.data as LotsTimeSeriesPoint[]
+    return []
+  }
+  return data as LotsTimeSeriesPoint[]
 }

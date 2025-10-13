@@ -1,4 +1,4 @@
-import { type LucideIcon, LibraryBig, CalendarDays, MonitorCog, MapIcon, LayoutGrid, Newspaper } from 'lucide-react'
+import { type LucideIcon, LibraryBig, CalendarDays, MonitorCog, MapIcon, LayoutGrid } from 'lucide-react'
 
 export interface NavMainItem {
   url: string
@@ -61,15 +61,15 @@ export const getSidebarItems = (role: UserRole): NavGroup[] => {
       icon: CalendarDays,
       url: '/admin/bookings',
     },
-    ...(!import.meta.env.PROD
-      ? [
-          {
-            title: 'News & Announcements',
-            icon: Newspaper,
-            url: '/admin/news',
-          },
-        ]
-      : []),
+    // ...(!import.meta.env.PROD
+    //   ? [
+    //       {
+    //         title: 'News & Announcements',
+    //         icon: Newspaper,
+    //         url: '/admin/news',
+    //       },
+    //     ]
+    //   : []),
   ]
 
   if (role === 'admin') {

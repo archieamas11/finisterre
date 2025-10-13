@@ -189,13 +189,11 @@ html {
   @apply mx-auto text-lg leading-8 text-slate-600;
 }
 
-/* Aurora background protection - ensures it's never overridden by theme changes */
 .aurora-background {
   background: #ffffff;
   background-image: radial-gradient(circle at top center, rgba(59, 130, 246, 0.5), transparent 60%);
 }
 
-/* Protect aurora background from theme overrides */
 html.dark .aurora-background,
 html:not(.dark) .aurora-background,
 .ios.dark .aurora-background,
@@ -206,17 +204,14 @@ html:not(.dark) .aurora-background,
   background-image: radial-gradient(circle at top center, rgba(59, 130, 246, 0.5), transparent 60%);
 }
 
-/* Ensure landing page container is always transparent */
 .landing-page-root {
   background: transparent !important;
 }
 
-/* Override any Konsta body background for landing page */
 body:has(.landing-page-root) {
   background: transparent !important;
 }
 
-/* Prevent page-level scrolling on map pages but allow map interactions */
 body:has(.map-page-container) {
   overflow: hidden;
   height: 100vh;
@@ -243,7 +238,6 @@ body:has(.map-page-container) {
   display: none;
 }
 
-/* Add marker mode styling */
 .add-marker-mode {
   cursor: crosshair !important;
 }
@@ -252,7 +246,6 @@ body:has(.map-page-container) {
   cursor: crosshair !important;
 }
 
-/* Edit marker mode styling */
 .edit-marker-mode {
   cursor: pointer !important;
 }
@@ -292,8 +285,6 @@ body:has(.map-page-container) {
   will-change: transform;
 }
 
-/* Optimized marker cluster styles to prevent reflows */
-
 .custom-marker-cluster {
   background: transparent !important;
   border: none !important;
@@ -307,7 +298,6 @@ body:has(.map-page-container) {
   display: flex;
   align-items: center;
   justify-content: center;
-  /* ⚡️ Use transform for animations instead of changing layout properties */
   transform-origin: center center;
   transition: transform 0.2s ease-out;
 }
@@ -329,62 +319,47 @@ body:has(.map-page-container) {
   align-items: center;
   justify-content: center;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
-  /* Use will-change to optimize for animations */
   will-change: transform;
 }
 
-/* Optimized plot marker styles */
 .plot-marker-icon {
   background: transparent !important;
   border: none !important;
   box-shadow: none !important;
 }
 
-/* Optimize leaflet popup performance */
 .leaflet-popup-content-wrapper {
-  /* Use GPU acceleration */
   transform: translateZ(0);
   will-change: transform;
 }
 
-/* Prevent layout thrashing in marker cluster groups */
 .marker-cluster-small,
 .marker-cluster-medium,
 .marker-cluster-large {
-  /* Use contain for layout optimization */
   contain: layout style paint;
 }
 
-/* Performance optimizations for map container */
 .leaflet-container {
-  /* Enable hardware acceleration */
   transform: translateZ(0);
   backface-visibility: hidden;
 }
 
-/* Optimize marker cluster animations */
 .marker-cluster {
-  /* Composite on GPU */
   transform: translateZ(0);
   will-change: transform;
 }
 
-/* Prevent reflow during zoom transitions */
 .leaflet-zoom-animated {
   transform: translateZ(0);
 }
 
-/* Hide scrollbars for horizontally scrolling controls container */
 .no-scrollbar {
   scrollbar-width: none;
-  /* Firefox */
   -ms-overflow-style: none;
-  /* IE 10+ */
 }
 
 .no-scrollbar::-webkit-scrollbar {
   display: none;
-  /* Chrome/Safari */
 }
 
 button {

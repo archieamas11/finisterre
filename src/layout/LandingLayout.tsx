@@ -1,5 +1,4 @@
 import { useEffect } from 'react'
-import { FaFacebookMessenger } from 'react-icons/fa'
 import { Outlet, useLocation } from 'react-router-dom'
 
 import { PulsatingButton } from '@/components/pulsating-button'
@@ -16,6 +15,7 @@ import ContactUs from '@/pages/landing/section/ContactUs'
 import Products from '@/pages/landing/section/Products'
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet'
 import Chatbot from '@/pages/landing/section/chatbot/Chatbot'
+import { BotIcon } from 'lucide-react'
 
 function LandingHome() {
   return (
@@ -71,7 +71,7 @@ export default function LandingLayout() {
                 <Sheet>
                   <SheetTrigger asChild>
                     <PulsatingButton className="h-15 w-15 rounded-full bg-[var(--brand-primary)] shadow-lg">
-                      <FaFacebookMessenger className="text-white" />
+                      <BotIcon className="text-white" />
                     </PulsatingButton>
                   </SheetTrigger>
                   <SheetContent forceMount showClose={false} className="rounded-none border-none">
