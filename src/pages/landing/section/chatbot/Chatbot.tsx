@@ -348,7 +348,7 @@ export default function Chatbot() {
               <span className="h-2 w-2 rounded-full bg-red-600" aria-label="Index not built" />
             )}
           </div>
-          {import.meta.env.MODE !== 'production' && (
+          {!import.meta.env.PROD && (
             <Button onClick={testConnection} disabled={busy} variant="ghost" size="icon" className="h-8 w-8">
               <GlobeIcon className="h-4 w-4" />
             </Button>
