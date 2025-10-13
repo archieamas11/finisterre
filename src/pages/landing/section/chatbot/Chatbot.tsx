@@ -8,6 +8,7 @@ import { GlobeIcon, MessageCirclePlusIcon, TrashIcon, XIcon, ArrowRightIcon } fr
 import { useEffect, useMemo, useRef, useState } from 'react'
 import Spinner from '@/components/ui/spinner'
 import remarkGfm from 'remark-gfm'
+import { cn } from '@/lib/utils'
 
 const STORAGE_KEY = 'chatbot:messages'
 const LAST_ACTIVE_KEY = 'chatbot:lastActive'
@@ -316,7 +317,7 @@ export default function Chatbot() {
   const showIntro = messages.length === 0
 
   return (
-    <Card className="h-full overflow-hidden rounded-none border-0">
+    <Card className="flex h-full flex-col overflow-hidden rounded-none border-0 shadow-sm">
       {/* Inline styles for typing animation to keep change local */}
       <style>{`
         .typing-dots{display:inline-flex;gap:4px;align-items:center}
@@ -331,60 +332,61 @@ export default function Chatbot() {
         .scrollbar-hide::-webkit-scrollbar { display: none; }
         .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
       `}</style>
-      <CardHeader className="flex flex-col items-center justify-between gap-2 sm:flex-row">
-        <CardTitle className="text-lg">Finisbot</CardTitle>
-        <div className="flex flex-wrap items-center justify-center gap-2 sm:justify-end">
+      <CardHeader className="flex flex-col gap-3 border-b px-4 py-3 backdrop-blur sm:flex-row sm:items-center sm:justify-between sm:px-6 sm:py-4">
+        <CardTitle className="text-lg font-semibold">Finisbot</CardTitle>
+        <div className="flex items-center gap-2">
           {/* Index status indicator */}
           <div
-            className="text-muted-foreground bg-secondary flex items-center gap-2 rounded-md border px-2 py-1 text-xs"
+            className="text-muted-foreground flex items-center gap-2 rounded-md px-2 py-1 text-xs"
             title={indexStatus === 'building' ? 'Building index' : indexStatus === 'built' ? 'Index ready' : 'Index not built'}
           >
-            <span>Index</span>
             {indexStatus === 'building' ? (
-              <Spinner className="h-2 w-2" />
+              <Spinner className="h-3 w-3" />
             ) : indexStatus === 'built' ? (
               <span className="h-2 w-2 rounded-full bg-green-500" aria-label="Index ready" />
             ) : (
               <span className="h-2 w-2 rounded-full bg-red-600" aria-label="Index not built" />
             )}
           </div>
-          <Button onClick={testConnection} disabled={busy} variant="ghost" size="icon">
-            <GlobeIcon />
+          <Button onClick={testConnection} disabled={busy} variant="ghost" size="icon" className="h-8 w-8">
+            <GlobeIcon className="h-4 w-4" />
           </Button>
-          <Button onClick={clearSessionStorage} disabled={busy} variant="ghost" size="icon">
-            <TrashIcon />
+          <Button onClick={clearSessionStorage} disabled={busy} variant="ghost" size="icon" className="h-8 w-8">
+            <TrashIcon className="h-4 w-4" />
           </Button>
-          <Button onClick={clearChat} variant="ghost" size="icon" disabled={busy}>
-            <MessageCirclePlusIcon />
+          <Button onClick={clearChat} variant="ghost" size="icon" disabled={busy} className="h-8 w-8">
+            <MessageCirclePlusIcon className="h-4 w-4" />
           </Button>
           <SheetClose asChild>
-            <Button variant="ghost" size="icon">
-              <XIcon className="size-4" />
+            <Button variant="ghost" size="icon" className="h-8 w-8">
+              <XIcon className="h-4 w-4" />
             </Button>
           </SheetClose>
         </div>
       </CardHeader>
-      <CardContent className="flex min-h-0 flex-1 flex-col p-0">
-        <div ref={scrollerRef} className="scrollbar-hide flex-1 space-y-3 overflow-y-auto px-3 py-2 sm:px-4 sm:py-3">
+      <CardContent className="flex flex-1 flex-col overflow-hidden p-0">
+        <div ref={scrollerRef} className="scrollbar-hide flex-1 overflow-y-auto px-4 py-4 sm:px-6">
           {showIntro && (
-            <div className="mx-auto flex max-w-md flex-col items-center py-4 text-center sm:py-8">
+            <div className="mx-auto flex max-w-lg flex-col items-center py-8 text-center sm:py-12">
               {/* Logo/Avatar placeholder */}
-              <div className="mb-4 grid h-16 w-16 place-items-center rounded-full bg-[var(--brand-primary)]/50 p-3 text-2xl">
-                <img src="/favicon-96x96.png" alt="" />
+              <div className="bg-primary/10 mb-6 flex h-20 w-20 items-center justify-center rounded-full p-3">
+                <img src="/favicon-96x96.png" alt="Finisbot" className="h-full w-full object-contain" />
               </div>
-              <h2 className="text-xl font-semibold">
+              <h2 className="mb-2 text-2xl font-bold">
                 Hello there <span className="inline-block">👋</span>
               </h2>
-              <p className="mt-2 text-xl font-bold sm:text-2xl">How can I help you today?</p>
-              <div className="mt-6 w-full space-y-3">
+              <p className="text-muted-foreground mb-8 text-xl">How can I help you today?</p>
+              <div className="w-full space-y-3">
                 {filteredIntroSuggestions.map((s, i) => (
                   <button
                     key={i}
                     onClick={() => sendMsg(s.question)}
                     disabled={busy}
-                    className="flex w-full cursor-pointer items-start gap-3 rounded-xl border p-3 text-left transition-colors sm:p-4"
+                    className="group border-border bg-card hover:bg-accent flex w-full cursor-pointer items-start gap-3 rounded-xl border p-4 text-left transition-all hover:shadow-md disabled:opacity-50"
                   >
-                    <div className="bg-muted grid h-10 w-10 place-items-center rounded-lg text-gray-600">💬</div>
+                    <div className="bg-primary/10 text-primary group-hover:bg-primary/20 flex h-10 w-10 items-center justify-center rounded-lg">
+                      <MessageCirclePlusIcon className="h-5 w-5" />
+                    </div>
                     <div className="flex-1">
                       <div className="font-medium">{s.question}</div>
                       {s.subtitle && <div className="text-muted-foreground mt-1 text-sm">{s.subtitle}</div>}
@@ -396,91 +398,98 @@ export default function Chatbot() {
           )}
 
           {/* Conversation */}
-          {messages.map((m, i) => {
-            const filteredSources = dedupeQuestions(m.sources ?? [], askedQuestions)
-            return (
-              <div key={i} className={m.sender === 'user' ? 'flex justify-end' : 'flex justify-start'}>
-                <div
-                  className={
-                    m.sender === 'user'
-                      ? 'max-w-[85%] rounded-lg bg-[var(--brand-primary)] px-3 py-2 text-white shadow sm:max-w-[80%]'
-                      : m.sender === 'bot'
-                        ? 'bg-muted max-w-[85%] rounded-lg px-3 py-2 shadow sm:max-w-[80%]'
-                        : 'text-muted-foreground max-w-[90%] text-xs'
-                  }
-                >
-                  {m.sender !== 'system' && <div className="mb-1 text-[10px] opacity-70">{m.sender === 'user' ? 'You' : 'Finisbot'}</div>}
-                  <div className="leading-relaxed whitespace-pre-wrap">
-                    {m.isTyping ? (
-                      <div className="typing-dots" aria-live="polite" aria-label="Assistant is typing">
-                        <span />
-                        <span />
-                        <span />
-                      </div>
-                    ) : (
-                      <ReactMarkdown
-                        remarkPlugins={[remarkGfm]}
-                        components={{
-                          a: ({ ...props }) => (
-                            <a {...props} href={props.href} target="_blank" rel="noopener noreferrer" className="text-blue-500 underline" />
-                          ),
-                        }}
-                      >
-                        {m.text}
-                      </ReactMarkdown>
-                    )}
-                  </div>
-                  {filteredSources.length > 0 && (
-                    <div className="mt-5">
-                      <div className="text-muted-foreground mb-1 text-[10px] tracking-wide uppercase">Suggested replies</div>
-                      <ul className="relative flex w-full flex-wrap gap-2">
-                        {filteredSources.map((s, j) => (
-                          <li key={j} className="w-full">
+          <div className="space-y-4">
+            {messages.map((m, i) => {
+              const filteredSources = dedupeQuestions(m.sources ?? [], askedQuestions)
+              return (
+                <div key={i} className={cn('flex', m.sender === 'user' ? 'justify-end' : 'justify-start')}>
+                  <div
+                    className={cn('max-w-[85%] rounded-2xl px-4 py-3 shadow-sm sm:max-w-[75%]', {
+                      'bg-[var(--brand-primary)] text-white': m.sender === 'user',
+                      'bg-muted': m.sender === 'bot',
+                      'bg-destructive/10 text-destructive border-destructive/20 border': m.sender === 'system',
+                    })}
+                  >
+                    {m.sender !== 'system' && <div className="mb-1 text-xs font-medium opacity-70">{m.sender === 'user' ? 'You' : 'Finisbot'}</div>}
+                    <div className="prose prose-sm dark:prose-invert max-w-none break-words">
+                      {m.isTyping ? (
+                        <div className="typing-dots" aria-live="polite" aria-label="Assistant is typing">
+                          <span />
+                          <span />
+                          <span />
+                        </div>
+                      ) : (
+                        <ReactMarkdown
+                          remarkPlugins={[remarkGfm]}
+                          components={{
+                            a: ({ ...props }) => (
+                              <a {...props} href={props.href} target="_blank" rel="noopener noreferrer" className="text-blue-500 underline" />
+                            ),
+                          }}
+                        >
+                          {m.text}
+                        </ReactMarkdown>
+                      )}
+                    </div>
+                    {filteredSources.length > 0 && (
+                      <div className="mt-4 space-y-2">
+                        <div className="text-muted-foreground text-xs font-medium tracking-wide uppercase">Suggested replies</div>
+                        <div className="flex flex-wrap gap-1">
+                          {filteredSources.map((s, j) => (
                             <button
+                              key={j}
                               type="button"
                               onClick={() => sendMsg(s.question)}
-                              className="bg-secondary min-h-[40px] w-full cursor-pointer rounded-md border px-3 py-2 text-left text-xs break-words whitespace-normal shadow-sm"
+                              className="bg-background hover:bg-accent w-full cursor-pointer rounded-md border px-3 py-2 text-left text-xs transition-colors disabled:opacity-50"
                               title={`Relevance score: ${s.score}`}
                               disabled={busy}
                             >
                               {s.question}
                             </button>
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-                  )}
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                  </div>
                 </div>
-              </div>
-            )
-          })}
+              )
+            })}
+          </div>
         </div>
       </CardContent>
-      <CardFooter className="">
-        <div className="relative flex w-full flex-col">
-          <div>
+      <CardFooter className="border-t px-4 py-4 backdrop-blur sm:px-6">
+        <div className="w-full space-y-3">
+          <div className="relative">
             <Textarea
               value={input}
-              onChange={(e) => setInput(e.target.value)}
-              className="bg-secondary min-h-15 w-full resize-none rounded-xl border-2 border-[var(--brand-primary)] p-4 pr-16 sm:min-h-30"
+              onChange={(e) => {
+                setInput(e.target.value)
+                e.target.style.height = 'auto'
+                e.target.style.height = `${Math.min(e.target.scrollHeight, 200)}px`
+              }}
+              className="scrollbar-hide max-h-[200px] min-h-[52px] resize-none py-3 pr-12 leading-relaxed"
               placeholder={busy ? 'Working...' : 'Write your question'}
               onKeyDown={(e) => {
-                if (e.key === 'Enter') sendMsg()
+                if (e.key === 'Enter' && !e.shiftKey) {
+                  e.preventDefault()
+                  sendMsg()
+                }
               }}
               disabled={busy}
+              rows={1}
+              style={{ overflow: 'hidden' }}
             />
-
             <Button
               onClick={() => sendMsg()}
-              disabled={busy}
-              aria-label="Send"
-              className="absolute right-3 bottom-1/7 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full bg-gray-100 p-0 text-gray-700 shadow"
+              disabled={busy || !input.trim()}
+              aria-label="Send message"
               size="icon"
+              className="absolute right-2 bottom-2 h-8 w-8 rounded-lg"
             >
-              <ArrowRightIcon size={16} />
+              <ArrowRightIcon className="h-4 w-4" />
             </Button>
           </div>
-          <div className="text-muted-foreground mt-4 text-center text-[11px]">This assistant may produce inaccurate information.</div>
+          <div className="text-muted-foreground text-center text-xs">This assistant may produce inaccurate information.</div>
         </div>
       </CardFooter>
     </Card>
