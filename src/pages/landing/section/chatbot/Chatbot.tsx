@@ -9,6 +9,7 @@ import { useEffect, useMemo, useRef, useState } from 'react'
 import Spinner from '@/components/ui/spinner'
 import remarkGfm from 'remark-gfm'
 import { cn } from '@/lib/utils'
+import { executeRecaptcha, isRecaptchaConfigured } from '@/lib/recaptcha'
 
 const STORAGE_KEY = 'chatbot:messages'
 const LAST_ACTIVE_KEY = 'chatbot:lastActive'
@@ -209,7 +210,19 @@ export default function Chatbot() {
   const buildIndex = async () => {
     try {
       setIndexStatus('building')
-      const res = await fetch(`${API}?action=index`)
+      let recaptchaToken: string | undefined
+      if (isRecaptchaConfigured()) {
+        try {
+          recaptchaToken = await executeRecaptcha('chatbot_index')
+        } catch (e) {
+          console.warn('reCAPTCHA error (index):', e)
+        }
+      }
+      const res = await fetch(`${API}?action=index`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ recaptcha_token: recaptchaToken }),
+      })
       if (!res.ok) {
         const errData = await res.json().catch(() => ({ error: 'Unknown error' }))
         throw new Error(`HTTP ${res.status}: ${errData.error || 'Unknown error'}`)
@@ -243,10 +256,18 @@ export default function Chatbot() {
     // Add thinking indicator
     setMessages((prev) => [...prev, { sender: 'bot', text: 'Thinking...', isTyping: true }])
     try {
+      let recaptchaToken: string | undefined
+      if (isRecaptchaConfigured()) {
+        try {
+          recaptchaToken = await executeRecaptcha('chatbot_chat')
+        } catch (e) {
+          console.warn('reCAPTCHA error (chat):', e)
+        }
+      }
       const res = await fetch(`${API}?action=chat`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ prompt: finalPrompt }),
+        body: JSON.stringify({ prompt: finalPrompt, recaptcha_token: recaptchaToken }),
       })
       if (!res.ok) throw new Error(`HTTP ${res.status}`)
       const data = (await res.json()) as {

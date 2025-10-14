@@ -7,6 +7,7 @@ import { toast } from 'sonner'
 import { z } from 'zod'
 
 import { loginUser } from '@/api/auth.api'
+import { executeRecaptcha, isRecaptchaConfigured } from '@/lib/recaptcha'
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
 import { Checkbox } from '@/components/ui/checkbox'
@@ -15,12 +16,13 @@ import { Input } from '@/components/ui/input'
 import Spinner from '@/components/ui/spinner'
 import { useAuthQuery } from '@/hooks/useAuthQuery'
 import { cn } from '@/lib/utils'
-import { isNativePlatform, isAndroid, isIOS } from '@/utils/platform.utils'
+import { isNativePlatform } from '@/utils/platform.utils'
 
 const FormSchema = z.object({
   remember: z.boolean().optional(),
   password: z.string().min(3, { message: 'Password must be at least 4 characters.' }),
   username: z.string().min(2, { message: 'Property ID must be at least 2 characters.' }),
+  honeypot: z.string().optional(),
 })
 
 export default function LoginPage() {
@@ -34,6 +36,7 @@ export default function LoginPage() {
       username: '',
       password: '',
       remember: false,
+      honeypot: '',
     },
   })
 
@@ -43,7 +46,7 @@ export default function LoginPage() {
       const role = data?.user?.role
 
       if (isNativePlatform()) {
-        navigate(isIOS() ? '/landing-ios' : '/landing-android', { replace: true })
+        navigate('/landing-android', { replace: true })
       } else {
         navigate(role === 'user' ? '/user' : '/admin', { replace: true })
       }
@@ -51,52 +54,74 @@ export default function LoginPage() {
   }, [data, isSuccess, navigate])
 
   const onSubmit = async (formData: z.infer<typeof FormSchema>) => {
+    if (formData.honeypot?.trim()) {
+      return
+    }
+
     setIsLoading(true)
+
     try {
-      const res = await loginUser(formData.username, formData.password)
+      const recaptchaToken = await getRecaptchaToken()
+      const res = await loginUser(formData.username, formData.password, recaptchaToken, formData.honeypot)
 
       if (res.success) {
-        localStorage.setItem('token', res.token!)
-        if (res.role) localStorage.setItem('role', res.role)
-
-        setAuthFromToken()
-
-        toast.success(`Welcome back, ${formData.username}!`)
-
-        if (isNativePlatform()) {
-          if (isAndroid()) {
-            navigate('/landing-android')
-          } else if (isIOS()) {
-            navigate('/landing-ios')
-          } else {
-            navigate('/landing-android')
-          }
-        } else {
-          // admin and staff go to /admin; user goes to /user
-          navigate(res.role === 'user' ? '/user' : '/admin')
-        }
+        handleSuccessfulLogin(res, formData.username)
       } else {
-        form.setValue('password', '')
-        if (res.message === 'User not found') {
-          form.setError('username', {
-            type: 'manual',
-            message: 'Incorrect Property ID or Password',
-          })
-          toast.error('Please check your credentials and try again')
-        } else if (res.message === 'Invalid password') {
-          form.setError('password', {
-            type: 'manual',
-            message: 'Incorrect Property ID or Password',
-          })
-          toast.error('Please check your credentials and try again')
-        } else {
-          toast.error('Something went wrong. Please try again later.')
-        }
+        handleLoginError(res)
       }
-    } catch {
+    } catch (error) {
+      console.error('Login error:', error)
       toast.error('Something went wrong. Please try again later.')
     } finally {
       setIsLoading(false)
+    }
+  }
+
+  const getRecaptchaToken = async (): Promise<string | undefined> => {
+    if (!isRecaptchaConfigured()) return undefined
+
+    try {
+      return await executeRecaptcha('login')
+    } catch (error) {
+      console.warn('reCAPTCHA error:', error)
+      return undefined
+    }
+  }
+
+  const handleSuccessfulLogin = (res: { token?: string; role?: string }, username: string) => {
+    if (res.token) localStorage.setItem('token', res.token)
+    if (res.role) localStorage.setItem('role', res.role)
+
+    setAuthFromToken()
+    toast.success(`Welcome back, ${username}!`)
+
+    const destination = getNavigationDestination(res.role)
+    navigate(destination)
+  }
+
+  // Helper function to determine navigation destination
+  const getNavigationDestination = (role?: string): string => {
+    if (isNativePlatform()) {
+      return '/landing-android'
+    }
+    return role === 'user' ? '/user' : '/admin'
+  }
+
+  // Helper function to handle login errors
+  const handleLoginError = (res: { message?: string }) => {
+    form.setValue('password', '')
+
+    const isAuthError = res.message === 'User not found' || res.message === 'Invalid password'
+
+    if (isAuthError) {
+      const fieldToError = res.message === 'User not found' ? 'username' : 'password'
+      form.setError(fieldToError, {
+        type: 'manual',
+        message: 'Incorrect Property ID or Password',
+      })
+      toast.error('Please check your credentials and try again')
+    } else {
+      toast.error('Something went wrong. Please try again later.')
     }
   }
 
@@ -209,6 +234,18 @@ export default function LoginPage() {
               )}
             />
             <div className="space-y-2">
+              {/* Honeypot field (hidden) */}
+              <FormField
+                control={form.control}
+                name="honeypot"
+                render={({ field }) => (
+                  <FormItem style={{ position: 'absolute', left: '-9999px' }}>
+                    <FormControl>
+                      <Input type="text" autoComplete="off" {...field} />
+                    </FormControl>
+                  </FormItem>
+                )}
+              />
               <Button
                 className={cn('mt-2 flex w-full items-center justify-center gap-2', { 'pointer-events-none opacity-70': isLoading })}
                 variant="default"

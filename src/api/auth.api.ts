@@ -7,11 +7,13 @@ export interface LoginResponse {
   role?: 'admin' | 'staff' | 'user'
 }
 
-export async function loginUser(username: string, password: string): Promise<LoginResponse> {
+export async function loginUser(username: string, password: string, recaptcha_token?: string, honeypot?: string): Promise<LoginResponse> {
   try {
     const res = await api.post<LoginResponse>('auth/login.php', {
       username,
       password,
+      recaptcha_token,
+      honeypot,
     })
     return res.data
   } catch (error: unknown) {

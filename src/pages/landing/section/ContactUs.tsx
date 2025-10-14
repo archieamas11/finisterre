@@ -10,8 +10,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Textarea } from '@/components/ui/textarea'
 import { Clock, MessageCircle, Phone, PhoneCall, Voicemail } from 'lucide-react'
 import { sendContactMessage, type ContactPayload } from '@/api/contact.api'
+import { executeRecaptcha, isRecaptchaConfigured } from '@/lib/recaptcha'
 
-// Subject options (will be mapped to Select). Can be extended later.
 const SUBJECT_OPTIONS = [
   { value: 'general', label: 'General Inquiry' },
   { value: 'support', label: 'Support' },
@@ -19,14 +19,12 @@ const SUBJECT_OPTIONS = [
   { value: 'other', label: 'Other' },
 ]
 
-// Business hours (could be moved to a CMS later)
 const BUSINESS_HOURS = [
   { day: 'Monday - Friday', time: '8:00 AM – 5:00 PM' },
   { day: 'Saturday', time: '8:00 AM – 12:00 PM' },
   { day: 'Sunday & Holidays', time: 'By Appointment' },
 ]
 
-// Contact method entries
 const CONTACT_METHODS = [
   { id: 'messenger', label: 'Messenger', value: 'm.me/finisterregardenz', icon: MessageCircle },
   { id: 'viber', label: 'Viber', value: '+63 998 841 1173', icon: PhoneCall },
@@ -34,7 +32,6 @@ const CONTACT_METHODS = [
   { id: 'landline', label: 'Landline', value: '407 3099 | 254 3065', icon: Voicemail },
 ]
 
-// Phone regex: allows +, spaces, dashes, parentheses but must contain 7-15 digits total.
 const phoneRegex = /^(?=.*\d)[+()\d\s-]{7,20}$/
 
 const formSchema = z.object({
@@ -44,6 +41,7 @@ const formSchema = z.object({
   phone_number: z.string().trim().regex(phoneRegex, 'Enter a valid phone number').optional().or(z.literal('')),
   subject: z.enum(['general', 'support', 'billing', 'other'], { error: 'Select a subject' }),
   message: z.string().min(10, 'Message must be at least 10 characters'),
+  honeypot: z.string().optional(),
 })
 
 export default function ContactUs() {
@@ -56,11 +54,25 @@ export default function ContactUs() {
       phone_number: '',
       subject: undefined,
       message: '',
+      honeypot: '',
     },
   })
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
+    if (values.honeypot && values.honeypot.trim() !== '') {
+      return
+    }
+
     try {
+      let recaptchaToken: string | undefined
+      if (isRecaptchaConfigured()) {
+        try {
+          recaptchaToken = await executeRecaptcha('contact')
+        } catch (e) {
+          // If reCAPTCHA fails to load/execute, proceed without token but log
+          console.warn('reCAPTCHA error:', e)
+        }
+      }
       const payload: ContactPayload = {
         first_name: values.first_name,
         last_name: values.last_name,
@@ -68,6 +80,8 @@ export default function ContactUs() {
         phone_number: values.phone_number || undefined,
         subject: values.subject,
         message: values.message,
+        honeypot: values.honeypot,
+        recaptcha_token: recaptchaToken,
       }
       const promise = sendContactMessage(payload)
       await toast.promise(promise, {
@@ -76,7 +90,6 @@ export default function ContactUs() {
         error: (err) => err?.message || 'Failed to send. Please try again.',
       })
 
-      // If success, reset the form
       form.reset()
     } catch (error) {
       console.error('Submit error', error)
@@ -220,6 +233,17 @@ export default function ContactUs() {
                             />
                           </FormControl>
                           <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={form.control}
+                      name="honeypot"
+                      render={({ field }) => (
+                        <FormItem style={{ position: 'absolute', left: '-9999px' }}>
+                          <FormControl>
+                            <Input type="text" autoComplete="off" {...field} />
+                          </FormControl>
                         </FormItem>
                       )}
                     />

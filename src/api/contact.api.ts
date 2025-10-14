@@ -7,6 +7,8 @@ export interface ContactPayload {
   phone_number?: string
   subject: 'general' | 'support' | 'billing' | 'other'
   message: string
+  recaptcha_token?: string
+  honeypot?: string
 }
 
 export interface ContactResponse {
