@@ -1,5 +1,5 @@
 import { LogOutIcon, LayoutDashboard } from 'lucide-react'
-import { useMemo, useCallback, memo } from 'react'
+import { useCallback } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
 
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
@@ -22,15 +22,15 @@ interface ProfileUser {
   avatar: string
   email: string
   name: string
-  isAdmin?: boolean
+  role?: string
 }
 
-function ProfileMenu({ user }: { user: ProfileUser }) {
+export default function ProfileMenu({ user }: { user: ProfileUser }) {
   const { performLogout, isPending } = useLogout()
   const navigate = useNavigate()
   const location = useLocation()
 
-  const dashboardPath = useMemo(() => (user.isAdmin ? '/admin' : '/user'), [user.isAdmin])
+  const dashboardPath = user.role === 'admin' || user.role === 'staff' ? '/admin' : '/user'
   const onDashboard = location.pathname.startsWith(dashboardPath)
 
   const handleNavigateToDashboard = useCallback(() => {
@@ -74,14 +74,3 @@ function ProfileMenu({ user }: { user: ProfileUser }) {
     </DropdownMenu>
   )
 }
-
-// Memoize ProfileMenu to prevent re-renders when parent re-renders
-export default memo(ProfileMenu, (prevProps, nextProps) => {
-  // Only re-render if user data actually changes
-  return (
-    prevProps.user.avatar === nextProps.user.avatar &&
-    prevProps.user.email === nextProps.user.email &&
-    prevProps.user.name === nextProps.user.name &&
-    prevProps.user.isAdmin === nextProps.user.isAdmin
-  )
-})
