@@ -228,7 +228,8 @@ export default function Chatbot() {
         throw new Error(`HTTP ${res.status}: ${errData.error || 'Unknown error'}`)
       }
       const data = (await res.json()) as { count: number; embed_model: string }
-      toast.success(`Index built: ${data.count} items (model: ${data.embed_model})`, { duration: 1000 })
+      // toast.success(`Index built: ${data.count} items (model: ${data.embed_model})`, { duration: 1000 })
+      console.log('Index build result:', data)
       try {
         sessionStorage.setItem(INDEX_BUILT_KEY, String(Date.now()))
       } catch {
@@ -237,7 +238,8 @@ export default function Chatbot() {
       setIndexStatus('built')
     } catch (e) {
       setIndexStatus('idle')
-      toast.error(`Index build failed: ${getErrorMessage(e)}`, { duration: 1000 })
+      // toast.error(`Index build failed: ${getErrorMessage(e)}`, { duration: 1000 })
+      console.log('Index build failed:', getErrorMessage(e))
     }
   }
 
