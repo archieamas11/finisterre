@@ -28,7 +28,7 @@ export default function Footer() {
   }
 
   return (
-    <footer id="contact" className="border-t border-gray-300" aria-labelledby="footer-heading">
+    <footer id="footer" className="border-t border-gray-300" aria-labelledby="footer-heading">
       <h2 id="footer-heading" className="sr-only">
         Footer
       </h2>

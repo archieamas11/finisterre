@@ -59,14 +59,12 @@ const MemoizedPetersRockMarkers = memo(PetersRockMarkers)
 const MemoizedPlotMarkers = memo(PlotMarkers)
 const MemoizedNavigationInstructions = memo(NavigationInstructions)
 
-// Extend HTMLElement to include the _leaflet_map property for legacy compatibility
 declare global {
   interface HTMLElement {
     _leaflet_map?: L.Map
   }
 }
 
-// Internal component to capture map instance once available
 function MapInstanceBinder({ onMapReady }: { onMapReady: (map: L.Map) => void }) {
   const map = useMap()
 
@@ -75,8 +73,6 @@ function MapInstanceBinder({ onMapReady }: { onMapReady: (map: L.Map) => void })
     onMapReady(map)
     map.getContainer()._leaflet_map = map
 
-    // Pre-create custom panes to avoid race conditions when conditionally rendering components
-    // that expect these panes to exist (prevents intermittent appendChild undefined errors)
     const ensurePane = (name: string, zIndex: number) => {
       if (!map.getPane(name)) {
         const pane = map.createPane(name)
@@ -163,17 +159,11 @@ export default function MapPage({ onBack, initialDirection }: { onBack?: () => v
     [],
   )
 
-  // Dynamic React Query and offline-aware hook
   const { isLoading: rqLoading, data: plotsDataRQ } = usePlots()
   const { data: offlinePlots, isLoading: offlineLoading } = useMarkersOffline()
-
-  // Use offline data if available, otherwise fallback to React Query data
   const plotsData = offlinePlots && offlinePlots.length > 0 ? offlinePlots : plotsDataRQ
-
-  // Only show loading if we have no data at all (neither cached nor fresh)
   const isLoading = !plotsData && (rqLoading || offlineLoading)
   const { data: userPlotsData } = useUserOwnedPlots()
-
   const markers = useMemo(() => plotsData?.map(convertPlotToMarker) || [], [plotsData])
   const userMarkers = useMemo(() => {
     if (!userPlotsData?.plots) return []
@@ -218,7 +208,6 @@ export default function MapPage({ onBack, initialDirection }: { onBack?: () => v
   const stateRef = useRef(state)
   stateRef.current = state
 
-  // Konsta Notification state for native platforms
   const [konstaNotificationOpen, setKonstaNotificationOpen] = useState(false)
   const [konstaNotificationProps, setKonstaNotificationProps] = useState<{
     title?: string
@@ -227,19 +216,16 @@ export default function MapPage({ onBack, initialDirection }: { onBack?: () => v
     titleRightText?: string
   }>({})
 
-  // Auto-close Konsta notification after 3s
   useEffect(() => {
     if (!konstaNotificationOpen) return
     const t = setTimeout(() => setKonstaNotificationOpen(false), 3000)
     return () => clearTimeout(t)
   }, [konstaNotificationOpen])
 
-  // nuqs-backed query params
   const [query, setQuery] = useQueryStates(
     {
       to: parseAsString,
       from: parseAsString,
-      // legacy keys we clear when starting navigation
       direction: parseAsString,
       lat: parseAsString,
       lng: parseAsString,
@@ -247,39 +233,30 @@ export default function MapPage({ onBack, initialDirection }: { onBack?: () => v
     { clearOnDefault: true },
   )
 
-  // Hold reference to Leaflet map for reset
   const [mapInstance, setMapInstance] = useState<L.Map | null>(null)
 
-  // Process location updates only when navigating; stable callback prevents re-renders
   useEffect(() => {
     if (!isNavigating || !currentLocation) return
     handleLocationUpdate(currentLocation)
   }, [currentLocation, isNavigating, handleLocationUpdate])
 
-  // Stop track user location
   useEffect(() => {
     return () => {
       stopTracking()
     }
   }, [stopTracking])
 
-  // This should center the user map view only once, when location is first obtained
-  // Center on user only once per explicit request
   const hasCenteredRef = useRef(false)
-  // Suppress a single auto-center event (used when user cancels navigation)
   const suppressAutoCenterRef = useRef(false)
   useEffect(() => {
     if (!currentLocation || !mapInstance) return
     if (hasCenteredRef.current) return
 
-    // If suppression flag is set, ignore this first location update and clear the flag
     if (suppressAutoCenterRef.current) {
       suppressAutoCenterRef.current = false
       return
     }
 
-    // During navigation, don't auto-center unless explicitly requested
-    // This prevents camera jumps during route following
     if (isNavigating) {
       dispatch({ type: 'CLEAR_LOCATE' })
       return
@@ -288,14 +265,12 @@ export default function MapPage({ onBack, initialDirection }: { onBack?: () => v
     hasCenteredRef.current = true
     mapInstance.flyTo([currentLocation.latitude, currentLocation.longitude])
     dispatch({ type: 'CLEAR_LOCATE' })
-    // reset guard when user explicitly requests again
     const t = setTimeout(() => {
       hasCenteredRef.current = false
     }, 1000)
     return () => clearTimeout(t)
   }, [currentLocation, mapInstance, isNavigating])
 
-  // Effect to detect when route is fully loaded and flyTo animation is complete
   useEffect(() => {
     if (!(route && routeCoordinates.length > 0 && state.isDirectionLoading && mapInstance)) return
     const handleMoveEnd = () => {
@@ -308,8 +283,6 @@ export default function MapPage({ onBack, initialDirection }: { onBack?: () => v
     }
   }, [route, routeCoordinates, state.isDirectionLoading, mapInstance])
 
-  // Get user location and fly to it
-  // Stable callback prevents re-renders
   const requestLocate = useCallback(
     async (zoom: number = 18) => {
       const loc = isTracking
@@ -338,10 +311,7 @@ export default function MapPage({ onBack, initialDirection }: { onBack?: () => v
     stopNavigation()
     dispatch({ type: 'SET_NAV_OPEN', value: false })
     dispatch({ type: 'SET_DIRECTION_LOADING', value: false })
-    // Prevent the next location update from auto-centering the map
-    // This avoids an immediate flyTo when the user cancels navigation.
     suppressAutoCenterRef.current = true
-    // Safety: clear suppression after 2s in case no location event arrives
     setTimeout(() => {
       suppressAutoCenterRef.current = false
     }, 2000)
@@ -361,7 +331,6 @@ export default function MapPage({ onBack, initialDirection }: { onBack?: () => v
 
         await startNavigation(from, { latitude: toLat, longitude: toLng })
 
-        // Clear legacy keys and set from/to in one go
         setQuery({
           direction: null,
           lat: null,
@@ -382,20 +351,16 @@ export default function MapPage({ onBack, initialDirection }: { onBack?: () => v
     [currentLocation, getCurrentLocation, isTracking, startNavigation, requestLocate, setQuery, startTracking],
   )
 
-  /* helpers */
   const konstaNotify = (text: string) => {
     setKonstaNotificationProps({ title: 'Navigation Error', text, titleRightText: 'now' })
     setKonstaNotificationOpen(true)
   }
 
-  // Parse new navigation params (?from=lat,lng&to=lat,lng) and auto-start navigation
-  // Avoid retriggering navigation if already navigating to same destination
   useEffect(() => {
     const to = query.to
     if (!to) return
-    // Only trigger when destination changed and we're not currently navigating
     if (lastDestSigRef.current === to) return
-    if (lastCancelledDestRef.current === to) return // user just cancelled this destination
+    if (lastCancelledDestRef.current === to) return
     if (isNavigating) return
     const parts = to.split(',')
     if (parts.length !== 2) return
@@ -403,47 +368,33 @@ export default function MapPage({ onBack, initialDirection }: { onBack?: () => v
     const b = parseFloat(parts[1])
     if (isNaN(a) || isNaN(b)) return
     lastDestSigRef.current = to
-    // New user intent, clear cancelled marker
     lastCancelledDestRef.current = null
     handleDirectionClick([a, b])
   }, [query.to, handleDirectionClick, isNavigating])
 
-  // When nuqs query params are present (from/to) and map is ready, request a locate
-  // This centers the map on the user's location so that navigation or query-based actions
-  // have the user's position available. Avoid triggering while actively navigating.
   useEffect(() => {
-    // Only act when map is initialized and we have either to/from params
     if (!mapInstance) return
     if (isNavigating) return
 
     const hasNavParam = Boolean(query.to || query.from)
     if (!hasNavParam) return
 
-    // Request locate with a standard zoom. The requestLocate function already guards
-    // against redundant actions (it checks isTracking / currentLocation).
     void requestLocate()
   }, [mapInstance, query.to, query.from, requestLocate, isNavigating])
 
-  // Stabilize initialDirection-based navigation (avoid duplicate triggers on same coords)
   const lastInitDirRef = useRef<string | null>(null)
   useEffect(() => {
     if (!initialDirection || !isNativePlatform()) return
     const sig = `${initialDirection.lat},${initialDirection.lng}`
     if (lastInitDirRef.current === sig) return
-    if (isNavigating) return // already navigating
+    if (isNavigating) return
     lastInitDirRef.current = sig
     requestAnimationFrame(() => handleDirectionClick([initialDirection.lat, initialDirection.lng]))
   }, [initialDirection, handleDirectionClick, isNavigating])
 
-  // Cluster control functions
   const toggleGroupSelection = useCallback((groupKey: string) => dispatch({ type: 'TOGGLE_GROUP', group: groupKey }), [])
-
   const resetGroupSelection = useCallback(() => dispatch({ type: 'RESET_GROUPS' }), [])
-
-  // Handle cluster click - select single group
   const handleClusterClick = useCallback((groupKey: string) => dispatch({ type: 'SELECT_GROUPS', groups: new Set([groupKey]) }), [])
-
-  // Search functions
   const searchLot = useCallback(
     async (lotId: string) => {
       if (!lotId.trim()) {
@@ -459,7 +410,6 @@ export default function MapPage({ onBack, initialDirection }: { onBack?: () => v
         if (result.success && result.data) {
           const { plot_id, niche_number, coordinates } = result.data
 
-          // Parse coordinates from "lng,lat" format to [lat, lng]
           let plotCoords: [number, number] | null = null
           if (coordinates) {
             try {
@@ -472,29 +422,17 @@ export default function MapPage({ onBack, initialDirection }: { onBack?: () => v
             }
           }
 
-          // Find the matching plot in markers to get the correct group key
           const matchedMarker = markers.find((m: ConvertedMarker) => m.plot_id === plot_id)
           if (matchedMarker) {
             const groupKey = matchedMarker.block ? `block:${matchedMarker.block}` : `category:${matchedMarker.category}`
-
-            // Switch to selective mode and select only this plot's group
             dispatch({ type: 'SELECT_GROUPS', groups: new Set([groupKey]) })
-
-            // If there's a niche number, highlight it
             if (niche_number) dispatch({ type: 'SET_HIGHLIGHTED_NICHE', niche: niche_number })
-
-            // Set auto popup for this plot and center map
             dispatch({ type: 'SET_AUTO_POPUP', plotId: String(plot_id) })
-
-            // Use coordinates from search result or fallback to marker position
             const centerCoords = plotCoords || matchedMarker.position
-
-            // Center and zoom the map on the found plot using stored map instance
             if (mapInstance && centerCoords) mapInstance.setView(centerCoords, 18, { animate: true })
           }
 
           if (isNativePlatform()) {
-            // Use Konsta Notification on native
             setKonstaNotificationProps({
               title: 'Lot found',
               subtitle: `${result.data.category} ${result.data.block ? `- Block ${result.data.block}` : '- Chamber'}`,
@@ -546,7 +484,6 @@ export default function MapPage({ onBack, initialDirection }: { onBack?: () => v
     dispatch({ type: 'RESET_GROUPS' })
   }, [])
 
-  // Grouped markers (memoized) & available groups for dropdown
   const markersByGroup = useMemo(() => groupMarkersByKey(markers), [markers])
   const availableGroups = useMemo(
     () =>
@@ -560,18 +497,16 @@ export default function MapPage({ onBack, initialDirection }: { onBack?: () => v
     [markersByGroup],
   )
 
-  // Reset map view to default state (center via bounds + default zoom)
   const resetView = useCallback(() => {
     if (!mapInstance) return
 
-    const [sw, ne] = bounds // [[lng,lat],[lng,lat]]
+    const [sw, ne] = bounds
     const centerLatLng: [number, number] = [(sw[0] + ne[0]) / 2, (sw[1] + ne[1]) / 2]
 
     mapInstance.flyTo(centerLatLng, 18)
     dispatch({ type: 'RESET_VIEW' })
   }, [mapInstance, bounds])
 
-  // Move error notifications to effect (avoid side effects in render)
   useEffect(() => {
     if (!(locationError || routingError)) return
     const message = 'Unable to get directions. Please try again.'
@@ -583,14 +518,12 @@ export default function MapPage({ onBack, initialDirection }: { onBack?: () => v
     }
   }, [locationError, routingError])
 
-  // Show only user-owned plots
   const showUserPlotsOnly = useCallback(() => {
     dispatch({ type: 'SHOW_USER_PLOTS' })
   }, [])
 
   const contextValue = useMemo(
     () => ({
-      // direct state (for backward compat; prefer useMapState selectors moving forward)
       ...state,
       requestLocate,
       cancelNavigation,
@@ -644,8 +577,6 @@ export default function MapPage({ onBack, initialDirection }: { onBack?: () => v
           <div className="relative h-full w-full overflow-hidden">
             <WebMapNavs onBack={onBack} />
             <WebmapLegend />
-
-            {/* Konsta Notification for native platforms */}
             <Notification
               opened={konstaNotificationOpen}
               title={konstaNotificationProps.title}

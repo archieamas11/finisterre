@@ -36,7 +36,6 @@ export default function LandingLayout() {
   const location = useLocation()
   const isNestedRoute = location.pathname !== '/'
 
-  // Handle hash navigation (scroll to section when hash changes)
   useEffect(() => {
     if (location.hash) {
       const id = location.hash.replace('#', '')
@@ -47,7 +46,6 @@ export default function LandingLayout() {
         }, 100)
       }
     } else {
-      // Scroll to top when navigating without hash (both landing and nested routes)
       setTimeout(() => {
         window.scrollTo({ top: 0, behavior: 'smooth' })
       }, 100)

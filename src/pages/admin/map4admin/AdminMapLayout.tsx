@@ -10,9 +10,7 @@ import { useMap } from 'react-leaflet'
 import { MapContainer, TileLayer, Popup, GeoJSON } from 'react-leaflet'
 import MarkerClusterGroup from 'react-leaflet-markercluster'
 import { useLocation, useNavigate } from 'react-router-dom'
-
 import type { ConvertedMarker } from '@/types/map.types'
-
 import { searchLotById } from '@/api/plots.api'
 import { ErrorMessage } from '@/components/ErrorMessage'
 import AddMarkerInstructions from '@/components/map/AddMarkerInstructions'
@@ -45,7 +43,6 @@ import PeterRockMarkers from '@/pages/webmap/PeterRock'
 const DefaultIcon = L.icon({ iconUrl, shadowUrl, iconRetinaUrl })
 ;(L.Marker.prototype as unknown as { options: { icon: L.Icon } }).options.icon = DefaultIcon
 
-// Helper: build tiny colored status dot icon (kept outside component to avoid re-creation)
 function buildStatusCircleIcon(color: string) {
   return L.divIcon({
     className: '',
@@ -53,7 +50,6 @@ function buildStatusCircleIcon(color: string) {
   })
 }
 
-//  Helper: popup content for columbarium vs single plot
 function renderPopupContent(marker: ConvertedMarker, backgroundColor: string, highlightedNiche?: string | null) {
   const isColumbarium = !!(marker.rows && marker.columns)
   if (isColumbarium) {
@@ -80,7 +76,6 @@ export default function AdminMapLayout() {
   const { isError, refetch, isLoading, data: plotsData } = usePlots()
   const queryClient = useQueryClient()
   const markers = useMemo(() => (plotsData ? plotsData.map(convertPlotToMarker) : []), [plotsData])
-
   const [mapInstance, setMapInstance] = useState<L.Map | null>(null)
   const [autoOpenPlotId, setAutoOpenPlotId] = useState<string | null>(null)
   const [highlightedNiche, setHighlightedNiche] = useState<string | null>(null)
@@ -137,7 +132,6 @@ export default function AdminMapLayout() {
     [markers, mapInstance],
   )
 
-  // Handle click from search results list
   const handleSelectSearchResult = useCallback(
     (item: AdminSearchItem) => {
       console.log('[AdminMapLayout] select result', { item })
@@ -164,7 +158,6 @@ export default function AdminMapLayout() {
         setAutoOpenPlotId(targetPlotId)
       }
 
-      // If map isn't ready, open immediately; otherwise compute if we should wait
       if (!mapInstance) {
         console.log('[AdminMapLayout] mapInstance not ready yet; opening immediately and skipping flyTo')
         openTargetPopup()
@@ -206,7 +199,6 @@ export default function AdminMapLayout() {
     [markers, mapInstance, isEditingMarker],
   )
 
-  // Open specific plot from view customer button (restored)
   useEffect(() => {
     const state = location.state as { focusPlotId?: string; focusNicheNumber?: string | null } | null
     if (!state?.focusPlotId) return
@@ -231,7 +223,6 @@ export default function AdminMapLayout() {
     navigate(location.pathname, { replace: true, state: null })
   }, [handleSelectSearchResult, location.pathname, location.state, markers, navigate])
 
-  // If activeSearchMarker was set before mapInstance became available, perform the fly when possible
   useEffect(() => {
     if (!activeSearchMarker || !mapInstance) return
     const desiredZoom = 20
@@ -267,23 +258,19 @@ export default function AdminMapLayout() {
     }
   }
 
-  // Handle edit completion (save or cancel)
   const onEditComplete = useCallback(() => {
     setSelectedPlotForEdit(null)
     setIsEditingMarker(false)
     document.body.classList.remove('edit-marker-mode')
   }, [])
 
-  // Handle map click when adding marker
   const onMapClick = (coordinates: [number, number]) => {
     setSelectedCoordinates(coordinates)
     setShowAddDialog(true)
-    // Pause add mode while dialog is open to prevent accidental clicks
     setIsAddingMarker(false)
     document.body.classList.remove('add-marker-mode')
   }
 
-  // Handle dialog close
   const onDialogClose = (open: boolean) => {
     setShowAddDialog(open)
     if (!open) {
@@ -291,7 +278,6 @@ export default function AdminMapLayout() {
     }
   }
 
-  // After a successful add, immediately return to add mode for rapid entry
   const onAddDone = () => {
     setSelectedCoordinates(null)
     setShowAddDialog(false)
@@ -299,7 +285,6 @@ export default function AdminMapLayout() {
     document.body.classList.add('add-marker-mode')
   }
 
-  // Cleanup effect to remove cursor class on unmount
   useEffect(() => {
     return () => {
       document.body.classList.remove('add-marker-mode')
@@ -307,13 +292,10 @@ export default function AdminMapLayout() {
     }
   }, [])
 
-  // Unified Escape handler: cancel add/edit flows and close dialog reliably
   useHotkeys(
     'escape',
     (e) => {
       e.preventDefault()
-
-      // If add dialog is open, close it and reset coordinates
       if (showAddDialog) {
         setShowAddDialog(false)
         setSelectedCoordinates(null)
@@ -322,7 +304,6 @@ export default function AdminMapLayout() {
         return
       }
 
-      // If currently in add-marker mode (and dialog not open), cancel it
       if (isAddingMarker) {
         setIsAddingMarker(false)
         setSelectedCoordinates(null)
@@ -330,13 +311,11 @@ export default function AdminMapLayout() {
         return
       }
 
-      // If editing and a specific plot is selected, cancel that edit
       if (isEditingMarker && selectedPlotForEdit) {
         onEditComplete()
         return
       }
 
-      // If editing mode is active but no plot selected, exit editing mode
       if (isEditingMarker) {
         setIsEditingMarker(false)
         setSelectedPlotForEdit(null)
@@ -370,15 +349,12 @@ export default function AdminMapLayout() {
     }
   }, [])
 
-  // Function to handle popup opening - invalidate cache for fresh data
   const handlePopupOpen = (plot_id: string) => {
-    // Invalidate the specific plot details cache when popup opens
     queryClient.invalidateQueries({
       queryKey: ['plotDetails', plot_id],
     })
   }
 
-  // ⚡️ Derived grouping + cluster icon factory (stable references reduce re-renders inside leaflet layer trees)
   const markersByGroup = useMemo(() => groupMarkersByKey(markers), [markers])
   const labelLookup = useCallback((k: string) => {
     const raw = getLabelFromGroupKey(k)
@@ -470,7 +446,7 @@ export default function AdminMapLayout() {
 
             <MapInstanceBinder onMapReady={setMapInstance} />
 
-            {/* GeoJSON overlay: Guide 4 Block C */}
+            {/* GeoJSON overlay for test accounts */}
             {showGuide4 && guide4Data && (
               <GeoJSON
                 interactive={false}
@@ -489,7 +465,6 @@ export default function AdminMapLayout() {
               />
             )}
 
-            {/* Map click handler for adding markers */}
             <MapClickHandler isAddingMarker={isAddingMarker} onMapClick={onMapClick} />
             <MainEntranceMarkers />
             <ChapelMarkers />
@@ -498,7 +473,6 @@ export default function AdminMapLayout() {
             <CenterSerenityMarkers />
             <ComfortRoomMarker />
             <PeterRockMarkers />
-            {/* Display all clustered markers */}
             {Object.entries(markersByGroup).map(([groupKey, groupMarkers]) => {
               if (isEditingMarker || isAddingMarker) {
                 return (
@@ -521,7 +495,6 @@ export default function AdminMapLayout() {
                           onPopupOpen={() => handlePopupOpen(marker.plot_id)}
                           autoOpenPlotId={autoOpenPlotId}
                           registerMarkerRef={registerMarkerRef}
-                          // If this marker is targeted by search, open its popup once
                           onPopupClose={() => {
                             if (autoOpenPlotId === marker.plot_id) {
                               setAutoOpenPlotId(null)
@@ -583,7 +556,6 @@ export default function AdminMapLayout() {
             })}
           </MapContainer>
         </div>
-        {/* Add Plot Dialog */}
         <AddPlotMarkerDialog open={showAddDialog} onOpenChange={onDialogClose} coordinates={selectedCoordinates} onDoneAdd={onAddDone} />
       </LocateContext.Provider>
     </div>

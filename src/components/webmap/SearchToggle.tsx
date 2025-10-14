@@ -1,5 +1,5 @@
 import { SearchIcon, X, ArrowRightIcon } from 'lucide-react'
-import { useCallback, useRef, memo } from 'react'
+import { useCallback, useRef } from 'react'
 import { Input } from '@/components/ui/input'
 import { cn } from '@/lib/utils'
 import { isNativePlatform } from '@/utils/platform.utils'
@@ -18,7 +18,7 @@ interface SearchToggleProps {
   className?: string
 }
 
-function SearchToggle({ context, className }: SearchToggleProps) {
+export default function SearchToggle({ context, className }: SearchToggleProps) {
   const containerRef = useRef<HTMLDivElement>(null)
 
   const handleSearchSubmit = useCallback(
@@ -28,7 +28,7 @@ function SearchToggle({ context, className }: SearchToggleProps) {
         await context.searchLot(context.searchQuery)
       }
     },
-    [context.searchQuery, context.searchLot],
+    [context],
   )
 
   const handleSearchInputKeyDown = useCallback(
@@ -39,12 +39,12 @@ function SearchToggle({ context, className }: SearchToggleProps) {
         context.searchLot(context.searchQuery)
       }
     },
-    [context.setSearchQuery, context.searchLot, context.searchQuery],
+    [context],
   )
 
   const handleClearSearch = useCallback(() => {
     context.clearSearch()
-  }, [context.clearSearch])
+  }, [context])
 
   return (
     <div ref={containerRef} className={cn('relative w-full', className)}>
@@ -72,12 +72,10 @@ function SearchToggle({ context, className }: SearchToggleProps) {
                 aria-label="Search lot"
               />
 
-              {/* Search icon */}
               <div className="text-muted-foreground/80 pointer-events-none absolute inset-y-0 start-0 flex items-center justify-center ps-3 peer-disabled:opacity-50">
                 <SearchIcon size={16} />
               </div>
 
-              {/* Clear/Submit button */}
               {context.searchQuery.trim() ? (
                 <button
                   className="text-muted-foreground/80 hover:text-foreground focus-visible:border-ring focus-visible:ring-ring/50 absolute inset-y-0 end-0 flex h-full w-10 items-center justify-center rounded-e-full transition-[color,box-shadow] outline-none focus:z-10 focus-visible:ring-[3px] disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50"
@@ -103,13 +101,3 @@ function SearchToggle({ context, className }: SearchToggleProps) {
     </div>
   )
 }
-
-// Memoize SearchToggle to prevent re-renders
-export default memo(SearchToggle, (prevProps, nextProps) => {
-  // Only re-render if search-related context properties change
-  return (
-    prevProps.context.searchQuery === nextProps.context.searchQuery &&
-    prevProps.context.isSearching === nextProps.context.isSearching &&
-    prevProps.className === nextProps.className
-  )
-})

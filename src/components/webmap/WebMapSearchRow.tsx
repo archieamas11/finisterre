@@ -1,6 +1,5 @@
 import { Link } from 'react-router-dom'
 import { RiLoginBoxLine } from 'react-icons/ri'
-import { memo } from 'react'
 
 import ProfileMenu from '@/components/ProfileMenu'
 import { Button } from '@/components/ui/button'
@@ -14,7 +13,7 @@ interface WebMapSearchRowProps {
   context: WebMapContext
 }
 
-function WebMapSearchRow({ context }: WebMapSearchRowProps) {
+export default function WebMapSearchRow({ context }: WebMapSearchRowProps) {
   const { user: meUser, isLoading: isUserLoading } = useMe()
 
   if (!context) return null
@@ -22,8 +21,10 @@ function WebMapSearchRow({ context }: WebMapSearchRowProps) {
   return (
     <>
       <div className="flex w-full items-center gap-2 pr-3">
-        <div className="mx-auto w-full">
-          <SearchToggle context={context} className="w-full" />
+        <div className="flex-1">
+          <div className="mx-auto w-full max-w-3xl xl:max-w-4xl">
+            <SearchToggle context={context} className="w-full" />
+          </div>
         </div>
         {!isAuthenticated() && !isNativePlatform() ? (
           <Link to="/login" className="shrink-0">
@@ -41,9 +42,3 @@ function WebMapSearchRow({ context }: WebMapSearchRowProps) {
     </>
   )
 }
-
-// Memoize to prevent re-renders when parent state changes
-export default memo(WebMapSearchRow, (prevProps, nextProps) => {
-  // Only re-render if the context search-related properties change
-  return prevProps.context.searchQuery === nextProps.context.searchQuery && prevProps.context.isSearching === nextProps.context.isSearching
-})
