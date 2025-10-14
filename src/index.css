@@ -367,3 +367,7 @@ button {
   -webkit-touch-callout: none;
   user-select: none;
 }
+
+.grecaptcha-badge {
+  z-index: 9999;
+}
