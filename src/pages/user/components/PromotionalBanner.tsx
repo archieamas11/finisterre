@@ -1,7 +1,8 @@
-import { ArrowRight } from 'lucide-react'
-import React from 'react'
+// import { ArrowRight } from 'lucide-react'
+import React, { useState } from 'react'
 
-import { Button } from '@/components/ui/button'
+// import { Button } from '@/components/ui/button'
+import { Skeleton } from '@/components/ui/skeleton'
 import { cn } from '@/lib/utils'
 
 type PromotionalBannerProps = {
@@ -38,19 +39,19 @@ export const PromotionalBanner: React.FC<PromotionalBannerProps> = ({
   description,
   imageSrc,
   imageAlt = 'Promotional banner image',
-  buttonText = 'Learn More',
-  onButtonClick,
+  // onButtonClick,
   className,
   variant = 'default',
   size = 'md',
 }) => {
-  const handleScrollToAnnouncements = () => {
-    const el = document.getElementById('announcements-section')
-    if (el) {
-      el.scrollIntoView({ behavior: 'smooth', block: 'start' })
-    }
-    onButtonClick?.()
-  }
+  const [imageLoaded, setImageLoaded] = useState(false)
+  // const handleScrollToAnnouncements = () => {
+  //   const el = document.getElementById('announcements-section')
+  //   if (el) {
+  //     el.scrollIntoView({ behavior: 'smooth', block: 'start' })
+  //   }
+  //   onButtonClick?.()
+  // }
 
   return (
     <section
@@ -70,7 +71,7 @@ export const PromotionalBanner: React.FC<PromotionalBannerProps> = ({
           <p className="animate-fade-in text-sm leading-relaxed text-white/95 drop-shadow-lg md:text-base" style={{ animationDelay: '0.2s' }}>
             {description}
           </p>
-
+          {/* 
           <div className="flex flex-wrap gap-3">
             <Button
               type="button"
@@ -78,21 +79,23 @@ export const PromotionalBanner: React.FC<PromotionalBannerProps> = ({
               onClick={handleScrollToAnnouncements}
               className="group bg-[var(--brand-secondary)] text-black hover:bg-[var(--brand-secondary)]"
             >
-              <span className="relative z-10">{buttonText}</span>
+              <span className="relative z-10">Learn More</span>
               <ArrowRight className="relative z-10 h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
             </Button>
-          </div>
+          </div> */}
         </div>
 
         {/* Enhanced Image Section */}
         {imageSrc && (
           <div className="relative flex-shrink-0 overflow-hidden rounded-2xl shadow-2xl shadow-black/30 md:max-w-sm lg:max-w-md">
             <div className="aspect-[3/2] overflow-hidden rounded-2xl bg-gradient-to-br from-white/10 to-transparent">
+              {!imageLoaded && <Skeleton className="absolute inset-0 rounded-2xl" />}
               <img
                 src={imageSrc}
                 alt={imageAlt}
                 loading="lazy"
-                className="h-full w-full object-cover transition-all duration-700 ease-out hover:scale-105 hover:brightness-110"
+                className={`h-full w-full object-cover transition-opacity duration-700 ease-out ${imageLoaded ? 'opacity-100' : 'opacity-0'}`}
+                onLoad={() => setImageLoaded(true)}
               />
             </div>
           </div>
