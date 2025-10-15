@@ -106,6 +106,17 @@ export default function ResetPassword() {
                 Back
               </Button>
             </div>
+            <p className="text-muted-foreground mt-4 text-center text-xs">
+              This site is protected by reCAPTCHA and subject to the{' '}
+              <a href="https://policies.google.com/privacy" target="_blank" rel="noopener noreferrer" className="underline hover:opacity-80">
+                Privacy Policy
+              </a>{' '}
+              and{' '}
+              <a href="https://policies.google.com/terms" target="_blank" rel="noopener noreferrer" className="underline hover:opacity-80">
+                Terms of Service
+              </a>{' '}
+              apply.
+            </p>
           </form>
         </Form>
       </Card>
