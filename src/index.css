@@ -447,22 +447,29 @@ button {
 
 .grecaptcha-badge {
   position: fixed !important;
-  left: 12px !important;
-  bottom: 12px !important;
+  left: 4px !important;
+  bottom: 4px !important;
   right: auto !important;
   z-index: 9999 !important;
-  transition: all 0.3s ease;
-  transform: scale(0.9);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transform: scale(0.75);
   transform-origin: 0 100%;
+  opacity: 0.6;
 }
 
 .grecaptcha-badge:hover {
-  transform: scale(1);
+  transform: scale(0.85);
+  opacity: 1;
 }
 
 @media (max-width: 480px) {
   .grecaptcha-badge {
-    left: 8px !important;
-    bottom: 8px !important;
+    left: 2px !important;
+    bottom: 2px !important;
+    transform: scale(0.7);
+  }
+
+  .grecaptcha-badge:hover {
+    transform: scale(0.8);
   }
 }
