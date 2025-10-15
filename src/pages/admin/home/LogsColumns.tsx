@@ -23,13 +23,13 @@ const actionConfig = {
   },
   delete: {
     icon: TrashIcon,
-    variant: 'destructive' as const,
-    className: 'text-red-600',
+    variant: 'outline' as const,
+    className: 'text-destructive border-destructive',
   },
   archive: {
     icon: ArchiveIcon,
-    variant: 'destructive' as const,
-    className: 'text-yellow-600',
+    variant: 'outline' as const,
+    className: 'text-destructive border-destructive',
   },
   login: {
     icon: LogInIcon,
