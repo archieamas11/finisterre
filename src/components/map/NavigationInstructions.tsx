@@ -93,7 +93,6 @@ export default function NavigationInstructions({
 
   const { isEnabled, toggle, speak, canUseTts, stop } = useVoiceGuidance()
 
-  // Speak the current maneuver when it changes and navigation is active.
   React.useEffect(() => {
     if (!isNavigating || !currentManeuver) return
     const text = currentManeuver.instruction || ''
@@ -103,7 +102,6 @@ export default function NavigationInstructions({
     }
   }, [currentManeuver, isNavigating, speak, stop])
 
-  // Stop TTS when navigation ends or on component unmount.
   React.useEffect(() => {
     if (!isNavigating) stop()
     return () => stop()
@@ -123,7 +121,7 @@ export default function NavigationInstructions({
         >
           <Card
             className={cn(
-              'rounded-t-3xl rounded-bl-none border shadow-lg sm:rounded-lg',
+              'rounded-t-3xl rounded-bl-none shadow-lg sm:rounded-lg',
               'bg-background/90 supports-[backdrop-filter]:bg-background/60 backdrop-blur',
             )}
           >

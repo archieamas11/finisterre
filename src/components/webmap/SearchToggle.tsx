@@ -63,7 +63,7 @@ export default function SearchToggle({ context, className }: SearchToggleProps) 
           <form onSubmit={handleSearchSubmit} className="flex w-full gap-1" role="search" aria-label="Lot search">
             <div className="relative flex-1">
               <Input
-                className="peer dark:bg-background h-9 w-full rounded-full bg-white ps-9 pe-10 text-xs md:h-10 md:text-sm"
+                className="peer bg-background dark:bg-background text-background-foreground dark:text-background-foreground h-9 w-full rounded-full border-none ps-9 pe-10 text-xs md:h-10 md:text-sm"
                 placeholder="Search lot..."
                 value={context.searchQuery}
                 onChange={(e) => context.setSearchQuery(e.target.value)}
@@ -72,13 +72,13 @@ export default function SearchToggle({ context, className }: SearchToggleProps) 
                 aria-label="Search lot"
               />
 
-              <div className="text-muted-foreground/80 pointer-events-none absolute inset-y-0 start-0 flex items-center justify-center ps-3 peer-disabled:opacity-50">
+              <div className="text-background-foreground pointer-events-none absolute inset-y-0 start-0 flex items-center justify-center ps-3 peer-disabled:opacity-50">
                 <SearchIcon size={16} />
               </div>
 
               {context.searchQuery.trim() ? (
                 <button
-                  className="text-muted-foreground/80 hover:text-foreground focus-visible:border-ring focus-visible:ring-ring/50 absolute inset-y-0 end-0 flex h-full w-10 items-center justify-center rounded-e-full transition-[color,box-shadow] outline-none focus:z-10 focus-visible:ring-[3px] disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50"
+                  className="text-background-foreground hover:text-foreground focus-visible:border-ring focus-visible:ring-ring/50 absolute inset-y-0 end-0 flex h-full w-10 items-center justify-center rounded-e-full transition-[color,box-shadow] outline-none focus:z-10 focus-visible:ring-[3px] disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50"
                   aria-label="Clear search"
                   type="button"
                   onClick={handleClearSearch}
@@ -87,7 +87,7 @@ export default function SearchToggle({ context, className }: SearchToggleProps) 
                 </button>
               ) : (
                 <button
-                  className="text-muted-foreground/80 hover:text-foreground focus-visible:border-ring focus-visible:ring-ring/50 absolute inset-y-0 end-0 flex h-full w-10 items-center justify-center rounded-e-full transition-[color,box-shadow] outline-none focus:z-10 focus-visible:ring-[3px] disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50"
+                  className="text-background-foreground hover:text-foreground focus-visible:border-ring focus-visible:ring-ring/50 absolute inset-y-0 end-0 flex h-full w-10 items-center justify-center rounded-e-full transition-[color,box-shadow] outline-none focus:z-10 focus-visible:ring-[3px] disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50"
                   aria-label="Submit search"
                   type="submit"
                 >

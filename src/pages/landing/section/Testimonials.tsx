@@ -24,7 +24,7 @@ export function TestimonialCard({ description, name, img, role, className, ...pr
   return (
     <figure
       className={cn(
-        'relative h-full w-full transform-gpu cursor-pointer break-inside-avoid-page overflow-hidden rounded-xl border bg-white p-6 text-black shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-lg',
+        'relative h-full w-full transform-gpu cursor-pointer break-inside-avoid-page overflow-hidden rounded-xl bg-white p-6 text-black shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-lg',
         className,
       )}
       {...props}

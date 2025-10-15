@@ -37,7 +37,6 @@ interface ColumbariumPopupProps {
 }
 
 export default function ColumbariumPopup({ marker, onDirectionClick, isDirectionLoading = false, highlightedNiche }: ColumbariumPopupProps) {
-  // Keep customers in cache fresh for the selector
   useCustomers()
   const [selectedNiche, setSelectedNiche] = useState<nicheData | null>(null)
   const [isDetailOpen, setIsDetailOpen] = useState(false)
@@ -48,8 +47,6 @@ export default function ColumbariumPopup({ marker, onDirectionClick, isDirection
   const cols = parseInt(marker.columns)
   const queryClient = useQueryClient()
   const createLotOwnerMutation = useCreateLotOwner()
-
-  // Highlighting relies on prop passed from map layout when navigating from search
 
   const handleCancelReservation = () => {
     console.log('Reservation cancelled')
@@ -93,7 +90,6 @@ export default function ColumbariumPopup({ marker, onDirectionClick, isDirection
     setIsSaving(false)
   }
 
-  // 🔄 Fetch niche data using React Query
   const { error, isLoading, refetch, data: nicheData = [] } = useNichesByPlot(marker.plot_id, rows, cols)
 
   const handleNicheClick = (niche: nicheData) => {
@@ -131,12 +127,12 @@ export default function ColumbariumPopup({ marker, onDirectionClick, isDirection
 
   return (
     <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3 }} className="w-full">
-      <div className="bg-background dark:bg-muted mb-2 flex h-full items-center justify-between rounded-lg border p-3">
+      <div className="bg-background mb-2 flex h-full items-center justify-between rounded-lg border p-3">
         <div>
           <h3 className="text-accent-foreground flex items-center gap-2 text-lg font-bold">
             <ImLibrary /> {ucwords(marker.category)} {marker.plot_id}
           </h3>
-          <div className="text-secondary-foreground flex gap-2 text-sm">
+          <div className="text-foreground/80 flex gap-2 text-sm">
             <span>
               <span className="font-medium">Rows:</span> {marker.columns}
             </span>
@@ -148,7 +144,6 @@ export default function ColumbariumPopup({ marker, onDirectionClick, isDirection
             </span>
           </div>
         </div>
-        {/* Only show directions button if NOT admin */}
         {getRole() !== 'admin' && (
           <div className="flex gap-2">
             <GetDirectionButton
@@ -168,16 +163,15 @@ export default function ColumbariumPopup({ marker, onDirectionClick, isDirection
           </div>
         )}
       </div>
-      {/* 🔢 Grid layout for niches */}
       <div className="mb-2">
-        <h4 className="text-secondary-foreground bg-background dark:bg-muted mb-2 rounded-lg border p-3 text-sm font-medium">Niche Layout:</h4>
+        <h4 className="text-foreground bg-background mb-2 rounded-lg border p-3 text-sm font-medium">Niche Layout:</h4>
         <div
           style={{
             fontSize: '20px',
             scrollbarWidth: 'thin',
             gridTemplateColumns: `repeat(${Math.min(cols, 10)}, minmax(0, 1fr))`,
           }}
-          className="bg-background dark:bg-muted grid w-full gap-1 rounded-lg border p-2"
+          className="bg-background grid w-full gap-1 rounded-lg border p-2"
         >
           {nicheData.map((niche, index) => {
             const isHighlighted = (highlightedNiche ?? null) === String(niche.niche_number)
@@ -203,26 +197,24 @@ export default function ColumbariumPopup({ marker, onDirectionClick, isDirection
         </div>
       </div>
 
-      {/* 🎨 Legend */}
-      <div className="bg-background dark:bg-muted mb-3 rounded-lg border p-3">
+      <div className="bg-background mb-3 rounded-lg border p-3">
         <div className="mb-3">
           <div className="flex gap-4 text-xs">
             <div className="flex items-center gap-1">
               <div className="h-3 w-3 rounded border border-green-300 bg-green-100"></div>
-              <span className="text-secondary-foreground">Available</span>
+              <span className="text-foreground/80">Available</span>
             </div>
             <div className="flex items-center gap-1">
               <div className="h-3 w-3 rounded border border-yellow-300 bg-yellow-100"></div>
-              <span className="text-secondary-foreground">Reserved</span>
+              <span className="text-foreground/80">Reserved</span>
             </div>
             <div className="flex items-center gap-1">
               <div className="h-3 w-3 rounded border border-red-300 bg-red-100"></div>
-              <span className="text-secondary-foreground">Occupied</span>
+              <span className="text-foreground/80">Occupied</span>
             </div>
           </div>
         </div>
 
-        {/* 📊 Summary stats */}
         <div className="grid grid-cols-3 gap-2 text-xs">
           <div className="rounded bg-green-50 p-2 text-center dark:bg-green-200">
             <div className="font-semibold text-green-700">{nicheData.filter((n) => n.niche_status === 'available').length}</div>
@@ -239,7 +231,6 @@ export default function ColumbariumPopup({ marker, onDirectionClick, isDirection
         </div>
       </div>
 
-      {/* 🔍 Niche Detail Dialog */}
       <Dialog
         open={isDetailOpen}
         onOpenChange={(open) => {
@@ -255,12 +246,10 @@ export default function ColumbariumPopup({ marker, onDirectionClick, isDirection
               <Crown className="h-5 w-5 text-purple-600" />
               Chamber {marker.plot_id}
             </DialogTitle>
-            {/* ✅ Proper location for description */}
             <DialogDescription className="sr-only">Details and actions for the selected chambers niche.</DialogDescription>
           </DialogHeader>
           {selectedNiche && (
             <div className="space-y-4">
-              {/* Status Badge */}
               <div className="flex items-center gap-2">
                 <Badge className={getStatusBadgeVariant(selectedNiche.niche_status)}>{selectedNiche.niche_status.toUpperCase()}</Badge>
                 <span className="text-sm text-gray-600">
@@ -268,7 +257,6 @@ export default function ColumbariumPopup({ marker, onDirectionClick, isDirection
                 </span>
               </div>
 
-              {/* Owner Information */}
               {selectedNiche.owner && (
                 <Card>
                   <CardHeader className="pb-3">
@@ -304,7 +292,6 @@ export default function ColumbariumPopup({ marker, onDirectionClick, isDirection
                 </Card>
               )}
 
-              {/* Action buttons for reserved niches */}
               {selectedNiche.niche_status === 'reserved' && (
                 <div className="flex gap-2">
                   <CreateDeceased
@@ -316,7 +303,6 @@ export default function ColumbariumPopup({ marker, onDirectionClick, isDirection
                 </div>
               )}
 
-              {/* Deceased Information */}
               {selectedNiche.deceased && (
                 <Card>
                   <CardHeader className="pb-3">
@@ -358,7 +344,6 @@ export default function ColumbariumPopup({ marker, onDirectionClick, isDirection
 
               {selectedNiche.niche_status === 'available' && (
                 <>
-                  {/* Available niche message */}
                   <Card className="border-green-200 bg-green-50">
                     <CardContent>
                       <div className="flex items-center justify-center gap-2 text-center text-sm text-green-800">
@@ -367,7 +352,6 @@ export default function ColumbariumPopup({ marker, onDirectionClick, isDirection
                     </CardContent>
                   </Card>
 
-                  {/* Action buttons for available niches */}
                   {!showCustomerCombo && (
                     <div className="flex gap-2">
                       <Button onClick={() => setShowCustomerCombo(true)} className="flex-1" size="sm">
@@ -376,7 +360,6 @@ export default function ColumbariumPopup({ marker, onDirectionClick, isDirection
                     </div>
                   )}
 
-                  {/* Customer combobox shown when Reserve is clicked */}
                   {showCustomerCombo && (
                     <CustomerSelectForm
                       title="Select Customer for Reservation"
@@ -397,7 +380,6 @@ export default function ColumbariumPopup({ marker, onDirectionClick, isDirection
   )
 }
 
-// 🎨 Get status styling for niche grid items
 const getNicheStatusStyle = (status: nicheData['niche_status']) => {
   switch (status) {
     case 'available':
@@ -411,7 +393,6 @@ const getNicheStatusStyle = (status: nicheData['niche_status']) => {
   }
 }
 
-// 🎯 Get status badge styling
 const getStatusBadgeVariant = (status: nicheData['niche_status']) => {
   switch (status) {
     case 'available':

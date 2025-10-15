@@ -63,7 +63,11 @@ export default function WebMapControlsRow({ context, onBack, onLegendClick }: We
             </button>
           ) : (
             <Link to="/" className="shrink-0">
-              <Button variant="secondary" size="sm" className="bg-background no-long-press touch-manipulation rounded-full text-xs sm:text-sm">
+              <Button
+                variant="secondary"
+                size="sm"
+                className="bg-background no-long-press text-background-foreground hover:bg-background/80 touch-manipulation rounded-full text-xs sm:text-sm"
+              >
                 <Home className="text-accent-foreground h-3 w-3 sm:h-4 sm:w-4" />
                 <span>Home</span>
               </Button>
@@ -84,7 +88,7 @@ export default function WebMapControlsRow({ context, onBack, onLegendClick }: We
         <Button
           variant="secondary"
           size="sm"
-          className="bg-background no-long-press shrink-0 touch-manipulation rounded-full text-xs sm:text-sm"
+          className="bg-background no-long-press text-background-foreground hover:bg-background/80 shrink-0 touch-manipulation rounded-full text-xs sm:text-sm"
           onClick={handleMyPlotsClick}
           aria-label="My Plots"
         >
@@ -92,9 +96,7 @@ export default function WebMapControlsRow({ context, onBack, onLegendClick }: We
           <span>My Plots</span>
         </Button>
       )}
-
       {context && 'selectedGroups' in context && <ClusterFilterDropdown context={context as WebMapContext} />}
-
       {context && 'clusterViewMode' in context && (context as WebMapContext).clusterViewMode !== 'all' && (
         <>
           {isNativePlatform() ? (
@@ -118,7 +120,7 @@ export default function WebMapControlsRow({ context, onBack, onLegendClick }: We
             <Button
               variant="secondary"
               size="sm"
-              className="bg-background no-long-press shrink-0 touch-manipulation rounded-full"
+              className="bg-background no-long-press text-background-foreground hover:bg-background/80 shrink-0 touch-manipulation rounded-full"
               onClick={() => {
                 if (context && 'clearSearch' in context && 'resetGroupSelection' in context) {
                   const webMapCtx = context as WebMapContext
@@ -142,7 +144,7 @@ export default function WebMapControlsRow({ context, onBack, onLegendClick }: We
         <Button
           variant="secondary"
           size="sm"
-          className="bg-background no-long-press shrink-0 touch-manipulation rounded-full text-xs sm:text-sm"
+          className="bg-background no-long-press text-background-foreground hover:bg-background/80 shrink-0 touch-manipulation rounded-full text-xs sm:text-sm"
           onClick={() => context?.requestLocate()}
           aria-label="Locate me"
         >
@@ -167,7 +169,7 @@ export default function WebMapControlsRow({ context, onBack, onLegendClick }: We
             <Button
               variant="secondary"
               size="sm"
-              className="bg-background no-long-press shrink-0 touch-manipulation rounded-full text-xs sm:text-sm lg:hidden"
+              className="bg-background no-long-press text-background-foreground hover:bg-background/80 shrink-0 touch-manipulation rounded-full text-xs sm:text-sm lg:hidden"
               onClick={onLegendClick}
               aria-label="Show legend"
             >

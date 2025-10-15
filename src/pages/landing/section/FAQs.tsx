@@ -65,7 +65,7 @@ export default function FAQs() {
           <div className="lg:col-span-2">
             <Accordion type="single" collapsible className="w-full space-y-4">
               {faqItems.map((item) => (
-                <AccordionItem key={item.id} value={item.id} className="border-border/70 rounded-lg border bg-white/60 shadow-sm">
+                <AccordionItem key={item.id} value={item.id} className="rounded-lg border-none bg-white/60 shadow-sm">
                   <AccordionTrigger className="flex w-full items-center justify-between p-6 font-medium hover:no-underline">
                     <span className="text-left text-lg text-gray-700">{item.question}</span>
                   </AccordionTrigger>

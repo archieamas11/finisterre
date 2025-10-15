@@ -126,7 +126,7 @@ export default function ContactUs() {
                             <FormLabel className="text-gray-600">First name</FormLabel>
                             <FormControl>
                               <Input
-                                className="border border-gray-400 text-gray-600"
+                                className="border border-gray-400 text-gray-600 dark:bg-transparent"
                                 placeholder="Enter your first name"
                                 autoComplete="given-name"
                                 {...field}
@@ -144,7 +144,7 @@ export default function ContactUs() {
                             <FormLabel className="text-gray-600">Last name</FormLabel>
                             <FormControl>
                               <Input
-                                className="border border-gray-400 text-gray-600"
+                                className="border border-gray-400 text-gray-600 dark:bg-transparent"
                                 placeholder="Enter your last name"
                                 autoComplete="family-name"
                                 {...field}
@@ -163,7 +163,7 @@ export default function ContactUs() {
                           <FormLabel className="text-gray-600">Email</FormLabel>
                           <FormControl>
                             <Input
-                              className="border border-gray-400 text-gray-600"
+                              className="border border-gray-400 text-gray-600 dark:bg-transparent"
                               placeholder="Enter your email"
                               type="email"
                               autoComplete="email"
@@ -183,7 +183,7 @@ export default function ContactUs() {
                           <FormLabel className="text-gray-600">Phone number (optional)</FormLabel>
                           <FormControl>
                             <Input
-                              className="border border-gray-400 text-gray-600"
+                              className="border border-gray-400 dark:bg-transparent dark:text-gray-500"
                               placeholder="e.g. +63 912 345 6789"
                               type="tel"
                               inputMode="tel"
@@ -202,7 +202,7 @@ export default function ContactUs() {
                           <FormLabel className="text-gray-600">Subject</FormLabel>
                           <Select onValueChange={field.onChange} defaultValue={field.value}>
                             <FormControl>
-                              <SelectTrigger className="w-full border border-gray-400 text-gray-600">
+                              <SelectTrigger className="w-full border border-gray-400 dark:bg-transparent dark:text-gray-500 dark:hover:bg-white/50">
                                 <SelectValue placeholder="Select a subject" />
                               </SelectTrigger>
                             </FormControl>
@@ -228,7 +228,7 @@ export default function ContactUs() {
                           <FormControl>
                             <Textarea
                               placeholder="Please share how we can help you..."
-                              className="resize-none border border-gray-400 text-gray-600"
+                              className="resize-none border border-gray-400 dark:bg-transparent dark:text-gray-500 dark:hover:bg-white/50"
                               {...field}
                             />
                           </FormControl>

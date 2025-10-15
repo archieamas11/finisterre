@@ -86,7 +86,11 @@ export default function ClusterFilterDropdown({ context, className }: ClusterFil
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="secondary" size="sm" className={`bg-background shrink-0 rounded-full text-xs sm:text-sm ${className || ''}`}>
+        <Button
+          variant="secondary"
+          size="sm"
+          className={`bg-background text-background-foreground hover:bg-background/80 shrink-0 rounded-full text-xs sm:text-sm ${className || ''}`}
+        >
           <Filter className="text-accent-foreground h-3 w-3 sm:h-4 sm:w-4" />
           <span>Filter</span>
         </Button>

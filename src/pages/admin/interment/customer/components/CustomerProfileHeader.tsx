@@ -12,7 +12,7 @@ interface CustomerProfileHeaderProps {
 
 export function CustomerProfileHeader({ customer, onEditClick, onPrintClick }: CustomerProfileHeaderProps) {
   return (
-    <div className="bg-primary/5 relative flex flex-col items-center pt-12 pb-6">
+    <div className="bg-card relative flex flex-col items-center pt-12 pb-6">
       {/* Action Buttons */}
       <div className="absolute top-2 left-2 flex gap-2">
         <Button aria-label="Edit customer" size="icon" variant="ghost" className="gap-1" onClick={onEditClick}>

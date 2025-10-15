@@ -29,14 +29,14 @@ export default function PlotLocations({ marker, backgroundColor, onDirectionClic
   return (
     <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3 }} className="mt-5">
       <div className="bg-background dark:bg-muted rounded-t-lg p-3 transition-colors" style={backgroundColor ? { background: backgroundColor } : {}}>
-        <CardDescription className="text-primary-background">Finisterre</CardDescription>
-        <CardTitle className="text-primary-background">Plot Information</CardTitle>
+        <CardDescription className="text-primary-background font-medium">Finisterre</CardDescription>
+        <CardTitle className="text-primary-background font-bold">Plot Information</CardTitle>
       </div>
-      <div className="bg-accent/60 dark:bg-accent/80 mb-3 rounded-b-lg p-2 transition-colors">
+      <div className="bg-accent mb-3 rounded-b-lg p-2 transition-colors">
         <div className="flex items-center justify-between gap-1">
           <div className="flex items-center gap-1">
-            <MapPin className="text-primary/80 dark:text-primary" size={16} />
-            <span className="text-foreground text-sm leading-none font-medium">{marker.location}</span>
+            <MapPin className="text-accent-foreground" size={16} />
+            <span className="text-accent-foreground text-sm leading-none font-medium">{marker.location}</span>
           </div>
           <div className="flex gap-2">
             <GetDirectionButton
@@ -56,11 +56,10 @@ export default function PlotLocations({ marker, backgroundColor, onDirectionClic
         </div>
       </div>
 
-      {/* Deceased Information */}
       {isAuthenticated && deceasedData && deceasedData.length > 0 && (
-        <div className="bg-accent/40 dark:bg-accent/60 mb-3 rounded-lg p-3 shadow-sm transition-colors">
+        <div className="bg-accent mb-3 rounded-lg p-3 shadow-sm transition-colors">
           <div className="mb-3 flex items-center gap-2">
-            <BsPersonHeart className="text-primary/80 dark:text-primary" size={18} />
+            <BsPersonHeart className="text-accent-foreground" size={18} />
             <span className="text-foreground text-sm font-semibold">Deceased Information</span>
           </div>
           {isDeceasedLoading ? (
@@ -70,7 +69,7 @@ export default function PlotLocations({ marker, backgroundColor, onDirectionClic
           ) : (
             <div className="space-y-3">
               {deceasedData.map((deceased: DeceasedData) => (
-                <div key={deceased.deceased_id} className="bg-background/70 dark:bg-background/50 border-border/50 rounded-lg border p-3">
+                <div key={deceased.deceased_id} className="border-accent-foreground border-b p-3 last:border-0">
                   <div className="text-foreground mb-2 flex items-center gap-2 text-sm font-semibold">
                     <BsPersonHeart size={14} className="text-muted-foreground" />
                     {deceased.dead_fullname}
@@ -96,8 +95,7 @@ export default function PlotLocations({ marker, backgroundColor, onDirectionClic
         </div>
       )}
 
-      {/* Plot Status */}
-      <div className="bg-accent/40 dark:bg-accent/60 mb-3 flex items-center justify-between gap-2 rounded-lg p-2 shadow-sm transition-colors">
+      <div className="bg-accent mb-3 flex items-center justify-between gap-2 rounded-lg p-2 shadow-sm transition-colors">
         <div className="flex items-center gap-1">
           <Info className="text-primary/80 dark:text-primary leading-none" size={16} />
           <span className="text-foreground text-sm leading-none">Plot Status</span>
@@ -110,7 +108,6 @@ export default function PlotLocations({ marker, backgroundColor, onDirectionClic
             marker.plotStatus !== 'reserved' && marker.plotStatus !== 'occupied' && 'bg-green-100 text-green-800',
           )}
         >
-          {/* 🟢 Show only the relevant icon for each plotStatus */}
           {marker.plotStatus === 'reserved' && <FaHourglassStart size={10} />}
           {marker.plotStatus === 'occupied' && <BiXCircle size={14} />}
           {marker.plotStatus === 'available' && <BiCheckCircle size={14} />}
@@ -118,12 +115,11 @@ export default function PlotLocations({ marker, backgroundColor, onDirectionClic
           <span className="text-xs capitalize">{marker.plotStatus}</span>
         </div>
       </div>
-      {/* Plot Dimension */}
       <div className="mb-3 flex gap-2">
-        <div className="bg-accent/40 dark:bg-accent/60 flex-1 rounded-lg p-2 shadow-sm transition-colors">
-          <div className="mb-1 flex items-center gap-1">
-            <Ruler className="text-blue-600 dark:text-blue-300" size={16} />
-            <span className="text-xs font-semibold text-blue-700 dark:text-blue-200">Dimension</span>
+        <div className="bg-accent flex-1 rounded-lg p-2 shadow-sm transition-colors">
+          <div className="text-accent-foreground mb-1 flex items-center gap-1">
+            <Ruler size={16} />
+            <span className="text-xs font-semibold">Dimension</span>
           </div>
           <div className="flex flex-col items-center">
             <div className="text-foreground text-xs font-bold">
@@ -132,7 +128,7 @@ export default function PlotLocations({ marker, backgroundColor, onDirectionClic
             <span className="text-muted-foreground text-xs">{marker.dimensions.area.toLocaleString()} m²</span>
           </div>
         </div>
-        <div className="bg-accent/40 dark:bg-accent/60 flex-1 rounded-lg p-2 shadow-sm transition-colors">
+        <div className="bg-accent flex-1 rounded-lg p-2 shadow-sm transition-colors">
           <div className="mb-1 flex items-center gap-1">
             <Info className="text-primary/80 dark:text-primary" size={16} />
             <span className="text-foreground text-xs font-semibold">Details</span>
