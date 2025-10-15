@@ -451,8 +451,13 @@ button {
   bottom: 12px !important;
   right: auto !important;
   z-index: 9999 !important;
-  transform: scale(1);
   transition: all 0.3s ease;
+  transform: scale(0.9);
+  transform-origin: 0 100%;
+}
+
+.grecaptcha-badge:hover {
+  transform: scale(1);
 }
 
 @media (max-width: 480px) {
