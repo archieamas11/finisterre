@@ -446,6 +446,18 @@ button {
 }
 
 .grecaptcha-badge {
-  bottom: 20px !important;
-  left: 20px !important;
+  position: fixed !important;
+  left: 12px !important;
+  bottom: 12px !important;
+  right: auto !important;
+  z-index: 9999 !important;
+  transform: scale(1);
+  transition: all 0.3s ease;
+}
+
+@media (max-width: 480px) {
+  .grecaptcha-badge {
+    left: 8px !important;
+    bottom: 8px !important;
+  }
 }
