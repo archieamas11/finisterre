@@ -120,8 +120,21 @@ export default function Footer() {
           </div>
         </div>
         <div className="border-border/50 mt-16 border-t pt-8 sm:mt-20 lg:mt-24">
-          <div className="sm:flex sm:items-center sm:justify-between">
-            <p className="text-sm leading-5 text-gray-500">&copy; {new Date().getFullYear()} Finisterre. All rights reserved.</p>
+          <div className="space-y-4">
+            <div className="sm:flex sm:items-center sm:justify-between">
+              <p className="text-sm leading-5 text-gray-500">&copy; {new Date().getFullYear()} Finisterre. All rights reserved.</p>
+            </div>
+            <p className="text-xs leading-5 text-gray-500">
+              This site is protected by reCAPTCHA and subject to the{' '}
+              <a href="https://policies.google.com/privacy" target="_blank" rel="noopener noreferrer" className="underline hover:text-gray-700">
+                Privacy Policy
+              </a>{' '}
+              and{' '}
+              <a href="https://policies.google.com/terms" target="_blank" rel="noopener noreferrer" className="underline hover:text-gray-700">
+                Terms of Service
+              </a>{' '}
+              apply.
+            </p>
           </div>
         </div>
       </div>
