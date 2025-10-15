@@ -117,15 +117,13 @@ export default function Chatbot() {
     }
     load()
 
-    // initialize index status from session and trigger auto-build if needed
+    // initialize index status from session - DO NOT auto-build to avoid loading reCAPTCHA on every page
     try {
       const built = sessionStorage.getItem(INDEX_BUILT_KEY)
       if (built) {
         setIndexStatus('built')
-      } else {
-        // fire-and-forget build without blocking other interactions
-        void buildIndex()
       }
+      // Index will be built on-demand when user sends first message
     } catch {
       // ignore storage access errors
     }
@@ -243,10 +241,14 @@ export default function Chatbot() {
     }
   }
 
-  // Accept an optional custom prompt (used by clicking suggested questions)
   const sendMsg = async (customPrompt?: string) => {
     const finalPrompt = (customPrompt ?? input).trim()
     if (!finalPrompt || busy) return
+
+    // Build index on first interaction (lazy load to avoid loading reCAPTCHA on page load)
+    if (indexStatus === 'idle') {
+      void buildIndex()
+    }
 
     const userMsg: Message = { sender: 'user', text: finalPrompt }
     setMessages((prev) => [...prev, userMsg])
@@ -255,7 +257,6 @@ export default function Chatbot() {
     if (!customPrompt) setInput('')
 
     setBusy(true)
-    // Add thinking indicator
     setMessages((prev) => [...prev, { sender: 'bot', text: 'Thinking...', isTyping: true }])
     try {
       let recaptchaToken: string | undefined
@@ -282,7 +283,6 @@ export default function Chatbot() {
         text: botReply,
         sources: data.sources,
       }
-      // Replace typing message with actual response
       setMessages((prev) => {
         const newMsgs = [...prev]
         const last = newMsgs[newMsgs.length - 1]
@@ -298,7 +298,6 @@ export default function Chatbot() {
         sender: 'system',
         text: `Error: ${getErrorMessage(e)}`,
       }
-      // Replace typing message with error
       setMessages((prev) => {
         const newMsgs = [...prev]
         const last = newMsgs[newMsgs.length - 1]
@@ -336,12 +335,10 @@ export default function Chatbot() {
     }
   }
 
-  // Intro hero-like content when no messages yet
   const showIntro = messages.length === 0
 
   return (
     <div className="flex h-full flex-col overflow-hidden rounded-none border-0 shadow-sm">
-      {/* Inline styles for typing animation to keep change local */}
       <style>{`
         .typing-dots{display:inline-flex;gap:4px;align-items:center}
         .typing-dots span{width:8px;height:8px;border-radius:50%;background:rgba(0,0,0,0.45);opacity:0.4;display:inline-block}
@@ -358,7 +355,6 @@ export default function Chatbot() {
       <CardHeader className="flex flex-col gap-3 border-b px-4 py-3 backdrop-blur sm:flex-row sm:items-center sm:justify-between sm:px-6 sm:py-4">
         <CardTitle className="text-lg font-semibold">Finisbot</CardTitle>
         <div className="flex items-center gap-2">
-          {/* Index status indicator */}
           <div
             className="text-muted-foreground flex items-center gap-2 rounded-md px-2 py-1 text-xs"
             title={indexStatus === 'building' ? 'Building index' : indexStatus === 'built' ? 'Index ready' : 'Index not built'}
@@ -393,7 +389,6 @@ export default function Chatbot() {
         <div ref={scrollerRef} className="scrollbar-hide flex-1 overflow-y-auto px-4 py-4 sm:px-6">
           {showIntro && (
             <div className="mx-auto flex max-w-lg flex-col items-center py-8 text-center sm:py-4">
-              {/* Logo/Avatar placeholder */}
               <div className="bg-primary/10 mb-6 flex h-20 w-20 items-center justify-center rounded-full p-3">
                 <img src="/favicon-96x96.png" alt="Finisbot" className="h-full w-full object-contain" />
               </div>

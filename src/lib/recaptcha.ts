@@ -47,6 +47,12 @@ function loadRecaptcha(siteKey: string): Promise<void> {
 }
 
 export async function executeRecaptcha(action: string): Promise<string> {
+  // Skip reCAPTCHA in development mode
+  if (import.meta.env.DEV) {
+    console.log(`[DEV] Skipping reCAPTCHA for action: ${action}`)
+    return 'dev-mode-token'
+  }
+
   const siteKey = import.meta.env?.VITE_RECAPTCHA_SITE_KEY
   if (!siteKey) throw new Error('reCAPTCHA site key is not configured')
 
@@ -61,5 +67,8 @@ export async function executeRecaptcha(action: string): Promise<string> {
 }
 
 export function isRecaptchaConfigured(): boolean {
+  if (import.meta.env.DEV) {
+    return true
+  }
   return Boolean(import.meta.env?.VITE_RECAPTCHA_SITE_KEY)
 }

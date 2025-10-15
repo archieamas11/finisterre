@@ -93,7 +93,7 @@ export default function UserDashboard({ onPlotNavigate }: UserDashboardProps) {
   return (
     <div className="px-4 py-8 md:py-8 lg:container lg:mx-auto lg:max-w-7xl lg:px-4 lg:py-8">
       {!isNativePlatform() && (
-        <div className="group">
+        <div className="group z-999">
           <div className="fixed right-22 bottom-9 z-999">
             <span className="rounded-full bg-white px-4 py-2 text-[var(--brand-primary)] shadow-lg transition-opacity duration-300 group-hover:opacity-0">
               Chat with Finisbot!
