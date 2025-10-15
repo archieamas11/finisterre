@@ -245,11 +245,6 @@ export default function Chatbot() {
     const finalPrompt = (customPrompt ?? input).trim()
     if (!finalPrompt || busy) return
 
-    // Build index on first interaction (lazy load to avoid loading reCAPTCHA on page load)
-    if (indexStatus === 'idle') {
-      void buildIndex()
-    }
-
     const userMsg: Message = { sender: 'user', text: finalPrompt }
     setMessages((prev) => [...prev, userMsg])
 
@@ -272,7 +267,10 @@ export default function Chatbot() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ prompt: finalPrompt, recaptcha_token: recaptchaToken }),
       })
-      if (!res.ok) throw new Error(`HTTP ${res.status}`)
+      if (!res.ok) {
+        const errorData = await res.json().catch(() => ({ error: 'Unknown error' }))
+        throw new Error(`HTTP ${res.status}: ${errorData.error || 'Unknown error'}`)
+      }
       const data = (await res.json()) as {
         response?: string
         sources?: Source[]
@@ -293,6 +291,11 @@ export default function Chatbot() {
         }
         return newMsgs
       })
+
+      // Build index after successful chat (lazy load to avoid loading reCAPTCHA on page load)
+      if (indexStatus === 'idle') {
+        void buildIndex()
+      }
     } catch (e) {
       const errorMsg: Message = {
         sender: 'system',

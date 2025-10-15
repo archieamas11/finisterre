@@ -17,7 +17,6 @@ import { AnnouncementCard } from './components/AnnouncementCard'
 import { MemorialProperties } from './components/MemorialProperties'
 import { PromotionalBanner } from './components/PromotionalBanner'
 import { StatCard } from './components/StatCard'
-import { Tooltip, TooltipTrigger, TooltipContent } from '@/components/ui/tooltip'
 import { Sheet, SheetTrigger, SheetContent } from '@/components/ui/sheet'
 import { PulsatingButton } from '@/components/pulsating-button'
 import Chatbot from '../landing/section/chatbot/Chatbot'
@@ -94,27 +93,22 @@ export default function UserDashboard({ onPlotNavigate }: UserDashboardProps) {
     <div className="px-4 py-8 md:py-8 lg:container lg:mx-auto lg:max-w-7xl lg:px-4 lg:py-8">
       {!isNativePlatform() && (
         <div className="group z-999">
-          <div className="fixed right-22 bottom-9 z-999">
+          <div className="fixed right-22 bottom-30 z-999">
             <span className="rounded-full bg-white px-4 py-2 text-[var(--brand-primary)] shadow-lg transition-opacity duration-300 group-hover:opacity-0">
               Chat with Finisbot!
             </span>
           </div>
-          <div className="fixed right-4 bottom-4 z-999">
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Sheet>
-                  <SheetTrigger asChild>
-                    <PulsatingButton className="h-15 w-15 rounded-full bg-[var(--brand-primary)] shadow-lg">
-                      <BotIcon className="text-white" />
-                    </PulsatingButton>
-                  </SheetTrigger>
-                  <SheetContent forceMount showClose={false} className="rounded-none border-none">
-                    <Chatbot />
-                  </SheetContent>
-                </Sheet>
-              </TooltipTrigger>
-              <TooltipContent>Finisbot Chabot</TooltipContent>
-            </Tooltip>
+          <div className="fixed right-4 bottom-25 z-999">
+            <Sheet>
+              <SheetTrigger asChild>
+                <PulsatingButton className="h-15 w-15 rounded-full bg-[var(--brand-primary)] shadow-lg">
+                  <BotIcon className="text-white" />
+                </PulsatingButton>
+              </SheetTrigger>
+              <SheetContent forceMount showClose={false} className="rounded-none border-none">
+                <Chatbot />
+              </SheetContent>
+            </Sheet>
           </div>
         </div>
       )}
