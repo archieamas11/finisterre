@@ -446,5 +446,6 @@ button {
 }
 
 .grecaptcha-badge {
-  z-index: 9999;
+  bottom: 20px !important;
+  left: 20px !important;
 }

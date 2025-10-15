@@ -117,13 +117,15 @@ export default function Chatbot() {
     }
     load()
 
-    // initialize index status from session - DO NOT auto-build to avoid loading reCAPTCHA on every page
+    // initialize index status from session and start building when chat opens
     try {
       const built = sessionStorage.getItem(INDEX_BUILT_KEY)
       if (built) {
         setIndexStatus('built')
+      } else {
+        // Start building index when user opens the chat (lazy load but proactive)
+        void buildIndex()
       }
-      // Index will be built on-demand when user sends first message
     } catch {
       // ignore storage access errors
     }
@@ -291,11 +293,6 @@ export default function Chatbot() {
         }
         return newMsgs
       })
-
-      // Build index after successful chat (lazy load to avoid loading reCAPTCHA on page load)
-      if (indexStatus === 'idle') {
-        void buildIndex()
-      }
     } catch (e) {
       const errorMsg: Message = {
         sender: 'system',
