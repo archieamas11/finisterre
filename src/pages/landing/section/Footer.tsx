@@ -125,7 +125,7 @@ export default function Footer() {
               <p className="text-sm leading-5 text-gray-500">&copy; {new Date().getFullYear()} Finisterre. All rights reserved.</p>
             </div>
             <p className="text-xs leading-5 text-gray-500">
-              This site is protected by reCAPTCHA and subject to the{' '}
+              This site is protected by reCAPTCHA and the Google{' '}
               <a href="https://policies.google.com/privacy" target="_blank" rel="noopener noreferrer" className="underline hover:text-gray-700">
                 Privacy Policy
               </a>{' '}

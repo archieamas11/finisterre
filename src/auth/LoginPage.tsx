@@ -262,7 +262,7 @@ export default function LoginPage() {
               </Button>
             </div>
             <p className="text-muted-foreground mt-4 text-center text-xs">
-              This site is protected by reCAPTCHA and subject to the{' '}
+              This site is protected by reCAPTCHA and the Google{' '}
               <a href="https://policies.google.com/privacy" target="_blank" rel="noopener noreferrer" className="underline hover:opacity-80">
                 Privacy Policy
               </a>{' '}
