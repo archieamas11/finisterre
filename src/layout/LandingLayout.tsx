@@ -11,17 +11,17 @@ import Footer from '@/pages/landing/section/Footer'
 import FeatureSection from '@/pages/landing/section/FeatureSection'
 import Testimonials from '@/pages/landing/section/Testimonials'
 import ContactUs from '@/pages/landing/section/ContactUs'
-import Products from '@/pages/landing/section/Products'
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet'
 import Chatbot from '@/pages/landing/section/chatbot/Chatbot'
 import { BotIcon } from 'lucide-react'
+import OurProducts from '@/pages/landing/section/OurProducts'
 
 function LandingHome() {
   return (
     <>
       <HeroSection />
       <FeatureSection />
-      <Products />
+      <OurProducts />
       <Showcase />
       <Testimonials />
       {/* <PublicNewsAnnouncement /> */}
