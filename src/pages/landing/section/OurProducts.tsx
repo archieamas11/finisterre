@@ -1,5 +1,3 @@
-'use client'
-
 import { useState } from 'react'
 import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
@@ -21,7 +19,7 @@ const products: Product[] = [
   },
   {
     id: 2,
-    title: 'Columbarium',
+    title: 'Columbarium (Niches)',
     description: 'A best-in-class burial unit crafted with premium concrete, with flat markers made of authentic marble stone.',
     image: 'https://finisterre.ph/wp-content/uploads/elementor/thumbs/COLUMBARIUM-SAN-MIGUEL-qydmp4k3d18n33djmk22ypvol055iecocqcnrurpuo.png',
   },
@@ -94,7 +92,7 @@ export default function OurProducts() {
               <div
                 className={cn(
                   'absolute inset-0 bg-gradient-to-t transition-opacity duration-700',
-                  isHovered ? 'from-black/90 via-black/50 to-transparent opacity-100' : 'from-black/70 to-transparent opacity-100',
+                  isHovered ? 'from-black/80 via-black/40 to-transparent opacity-100' : 'from-black/90 to-transparent opacity-100',
                 )}
               />
 
@@ -103,8 +101,10 @@ export default function OurProducts() {
                 {/* Title - always visible */}
                 <h2
                   className={cn(
-                    'max-w-70 text-lg font-bold text-balance text-white transition-all',
-                    isHovered ? 'max-w-70 translate-y-0 text-3xl text-[var(--brand-secondary)]' : 'translate-y-2',
+                    'absolute text-xl font-bold text-balance text-white transition-all duration-300 ease-in-out',
+                    isHovered
+                      ? 'bottom-20 left-6 max-w-70 text-left text-4xl text-[var(--brand-secondary)]'
+                      : 'top-1/2 left-1/2 max-w-70 -translate-x-1/2 -translate-y-1/2 text-center',
                   )}
                 >
                   {product.title}
@@ -113,7 +113,7 @@ export default function OurProducts() {
                 {/* Description - shows on hover */}
                 <div
                   className={cn(
-                    'overflow-hidden transition-all duration-200',
+                    'overflow-hidden transition-all duration-300 ease-in-out',
                     isHovered ? 'mt-3 max-h-32 translate-y-0 opacity-100' : 'max-h-0 translate-y-4 opacity-0',
                   )}
                 >
@@ -124,7 +124,6 @@ export default function OurProducts() {
           )
         })}
       </div>
-      {/* Additional Services CTA */}
       <div className="relative mt-24 overflow-hidden rounded-3xl bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 p-8 shadow-2xl sm:p-12 lg:p-16">
         <div className="relative mx-auto max-w-4xl text-center">
           <h3 className="text-3xl font-bold tracking-tight text-white sm:text-4xl lg:text-5xl">Additional Services</h3>
@@ -160,22 +159,6 @@ export default function OurProducts() {
               </Button>
             </Link>
           </div>
-
-          {/* Trust Indicators */}
-          {/* <div className="mt-12 flex flex-wrap items-center justify-center gap-8 border-t border-white/10 pt-8 text-sm text-slate-400">
-              <div className="flex items-center gap-2">
-                <span className="text-2xl">✓</span>
-                <span>Licensed & Certified</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <span className="text-2xl">✓</span>
-                <span>24/7 Support</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <span className="text-2xl">✓</span>
-                <span>Trusted by Families</span>
-              </div>
-            </div> */}
         </div>
       </div>
     </section>
