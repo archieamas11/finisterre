@@ -2,7 +2,6 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import React from 'react'
 import { useForm } from 'react-hook-form'
 
-// no direct dependency on API Customer here; callers should map to CustomerFormData
 import { Button } from '@/components/ui/button'
 import { DatePicker } from '@/components/ui/date-picker'
 import { DialogDescription, DialogContent, DialogHeader, DialogTitle, Dialog } from '@/components/ui/dialog'
@@ -41,7 +40,6 @@ export default function CustomerForm({ mode, open, onSubmit, isPending, onOpenCh
     },
   })
 
-  // 🔄 Reset form when initialValues change (important for edit mode)
   React.useEffect(() => {
     if (initialValues && open) {
       form.reset(initialValues)

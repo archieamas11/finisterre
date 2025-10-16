@@ -6,7 +6,7 @@ import { Link, useNavigate } from 'react-router-dom'
 import { toast } from 'sonner'
 import { z } from 'zod'
 
-import { loginUser } from '@/api/auth.api'
+import { loginUser, getCsrfToken } from '@/api/auth.api'
 import { executeRecaptcha, isRecaptchaConfigured } from '@/lib/recaptcha'
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
@@ -30,6 +30,7 @@ export default function LoginPage() {
   const { data, isSuccess, setAuthFromToken } = useAuthQuery()
   const [showPassword, setShowPassword] = React.useState(false)
   const [isLoading, setIsLoading] = React.useState(false)
+  const [csrfToken, setCsrfToken] = React.useState<string | null>(null)
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
@@ -39,6 +40,21 @@ export default function LoginPage() {
       honeypot: '',
     },
   })
+
+  // Fetch CSRF token on component mount
+  React.useEffect(() => {
+    const fetchCsrfToken = async () => {
+      try {
+        const token = await getCsrfToken()
+        setCsrfToken(token)
+      } catch (error) {
+        console.error('Failed to fetch CSRF token:', error)
+        toast.error('Security initialization failed. Please refresh the page.')
+      }
+    }
+
+    fetchCsrfToken()
+  }, [])
 
   React.useEffect(() => {
     const hasToken = !!localStorage.getItem('token')
@@ -58,20 +74,40 @@ export default function LoginPage() {
       return
     }
 
+    // Validate CSRF token is available
+    if (!csrfToken) {
+      toast.error('Security token missing. Please refresh the page and try again.')
+      return
+    }
+
     setIsLoading(true)
 
     try {
       const recaptchaToken = await getRecaptchaToken()
-      const res = await loginUser(formData.username, formData.password, recaptchaToken, formData.honeypot)
+      const res = await loginUser(formData.username, formData.password, csrfToken, recaptchaToken, formData.honeypot)
 
       if (res.success) {
         handleSuccessfulLogin(res, formData.username)
       } else {
         handleLoginError(res)
+        // Fetch a new CSRF token for the next attempt (tokens are one-time use)
+        try {
+          const newToken = await getCsrfToken()
+          setCsrfToken(newToken)
+        } catch (error) {
+          console.error('Failed to refresh CSRF token:', error)
+        }
       }
     } catch (error) {
       console.error('Login error:', error)
       toast.error('Something went wrong. Please try again later.')
+      // Fetch a new CSRF token after error
+      try {
+        const newToken = await getCsrfToken()
+        setCsrfToken(newToken)
+      } catch (tokenError) {
+        console.error('Failed to refresh CSRF token:', tokenError)
+      }
     } finally {
       setIsLoading(false)
     }

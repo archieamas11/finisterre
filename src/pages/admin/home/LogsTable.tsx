@@ -106,8 +106,6 @@ export default function LogsTable({ data }: LogsTableProps) {
         </div>
       </DataTableToolbar>
       <DataTable table={table} />
-
-      {/* Hidden printable table content */}
       <PrintableTable ref={contentRef} table={table} title="Activity Logs Report" subtitle="Finisterre Cemetery Management System" />
     </Card>
   )

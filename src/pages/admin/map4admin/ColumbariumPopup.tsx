@@ -183,7 +183,7 @@ export default function ColumbariumPopup({ marker, onDirectionClick, isDirection
                 className={cn(
                   'flex aspect-square min-h-[40px] cursor-pointer flex-col items-center justify-center rounded border p-1 text-center transition-all duration-200 hover:scale-105 hover:shadow-sm',
                   getNicheStatusStyle(niche.niche_status),
-                  isHighlighted && 'scale-110 transform shadow-lg ring-4 ring-blue-500 ring-offset-2',
+                  isHighlighted && 'z-999 scale-110 transform shadow-lg ring-4 ring-blue-500 ring-offset-2',
                 )}
                 title={`${niche.lot_id} - ${niche.niche_status}${niche.owner ? ` (${niche.owner.name})` : ''}${isHighlighted ? ' (Search Result)' : ''}`}
               >

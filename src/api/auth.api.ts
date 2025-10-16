@@ -7,11 +7,37 @@ export interface LoginResponse {
   role?: 'admin' | 'staff' | 'user'
 }
 
-export async function loginUser(username: string, password: string, recaptcha_token?: string, honeypot?: string): Promise<LoginResponse> {
+export interface CsrfTokenResponse {
+  success: boolean
+  csrf_token: string
+  expires_at: number
+}
+
+export async function getCsrfToken(): Promise<string> {
+  try {
+    const res = await api.get<CsrfTokenResponse>('auth/get_csrf_token.php')
+    if (res.data.success && res.data.csrf_token) {
+      return res.data.csrf_token
+    }
+    throw new Error('Failed to get CSRF token')
+  } catch (error) {
+    console.error('CSRF token fetch error:', error)
+    throw new Error('Failed to get CSRF token')
+  }
+}
+
+export async function loginUser(
+  username: string,
+  password: string,
+  csrf_token: string,
+  recaptcha_token?: string,
+  honeypot?: string,
+): Promise<LoginResponse> {
   try {
     const res = await api.post<LoginResponse>('auth/login.php', {
       username,
       password,
+      csrf_token,
       recaptcha_token,
       honeypot,
     })

@@ -5,7 +5,7 @@ import type { Customer, LotInfo } from '@/api/customer.api'
 import { editCustomer } from '@/api/customer.api'
 import { Sheet, SheetContent } from '@/components/ui/sheet'
 import { formatDate } from '@/lib/format'
-import CustomerForm from '@/pages/admin/interment/customer/CustomerForm'
+import CustomerForm from '@/pages/admin/interment/customer/dialog/CustomerForm'
 import PropertiesAction from './dialog/PropertiesAction'
 import { CustomerProfileHeader, SectionHeader, InfoItem, PropertyDeceasedCard, PrintableCustomerDetails } from './components'
 

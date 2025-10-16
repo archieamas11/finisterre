@@ -7,7 +7,7 @@ import type { CustomerFormData } from '@/schema/customer.schema'
 
 import { createCustomer, type Customer } from '@/api/customer.api'
 import { Button } from '@/components/ui/button'
-import CustomerForm from '@/pages/admin/interment/customer/CustomerForm'
+import CustomerForm from '@/pages/admin/interment/customer/dialog/CustomerForm'
 
 export default function CreateCustomer() {
   const queryClient = useQueryClient()
@@ -19,7 +19,6 @@ export default function CreateCustomer() {
 
   const handleSubmit = async (data: CustomerFormData) => {
     try {
-      // map form data to API Customer shape
       const payload: Partial<Customer> = {
         first_name: data.first_name,
         middle_name: data.middle_name || null,

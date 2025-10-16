@@ -4,7 +4,7 @@ import type { Customer } from '@/api/customer.api'
 import type { CustomerFormData } from '@/schema/customer.schema'
 
 import { useUpsertCustomer } from '@/hooks/customer-hooks/customer.hooks'
-import CustomerForm from '@/pages/admin/interment/customer/CustomerForm'
+import CustomerForm from '@/pages/admin/interment/customer/dialog/CustomerForm'
 
 interface EditCustomerDialogProps {
   open: boolean

@@ -1,18 +1,15 @@
 import axios, { type InternalAxiosRequestConfig, type AxiosInstance, type AxiosError, type AxiosRequestConfig, type AxiosResponse } from 'axios'
 
-// Constants
 const DEFAULT_API_URL = 'http://localhost/finisterre_backend/'
 const TOKEN_KEY = 'token'
 const MAX_RETRIES = 1
 const TIMEOUT = 10000
 
-// Error interface type safety
 interface ApiError extends Error {
   status?: number | null
   originalError?: AxiosError
 }
 
-// Check if we're in a browser environment
 const isBrowser = typeof window !== 'undefined'
 
 export const api: AxiosInstance = axios.create({
@@ -22,17 +19,14 @@ export const api: AxiosInstance = axios.create({
   timeout: TIMEOUT,
 })
 
-// Store token in memory as fallback when localStorage isn't available
 let inMemoryToken: string | null = null
 
-// Callback management
 let onUnauthorized: (() => void) | null = null
 
 export function registerOnUnauthorized(cb: () => void): void {
   onUnauthorized = cb
 }
 
-// Token management
 export function setToken(token: string): void {
   inMemoryToken = token
 
@@ -72,9 +66,7 @@ export function getToken(): string | null {
   return inMemoryToken
 }
 
-// Request interceptor
 api.interceptors.request.use((config: InternalAxiosRequestConfig) => {
-  // Add authorization header if token exists and not already set
   if (!config.headers.Authorization) {
     const token = getToken()
     if (token) {
@@ -89,13 +81,11 @@ api.interceptors.request.use((config: InternalAxiosRequestConfig) => {
   return config
 })
 
-// Response interceptor
 api.interceptors.response.use(
   (response: AxiosResponse) => response,
   async (error: AxiosError) => {
     const config = error.config as (AxiosRequestConfig & { __retryCount?: number }) | undefined
 
-    // Handle timeout with retry
     if (config && (error.code === 'ECONNABORTED' || error.message?.toLowerCase().includes('timeout'))) {
       config.__retryCount = config.__retryCount ?? 0
 
@@ -105,13 +95,11 @@ api.interceptors.response.use(
       }
     }
 
-    // Handle 401 Unauthorized
     if (error.response?.status === 401) {
       clearToken()
       onUnauthorized?.()
     }
 
-    // Extract error message from response
     const responseData = error.response?.data
     let message = error.message
 
@@ -123,7 +111,6 @@ api.interceptors.response.use(
       }
     }
 
-    // Create and throw enhanced error
     const enhancedError = new Error(message) as ApiError
     enhancedError.status = error.response?.status ?? null
     enhancedError.originalError = error

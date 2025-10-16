@@ -1,13 +1,12 @@
 'use client'
 
-import { ChevronsUpDown, BadgeCheck, LogOut } from 'lucide-react'
+import { ChevronsUpDown, LogOut } from 'lucide-react'
 
 import { AvatarFallback, AvatarImage, Avatar } from '@/components/ui/avatar'
 import {
   DropdownMenuSeparator,
   DropdownMenuContent,
   DropdownMenuTrigger,
-  DropdownMenuGroup,
   DropdownMenuLabel,
   DropdownMenuItem,
   DropdownMenu,
@@ -41,7 +40,7 @@ export function NavUser() {
             </SidebarMenuButton>
           </DropdownMenuTrigger>
           <DropdownMenuContent
-            className="w-(--radix-dropdown-menu-trigger-width) min-w-56 rounded-lg"
+            className="bg-sidebar-accent w-(--radix-dropdown-menu-trigger-width) min-w-56 rounded-lg"
             side={isMobile ? 'bottom' : 'right'}
             sideOffset={4}
             align="end"
@@ -58,13 +57,13 @@ export function NavUser() {
                 </div>
               </div>
             </DropdownMenuLabel>
-            <DropdownMenuSeparator />
-            <DropdownMenuGroup>
+            {/* <DropdownMenuSeparator /> */}
+            {/* <DropdownMenuGroup>
               <DropdownMenuItem onClick={() => alert('Account is clicked!')} aria-label="Account">
                 <BadgeCheck />
                 Account
               </DropdownMenuItem>
-            </DropdownMenuGroup>
+            </DropdownMenuGroup> */}
             <DropdownMenuSeparator />
             <DropdownMenuItem onClick={() => performLogout()} disabled={isPending} aria-label="Logout">
               <LogOut />
