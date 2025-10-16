@@ -101,10 +101,10 @@ export default function OurProducts() {
                 {/* Title - always visible */}
                 <h2
                   className={cn(
-                    'absolute text-xl font-bold text-balance text-white transition-all duration-300 ease-in-out',
+                    'absolute text-xl font-bold text-balance text-white transition-all duration-500 ease-out',
                     isHovered
-                      ? 'bottom-20 left-6 max-w-70 text-left text-4xl text-[var(--brand-secondary)]'
-                      : 'top-1/2 left-1/2 max-w-70 -translate-x-1/2 -translate-y-1/2 text-center',
+                      ? 'bottom-20 left-6 w-[280px] text-left text-4xl text-[var(--brand-secondary)]'
+                      : 'top-1/2 left-1/2 w-[280px] -translate-x-1/2 -translate-y-1/2 text-center',
                   )}
                 >
                   {product.title}
