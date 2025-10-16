@@ -11,7 +11,6 @@ import ColumbariumPopup from '@/pages/admin/map4admin/ColumbariumPopup'
 import PlotLocations from '@/pages/webmap/WebMapPopup'
 import { getCategoryBackgroundColor, getStatusColor } from '@/types/map.types'
 
-// Icon caching
 const iconCache: Record<string, L.DivIcon> = {}
 const getIcon = (color: string, shape: string) => {
   const cacheKey = `${color}-${shape}`
@@ -24,7 +23,7 @@ const getIcon = (color: string, shape: string) => {
       case 'diamond':
         html = `<div class="" style="width: 15px; height: 15px; background: ${color}; border: 2px solid #fff; box-shadow: 0 0 5px rgba(0,0,0,0.5); transform: rotate(45deg);"></div>`
         break
-      default: // circle
+      default:
         html = `<div class="" style="width: 15px; height: 15px; border-radius: 50%; background: ${color}; border: 2px solid #fff; box-shadow: 0 0 5px rgba(0,0,0,0.5);"></div>`
     }
     iconCache[cacheKey] = L.divIcon({
@@ -42,13 +41,12 @@ interface PlotMarkersProps {
   isDirectionLoading: boolean
   onDirectionClick: (to: [number, number]) => void
   block: string
+  highlightedNiche?: string | null
 }
 
-const PlotMarkers: React.FC<PlotMarkersProps> = memo(({ markers, isDirectionLoading, onDirectionClick }) => {
+const PlotMarkers: React.FC<PlotMarkersProps> = memo(({ markers, isDirectionLoading, onDirectionClick, highlightedNiche }) => {
   const [openDrawerPlotId, setOpenDrawerPlotId] = useState<string | null>(null)
   const isSmallScreen = useIsMobile()
-
-  // 🎯 Get search context for auto popup functionality
   const locateContext = useContext(LocateContext)
   const autoOpenPopupFor = locateContext?.autoOpenPopupFor
   const markerRefs = useRef<{ [key: string]: L.Marker | null }>({})
@@ -74,7 +72,6 @@ const PlotMarkers: React.FC<PlotMarkersProps> = memo(({ markers, isDirectionLoad
     [idToKey],
   )
 
-  // 🎯 Auto-open popup OR drawer when search result is found
   useEffect(() => {
     if (!autoOpenPopupFor) return
 
@@ -82,9 +79,7 @@ const PlotMarkers: React.FC<PlotMarkersProps> = memo(({ markers, isDirectionLoad
     const targetMarker = markers.find((m) => idToKey(m.plot_id) === targetIdKey)
     if (!targetMarker) return
 
-    // Mobile + columbarium (rows/columns) => open drawer instead of (hidden) popup
     if (isSmallScreen && targetMarker.rows && targetMarker.columns) {
-      // Open drawer immediately (frame deferred for safety)
       requestAnimationFrame(() => {
         setOpenDrawerPlotId(targetIdKey)
         locateContext?.setAutoOpenPopupFor?.(null)
@@ -92,20 +87,18 @@ const PlotMarkers: React.FC<PlotMarkersProps> = memo(({ markers, isDirectionLoad
       return
     }
 
-    // Otherwise open the Leaflet popup (desktop or non-columbarium plots)
     const leafletMarker = markerRefs.current[targetIdKey]
     if (leafletMarker) {
       setTimeout(() => {
         leafletMarker.openPopup()
         locateContext?.setAutoOpenPopupFor?.(null)
-      }, 200) // Allow render/layout settle before opening popup
+      }, 200)
     }
   }, [autoOpenPopupFor, isSmallScreen, markers, locateContext, idToKey])
 
   return (
     <>
       {markers.map((marker) => {
-        // Determine marker color: blue for owned plots, otherwise use status color
         const statusColor = marker.is_owned ? '#2563EB' : getStatusColor(marker.plotStatus)
 
         let shape = 'circle'
@@ -142,7 +135,12 @@ const PlotMarkers: React.FC<PlotMarkersProps> = memo(({ markers, isDirectionLoad
             {marker.rows && marker.columns ? (
               <Popup className="leaflet-theme-popup hidden md:block" minWidth={450} closeButton={false}>
                 <div className="w-full py-2">
-                  <ColumbariumPopup onDirectionClick={onDir} isDirectionLoading={isDirectionLoading} marker={marker} />
+                  <ColumbariumPopup
+                    onDirectionClick={onDir}
+                    isDirectionLoading={isDirectionLoading}
+                    marker={marker}
+                    highlightedNiche={highlightedNiche ?? undefined}
+                  />
                 </div>
               </Popup>
             ) : (
@@ -166,7 +164,12 @@ const PlotMarkers: React.FC<PlotMarkersProps> = memo(({ markers, isDirectionLoad
                     <span className="sr-only">Columbarium plot details and actions.</span>
                   </DrawerDescription>
                   <div className="max-h-[85vh] touch-pan-y overflow-y-auto overscroll-contain px-2 pt-2 pb-4">
-                    <ColumbariumPopup onDirectionClick={onDir} isDirectionLoading={isDirectionLoading} marker={marker} />
+                    <ColumbariumPopup
+                      onDirectionClick={onDir}
+                      isDirectionLoading={isDirectionLoading}
+                      marker={marker}
+                      highlightedNiche={highlightedNiche ?? undefined}
+                    />
                   </div>
                 </DrawerContent>
               </Drawer>

@@ -41,7 +41,6 @@ export default function LoginPage() {
     },
   })
 
-  // Fetch CSRF token on component mount
   React.useEffect(() => {
     const fetchCsrfToken = async () => {
       try {
@@ -74,7 +73,6 @@ export default function LoginPage() {
       return
     }
 
-    // Validate CSRF token is available
     if (!csrfToken) {
       toast.error('Security token missing. Please refresh the page and try again.')
       return
@@ -90,7 +88,6 @@ export default function LoginPage() {
         handleSuccessfulLogin(res, formData.username)
       } else {
         handleLoginError(res)
-        // Fetch a new CSRF token for the next attempt (tokens are one-time use)
         try {
           const newToken = await getCsrfToken()
           setCsrfToken(newToken)
@@ -101,7 +98,6 @@ export default function LoginPage() {
     } catch (error) {
       console.error('Login error:', error)
       toast.error('Something went wrong. Please try again later.')
-      // Fetch a new CSRF token after error
       try {
         const newToken = await getCsrfToken()
         setCsrfToken(newToken)
@@ -135,7 +131,6 @@ export default function LoginPage() {
     navigate(destination)
   }
 
-  // Helper function to determine navigation destination
   const getNavigationDestination = (role?: string): string => {
     if (isNativePlatform()) {
       return '/landing-android'
@@ -143,7 +138,6 @@ export default function LoginPage() {
     return role === 'user' ? '/user' : '/admin'
   }
 
-  // Helper function to handle login errors
   const handleLoginError = (res: { message?: string }) => {
     form.setValue('password', '')
 

@@ -18,15 +18,13 @@ interface CustomClusterManagerProps {
     isDirectionLoading: boolean
     onDirectionClick: (coordinates: [number, number]) => void
     block: string
+    highlightedNiche?: string | null
   }>
-  // Search related props
   searchResult: any | null
   highlightedNiche: string | null
-  // User plots
   userMarkers?: ConvertedMarker[]
 }
 
-// Calculate centroid of marker group for cluster positioning
 function calculateCentroid(markers: ConvertedMarker[]): [number, number] {
   if (markers.length === 0) return [0, 0]
 
@@ -41,9 +39,6 @@ function calculateCentroid(markers: ConvertedMarker[]): [number, number] {
   return [sum.lat / markers.length, sum.lng / markers.length]
 }
 
-// Removed viewport pruning to prevent popup loss when marker scrolls off-screen.
-
-// Custom cluster marker that shows group summary and handles clicks
 interface CustomClusterMarkerProps {
   groupKey: string
   markers: ConvertedMarker[]
@@ -94,31 +89,38 @@ const CustomClusterMarker = memo(({ groupKey, markers, onClusterClick }: CustomC
 })
 
 CustomClusterMarker.displayName = 'CustomClusterMarker'
-
-// Component that renders markers for selected group with viewport optimization
 interface SelectiveGroupMarkersProps {
   groupKey: string
   markers: ConvertedMarker[]
   onDirectionClick: (coordinates: [number, number]) => void
   isDirectionLoading: boolean
+  highlightedNiche?: string | null
   PlotMarkersComponent: React.ComponentType<{
     markers: ConvertedMarker[]
     isDirectionLoading: boolean
     onDirectionClick: (coordinates: [number, number]) => void
     block: string
+    highlightedNiche?: string | null
   }>
 }
 
 const SelectiveGroupMarkers = memo(
-  ({ groupKey, markers, onDirectionClick, isDirectionLoading, PlotMarkersComponent }: SelectiveGroupMarkersProps) => {
+  ({ groupKey, markers, onDirectionClick, isDirectionLoading, highlightedNiche, PlotMarkersComponent }: SelectiveGroupMarkersProps) => {
     const block = useMemo(() => (groupKey.startsWith('block:') ? groupKey.split('block:')[1] : ''), [groupKey])
-    return <PlotMarkersComponent markers={markers} isDirectionLoading={isDirectionLoading} onDirectionClick={onDirectionClick} block={block} />
+    return (
+      <PlotMarkersComponent
+        markers={markers}
+        isDirectionLoading={isDirectionLoading}
+        onDirectionClick={onDirectionClick}
+        block={block}
+        highlightedNiche={highlightedNiche}
+      />
+    )
   },
 )
 
 SelectiveGroupMarkers.displayName = 'SelectiveGroupMarkers'
 
-// Main cluster manager component
 const CustomClusterManager = memo(
   ({
     markersByGroup,
@@ -129,13 +131,10 @@ const CustomClusterManager = memo(
     onClusterClick,
     PlotMarkersComponent,
     searchResult,
-    highlightedNiche: _highlightedNiche,
+    highlightedNiche,
     userMarkers,
   }: CustomClusterManagerProps) => {
-    // Check if we're in search mode with results
     const isSearchActive = searchResult?.success && searchResult.data
-
-    // Handle cluster click - now uses external handler
     const handleClusterClick = useCallback(
       (groupKey: string) => {
         onClusterClick(groupKey)
@@ -143,20 +142,16 @@ const CustomClusterManager = memo(
       [onClusterClick],
     )
 
-    // Render cluster icons based on view mode and selection
     const renderClusters = useMemo(() => {
-      // If search is active or in user-plots mode, don't show clusters
       if (isSearchActive || clusterViewMode === 'user-plots') {
         return null
       }
 
       if (clusterViewMode === 'all') {
-        // Show all clusters in main view
         return Object.entries(markersByGroup).map(([groupKey, markers]) => (
           <CustomClusterMarker key={`cluster-${groupKey}`} groupKey={groupKey} markers={markers} onClusterClick={handleClusterClick} />
         ))
       } else if (clusterViewMode === 'selective') {
-        // Show clusters for unselected groups only (allows quick switching)
         return Object.entries(markersByGroup)
           .filter(([groupKey]) => !selectedGroups.has(groupKey))
           .map(([groupKey, markers]) => (
@@ -166,9 +161,7 @@ const CustomClusterManager = memo(
       return null
     }, [markersByGroup, clusterViewMode, selectedGroups, handleClusterClick, isSearchActive])
 
-    // Render markers for selected groups, search results, or user plots
     const renderSelectedGroups = useMemo(() => {
-      // If in user-plots mode, show user-owned plots without clustering
       if (clusterViewMode === 'user-plots' && userMarkers && userMarkers.length > 0) {
         return (
           <SelectiveGroupMarkers
@@ -177,16 +170,14 @@ const CustomClusterManager = memo(
             markers={userMarkers}
             onDirectionClick={onDirectionClick}
             isDirectionLoading={isDirectionLoading}
+            highlightedNiche={highlightedNiche}
             PlotMarkersComponent={PlotMarkersComponent}
           />
         )
       }
 
-      // If search is active, render only the search result
       if (isSearchActive && searchResult.data) {
         const { plot_id } = searchResult.data
-
-        // Find the group that contains this plot_id
         for (const [groupKey, markers] of Object.entries(markersByGroup)) {
           const matchedMarkers = markers.filter((m) => m.plot_id === plot_id)
           if (matchedMarkers.length > 0) {
@@ -197,6 +188,7 @@ const CustomClusterManager = memo(
                 markers={matchedMarkers}
                 onDirectionClick={onDirectionClick}
                 isDirectionLoading={isDirectionLoading}
+                highlightedNiche={highlightedNiche}
                 PlotMarkersComponent={PlotMarkersComponent}
               />
             )
@@ -205,7 +197,6 @@ const CustomClusterManager = memo(
         return null
       }
 
-      // Normal selective rendering
       if (clusterViewMode !== 'selective' || selectedGroups.size === 0) {
         return null
       }
@@ -221,6 +212,7 @@ const CustomClusterManager = memo(
             markers={markers}
             onDirectionClick={onDirectionClick}
             isDirectionLoading={isDirectionLoading}
+            highlightedNiche={highlightedNiche}
             PlotMarkersComponent={PlotMarkersComponent}
           />
         )
@@ -235,6 +227,7 @@ const CustomClusterManager = memo(
       isSearchActive,
       searchResult,
       userMarkers,
+      highlightedNiche,
     ])
 
     return (
