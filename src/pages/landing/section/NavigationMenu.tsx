@@ -39,25 +39,25 @@ const products: NavItem[] = [
   {
     icon: TreesIcon,
     title: 'Serenity Lawn',
-    href: '/#showcase-section',
+    href: '/#products',
     description: 'Double-depth in-ground burial plot with marble marker and well-manicured grass.',
   },
   {
     icon: LayersIcon,
     title: 'Columbarium (Niche)',
-    href: '/#showcase-section',
+    href: '/#products',
     description: 'Best-in-class burial unit crafted with premium concrete and marble markers.',
   },
   {
     icon: BoneIcon,
     title: 'Bone Chamber & Ash Vault',
-    href: '/#showcase-section',
+    href: '/#productsn',
     description: 'Concrete repository for bone and ash remains at the upper park level with garden views.',
   },
   {
     icon: Building2Icon,
     title: 'Family Estate',
-    href: '/#showcase-section',
+    href: '/#products',
     description: 'A sacred way to honor family—an estate of your own.',
   },
 ]
@@ -67,19 +67,19 @@ const coreServices: NavItem[] = [
   {
     icon: MapPinIcon,
     title: 'Interment',
-    href: '/#showcase-section',
+    href: '/#products',
     description: 'Complete interment services with modern equipment and dignified care.',
   },
   {
     icon: ArrowLeftRightIcon,
     title: 'Transfer & Reburial',
-    href: '/#showcase-section',
+    href: '/#products',
     description: 'Careful relocation of remains including documentation and coordination.',
   },
   {
     icon: ClockIcon,
     title: 'Exhumation & Reburial',
-    href: '/#showcase-section',
+    href: '/#products',
     description: 'For fresh, skeletal, and cinerary remains handled with utmost respect.',
   },
 ]
