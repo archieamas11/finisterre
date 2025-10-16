@@ -32,6 +32,7 @@ const PublicMap = React.lazy(() => import('@/pages/webmap/PublicWebMap'))
 const NewsAndUpdates = React.lazy(() => import('@/pages/admin/news/NewsAndUpdates'))
 const NotFound = React.lazy(() => import('@/pages/NotFound'))
 const About = React.lazy(() => import('@/pages/landing/section/About'))
+const Services = React.lazy(() => import('@/pages/landing/section/services'))
 
 function RootLanding() {
   const location = useLocation()
@@ -55,6 +56,7 @@ function AppRoutes() {
           {/* Public Routes */}
           <Route path="/" element={<RootLanding />}>
             <Route path="about" element={<About />} />
+            <Route path="services" element={<Services />} />
           </Route>
           <Route path="/map" element={<PublicMap />} />
           <Route path="/login" element={<LoginPage />} />
