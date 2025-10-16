@@ -9,7 +9,6 @@ import { useEffect, useMemo, useRef, useState } from 'react'
 import Spinner from '@/components/ui/spinner'
 import remarkGfm from 'remark-gfm'
 import { cn } from '@/lib/utils'
-import { executeRecaptcha, isRecaptchaConfigured } from '@/lib/recaptcha'
 
 const STORAGE_KEY = 'chatbot:messages'
 const LAST_ACTIVE_KEY = 'chatbot:lastActive'
@@ -49,7 +48,6 @@ const dedupeQuestions = <T extends HasQuestion>(items: T[], asked: Set<string>) 
 function getErrorMessage(err: unknown): string {
   if (err instanceof Error) return err.message
   try {
-    // some fetch errors may be plain strings
     return String(err)
   } catch {
     return 'Unknown error'
@@ -77,9 +75,7 @@ export default function Chatbot() {
     }
   }
 
-  // Hydrate from storage then load initial suggestions
   useEffect(() => {
-    // hydrate previous messages from sessionStorage with expiry check
     try {
       const tsRaw = sessionStorage.getItem(LAST_ACTIVE_KEY)
       const ts = tsRaw ? parseInt(tsRaw, 10) : 0
@@ -117,13 +113,11 @@ export default function Chatbot() {
     }
     load()
 
-    // initialize index status from session and start building when chat opens
     try {
       const built = sessionStorage.getItem(INDEX_BUILT_KEY)
       if (built) {
         setIndexStatus('built')
       } else {
-        // Start building index when user opens the chat (lazy load but proactive)
         void buildIndex()
       }
     } catch {
@@ -138,7 +132,6 @@ export default function Chatbot() {
     el.scrollTo({ top: el.scrollHeight, behavior: 'smooth' })
   }, [messages])
 
-  // Persist messages to sessionStorage and refresh lastActive when chat has content
   useEffect(() => {
     try {
       if (messages.length > 0) {
@@ -153,7 +146,6 @@ export default function Chatbot() {
     }
   }, [messages])
 
-  // Background expiry check (every minute)
   useEffect(() => {
     const id = window.setInterval(() => {
       try {
@@ -210,25 +202,15 @@ export default function Chatbot() {
   const buildIndex = async () => {
     try {
       setIndexStatus('building')
-      let recaptchaToken: string | undefined
-      if (isRecaptchaConfigured()) {
-        try {
-          recaptchaToken = await executeRecaptcha('chatbot_index')
-        } catch (e) {
-          console.warn('reCAPTCHA error (index):', e)
-        }
-      }
       const res = await fetch(`${API}?action=index`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ recaptcha_token: recaptchaToken }),
       })
       if (!res.ok) {
         const errData = await res.json().catch(() => ({ error: 'Unknown error' }))
         throw new Error(`HTTP ${res.status}: ${errData.error || 'Unknown error'}`)
       }
       const data = (await res.json()) as { count: number; embed_model: string }
-      // toast.success(`Index built: ${data.count} items (model: ${data.embed_model})`, { duration: 1000 })
       console.log('Index build result:', data)
       try {
         sessionStorage.setItem(INDEX_BUILT_KEY, String(Date.now()))
@@ -238,7 +220,6 @@ export default function Chatbot() {
       setIndexStatus('built')
     } catch (e) {
       setIndexStatus('idle')
-      // toast.error(`Index build failed: ${getErrorMessage(e)}`, { duration: 1000 })
       console.log('Index build failed:', getErrorMessage(e))
     }
   }
@@ -250,24 +231,15 @@ export default function Chatbot() {
     const userMsg: Message = { sender: 'user', text: finalPrompt }
     setMessages((prev) => [...prev, userMsg])
 
-    // clear input only if user typed it
     if (!customPrompt) setInput('')
 
     setBusy(true)
     setMessages((prev) => [...prev, { sender: 'bot', text: 'Thinking...', isTyping: true }])
     try {
-      let recaptchaToken: string | undefined
-      if (isRecaptchaConfigured()) {
-        try {
-          recaptchaToken = await executeRecaptcha('chatbot_chat')
-        } catch (e) {
-          console.warn('reCAPTCHA error (chat):', e)
-        }
-      }
       const res = await fetch(`${API}?action=chat`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ prompt: finalPrompt, recaptcha_token: recaptchaToken }),
+        body: JSON.stringify({ prompt: finalPrompt }),
       })
       if (!res.ok) {
         const errorData = await res.json().catch(() => ({ error: 'Unknown error' }))
@@ -417,7 +389,6 @@ export default function Chatbot() {
             </div>
           )}
 
-          {/* Conversation */}
           <div className="space-y-4">
             {messages.map((m, i) => {
               const filteredSources = dedupeQuestions(m.sources ?? [], askedQuestions)
