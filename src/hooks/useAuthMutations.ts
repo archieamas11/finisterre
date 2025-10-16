@@ -4,19 +4,19 @@ import { loginUser, type LoginResponse } from '@/api/auth.api'
 
 export function useLoginMutation() {
   const qc = useQueryClient()
-  return useMutation<{ username: string; password: string }, unknown, { username: string; password: string }, unknown>({
-    mutationKey: ['auth', 'login'],
-    mutationFn: async (vars) => {
-      const res: LoginResponse = await loginUser(vars.username, vars.password)
-      if (!res.success) throw Object.assign(new Error(res.message), { res })
-      return vars
+  return useMutation<void, unknown, { username: string; password: string; csrf_token: string; recaptcha_token?: string; honeypot?: string }, unknown>(
+    {
+      mutationKey: ['auth', 'login'],
+      mutationFn: async (vars) => {
+        const res: LoginResponse = await loginUser(vars.username, vars.password, vars.csrf_token, vars.recaptcha_token, vars.honeypot)
+        if (!res.success) throw Object.assign(new Error(res.message), { res })
+      },
+      onSuccess: async () => {
+        await qc.invalidateQueries({ queryKey: ['auth', 'me'] })
+        await qc.invalidateQueries({ queryKey: ['me'] })
+      },
     },
-    onSuccess: async () => {
-      // no-op, caller handles navigation and toasts
-      // The token is saved in the caller for explicit control
-      await qc.invalidateQueries({ queryKey: ['auth', 'me'] })
-    },
-  })
+  )
 }
 
 export function useLogoutMutation() {
@@ -28,7 +28,6 @@ export function useLogoutMutation() {
       localStorage.removeItem('isAdmin')
     },
     onSuccess: async () => {
-      // Invalidate both query keys to ensure UI updates immediately
       await qc.invalidateQueries({ queryKey: ['auth', 'me'] })
       await qc.invalidateQueries({ queryKey: ['me'] })
     },
