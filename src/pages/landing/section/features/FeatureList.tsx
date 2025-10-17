@@ -18,14 +18,19 @@ export function FeatureList({ feature, index }: { feature: Feature; index: numbe
       className={cn(
         'group relative flex transform-gpu flex-col overflow-hidden p-2',
         feature.image
-          ? 'border-primary/20 rounded-3xl border bg-white/40 backdrop-blur-md transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl'
+          ? 'rounded-3xl border border-[var(--brand-primary)]/20 bg-white/40 backdrop-blur-md transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl dark:border-[var(--brand-primary)]/20'
           : '',
       )}
     >
       <div className="absolute inset-x-0 top-0 h-48 bg-gradient-to-b from-white/[0.03] to-transparent" />
       <div className="z-10">
         {feature.image && (
-          <img src={feature.image} alt={feature.title} className="h-[180px] w-full rounded-[18px] object-cover shadow-lg sm:h-[200px] lg:h-[240px]" />
+          <img
+            src={feature.image}
+            alt={feature.title}
+            className="h-[180px] w-full rounded-[18px] object-cover shadow-lg sm:h-[200px] lg:h-[240px]"
+            loading="lazy"
+          />
         )}
         <div className={cn('group', feature.image ? 'p-4' : '')}>
           <h3
@@ -42,8 +47,8 @@ export function FeatureList({ feature, index }: { feature: Feature; index: numbe
           {feature.image && feature.href && (
             <div className="mt-3 sm:mt-4">
               <Link to={feature.href}>
-                <Button className="text-sm sm:text-base">
-                  <span>Learn more</span>
+                <Button className="bg-[var(--brand-primary)] text-sm sm:text-base">
+                  <span className="text-white">Learn more</span>
                   <ArrowRight className="h-4 w-4 text-white" aria-hidden />
                 </Button>
               </Link>
