@@ -47,7 +47,7 @@ export function FeatureList({ feature, index }: { feature: Feature; index: numbe
           {feature.image && feature.href && (
             <div className="mt-3 sm:mt-4">
               <Link to={feature.href}>
-                <Button className="bg-[var(--brand-primary)] text-sm sm:text-base">
+                <Button className="bg-[var(--brand-primary)] text-sm hover:bg-[var(--brand-primary)]/80 sm:text-base">
                   <span className="text-white">Learn more</span>
                   <ArrowRight className="h-4 w-4 text-white" aria-hidden />
                 </Button>
