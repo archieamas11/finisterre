@@ -43,19 +43,19 @@ export async function loginUser(
     })
     return res.data
   } catch (error: unknown) {
-    // Handle network errors or server errors (narrow unknown)
     const err = error as {
-      response?: { data?: Record<string, unknown> }
+      response?: {
+        status?: number
+        data?: Record<string, unknown>
+      }
       request?: unknown
     }
     if (err.response) {
-      // Server responded with error status
       const msg = String(err.response.data?.message ?? 'Server error occurred')
       return { success: false, message: msg }
     }
 
     if (err.request) {
-      // Request was made but no response received
       return {
         success: false,
         message: 'Network error. Please check your connection.',
@@ -100,7 +100,6 @@ export async function changePassword(payload: ChangePasswordPayload): Promise<Ch
     console.error('Change password error:', error)
     const err = error as { response?: { data?: ChangePasswordResponse } }
 
-    // If we have a structured response from the backend, use it
     if (err.response?.data) {
       return err.response.data
     }
@@ -112,7 +111,6 @@ export async function changePassword(payload: ChangePasswordPayload): Promise<Ch
   }
 }
 
-// Fetch current authenticated user (decoded from JWT)
 export interface MeResponse {
   success: boolean
   message: string

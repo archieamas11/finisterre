@@ -100,6 +100,10 @@ api.interceptors.response.use(
       onUnauthorized?.()
     }
 
+    if (error.response?.status === 429) {
+      return Promise.reject(error)
+    }
+
     const responseData = error.response?.data
     let message = error.message
 
