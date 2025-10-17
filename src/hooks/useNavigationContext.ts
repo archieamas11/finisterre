@@ -3,7 +3,6 @@ import { useContext, useCallback } from 'react'
 import { LocateContext as WebMapLocateContext } from '@/contexts/MapContext'
 import { LocateContext as AdminLocateContext } from '@/pages/admin/map4admin/LocateContext'
 
-// Define types for different contexts
 export interface AdminContext {
   requestLocate: () => void
   isAddingMarker: boolean
@@ -21,7 +20,6 @@ export interface WebMapContext {
   clusterViewMode: 'all' | 'selective' | 'user-plots'
   availableGroups: Array<{ key: string; label: string; count: number }>
   handleClusterClick: (groupKey: string) => void
-  // 🔍 Search functionality
   searchQuery: string
   setSearchQuery: (query: string) => void
   searchResult: { success: boolean; message: string; data?: unknown } | null
@@ -29,10 +27,8 @@ export interface WebMapContext {
   searchLot: (lotId: string) => Promise<void>
   clearSearch: () => void
   highlightedNiche: string | null
-  // 🎯 Auto popup functionality
   autoOpenPopupFor: string | null
   setAutoOpenPopupFor: (plotId: string | null) => void
-  // 👤 User plots functionality
   showUserPlotsOnly: () => void
   resetView: () => void
   userOwnedPlotsCount: number
@@ -40,7 +36,6 @@ export interface WebMapContext {
 
 export type MapContext = AdminContext | WebMapContext | null | undefined
 
-// 🔧 Type guards
 export const isAdminContext = (ctx: unknown): ctx is AdminContext => {
   return (
     typeof ctx === 'object' &&
@@ -69,12 +64,10 @@ export const isWebMapContext = (ctx: unknown): ctx is WebMapContext => {
   )
 }
 
-// 🎯 Custom hook for context management
 export const useMapContext = () => {
   const webMapCtx = useContext(WebMapLocateContext)
   const adminCtx = useContext(AdminLocateContext)
 
-  // 🎯 Use admin context if available, otherwise use web map context
   const locateCtx = adminCtx || webMapCtx
 
   return {
@@ -84,7 +77,6 @@ export const useMapContext = () => {
   }
 }
 
-// 🎯 Hook for admin-specific functionality
 export const useAdminContext = () => {
   const { context, isAdmin } = useMapContext()
 
@@ -113,7 +105,6 @@ export const useAdminContext = () => {
   }
 }
 
-// 🎯 Hook for web map specific functionality
 export const useWebMapContext = () => {
   const { context, isWebMap } = useMapContext()
 

@@ -16,6 +16,7 @@ import { usePlotDetails } from '@/hooks/plots-hooks/usePlotDetails'
 import { CreateDeceasedRecordDialog } from '@/pages/admin/map4admin/columbarium-dialogs/CreateDeceasedRecordDialog'
 import { DeceasedSection } from '@/pages/admin/map4admin/DeceasedSection'
 import CustomerSelectForm from '@/components/customers/CustomerSelectForm'
+import LotOwnerCredentialsDialog, { type LotOwnerCredentials } from '@/components/lot-owners/LotOwnerCredentialsDialog'
 
 import PlotInfo from './PlotInfo'
 
@@ -28,8 +29,6 @@ interface PlotLocationsProps {
 export default function SinglePlotLocations({ marker, popupCloseTick }: PlotLocationsProps) {
   const { data: plotDetails, isLoading: isLoadingDetails } = usePlotDetails(marker.plot_id)
 
-  // owner can be of varying shapes depending on the API response; declare
-  // a narrow OwnerData type that matches what the UI actually consumes.
   type OwnerData = {
     lot_id?: string
     fullname?: string
@@ -38,12 +37,10 @@ export default function SinglePlotLocations({ marker, popupCloseTick }: PlotLoca
     customer_id?: string
   }
 
-  // Match the DeceasedSection's minimal shape to avoid cross-module type collisions
   type DeceasedItem = Partial<Pick<DeceasedType, 'dead_fullname' | 'dead_interment' | 'deceased_id'>>
 
   const ownerData = useMemo(() => (plotDetails?.owner as OwnerData) ?? null, [plotDetails])
 
-  // Normalize deceased list to the minimal shape expected by DeceasedSection
   const deceasedList: DeceasedItem[] = useMemo(() => {
     const data = plotDetails?.deceased
     if (!Array.isArray(data)) return []
@@ -57,21 +54,18 @@ export default function SinglePlotLocations({ marker, popupCloseTick }: PlotLoca
     })
   }, [plotDetails?.deceased])
 
-  // UI state for Add actions
   const [isDeceasedDialogOpen, setIsDeceasedDialogOpen] = useState(false)
   const [showCustomerCombo, setShowCustomerCombo] = useState(false)
   const [selectedCustomer, setSelectedCustomer] = useState<string>('')
   const [isSavingOwner, setIsSavingOwner] = useState(false)
-
-  // Detect when the Leaflet popup DOM parent is removed so we can reset transient UI
+  const [credentialsDialogOpen, setCredentialsDialogOpen] = useState(false)
+  const [lotOwnerCredentials, setLotOwnerCredentials] = useState<LotOwnerCredentials | null>(null)
   const rootRef = useRef<HTMLDivElement | null>(null)
-
   const queryClient = useQueryClient()
   const { data: customers = [] } = useCustomers()
   const createLotOwnerMutation = useCreateLotOwner()
   const createDeceasedMutation = useCreateDeceasedRecord()
 
-  // Reset UI when popup closes
   useEffect(() => {
     if (popupCloseTick !== undefined) {
       setShowCustomerCombo(false)
@@ -80,19 +74,14 @@ export default function SinglePlotLocations({ marker, popupCloseTick }: PlotLoca
     }
   }, [popupCloseTick])
 
-  // Listen for DOM removal of the nearest Leaflet popup container and reset transient UI.
-  // Use a document-level observer (subtree) to robustly detect removal even when
-  // Leaflet remounts or moves popup nodes. Re-run when the internal rootRef changes.
   useEffect(() => {
     const el = rootRef.current
     if (!el) return
 
-    // find nearest ancestor with class 'leaflet-popup'
     const popupEl = el.closest('.leaflet-popup') as Element | null
     if (!popupEl) return
 
     const observer = new MutationObserver(() => {
-      // If the popup element is no longer in the document, it was closed/removed
       if (!document.body.contains(popupEl)) {
         setShowCustomerCombo(false)
         setSelectedCustomer('')
@@ -101,14 +90,12 @@ export default function SinglePlotLocations({ marker, popupCloseTick }: PlotLoca
       }
     })
 
-    // Observe the entire body subtree for removals — robust for Leaflet remounts
     observer.observe(document.body, { childList: true, subtree: true })
 
     return () => observer.disconnect()
   }, [popupCloseTick])
 
   const openAddFlow = useCallback(() => {
-    // If the plot already has two or more deceased, prevent creating more
     const existingCount = Array.isArray(deceasedList) ? deceasedList.filter(Boolean).length : 0
     if (existingCount >= 2) {
       toast.error('This plot already reached the maximum of 2 bodies.')
@@ -122,8 +109,6 @@ export default function SinglePlotLocations({ marker, popupCloseTick }: PlotLoca
 
     setIsDeceasedDialogOpen(true)
   }, [ownerData, deceasedList])
-
-  // selection is handled by the reusable component
 
   const handleSaveOwner = useCallback(
     async (customerId?: string) => {
@@ -143,13 +128,25 @@ export default function SinglePlotLocations({ marker, popupCloseTick }: PlotLoca
 
       try {
         const result = await createLotOwnerMutation.mutateAsync(payload)
+
         if (!result?.success) {
           throw new Error(result?.message || 'Failed to save owner')
         }
 
         toast.success('Owner saved successfully')
 
-        // Optimistically update plot details cache
+        if (result?.credentials) {
+          const credentialsWithCategory = {
+            ...result.credentials,
+            plot_category: marker.category,
+          }
+
+          setLotOwnerCredentials(credentialsWithCategory as LotOwnerCredentials)
+          setCredentialsDialogOpen(true)
+        } else {
+          console.log('No credentials found in response')
+        }
+
         const customer = (customers as Customer[]).find((c) => String(c.customer_id) === String(customerToUse))
         const optimisticOwner = customer
           ? {
@@ -167,7 +164,6 @@ export default function SinglePlotLocations({ marker, popupCloseTick }: PlotLoca
           deceased: (old as Record<string, unknown>)?.deceased ?? [],
         }))
 
-        // Close UI
         setShowCustomerCombo(false)
         setSelectedCustomer('')
       } catch (err: unknown) {
@@ -177,7 +173,7 @@ export default function SinglePlotLocations({ marker, popupCloseTick }: PlotLoca
         setIsSavingOwner(false)
       }
     },
-    [createLotOwnerMutation, marker.plot_id, customers, queryClient, selectedCustomer],
+    [createLotOwnerMutation, marker.plot_id, marker.category, customers, queryClient, selectedCustomer],
   )
 
   const handleCreateDeceased = useCallback(
@@ -209,7 +205,6 @@ export default function SinglePlotLocations({ marker, popupCloseTick }: PlotLoca
 
   return (
     <div ref={rootRef} className="max-w-full">
-      {/* Only show the Add button when no dialog / combo is visible */}
       {!showCustomerCombo && !isDeceasedDialogOpen && (
         <div className="mb-3 grid grid-cols-1 gap-2">
           <Button
@@ -227,7 +222,6 @@ export default function SinglePlotLocations({ marker, popupCloseTick }: PlotLoca
         </div>
       )}
 
-      {/* Customer selection dialog for assigning plot owner */}
       {showCustomerCombo && (
         <div className="py-3">
           <CustomerSelectForm
@@ -244,7 +238,6 @@ export default function SinglePlotLocations({ marker, popupCloseTick }: PlotLoca
         </div>
       )}
 
-      {/* Deceased creation dialog */}
       {ownerData && (
         <CreateDeceasedRecordDialog
           open={isDeceasedDialogOpen}
@@ -255,11 +248,9 @@ export default function SinglePlotLocations({ marker, popupCloseTick }: PlotLoca
         />
       )}
 
-      {/* popup content. left is the plot information and right side is the owner and deceased information */}
+      <LotOwnerCredentialsDialog open={credentialsDialogOpen} onOpenChange={setCredentialsDialogOpen} credentials={lotOwnerCredentials} />
       <div className="grid grid-cols-1 gap-2 md:grid-cols-2">
-        {/* left column - plot info */}
         <PlotInfo marker={marker} />
-        {/* Right Column - Combined Owner & Deceased info */}
         <div className="space-y-2">
           <DeceasedSection owner={ownerData ?? null} deceased={deceasedList} isLoading={isLoadingDetails} />
         </div>

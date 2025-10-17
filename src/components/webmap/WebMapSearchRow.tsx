@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom'
+import { Link, useLocation } from 'react-router-dom'
 import { RiLoginBoxLine } from 'react-icons/ri'
 
 import ProfileMenu from '@/components/ProfileMenu'
@@ -15,6 +15,8 @@ interface WebMapSearchRowProps {
 
 export default function WebMapSearchRow({ context }: WebMapSearchRowProps) {
   const { user: meUser, isLoading: isUserLoading } = useMe()
+  const location = useLocation()
+  const isMapRoute = location.pathname === '/map'
 
   if (!context) return null
 
@@ -37,7 +39,7 @@ export default function WebMapSearchRow({ context }: WebMapSearchRowProps) {
               <span>Login</span>
             </Button>
           </Link>
-        ) : !isNativePlatform() && meUser && !isUserLoading ? (
+        ) : !isNativePlatform() && meUser && !isUserLoading && isMapRoute ? (
           <div className="shrink-0">
             <ProfileMenu user={meUser} />
           </div>

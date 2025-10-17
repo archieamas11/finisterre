@@ -17,6 +17,7 @@ import Spinner from '@/components/ui/spinner'
 import { useAuthQuery } from '@/hooks/useAuthQuery'
 import { cn } from '@/lib/utils'
 import { isNativePlatform } from '@/utils/platform.utils'
+import { Logo } from './Logo'
 
 const FormSchema = z.object({
   remember: z.boolean().optional(),
@@ -125,7 +126,9 @@ export default function LoginPage() {
     if (res.role) localStorage.setItem('role', res.role)
 
     setAuthFromToken()
-    toast.success(`Welcome back, ${username}!`)
+    toast.success(`Welcome back, ${username}!`, {
+      duration: 500,
+    })
 
     const destination = getNavigationDestination(res.role)
     navigate(destination)
@@ -159,28 +162,7 @@ export default function LoginPage() {
     <main className="bg-background flex min-h-screen items-center justify-center" aria-label="Login page">
       <Card className="mx-auto w-full max-w-sm p-8 shadow-lg">
         <div className="mb-2 flex flex-col items-center">
-          <Link
-            className="mb-4"
-            to="/"
-            aria-label="Back to home"
-            onClick={(e) => {
-              e.preventDefault()
-              navigate('/')
-            }}
-            onKeyDown={(e) => {
-              if (e.key === 'Enter' || e.key === ' ') {
-                e.preventDefault()
-                navigate('/')
-              }
-            }}
-            role="link"
-            tabIndex={0}
-            style={{ touchAction: 'manipulation' }}
-          >
-            <div className="border-primary bg-accent relative z-20 rounded-lg border p-2">
-              <img src="/favicon.svg" className="h-8 w-8" alt="Home Logo" />
-            </div>
-          </Link>
+          <Logo />
           <h1 className="text-2xl font-bold tracking-tight">Sign in to your account</h1>
           <p className="text-muted-foreground mt-1 text-sm">Welcome back! Please enter your credentials.</p>
         </div>

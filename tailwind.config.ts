@@ -19,28 +19,4 @@ module.exports = {
       },
     },
   },
-  plugins: [
-    function ({ addUtilities }) {
-      addUtilities({
-        '.touch-manipulation': {
-          'touch-action': 'manipulation',
-        },
-        '.touch-pan-x': {
-          'touch-action': 'pan-x',
-        },
-        '.touch-none': {
-          'touch-action': 'none',
-        },
-        '.no-long-press': {
-          '-webkit-touch-callout': 'none',
-          '-webkit-user-select': 'none',
-          '-khtml-user-select': 'none',
-          '-moz-user-select': 'none',
-          '-ms-user-select': 'none',
-          'user-select': 'none',
-          'touch-action': 'manipulation',
-        },
-      })
-    },
-  ],
 }

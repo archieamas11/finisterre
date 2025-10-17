@@ -56,7 +56,7 @@ export default function PlotLocations({ marker, backgroundColor, onDirectionClic
         </div>
       </div>
 
-      {isAuthenticated && deceasedData && deceasedData.length > 0 && (
+      {isAuthenticated && (
         <div className="bg-accent mb-3 rounded-lg p-3 shadow-sm transition-colors">
           <div className="mb-3 flex items-center gap-2">
             <BsPersonHeart className="text-accent-foreground" size={18} />
@@ -66,7 +66,7 @@ export default function PlotLocations({ marker, backgroundColor, onDirectionClic
             <div className="flex items-center justify-center py-4">
               <Spinner className="h-5 w-5" />
             </div>
-          ) : (
+          ) : deceasedData && deceasedData.length > 0 ? (
             <div className="space-y-3">
               {deceasedData.map((deceased: DeceasedData) => (
                 <div key={deceased.deceased_id} className="border-accent-foreground border-b p-3 last:border-0">
@@ -91,6 +91,8 @@ export default function PlotLocations({ marker, backgroundColor, onDirectionClic
                 </div>
               ))}
             </div>
+          ) : (
+            <div className="text-muted-foreground py-4 text-center text-sm">No deceased information in this plot yet</div>
           )}
         </div>
       )}

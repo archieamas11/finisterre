@@ -2,7 +2,6 @@ import { useQuery } from '@tanstack/react-query'
 
 import { getNichesByPlot } from '@/api/plots.api'
 
-// Niche data structure matching database schema
 interface NicheData {
   row: number
   col: number
@@ -25,11 +24,9 @@ interface NicheData {
   }
 }
 
-// Generate grid positions and fill empty niches
 const generateGridPositions = (fetchedNiches: NicheData[], totalRows: number, totalCols: number, plotId: string): NicheData[] => {
   const result: NicheData[] = []
 
-  // Create a map of existing niches by niche_number
   const nicheMap = new Map<number, NicheData>()
   fetchedNiches.forEach((niche) => {
     if (niche.niche_number) {
@@ -43,7 +40,6 @@ const generateGridPositions = (fetchedNiches: NicheData[], totalRows: number, to
       const existingNiche = nicheMap.get(nicheCounter)
 
       if (existingNiche) {
-        // Use existing niche data but ensure row/col are correct for grid positioning
         result.push({
           ...existingNiche,
           row,
@@ -51,7 +47,6 @@ const generateGridPositions = (fetchedNiches: NicheData[], totalRows: number, to
           niche_number: nicheCounter,
         })
       } else {
-        // Create empty niche for positions without data
         result.push({
           row,
           col,
@@ -66,7 +61,6 @@ const generateGridPositions = (fetchedNiches: NicheData[], totalRows: number, to
   return result
 }
 
-// Hook to fetch niche data for a specific plot/columbarium with grid generation
 export function useNichesByPlot(plotId: string, rows: number, cols: number) {
   return useQuery({
     queryKey: ['niches', plotId, rows, cols],
@@ -80,7 +74,6 @@ export function useNichesByPlot(plotId: string, rows: number, cols: number) {
         existingNiches = []
       }
 
-      // Map existing niche data to our interface
       const plotNiches: NicheData[] = existingNiches.map((n) => {
         const niche = (n || {}) as Record<string, unknown>
         const row = Number(niche.row as string) || 0
@@ -114,7 +107,6 @@ export function useNichesByPlot(plotId: string, rows: number, cols: number) {
         }
       })
 
-      // Generate grid positions for niches that don't have row/col data
       const completeNiches = generateGridPositions(plotNiches, rows, cols, plotId)
       return completeNiches
     },

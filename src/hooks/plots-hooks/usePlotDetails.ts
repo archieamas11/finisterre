@@ -33,14 +33,9 @@ export const usePlotDetails = (plot_id: string) => {
 
       return {
         owner: response.owner || null,
-        deceased: Array.isArray(response.deceased) ? response.deceased : [], // Ensure array
+        deceased: Array.isArray(response.deceased) ? response.deceased : [],
       }
     },
     enabled: !!plot_id,
-    staleTime: 0, // Always consider data stale for immediate refetch when invalidated
-    gcTime: 2 * 60 * 1000, // 2 minutes garbage collection time
-    refetchOnWindowFocus: true, // Refetch when window gains focus
-    refetchOnMount: true, // Always refetch on component mount
-    retry: 2,
   })
 }

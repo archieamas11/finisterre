@@ -8,7 +8,6 @@ export function useUpsertCustomer() {
   const qc = useQueryClient()
   return useMutation<Customer | unknown, Error, Partial<Customer>>({
     mutationFn: async (data) => {
-      // Only call editCustomer if data.customer_id exists and is not undefined/null
       if ('customer_id' in data && data.customer_id !== undefined && data.customer_id !== null) {
         return await editCustomer({
           ...data,
@@ -21,9 +20,7 @@ export function useUpsertCustomer() {
       } as Customer)
     },
     onSuccess: (_, variables) => {
-      // Force refetch to ensure we have the latest data
       qc.invalidateQueries({ queryKey: ['customers'] })
-      // If editing, also optimistically update the cache
       if ('customer_id' in variables && variables.customer_id) {
         qc.setQueryData<Customer[]>(['customers'], (oldData) => {
           if (!oldData) return []

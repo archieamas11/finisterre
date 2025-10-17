@@ -32,7 +32,7 @@ const PublicMap = React.lazy(() => import('@/pages/webmap/PublicWebMap'))
 const NewsAndUpdates = React.lazy(() => import('@/pages/admin/news/NewsAndUpdates'))
 const NotFound = React.lazy(() => import('@/pages/NotFound'))
 const About = React.lazy(() => import('@/pages/landing/section/About'))
-const Services = React.lazy(() => import('@/pages/landing/section/services'))
+const Services = React.lazy(() => import('@/pages/landing/section/products/Services'))
 
 function RootLanding() {
   const location = useLocation()

@@ -16,7 +16,6 @@ export function useDeceasedForPlot(plotId: string) {
       return response.deceased || []
     },
     enabled: isAuthenticated && !!plotId,
-    staleTime: 5 * 60 * 1000,
-    refetchOnWindowFocus: false,
+    placeholderData: [],
   })
 }

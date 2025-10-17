@@ -27,6 +27,7 @@ import CreateDeceased from './columbarium-dialogs/CreateDeceasedPage'
 import { ShareButton } from '@/pages/webmap/components/share-button'
 import GetDirectionButton from '@/pages/webmap/components/get-direction-button'
 import CustomerSelectForm from '@/components/customers/CustomerSelectForm'
+import LotOwnerCredentialsDialog, { type LotOwnerCredentials } from '@/components/lot-owners/LotOwnerCredentialsDialog'
 import { ucwords } from '@/lib/format'
 
 interface ColumbariumPopupProps {
@@ -43,6 +44,8 @@ export default function ColumbariumPopup({ marker, onDirectionClick, isDirection
   const [showCustomerCombo, setShowCustomerCombo] = useState(false)
   const [selectedCustomer, setSelectedCustomer] = useState<string>('')
   const [isSaving, setIsSaving] = useState(false)
+  const [credentialsDialogOpen, setCredentialsDialogOpen] = useState(false)
+  const [lotOwnerCredentials, setLotOwnerCredentials] = useState<LotOwnerCredentials | null>(null)
   const rows = parseInt(marker.rows)
   const cols = parseInt(marker.columns)
   const queryClient = useQueryClient()
@@ -72,7 +75,16 @@ export default function ColumbariumPopup({ marker, onDirectionClick, isDirection
 
     await toast.promise(createLotOwnerMutation.mutateAsync(lotOwnerData), {
       loading: 'Saving reservation...',
-      success: () => {
+      success: (result) => {
+        if (result?.credentials) {
+          const credentialsWithCategory = {
+            ...result.credentials,
+            plot_category: marker.category,
+          }
+          setLotOwnerCredentials(credentialsWithCategory as LotOwnerCredentials)
+          setCredentialsDialogOpen(true)
+        }
+
         queryClient.invalidateQueries({
           queryKey: ['niches', marker.plot_id, rows, cols],
         })
@@ -376,6 +388,7 @@ export default function ColumbariumPopup({ marker, onDirectionClick, isDirection
           )}
         </DialogContent>
       </Dialog>
+      <LotOwnerCredentialsDialog open={credentialsDialogOpen} onOpenChange={setCredentialsDialogOpen} credentials={lotOwnerCredentials} />
     </motion.div>
   )
 }

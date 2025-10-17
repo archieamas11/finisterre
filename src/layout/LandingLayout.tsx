@@ -14,14 +14,14 @@ import ContactUs from '@/pages/landing/section/ContactUs'
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet'
 import Chatbot from '@/pages/landing/section/chatbot/Chatbot'
 import { BotIcon } from 'lucide-react'
-import OurProducts from '@/pages/landing/section/OurProducts'
+import Products from '@/pages/landing/section/products'
 
 function LandingHome() {
   return (
     <>
       <HeroSection />
       <FeatureSection />
-      <OurProducts />
+      <Products />
       <Showcase />
       <Testimonials />
       {/* <PublicNewsAnnouncement /> */}

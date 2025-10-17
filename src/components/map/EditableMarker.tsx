@@ -45,7 +45,6 @@ export default function EditableMarker({
   const [localPosition, setLocalPosition] = useState<[number, number]>(position)
   const queryClient = useQueryClient()
 
-  // Update local position when prop changes, but only if it's different
   useEffect(() => {
     const [currentLat, currentLng] = localPosition
     const [newLat, newLng] = position
@@ -55,13 +54,11 @@ export default function EditableMarker({
     }
   }, [position, localPosition])
 
-  // Update marker position when local position changes
   useEffect(() => {
     if (markerRef.current) {
       const currentLatLng = markerRef.current.getLatLng()
       const [newLat, newLng] = localPosition
 
-      // Only update if the position has actually changed
       if (currentLatLng.lat !== newLat || currentLatLng.lng !== newLng) {
         markerRef.current.setLatLng(localPosition)
         currentPositionRef.current = localPosition
@@ -69,7 +66,6 @@ export default function EditableMarker({
     }
   }, [localPosition])
 
-  // Register/unregister marker in parent registry when ref is available/cleanup
   useEffect(() => {
     const m = markerRef.current
     if (registerMarkerRef) {
@@ -80,7 +76,6 @@ export default function EditableMarker({
     }
   }, [plotId, registerMarkerRef])
 
-  // Selected plot marker style to edit
   useEffect(() => {
     let style = document.getElementById('selected-marker-styles')
     if (style) return
@@ -149,7 +144,6 @@ export default function EditableMarker({
     })
   }, [icon, isSelected, isEditable])
 
-  // Mutation for updating coordinates with optimistic updates
   const updateCoordinatesMutation = useMutation({
     mutationFn: async ({ plot_id, coordinates }: { plot_id: string; coordinates: string }) => {
       return updatePlotCoordinates(plot_id, coordinates)
@@ -161,19 +155,16 @@ export default function EditableMarker({
       const previousPlots = queryClient.getQueryData<ConvertedMarker[]>(['plots'])
       const previousPlotsClone = previousPlots ? JSON.parse(JSON.stringify(previousPlots)) : undefined
 
-      // parse "lng, lat" safely
       const parts = String(coordinates)
         .split(',')
         .map((s) => parseFloat(s.trim()))
       const [lng, lat] = parts.length >= 2 && !Number.isNaN(parts[0]) && !Number.isNaN(parts[1]) ? [parts[0], parts[1]] : [undefined, undefined]
 
       if (lat !== undefined && lng !== undefined) {
-        // set local marker position so UI moves right away
         setLocalPosition([lat, lng])
         currentPositionRef.current = [lat, lng]
       }
 
-      // update cache fields that your UI may read
       if (previousPlots) {
         queryClient.setQueryData(['plots'], (old: ConvertedMarker[] | undefined) => {
           if (!old) return old
@@ -194,11 +185,9 @@ export default function EditableMarker({
     },
 
     onError: (_err, _variables, context) => {
-      // Roll back cache if we saved a snapshot in onMutate
       if (context?.previousPlots) {
         queryClient.setQueryData(['plots'], context.previousPlots)
       }
-      // Reset marker position on error
       setLocalPosition(position)
       currentPositionRef.current = position
     },
@@ -211,12 +200,10 @@ export default function EditableMarker({
       }
     },
     onSuccess: () => {
-      // Keep edit session active; return to select mode
       onSaveSuccess?.()
     },
   })
 
-  // Save current position
   const savePosition = useCallback(async () => {
     const [lat, lng] = currentPositionRef.current
     try {
@@ -234,20 +221,15 @@ export default function EditableMarker({
     } catch (e) {}
   }, [plotId, updateCoordinatesMutation])
 
-  // Cancel editing and reset position
   const cancelEditing = useCallback(() => {
     setLocalPosition(position)
     onEditComplete()
   }, [position, onEditComplete])
 
-  // Handle keyboard shortcuts using react-hotkeys-hook
-  // Attach Enter -> savePosition and Escape -> cancelEditing, but only when this marker is selected
   useHotkeys(
     'enter, escape',
     (event) => {
-      // Only handle when this marker is selected
       if (!isSelected) return
-      // Use the KeyboardEvent.key which is well-typed
       const key = (event as KeyboardEvent).key
       if (key === 'Enter') {
         event.preventDefault()
@@ -257,26 +239,21 @@ export default function EditableMarker({
         cancelEditing()
       }
     },
-    // enable the hotkey only when this marker is selected
     { enabled: isSelected },
     [isSelected, savePosition, cancelEditing],
   )
 
-  // Setup dragging behavior (unchanged)
   useEffect(() => {
     const marker = markerRef.current
     if (!marker) return
 
-    // Clear existing event listeners
     marker.off('dragstart').off('drag').off('dragend')
 
     if (isSelected && isEditable) {
-      // Enable dragging
       if (!marker.dragging?.enabled()) {
         marker.dragging?.enable()
       }
 
-      // Set up drag event listeners
       marker.on('dragstart', () => {
         isDraggingRef.current = true
       })
@@ -290,21 +267,18 @@ export default function EditableMarker({
         isDraggingRef.current = false
       })
 
-      // Focus map container for keyboard events
       const mapContainer = document.querySelector('.leaflet-container') as HTMLElement
       if (mapContainer && mapContainer.getAttribute('tabindex') !== '0') {
         mapContainer.setAttribute('tabindex', '0')
         mapContainer.style.outline = 'none'
       }
     } else {
-      // Disable dragging
       if (marker.dragging?.enabled()) {
         marker.dragging?.disable()
       }
     }
   }, [isSelected, isEditable, savePosition])
 
-  // Auto-open popup when autoOpenPlotId matches this marker's plotId
   useEffect(() => {
     const marker = markerRef.current
     if (!autoOpenPlotId) return
@@ -313,7 +287,6 @@ export default function EditableMarker({
       return
     }
     if (autoOpenPlotId !== plotId) {
-      // not for this marker
       return
     }
     if (isEditable) {
@@ -327,13 +300,11 @@ export default function EditableMarker({
     const tryOpen = () => {
       if (cancelled) return
       const popup = marker.getPopup?.()
-      // Wait until popup is bound (child <Popup> mounted) and marker is on map
       const onMap = Boolean((marker as any)._map)
       console.log('[EditableMarker] tryOpen', { plotId, attempts, hasPopup: Boolean(popup), onMap })
       if (!popup || !onMap) {
         attempts += 1
         if (attempts < 15) {
-          // retry ~15 times over ~1.5s total
           window.setTimeout(tryOpen, 100)
         }
         return
@@ -346,7 +317,6 @@ export default function EditableMarker({
         } else {
           console.log('[EditableMarker] opening popup', { plotId })
           marker.openPopup()
-          // Fallback: if still not open after a short tick, try firing click
           window.setTimeout(() => {
             if (!marker.isPopupOpen()) {
               console.log('[EditableMarker] openPopup had no effect, firing click()', { plotId })
@@ -361,7 +331,6 @@ export default function EditableMarker({
       }
     }
 
-    // If marker is already on map, try shortly; also try when marker is added
     const immediate = window.setTimeout(tryOpen, 120)
     marker.once('add', tryOpen)
 
@@ -372,13 +341,10 @@ export default function EditableMarker({
     }
   }, [autoOpenPlotId, plotId, isEditable, onPopupOpen])
 
-  // Handle marker click
   const handleMarkerClick = useCallback(() => {
-    // Prevent click during drag
     if (isDraggingRef.current) return
     if (isEditable) {
       onMarkerClick(plotId)
-      // Focus map for keyboard events
       setTimeout(() => {
         const mapContainer = document.querySelector('.leaflet-container') as HTMLElement
         if (mapContainer) {
@@ -388,7 +354,6 @@ export default function EditableMarker({
     }
   }, [isEditable, onMarkerClick, plotId])
 
-  // Event handlers
   const eventHandlers = useMemo(() => {
     const handlers: Record<string, () => void> = {
       click: function () {
@@ -396,7 +361,6 @@ export default function EditableMarker({
         handleMarkerClick()
       },
     }
-    // Only add popup handlers when not in edit mode
     if (!isEditable) {
       if (onPopupOpen)
         handlers.popupopen = function () {
@@ -414,8 +378,6 @@ export default function EditableMarker({
 
   return (
     <Marker ref={markerRef} position={localPosition} icon={markerIcon} eventHandlers={eventHandlers} draggable={isSelected && isEditable}>
-      {/* Debug render log removed to avoid bundler parse issues */}
-      {/* Only render popup content when not in editable mode */}
       {!isEditable && children}
     </Marker>
   )

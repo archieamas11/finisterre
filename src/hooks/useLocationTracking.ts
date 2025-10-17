@@ -23,7 +23,6 @@ export interface UseLocationTrackingOptions {
   enableHighAccuracy?: boolean
   timeout?: number
   maximumAge?: number
-  // 🎯 Distance threshold in meters to trigger location updates
   distanceFilter?: number
 }
 
@@ -42,10 +41,6 @@ const DEFAULT_OPTIONS: Required<UseLocationTrackingOptions> = {
   distanceFilter: 5, // 📏 5 meters minimum distance
 }
 
-/**
- * 📍 Custom hook for tracking user location with high accuracy
- * Provides real-time location updates with error handling and distance filtering
- */
 export function useLocationTracking(options: UseLocationTrackingOptions = {}) {
   const [state, setState] = useState<LocationTrackingState>({
     currentLocation: null,
@@ -59,14 +54,12 @@ export function useLocationTracking(options: UseLocationTrackingOptions = {}) {
   const lastLocationRef = useRef<UserLocation | null>(null)
   const optionsRef = useRef({ ...DEFAULT_OPTIONS, ...options })
 
-  // 🔄 Update options ref when options change
   useEffect(() => {
     optionsRef.current = { ...DEFAULT_OPTIONS, ...options }
   }, [options])
 
-  // 🧭 Calculate distance between two locations
   const calculateDistance = useCallback((loc1: UserLocation, loc2: UserLocation): number => {
-    const R = 6371000 // 🌍 Earth's radius in meters
+    const R = 6371000 // Earth's radius in meters
     const dLat = ((loc2.latitude - loc1.latitude) * Math.PI) / 180
     const dLon = ((loc2.longitude - loc1.longitude) * Math.PI) / 180
     const a =
@@ -76,10 +69,8 @@ export function useLocationTracking(options: UseLocationTrackingOptions = {}) {
     return R * c
   }, [])
 
-  // ✅ Handle successful location updates
   const onLocationSuccess = useCallback(
     (position: GeolocationPosition | Position) => {
-      // Handle both browser and Capacitor position formats
       const coords = 'coords' in position ? position.coords : position
 
       const newLocation: UserLocation = {
@@ -93,12 +84,11 @@ export function useLocationTracking(options: UseLocationTrackingOptions = {}) {
         timestamp: position.timestamp,
       }
 
-      // 🎯 Apply distance filter
       const lastLocation = lastLocationRef.current
       if (lastLocation && optionsRef.current.distanceFilter > 0) {
         const distance = calculateDistance(lastLocation, newLocation)
         if (distance < optionsRef.current.distanceFilter) {
-          return // 🚫 Skip update if moved distance is below threshold
+          return
         }
       }
 
@@ -113,7 +103,6 @@ export function useLocationTracking(options: UseLocationTrackingOptions = {}) {
     [calculateDistance],
   )
 
-  // ❌ Handle location errors
   const onLocationError = useCallback(async (error: GeolocationPositionError) => {
     const locationError: LocationError = {
       code: error.code,
@@ -121,7 +110,7 @@ export function useLocationTracking(options: UseLocationTrackingOptions = {}) {
       timestamp: Date.now(),
     }
 
-    console.warn('🚫 Location tracking error:', locationError)
+    console.warn('Location tracking error:', locationError)
 
     setState((prev) => ({
       ...prev,
@@ -129,7 +118,6 @@ export function useLocationTracking(options: UseLocationTrackingOptions = {}) {
       isTracking: false,
     }))
 
-    // 🧹 Clear watch if there's an error
     if (watchIdRef.current !== null) {
       if (Capacitor.isNativePlatform()) {
         await Geolocation.clearWatch({ id: watchIdRef.current as string })
@@ -140,7 +128,6 @@ export function useLocationTracking(options: UseLocationTrackingOptions = {}) {
     }
   }, [])
 
-  // Start location tracking
   const startTracking = useCallback(async () => {
     if (!state.isSupported) {
       setState((prev) => ({
@@ -155,7 +142,7 @@ export function useLocationTracking(options: UseLocationTrackingOptions = {}) {
     }
 
     if (watchIdRef.current !== null) {
-      return // 🔄 Already tracking
+      return
     }
 
     setState((prev) => ({ ...prev, isTracking: true, error: null }))
@@ -168,7 +155,6 @@ export function useLocationTracking(options: UseLocationTrackingOptions = {}) {
 
     try {
       if (Capacitor.isNativePlatform()) {
-        // ✅ Handle permissions more robustly
         let { location } = await Geolocation.checkPermissions()
         if (location !== 'granted') {
           const request = await Geolocation.requestPermissions()
@@ -178,7 +164,6 @@ export function useLocationTracking(options: UseLocationTrackingOptions = {}) {
           }
         }
 
-        // ✅ Start watching position
         const watchId = await Geolocation.watchPosition(geolocationOptions, (position, error) => {
           if (position) {
             onLocationSuccess(position)
@@ -192,11 +177,10 @@ export function useLocationTracking(options: UseLocationTrackingOptions = {}) {
         })
         watchIdRef.current = watchId
       } else {
-        // ✅ Browser geolocation
         watchIdRef.current = navigator.geolocation.watchPosition(onLocationSuccess, onLocationError, geolocationOptions)
       }
     } catch (error) {
-      console.error('🚫 Failed to start location tracking:', error)
+      console.error('Failed to start location tracking:', error)
       setState((prev) => ({
         ...prev,
         isTracking: false,
@@ -209,14 +193,11 @@ export function useLocationTracking(options: UseLocationTrackingOptions = {}) {
     }
   }, [state.isSupported, onLocationSuccess, onLocationError])
 
-  // Stop location tracking
   const stopTracking = useCallback(async () => {
     if (watchIdRef.current !== null) {
       if (Capacitor.isNativePlatform()) {
-        // Use Capacitor to clear watch
         await Geolocation.clearWatch({ id: watchIdRef.current as string })
       } else {
-        // Use browser geolocation to clear watch
         navigator.geolocation.clearWatch(watchIdRef.current as number)
       }
       watchIdRef.current = null
@@ -224,7 +205,6 @@ export function useLocationTracking(options: UseLocationTrackingOptions = {}) {
     setState((prev) => ({ ...prev, isTracking: false }))
   }, [])
 
-  // 📍 Get current location once (without watching)
   const getCurrentLocation = useCallback(async (): Promise<UserLocation> => {
     if (!state.isSupported) {
       throw new Error('Geolocation is not supported by this device')
@@ -237,7 +217,6 @@ export function useLocationTracking(options: UseLocationTrackingOptions = {}) {
     }
 
     if (Capacitor.isNativePlatform()) {
-      // Use Capacitor Geolocation for native apps
       const permission = await Geolocation.checkPermissions()
       if (permission.location !== 'granted') {
         const request = await Geolocation.requestPermissions()
@@ -258,7 +237,6 @@ export function useLocationTracking(options: UseLocationTrackingOptions = {}) {
         timestamp: position.timestamp,
       }
     } else {
-      // Use browser geolocation for web
       return new Promise((resolve, reject) => {
         navigator.geolocation.getCurrentPosition(
           (position) => {
@@ -281,7 +259,6 @@ export function useLocationTracking(options: UseLocationTrackingOptions = {}) {
     }
   }, [state.isSupported])
 
-  // 🧹 Cleanup on unmount
   useEffect(() => {
     return () => {
       if (watchIdRef.current !== null) {
@@ -300,7 +277,6 @@ export function useLocationTracking(options: UseLocationTrackingOptions = {}) {
     startTracking,
     stopTracking,
     getCurrentLocation,
-    // 🎯 Convenience getters
     isLocationAvailable: state.currentLocation !== null,
     locationAge: state.currentLocation ? Date.now() - state.currentLocation.timestamp : null,
   }

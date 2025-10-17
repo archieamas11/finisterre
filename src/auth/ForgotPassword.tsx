@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
 import { FormControl, FormMessage, FormField, FormLabel, FormItem, Form } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
+import { Logo } from './Logo'
 
 const FormSchema = z.object({
   username: z.string().min(3, {
@@ -55,11 +56,7 @@ export default function ForgotPassword() {
     <div className="flex min-h-screen items-center justify-center">
       <Card className="mx-auto w-full max-w-sm p-8">
         <div className="mb-8 flex flex-col items-center">
-          <Link className="mb-4" to="/">
-            <div className="border-primary bg-accent rounded-lg border p-2">
-              <img src="/favicon.svg" className="h-8 w-8" alt="Home Logo" />
-            </div>
-          </Link>
+          <Logo />
           <h1 className="text-2xl font-bold tracking-tight">Forgot Password</h1>
           <p className="text-muted-foreground mt-1 text-center text-sm">Please enter your property id to verify your account.</p>
         </div>
