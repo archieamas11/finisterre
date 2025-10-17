@@ -56,13 +56,13 @@ export default function LandingLayout() {
       <div className="aurora-background pointer-events-none fixed inset-0 -z-10" aria-hidden="true" />
       <div className="relative z-10">
         <HeaderSection />
-        <div className="group z-999">
-          <div className="fixed right-22 bottom-8 z-999">
+        <div className="group">
+          <div className="fixed right-22 bottom-8">
             <span className="rounded-full bg-white px-4 py-2 text-[var(--brand-primary)] shadow-lg transition-opacity duration-300 group-hover:opacity-0">
               Chat with Finisbot!
             </span>
           </div>
-          <div className="fixed right-4 bottom-4 z-999">
+          <div className="fixed right-4 bottom-4">
             <Sheet>
               <SheetTrigger asChild>
                 <PulsatingButton className="h-15 w-15 rounded-full bg-[var(--brand-primary)] shadow-lg">
