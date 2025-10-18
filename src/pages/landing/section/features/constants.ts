@@ -8,7 +8,7 @@ export const features: Feature[] = [
   {
     title: 'Digital Mapping',
     description: 'Easily locate memorials and navigate the park with our online system.',
-    image: 'https://res.cloudinary.com/djrkvgfvo/image/upload/v1760720545/856df715-ecfd-4cf6-931c-037898407996.png',
+    image: 'https://res.cloudinary.com/djrkvgfvo/image/upload/v1760797636/mock_gk6kyw.png',
     href: '/map',
   },
   {
