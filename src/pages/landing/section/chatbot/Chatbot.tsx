@@ -2,9 +2,10 @@ import { Button } from '@/components/ui/button'
 import { CardHeader, CardTitle, CardContent, CardFooter } from '@/components/ui/card'
 import { Textarea } from '@/components/ui/textarea'
 import { SheetClose } from '@/components/ui/sheet'
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import ReactMarkdown from 'react-markdown'
 import { toast } from 'sonner'
-import { GlobeIcon, MessageCirclePlusIcon, TrashIcon, XIcon, ArrowRightIcon } from 'lucide-react'
+import { GlobeIcon, MessageCirclePlusIcon, XIcon, ArrowRightIcon, DatabaseIcon } from 'lucide-react'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import Spinner from '@/components/ui/spinner'
 import remarkGfm from 'remark-gfm'
@@ -65,6 +66,8 @@ export default function Chatbot() {
   type IndexStatus = 'idle' | 'building' | 'built'
   const [indexStatus, setIndexStatus] = useState<IndexStatus>('idle')
 
+  const [isClearDialogOpen, setIsClearDialogOpen] = useState(false)
+
   const updateLastActive = () => {
     try {
       sessionStorage.setItem(LAST_ACTIVE_KEY, String(Date.now()))
@@ -115,8 +118,6 @@ export default function Chatbot() {
       const built = sessionStorage.getItem(INDEX_BUILT_KEY)
       if (built) {
         setIndexStatus('built')
-      } else {
-        void buildIndex()
       }
     } catch {
       // ignore storage access errors
@@ -294,16 +295,16 @@ export default function Chatbot() {
     setInput('')
   }
 
-  const clearSessionStorage = () => {
-    try {
-      sessionStorage.removeItem(STORAGE_KEY)
-      sessionStorage.removeItem(LAST_ACTIVE_KEY)
-      sessionStorage.removeItem(INDEX_BUILT_KEY)
-      setMessages([])
-    } catch {
-      // ignore
-    }
-  }
+  // const clearSessionStorage = () => {
+  //   try {
+  //     sessionStorage.removeItem(STORAGE_KEY)
+  //     sessionStorage.removeItem(LAST_ACTIVE_KEY)
+  //     sessionStorage.removeItem(INDEX_BUILT_KEY)
+  //     setMessages([])
+  //   } catch {
+  //     // ignore
+  //   }
+  // }
 
   const showIntro = messages.length === 0
 
@@ -342,10 +343,12 @@ export default function Chatbot() {
               <GlobeIcon className="h-4 w-4" />
             </Button>
           )}
-          <Button onClick={clearSessionStorage} disabled={busy} variant="ghost" size="icon" className="h-8 w-8">
-            <TrashIcon className="h-4 w-4" />
-          </Button>
-          <Button onClick={clearChat} variant="ghost" size="icon" disabled={busy} className="h-8 w-8">
+          {!import.meta.env.PROD && (
+            <Button onClick={buildIndex} disabled={busy || indexStatus === 'building'} variant="ghost" size="icon" className="h-8 w-8">
+              <DatabaseIcon className="h-4 w-4" />
+            </Button>
+          )}
+          <Button onClick={() => setIsClearDialogOpen(true)} variant="ghost" size="icon" disabled={busy} className="h-8 w-8">
             <MessageCirclePlusIcon className="h-4 w-4" />
           </Button>
           <SheetClose asChild>
@@ -481,6 +484,27 @@ export default function Chatbot() {
           <div className="text-muted-foreground text-center text-xs">This assistant may produce inaccurate information.</div>
         </div>
       </CardFooter>
+      <Dialog open={isClearDialogOpen} onOpenChange={setIsClearDialogOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Clear Chat</DialogTitle>
+            <DialogDescription>The chat will be cleared and cannot be recovered. Are you sure?</DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setIsClearDialogOpen(false)}>
+              Cancel
+            </Button>
+            <Button
+              onClick={() => {
+                clearChat()
+                setIsClearDialogOpen(false)
+              }}
+            >
+              OK
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   )
 }
