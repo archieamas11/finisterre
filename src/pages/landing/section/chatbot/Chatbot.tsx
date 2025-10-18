@@ -5,7 +5,7 @@ import { SheetClose } from '@/components/ui/sheet'
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import ReactMarkdown from 'react-markdown'
 import { toast } from 'sonner'
-import { GlobeIcon, MessageCirclePlusIcon, XIcon, ArrowRightIcon, DatabaseIcon } from 'lucide-react'
+import { GlobeIcon, MessageCirclePlusIcon, XIcon, ArrowRightIcon, DatabaseIcon, TextAlignStart } from 'lucide-react'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import Spinner from '@/components/ui/spinner'
 import remarkGfm from 'remark-gfm'
@@ -107,7 +107,7 @@ export default function Chatbot() {
         const res = await fetch(`${API}?action=suggestions`)
         if (!res.ok) return
         const data = (await res.json()) as { ok: boolean; items: Suggestion[] }
-        if (data?.items) setSuggestions(data.items.slice(0, 3))
+        if (data?.items) setSuggestions(data.items.slice(0, 4))
       } catch {
         // ignore silently; UI will still work
       }
@@ -371,7 +371,8 @@ export default function Chatbot() {
                 Hello there <span className="inline-block">👋</span>
               </h2>
               <p className="text-muted-foreground mb-8 text-xl">How can I help you today?</p>
-              <div className="w-full space-y-3">
+              <div className="w-full space-y-2.5">
+                <p className="mt-5 text-left text-[10px] font-semibold">QUICK QUESTIONS</p>
                 {filteredIntroSuggestions.map((s, i) => (
                   <button
                     key={i}
@@ -379,12 +380,11 @@ export default function Chatbot() {
                     disabled={busy}
                     className="group border-border bg-card flex w-full cursor-pointer items-start gap-3 rounded-xl border p-4 text-left transition-all hover:shadow-md disabled:opacity-50"
                   >
-                    <div className="bg-primary/10 text-primary group-hover:bg-primary/20 flex h-10 w-10 items-center justify-center rounded-lg">
-                      <MessageCirclePlusIcon className="h-5 w-5" />
-                    </div>
-                    <div className="flex-1">
-                      <div className="font-medium">{s.question}</div>
-                      {s.subtitle && <div className="text-muted-foreground mt-1 text-sm">{s.subtitle}</div>}
+                    <div className="flex gap-2 leading-none">
+                      <div className="bg-primary/10 text-primary group-hover:bg-primary/20 flex h-5 w-5 items-center justify-center rounded-lg">
+                        <TextAlignStart className="h-3 w-3" />
+                      </div>
+                      <div className="text-xs font-medium">{s.question}</div>
                     </div>
                   </button>
                 ))}
@@ -435,7 +435,7 @@ export default function Chatbot() {
                               type="button"
                               onClick={() => sendMsg(s.question)}
                               className="bg-background hover:bg-accent w-full cursor-pointer rounded-md border px-3 py-2 text-left text-xs transition-colors disabled:opacity-50"
-                              title={`Relevance score: ${s.score}`}
+                              // title={`Relevance score: ${s.score}`}
                               disabled={busy}
                             >
                               {s.question}
