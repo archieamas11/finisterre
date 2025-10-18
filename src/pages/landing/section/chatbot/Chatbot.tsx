@@ -326,18 +326,20 @@ export default function Chatbot() {
       <CardHeader className="flex flex-col gap-3 border-b px-4 py-3 backdrop-blur sm:flex-row sm:items-center sm:justify-between sm:px-6 sm:py-4">
         <CardTitle className="text-lg font-semibold">Finisbot</CardTitle>
         <div className="flex items-center gap-2">
-          <div
-            className="text-muted-foreground flex items-center gap-2 rounded-md px-2 py-1 text-xs"
-            title={indexStatus === 'building' ? 'Building index' : indexStatus === 'built' ? 'Index ready' : 'Index not built'}
-          >
-            {indexStatus === 'building' ? (
-              <Spinner className="h-3 w-3" />
-            ) : indexStatus === 'built' ? (
-              <span className="h-2 w-2 rounded-full bg-green-500" aria-label="Index ready" />
-            ) : (
-              <span className="h-2 w-2 rounded-full bg-red-600" aria-label="Index not built" />
-            )}
-          </div>
+          {!import.meta.env.PROD && (
+            <div
+              className="text-muted-foreground flex items-center gap-2 rounded-md px-2 py-1 text-xs"
+              title={indexStatus === 'building' ? 'Building index' : indexStatus === 'built' ? 'Index ready' : 'Index not built'}
+            >
+              {indexStatus === 'building' ? (
+                <Spinner className="h-3 w-3" />
+              ) : indexStatus === 'built' ? (
+                <span className="h-2 w-2 rounded-full bg-green-500" aria-label="Index ready" />
+              ) : (
+                <span className="h-2 w-2 rounded-full bg-red-600" aria-label="Index not built" />
+              )}
+            </div>
+          )}
           {!import.meta.env.PROD && (
             <Button onClick={testConnection} disabled={busy} variant="ghost" size="icon" className="h-8 w-8">
               <GlobeIcon className="h-4 w-4" />
