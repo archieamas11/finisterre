@@ -1,7 +1,7 @@
 import { FiRefreshCcw } from 'react-icons/fi'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
-import { memo, useCallback } from 'react'
+import { useCallback } from 'react'
 import { isAndroid } from '@/utils/platform.utils'
 import { Fab } from 'konsta/react'
 
@@ -18,10 +18,9 @@ interface ResetMapViewButtonProps {
   children?: React.ReactNode
 }
 
-export function ResetMapViewButton({ context, onReset, className, size = 'sm', children }: ResetMapViewButtonProps) {
+export default function ResetMapViewButton({ context, onReset, className, size = 'sm', children }: ResetMapViewButtonProps) {
   const FiRefreshCcwIcon = <FiRefreshCcw className="h-6 w-6" />
   const handleReset = useCallback(() => {
-    // Attempt functions in order of priority
     if (onReset) {
       onReset()
       return
@@ -56,5 +55,3 @@ export function ResetMapViewButton({ context, onReset, className, size = 'sm', c
     </>
   )
 }
-
-export default memo(ResetMapViewButton)

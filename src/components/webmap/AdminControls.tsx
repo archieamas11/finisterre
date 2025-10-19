@@ -6,11 +6,7 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 import { cn } from '@/lib/utils'
 import { useAdminContext } from '@/hooks/useNavigationContext'
 
-interface AdminControlsProps {
-  className?: string
-}
-
-export default function AdminControls({ className }: AdminControlsProps) {
+export default function AdminControls() {
   const { context, onAddMarkerClick, onEditMarkerClick } = useAdminContext()
 
   useEffect(() => {
@@ -32,7 +28,12 @@ export default function AdminControls({ className }: AdminControlsProps) {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="secondary" size="sm" className={`bg-background shrink-0 rounded-full ${className || ''}`}>
+        <Button
+          variant="secondary"
+          size="sm"
+          aria-label="Admin map controls"
+          className="bg-background text-background-foreground hover:bg-background/80shrink-0 rounded-full text-xs sm:text-sm"
+        >
           <RiMapPinAddLine
             className={cn('h-3 w-3 sm:h-4 sm:w-4', {
               'text-primary-foreground': context.isAddingMarker,
