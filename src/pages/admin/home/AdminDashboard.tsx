@@ -16,7 +16,9 @@ export default function UserDashboard() {
   const isAdmin = role === 'admin'
   return (
     <div className="w-full p-4 shadow-sm">
-      <div className="@container/main flex flex-1 flex-col justify-between gap-4 py-4 md:gap-6">{isAdmin && <SectionCards />}</div>
+      <div className="@container/main flex flex-1 flex-col justify-between gap-4 py-4 md:gap-6">
+        <SectionCards />
+      </div>
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
         <ChartAreaInteractive />
         <ChartAreaStackedExpand />
@@ -32,7 +34,7 @@ export default function UserDashboard() {
             </h2>
           </div>
           <div aria-busy={isPending}>
-            {isPending && <DataTableSkeleton columnCount={5} filterCount={1} />}
+            {isPending && <DataTableSkeleton columnCount={10} filterCount={3} />}
             {isError && <ErrorMessage message="Failed to load activity logs." />}
             {!isPending && !isError && data && <LogsTable data={data.logs ?? []} />}
           </div>
