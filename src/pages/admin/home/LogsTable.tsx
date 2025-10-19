@@ -73,6 +73,11 @@ export default function LogsTable({ data }: LogsTableProps) {
     getFilteredRowModel: getFilteredRowModel(),
     onColumnVisibilityChange: setColumnVisibility,
     getPaginationRowModel: getPaginationRowModel(),
+    // initialState: {
+    //   pagination: {
+    //     pageSize: 10,
+    //   },
+    // },
     state: {
       sorting,
       rowSelection,
