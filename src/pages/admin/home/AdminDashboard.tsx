@@ -10,7 +10,7 @@ import LogsTable from './LogsTable'
 import { ChartPieInteractive } from './PieChart'
 
 export default function UserDashboard() {
-  const { data, isPending, isError } = useGetLogs({ limit: 500 })
+  const { data, isPending, isError } = useGetLogs()
   const { data: auth } = useAuthQuery()
   const role = auth?.user?.role ?? (localStorage.getItem('role') as 'admin' | 'staff' | 'user' | null)
   const isAdmin = role === 'admin'
