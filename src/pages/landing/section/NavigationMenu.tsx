@@ -286,7 +286,6 @@ export function NavigationMenuSection() {
               </Button>
             </SheetTrigger>
             <SheetContent className="w-80 p-0" side="left">
-              {/* Accessibility: Add DialogTitle and Description for SheetContent using shadcn primitives */}
               <SheetHeader className="border-b">
                 <SheetTitle>Menu</SheetTitle>
                 <SheetDescription className="sr-only">Main navigation menu for mobile users</SheetDescription>

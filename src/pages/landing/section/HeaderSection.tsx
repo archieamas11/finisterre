@@ -54,7 +54,8 @@ export const HeaderSection: FC = () => {
             asChild
             type="button"
             className={cn('rounded-full bg-transparent transition-colors', {
-              'border-black bg-transparent dark:border-[var(--brand-primary)] dark:text-[var(--brand-primary)]': scrolled,
+              'border-[var(--brand-primary)] bg-transparent hover:bg-transparent dark:border-[var(--brand-primary)] dark:text-[var(--brand-primary)]':
+                scrolled,
               'bg-transparent text-white dark:text-white': !scrolled,
             })}
             aria-label="Login"
