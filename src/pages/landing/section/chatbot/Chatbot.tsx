@@ -122,7 +122,7 @@ export default function Chatbot() {
     } catch {
       // ignore storage access errors
     }
-  }, [])
+  }, [API])
 
   // Auto-scroll to bottom when messages change
   useEffect(() => {
