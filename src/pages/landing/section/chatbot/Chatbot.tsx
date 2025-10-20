@@ -458,10 +458,14 @@ export default function Chatbot() {
               value={input}
               onChange={(e) => {
                 setInput(e.target.value)
-                e.target.style.height = 'auto'
-                e.target.style.height = `${Math.min(e.target.scrollHeight, 200)}px`
+                const target = e.target
+                target.style.height = 'auto'
+                const scrollHeight = target.scrollHeight
+                const newHeight = Math.min(scrollHeight, 200)
+                target.style.height = `${newHeight}px`
+                target.style.overflow = scrollHeight > 200 ? 'auto' : 'hidden'
               }}
-              className="scrollbar-hide max-h-[200px] min-h-[50px] resize-none rounded-lg border py-3 pr-12 leading-relaxed shadow-sm"
+              className="max-h-[200px] min-h-[50px] resize-none rounded-lg border py-3 pr-12 leading-relaxed shadow-sm"
               placeholder={busy ? 'Working...' : 'Write your question'}
               onKeyDown={(e) => {
                 if (e.key === 'Enter' && !e.shiftKey) {
@@ -471,7 +475,6 @@ export default function Chatbot() {
               }}
               disabled={busy}
               rows={1}
-              style={{ overflow: 'hidden' }}
             />
             <Button
               onClick={() => sendMsg()}
