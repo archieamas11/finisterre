@@ -28,22 +28,17 @@ export default function ForgotPassword() {
 
   const onSubmit = async (data: z.infer<typeof FormSchema>) => {
     const verifyPromise = async () => {
-      console.log('Sending forgot password request:', data)
       const res = await forgotPassword(data.username)
-      console.log('Forgot password response:', res)
 
       if (res.success) {
-        navigate('/reset-password', {
-          state: { username: data.username },
-        })
-        return 'Property ID verified successfully!'
+        return 'Email sent! Please check your inbox for a reset link.'
       } else {
         throw new Error(res.message || 'Failed to process request')
       }
     }
 
     toast.promise(verifyPromise(), {
-      loading: '🔍 Verifying your Property ID...',
+      loading: 'Sending reset email...',
       success: (message) => message,
       error: (err) => ({
         message: err.message,
@@ -58,7 +53,7 @@ export default function ForgotPassword() {
         <div className="mb-8 flex flex-col items-center">
           <Logo />
           <h1 className="text-2xl font-bold tracking-tight">Forgot Password</h1>
-          <p className="text-muted-foreground mt-1 text-center text-sm">Please enter your property id to verify your account.</p>
+          <p className="text-muted-foreground mt-1 text-center text-sm">Enter your Property ID. If it exists, well email a reset link.</p>
         </div>
 
         <Form {...form}>

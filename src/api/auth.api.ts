@@ -66,19 +66,19 @@ export async function loginUser(
   }
 }
 
-export async function resetPassword(username: string, newPassword: string) {
-  const res = await api.post('auth/reset_password.php', {
-    username,
-    new_password: newPassword,
-  })
+export async function resetPassword(payload: { username: string; old_password: string; new_password: string; token: string }) {
+  const res = await api.post('auth/reset_password.php', payload)
   return res.data
 }
 
 export async function forgotPassword(username: string) {
-  const res = await api.post('auth/forgot_password.php', {
-    username,
-  })
+  const res = await api.post('auth/forgot_password.php', { username })
   return res.data
+}
+
+export async function verifyResetToken(token: string) {
+  const res = await api.post('auth/verify_reset_token.php', { token })
+  return res.data as { success: boolean; message: string; user?: { user_id: number; username: string } }
 }
 
 export interface ChangePasswordPayload {
