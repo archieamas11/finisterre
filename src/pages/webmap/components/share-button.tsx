@@ -1,8 +1,8 @@
 import type { Button } from '@/components/ui/button'
 
-import { ShareDialog } from '@/pages/webmap/ShareDialog'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
 import { useIsMobile } from '@/hooks/use-mobile'
+import { ShareDialog } from '@/pages/webmap/ShareDialog'
 
 interface ShareButtonProps {
   coords: [number, number]

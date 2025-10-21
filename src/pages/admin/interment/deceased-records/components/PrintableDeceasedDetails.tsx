@@ -1,5 +1,6 @@
-import React from 'react'
 import type { DeceasedRecords } from '@/types/interment.types'
+import React from 'react'
+
 import { formatDate, ucwords } from '@/lib/format'
 import { calculateYearsBuried } from '@/utils/date.utils'
 

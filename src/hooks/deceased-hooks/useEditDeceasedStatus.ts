@@ -1,6 +1,8 @@
-import { useMutation, useQueryClient } from '@tanstack/react-query'
+import type { EditDeceasedStatus } from '@/api/interment.api'
 import type { DeceasedRecords } from '@/types/interment.types'
-import { editDeceasedStatusById, type EditDeceasedStatus } from '@/api/interment.api'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
+
+import { editDeceasedStatusById } from '@/api/interment.api'
 
 export function useEditDeceasedStatus() {
   const queryClient = useQueryClient()

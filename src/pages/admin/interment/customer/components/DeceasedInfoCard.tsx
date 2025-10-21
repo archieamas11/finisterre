@@ -1,5 +1,6 @@
-import { RiHeart2Fill } from 'react-icons/ri'
 import type { DeceasedInfo } from '@/api/customer.api'
+import { RiHeart2Fill } from 'react-icons/ri'
+
 import { Badge } from '@/components/ui/badge'
 import { formatDate, ucwords } from '@/lib/format'
 import { calculateYearsBuried } from '@/utils/date.utils'

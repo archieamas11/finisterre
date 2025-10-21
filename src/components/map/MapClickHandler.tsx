@@ -1,5 +1,4 @@
 import type { LeafletMouseEvent } from 'leaflet'
-
 import { useMapEvents } from 'react-leaflet'
 
 interface MapClickHandlerProps {

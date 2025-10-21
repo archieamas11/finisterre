@@ -1,15 +1,13 @@
-import type { ColumnDef } from '@tanstack/react-table'
-
-import { MapPin } from 'lucide-react'
-import React from 'react'
-
 import type { DeceasedRecords } from '@/types/interment.types'
+import type { ColumnDef } from '@tanstack/react-table'
+import React from 'react'
+import { MapPin } from 'lucide-react'
+import { AiOutlineUser } from 'react-icons/ai'
 
 import { DataTableColumnHeader } from '@/components/data-table/data-table-column-header'
 import { Badge } from '@/components/ui/badge'
-import { calculateYearsBuried } from '@/utils/date.utils'
-import { AiOutlineUser } from 'react-icons/ai'
 import { ucwords } from '@/lib/format'
+import { calculateYearsBuried } from '@/utils/date.utils'
 import DeceasedActionCell from './DeceasedActionCell'
 
 const IndeterminateCheckbox = React.forwardRef<HTMLInputElement, React.InputHTMLAttributes<HTMLInputElement> & { indeterminate?: boolean }>(

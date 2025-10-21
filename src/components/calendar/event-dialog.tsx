@@ -1,7 +1,8 @@
+import { useEffect, useMemo, useState } from 'react'
 import { RiCalendarLine, RiDeleteBinLine } from '@remixicon/react'
 import { format, isBefore } from 'date-fns'
-import { useEffect, useMemo, useState } from 'react'
 
+import type { CalendarEvent, EventColor } from './types'
 import { DefaultEndHour, DefaultStartHour, EndHour, StartHour } from '@/components/calendar/constants'
 import { Button } from '@/components/ui/button'
 import { Calendar } from '@/components/ui/calendar'
@@ -14,8 +15,6 @@ import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Textarea } from '@/components/ui/textarea'
 import { cn } from '@/lib/utils'
-
-import type { CalendarEvent, EventColor } from './types'
 
 interface EventDialogProps {
   event: CalendarEvent | null

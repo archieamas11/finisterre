@@ -1,13 +1,15 @@
-import { useQueryClient } from '@tanstack/react-query'
-import { Plus } from 'lucide-react'
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { toast } from 'sonner'
-
 import type { Customer } from '@/api/customer.api'
+import type { LotOwnerCredentials } from '@/components/lot-owners/LotOwnerCredentialsDialog'
 import type { DeceasedData as DeceasedType } from '@/types/deceased.types'
 import type { DeceasedRecords } from '@/types/interment.types'
 import type { ConvertedMarker } from '@/types/map.types'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { useQueryClient } from '@tanstack/react-query'
+import { Plus } from 'lucide-react'
+import { toast } from 'sonner'
 
+import CustomerSelectForm from '@/components/customers/CustomerSelectForm'
+import LotOwnerCredentialsDialog from '@/components/lot-owners/LotOwnerCredentialsDialog'
 import { Button } from '@/components/ui/button'
 import { useCustomers } from '@/hooks/customer-hooks/customer.hooks'
 import { useCreateDeceasedRecord } from '@/hooks/deceased-hooks/useCreateDeceasedRecord'
@@ -15,9 +17,6 @@ import { useCreateLotOwner } from '@/hooks/lot-owner-hooks/useCreateLotOwner'
 import { usePlotDetails } from '@/hooks/plots-hooks/usePlotDetails'
 import { CreateDeceasedRecordDialog } from '@/pages/admin/map4admin/columbarium-dialogs/CreateDeceasedRecordDialog'
 import { DeceasedSection } from '@/pages/admin/map4admin/DeceasedSection'
-import CustomerSelectForm from '@/components/customers/CustomerSelectForm'
-import LotOwnerCredentialsDialog, { type LotOwnerCredentials } from '@/components/lot-owners/LotOwnerCredentialsDialog'
-
 import PlotInfo from './PlotInfo'
 
 interface PlotLocationsProps {

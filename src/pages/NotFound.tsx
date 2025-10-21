@@ -1,7 +1,8 @@
-import { Link } from 'react-router-dom'
 import { AlertTriangle, ArrowLeft } from 'lucide-react'
-import { Card, CardHeader, CardContent, CardTitle, CardFooter } from '@/components/ui/card'
+import { Link } from 'react-router-dom'
+
 import { Button } from '@/components/ui/button'
+import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
 import { cn } from '@/lib/utils'
 
 export default function NotFound() {

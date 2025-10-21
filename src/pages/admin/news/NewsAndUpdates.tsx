@@ -1,4 +1,5 @@
 import { NewspaperIcon } from 'lucide-react'
+
 import NewsTablePage from './NewsTablePage'
 
 export default function NewsAndUpdates() {

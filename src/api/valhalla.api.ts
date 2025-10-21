@@ -1,5 +1,4 @@
-import { CapacitorHttp } from '@capacitor/core'
-import { Capacitor } from '@capacitor/core'
+import { Capacitor, CapacitorHttp } from '@capacitor/core'
 import polyline from '@mapbox/polyline'
 import axios from 'axios'
 

@@ -1,6 +1,7 @@
+import type { LotInfo } from '@/api/customer.api'
 import React from 'react'
 import { RiBuilding4Line } from 'react-icons/ri'
-import type { LotInfo } from '@/api/customer.api'
+
 import { Badge } from '@/components/ui/badge'
 import { ucwords } from '@/lib/format'
 import { DeceasedInfoCard } from './DeceasedInfoCard'

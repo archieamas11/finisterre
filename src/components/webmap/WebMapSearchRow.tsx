@@ -1,5 +1,6 @@
-import { Link, useLocation } from 'react-router-dom'
+import type { WebMapContext } from '@/hooks/useNavigationContext'
 import { RiLoginBoxLine } from 'react-icons/ri'
+import { Link, useLocation } from 'react-router-dom'
 
 import ProfileMenu from '@/components/ProfileMenu'
 import { Button } from '@/components/ui/button'
@@ -7,7 +8,6 @@ import SearchToggle from '@/components/webmap/SearchToggle'
 import { useMe } from '@/hooks/useMe'
 import { isAuthenticated } from '@/utils/auth.utils'
 import { isNativePlatform } from '@/utils/platform.utils'
-import type { WebMapContext } from '@/hooks/useNavigationContext'
 
 interface WebMapSearchRowProps {
   context: WebMapContext

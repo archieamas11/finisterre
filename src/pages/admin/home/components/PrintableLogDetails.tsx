@@ -1,5 +1,5 @@
-import React from 'react'
 import type { ActivityLog } from '@/api/logs.api'
+import React from 'react'
 
 interface PrintableLogDetailsProps {
   log: ActivityLog

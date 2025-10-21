@@ -1,15 +1,15 @@
 import { ChevronRight } from 'lucide-react'
 
-import { CollapsibleContent, CollapsibleTrigger, Collapsible } from '@/components/ui/collapsible'
-import { DropdownMenuContent, DropdownMenuTrigger, DropdownMenuItem, DropdownMenu } from '@/components/ui/dropdown-menu'
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible'
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
 import {
-  SidebarMenuSubButton,
   SidebarGroupContent,
-  SidebarMenuSubItem,
+  SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
   SidebarMenuSub,
-  SidebarMenu,
+  SidebarMenuSubButton,
+  SidebarMenuSubItem,
   useSidebar,
 } from '@/components/ui/sidebar'
 import { type NavMainItem } from '@/navigation/sidebar/sidebar-items'

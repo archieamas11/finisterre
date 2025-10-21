@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query'
 
-import { getLotOwnerById, getLotOwner } from '@/api/lotOwner.api'
+import { getLotOwner, getLotOwnerById } from '@/api/lotOwner.api'
 
 export function useGetLotOwner() {
   return useQuery({

@@ -1,6 +1,8 @@
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+import type { CreateUserPayload, UpdateUserPayload } from '@/api/users.api'
 import type { UserData } from '@/types/user.types'
-import { getUsers, createUser, type CreateUserPayload, updateUser, archiveUser, type UpdateUserPayload } from '@/api/users.api'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+
+import { archiveUser, createUser, getUsers, updateUser } from '@/api/users.api'
 
 export function useUsers(params: { isAdmin?: number } = {}) {
   return useQuery<UserData[]>({

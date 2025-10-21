@@ -1,11 +1,11 @@
 import { useCallback, useState } from 'react'
 
+import type { GalleryImage } from './types'
 import { GALLERY_IMAGES } from './constants'
 import { GallerySection } from './GallerySection'
 import { ImageLightbox } from './ImageLightbox'
 import { LocationFeatures } from './LocationFeatures'
 import { LocationMap } from './LocationMap'
-import type { GalleryImage } from './types'
 
 export function Showcase() {
   const [selectedImageIndex, setSelectedImageIndex] = useState(0)

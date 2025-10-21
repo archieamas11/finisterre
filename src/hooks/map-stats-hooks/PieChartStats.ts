@@ -1,6 +1,7 @@
+import type { MapStatsResponse } from '@/api/map-stats.api'
 import { useQuery } from '@tanstack/react-query'
 
-import { getChambersStats, getColumbariumStats, getSerenityStatsByBlock, type MapStatsResponse } from '@/api/map-stats.api'
+import { getChambersStats, getColumbariumStats, getSerenityStatsByBlock } from '@/api/map-stats.api'
 
 export function useSerenityStatsByBlock(block: string) {
   return useQuery<MapStatsResponse>({

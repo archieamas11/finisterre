@@ -1,17 +1,7 @@
-import {
-  ChevronDownIcon,
-  type LucideIcon,
-  MapPinIcon,
-  ClockIcon,
-  MenuIcon,
-  BoneIcon,
-  LayersIcon,
-  TreesIcon,
-  Building2Icon,
-  ArrowLeftRightIcon,
-} from 'lucide-react'
+import type { LucideIcon } from 'lucide-react'
 import * as React from 'react'
 import { useEffect, useState } from 'react'
+import { ArrowLeftRightIcon, BoneIcon, Building2Icon, ChevronDownIcon, ClockIcon, LayersIcon, MapPinIcon, MenuIcon, TreesIcon } from 'lucide-react'
 import { Link } from 'react-router-dom'
 
 import { Button } from '@/components/ui/button'

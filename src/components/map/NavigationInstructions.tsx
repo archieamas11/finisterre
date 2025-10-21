@@ -1,6 +1,6 @@
-import { X, Navigation, Clock, MapPin, Route, AlertTriangle, ChevronDown, ChevronUp, Volume2, VolumeOff } from 'lucide-react'
-import { AnimatePresence, motion } from 'framer-motion'
 import React from 'react'
+import { AnimatePresence, motion } from 'framer-motion'
+import { AlertTriangle, ChevronDown, ChevronUp, Clock, MapPin, Navigation, Route, Volume2, VolumeOff, X } from 'lucide-react'
 
 import { type ValhallaManeuver } from '@/api/valhalla.api'
 import { Badge } from '@/components/ui/badge'
@@ -9,9 +9,9 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { Separator } from '@/components/ui/separator'
 import { type NavigationState } from '@/hooks/useValhalla'
-import { cn } from '@/lib/utils'
 import useVoiceGuidance from '@/hooks/useVoiceGuidance'
-import { formatTime, formatDistance } from '@/lib/format'
+import { formatDistance, formatTime } from '@/lib/format'
+import { cn } from '@/lib/utils'
 
 interface NavigationInstructionsProps {
   isOpen: boolean

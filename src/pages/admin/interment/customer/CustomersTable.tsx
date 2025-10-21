@@ -1,31 +1,19 @@
-import {
-  type ColumnFiltersState,
-  type RowSelectionState,
-  getPaginationRowModel,
-  type VisibilityState,
-  getFilteredRowModel,
-  getSortedRowModel,
-  type SortingState,
-  getCoreRowModel,
-  useReactTable,
-  type Row,
-} from '@tanstack/react-table'
-import { ArrowRightIcon, SearchIcon, PrinterIcon } from 'lucide-react'
-import React, { useRef } from 'react'
-import { useReactToPrint } from 'react-to-print'
-
 import type { Customer } from '@/api/customer.api'
+import type { ColumnFiltersState, Row, RowSelectionState, SortingState, VisibilityState } from '@tanstack/react-table'
+import React, { useRef } from 'react'
+import { getCoreRowModel, getFilteredRowModel, getPaginationRowModel, getSortedRowModel, useReactTable } from '@tanstack/react-table'
+import { ArrowRightIcon, PrinterIcon, SearchIcon } from 'lucide-react'
+import { useReactToPrint } from 'react-to-print'
 
 import { DataTable } from '@/components/data-table/data-table'
 import { DataTableToolbar } from '@/components/data-table/data-table-toolbar'
+import { ImportFileButton } from '@/components/file-picker'
 import { PrintableTable } from '@/components/printable-table'
+import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { customerColumns } from '@/pages/admin/interment/columns/CustomerColumns'
-
 import CreateCustomer from './CreateCustomer'
-import { Button } from '@/components/ui/button'
-import { ImportFileButton } from '@/components/file-picker'
 
 interface CustomersTableProps {
   data: Customer[]

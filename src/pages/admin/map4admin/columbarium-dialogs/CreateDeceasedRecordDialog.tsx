@@ -1,8 +1,7 @@
+import type { DeceasedRecords } from '@/types/interment.types'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
-
-import type { DeceasedRecords } from '@/types/interment.types'
 
 import { Button } from '@/components/ui/button'
 import { DatePicker } from '@/components/ui/date-picker'

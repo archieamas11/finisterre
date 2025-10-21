@@ -1,5 +1,5 @@
-import { User, Mail, Phone, Calendar, Edit3, Shield, Heart, TrendingUp, Award, KeyRound } from 'lucide-react'
 import { memo, useMemo, useState } from 'react'
+import { Award, Calendar, Edit3, Heart, KeyRound, Mail, Phone, Shield, TrendingUp, User } from 'lucide-react'
 import { BiLogOut } from 'react-icons/bi'
 
 import { Avatar, AvatarFallback } from '@/components/ui/avatar'
@@ -11,7 +11,6 @@ import { useLogout } from '@/hooks/useLogout'
 import { useMe } from '@/hooks/useMe'
 import { useMyCustomer } from '@/hooks/useMyCustomer'
 import { isNativePlatform } from '@/utils/platform.utils'
-
 import ChangePasswordDialog from './dialog/ChangePasswordDialog'
 import EditProfileDialog from './dialog/EditProfileDialog'
 

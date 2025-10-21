@@ -1,10 +1,9 @@
-import { Award, CheckCircle, Clock, MapPin, XCircle } from 'lucide-react'
-
 // types (last)
 import type { ConvertedMarker } from '@/types/map.types'
+import { Award, CheckCircle, Clock, MapPin, XCircle } from 'lucide-react'
 
 import { Badge } from '@/components/ui/badge'
-import { CardHeader, Card, CardTitle, CardContent } from '@/components/ui/card'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Separator } from '@/components/ui/separator'
 import { cn } from '@/lib/utils'
 

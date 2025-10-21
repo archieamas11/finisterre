@@ -1,10 +1,9 @@
+import type { NewsItem } from '@/types/news.types'
 import { useMemo } from 'react'
 
 import { Badge } from '@/components/ui/badge'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { cn } from '@/lib/utils'
-
-import type { NewsItem } from '@/types/news.types'
 
 function PostAvatar({ label }: { label: string }) {
   const initial = useMemo(() => label?.trim()?.[0]?.toUpperCase() ?? 'F', [label])

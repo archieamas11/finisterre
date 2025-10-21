@@ -1,10 +1,11 @@
-import L from 'leaflet'
 import React from 'react'
-import { Polyline, Marker } from 'react-leaflet'
+import L from 'leaflet'
+import { Marker, Polyline } from 'react-leaflet'
 
 import { type ValhallaRouteResponse } from '@/api/valhalla.api'
 import { UserLocationMarker } from '@/components/map/UserLocationMarker'
 import { type UserLocation } from '@/hooks/useLocationTracking'
+
 interface ValhallaRouteProps {
   route: ValhallaRouteResponse | null
   routeCoordinates: [number, number][]

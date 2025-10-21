@@ -1,11 +1,10 @@
+import { memo, useCallback } from 'react'
 import { motion } from 'framer-motion'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
-import { memo, useCallback } from 'react'
-
-import { Button } from '@/components/ui/button'
-import { Dialog, DialogContent } from '@/components/ui/dialog'
 
 import type { GalleryImage } from './types'
+import { Button } from '@/components/ui/button'
+import { Dialog, DialogContent } from '@/components/ui/dialog'
 
 interface ImageLightboxProps {
   isOpen: boolean

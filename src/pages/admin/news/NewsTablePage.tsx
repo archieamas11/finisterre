@@ -2,7 +2,6 @@ import { DataTableSkeleton } from '@/components/data-table/data-table-skeleton'
 import { ErrorMessage } from '@/components/ErrorMessage'
 import { Card } from '@/components/ui/card'
 import { useGetNews } from '@/hooks/news-hooks/useGetNews'
-
 import NewsTable from './NewsTable'
 
 export default function NewsTablePage() {

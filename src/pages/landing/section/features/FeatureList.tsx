@@ -1,9 +1,10 @@
 import { motion } from 'framer-motion'
-import { Link } from 'react-router-dom'
-import type { Feature } from './types'
-import { cn } from '@/lib/utils'
-import { Button } from '@/components/ui/button'
 import { ArrowRight } from 'lucide-react'
+import { Link } from 'react-router-dom'
+
+import type { Feature } from './types'
+import { Button } from '@/components/ui/button'
+import { cn } from '@/lib/utils'
 
 export function FeatureList({ feature, index }: { feature: Feature; index: number }) {
   return (

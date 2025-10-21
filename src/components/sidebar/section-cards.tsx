@@ -1,7 +1,7 @@
 import { IconTrendingDown, IconTrendingUp } from '@tabler/icons-react'
 
 import { Badge } from '@/components/ui/badge'
-import { CardDescription, CardAction, CardFooter, CardHeader, CardTitle, Card } from '@/components/ui/card'
+import { Card, CardAction, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
 import { useOverallMapStats } from '@/hooks/map-stats-hooks/useOverallMapStats'
 import { cn } from '@/lib/utils'
 

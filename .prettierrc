@@ -4,5 +4,8 @@
   "semi": false,
   "trailingComma": "all",
   "arrowParens": "always",
-  "plugins": ["prettier-plugin-tailwindcss"]
+  "plugins": ["prettier-plugin-tailwindcss", "@ianvs/prettier-plugin-sort-imports"],
+  "tailwindFunctions": ["cva", "cn"],
+  "importOrderParserPlugins": ["typescript", "jsx", "explicitResourceManagement"],
+  "importOrder": ["<TYPES>", "^(react/(.*)$)|^(react$)", "<THIRD_PARTY_MODULES>", "", "", "<TYPES>^[.|..|~]", "^@/", "^[../]", "^[./]"]
 }

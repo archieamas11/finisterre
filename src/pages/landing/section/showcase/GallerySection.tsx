@@ -1,13 +1,12 @@
+import { memo, useCallback, useEffect, useMemo, useState } from 'react'
 import { motion } from 'framer-motion'
 import { Maximize2 } from 'lucide-react'
-import { memo, useCallback, useEffect, useMemo, useState } from 'react'
 
+import type { GalleryImage } from './types'
 import { Button } from '@/components/ui/button'
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { cn } from '@/lib/utils'
-
 import { CATEGORIES, GALLERY_IMAGES } from './constants'
-import type { GalleryImage } from './types'
 
 interface GallerySectionProps {
   onImageClick: (image: GalleryImage) => void

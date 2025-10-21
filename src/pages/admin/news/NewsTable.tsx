@@ -1,29 +1,17 @@
-import {
-  type ColumnFiltersState,
-  type RowSelectionState,
-  getPaginationRowModel,
-  type VisibilityState,
-  getFilteredRowModel,
-  getSortedRowModel,
-  type SortingState,
-  getCoreRowModel,
-  useReactTable,
-  type Row,
-} from '@tanstack/react-table'
-import { ArrowRightIcon, SearchIcon } from 'lucide-react'
-import React from 'react'
-
 import type { NewsItem } from '@/types/news.types'
+import type { ColumnFiltersState, Row, RowSelectionState, SortingState, VisibilityState } from '@tanstack/react-table'
+import React from 'react'
+import { getCoreRowModel, getFilteredRowModel, getPaginationRowModel, getSortedRowModel, useReactTable } from '@tanstack/react-table'
+import { ArrowRightIcon, SearchIcon } from 'lucide-react'
 
 import { DataTable } from '@/components/data-table/data-table'
 import { DataTableToolbar } from '@/components/data-table/data-table-toolbar'
+import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
-import { Badge } from '@/components/ui/badge'
 import { cn } from '@/lib/utils'
-
 import { newsColumns } from './columns/NewsColumns'
-import { Button } from '@/components/ui/button'
 import CreateNewsDialog from './modal/CreateNewsDialog'
 
 interface NewsTableProps {

@@ -1,25 +1,28 @@
 import { Notification } from 'konsta/react'
+
 import 'leaflet/dist/leaflet.css'
+
+import type { MapAction, MapState } from '@/contexts/MapContext'
+import type { ConvertedMarker } from '@/types/map.types'
+import { lazy, memo, Suspense, useCallback, useEffect, useMemo, useReducer, useRef, useState } from 'react'
 import L from 'leaflet'
 import iconRetinaUrl from 'leaflet/dist/images/marker-icon-2x.png'
 import iconUrl from 'leaflet/dist/images/marker-icon.png'
 import shadowUrl from 'leaflet/dist/images/marker-shadow.png'
-import { useEffect, useMemo, useCallback, memo, useState, Suspense, lazy, useReducer, useRef } from 'react'
+import { parseAsString, useQueryStates } from 'nuqs'
 import { MapContainer, TileLayer, useMap } from 'react-leaflet'
-import { useQueryStates, parseAsString } from 'nuqs'
 import { toast } from 'sonner'
-
-import type { ConvertedMarker } from '@/types/map.types'
 
 import { searchLotById } from '@/api/plots.api'
 import CustomClusterManager from '@/components/map/CustomClusterManager'
+import { UserLocationMarker } from '@/components/map/UserLocationMarker'
 import { ValhallaRoute } from '@/components/map/ValhallaRoute'
 import Spinner from '@/components/ui/spinner'
-import { MapStateContext, MapDispatchContext, LocateContext, type MapState, type MapAction } from '@/contexts/MapContext'
+import { LocateContext, MapDispatchContext, MapStateContext } from '@/contexts/MapContext'
 import { usePlots } from '@/hooks/plots-hooks/plot.hooks'
 import { useLocationTracking } from '@/hooks/useLocationTracking'
 import { useMarkersOffline } from '@/hooks/useMarkersOffline'
-import { useUserOwnedPlots, convertUserPlotToMarker } from '@/hooks/user-hooks/useUserOwnedPlots'
+import { convertUserPlotToMarker, useUserOwnedPlots } from '@/hooks/user-hooks/useUserOwnedPlots'
 import { useValhalla } from '@/hooks/useValhalla'
 import { groupMarkersByKey } from '@/lib/clusterUtils'
 import CenterSerenityMarkers from '@/pages/webmap/CenterSerenityMarkers'
@@ -34,8 +37,6 @@ import { WebmapLegend } from '@/pages/webmap/WebmapLegend'
 import WebMapNavs from '@/pages/webmap/WebMapNavs'
 import { convertPlotToMarker } from '@/types/map.types'
 import { isNativePlatform } from '@/utils/platform.utils'
-
-import { UserLocationMarker } from '@/components/map/UserLocationMarker'
 
 const NavigationInstructions = lazy(() => import('@/components/map/NavigationInstructions'))
 

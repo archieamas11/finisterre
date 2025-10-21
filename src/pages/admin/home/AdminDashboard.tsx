@@ -5,7 +5,6 @@ import { ChartAreaStackedExpand } from '@/components/sidebar/plots-stats'
 import { SectionCards } from '@/components/sidebar/section-cards'
 import { useGetLogs } from '@/hooks/logs-hooks/useGetLogs'
 import { useAuthQuery } from '@/hooks/useAuthQuery'
-
 import LogsTable from './LogsTable'
 import { ChartPieInteractive } from './PieChart'
 

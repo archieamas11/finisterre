@@ -1,6 +1,7 @@
+import type { FinisterreMarkerData } from '@/components/ui/popup-content'
 import { FaToilet } from 'react-icons/fa'
 
-import { FinisterreMarkers, type FinisterreMarkerData } from '@/components/ui/popup-content'
+import { FinisterreMarkers } from '@/components/ui/popup-content'
 
 interface Props {
   onDirectionClick?: (dest: [number, number]) => void

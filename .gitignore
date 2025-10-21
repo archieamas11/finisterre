@@ -24,6 +24,7 @@ dist-ssr
 *.sln
 *.sw?
 .github/chatmodes
+.github/prompts
 docs
 testsprite_tests
 request.rest
@@ -33,3 +34,5 @@ dev-dist
 .cursor
 .kiro
 finisterre.code-workspace
+openspec/*
+AGENTS.md

@@ -1,7 +1,6 @@
 import type { ColumnDef } from '@tanstack/react-table'
-
-import { Mail, MapPinHouse, Phone } from 'lucide-react'
 import React from 'react'
+import { Mail, MapPinHouse, Phone } from 'lucide-react'
 import { AiOutlineUser } from 'react-icons/ai'
 
 import { type Customer } from '@/api/customer.api'

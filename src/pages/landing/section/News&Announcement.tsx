@@ -1,3 +1,4 @@
+import type { NewsCategory, NewsItem } from '@/types/news.types'
 import React from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { ArrowUpRight, CalendarDays, Clock, Megaphone, Newspaper } from 'lucide-react'
@@ -10,7 +11,6 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Skeleton } from '@/components/ui/skeleton'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { cn } from '@/lib/utils'
-import type { NewsCategory, NewsItem } from '@/types/news.types'
 
 type IconComponent = React.ComponentType<React.SVGProps<SVGSVGElement>>
 

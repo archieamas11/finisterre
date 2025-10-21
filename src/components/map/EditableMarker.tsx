@@ -1,12 +1,12 @@
+import type { ConvertedMarker } from '@/types/map.types'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import L from 'leaflet'
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { useHotkeys } from 'react-hotkeys-hook'
 import { Marker } from 'react-leaflet'
 import { toast } from 'sonner'
-import { useHotkeys } from 'react-hotkeys-hook'
 
 import { updatePlotCoordinates } from '@/api/plots.api'
-import type { ConvertedMarker } from '@/types/map.types'
 
 interface EditableMarkerProps {
   plotId: string

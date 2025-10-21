@@ -1,7 +1,6 @@
-import React from 'react'
-import { ChevronsUpDown, Check, Save, X } from 'lucide-react'
-
 import type { Customer } from '@/api/customer.api'
+import React from 'react'
+import { Check, ChevronsUpDown, Save, X } from 'lucide-react'
 
 import { Button } from '@/components/ui/button'
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from '@/components/ui/command'

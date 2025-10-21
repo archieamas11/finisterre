@@ -1,12 +1,13 @@
+import type { ChartConfig } from '@/components/ui/chart'
 import React from 'react'
-import { Area, AreaChart, CartesianGrid, XAxis } from 'recharts'
-import { useReactToPrint } from 'react-to-print'
-
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { type ChartConfig, ChartContainer, ChartTooltip, ChartTooltipContent } from '@/components/ui/chart'
-import { useLotsMonthlyShare } from '@/hooks/map-stats-hooks/PlotSalesStats'
-import { Button } from '@/components/ui/button'
 import { PrinterIcon } from 'lucide-react'
+import { useReactToPrint } from 'react-to-print'
+import { Area, AreaChart, CartesianGrid, XAxis } from 'recharts'
+
+import { Button } from '@/components/ui/button'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { ChartContainer, ChartTooltip, ChartTooltipContent } from '@/components/ui/chart'
+import { useLotsMonthlyShare } from '@/hooks/map-stats-hooks/PlotSalesStats'
 import PrintableAreaChart from './components/PrintableAreaChart'
 
 export const description = 'Monthly distribution of newly created lots by category'

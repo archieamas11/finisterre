@@ -1,22 +1,21 @@
+import type { NewsItem } from '@/types/news.types'
 import type { ColumnDef } from '@tanstack/react-table'
-
-import { Archive, CalendarDays, Clock, Megaphone, MoreHorizontal, Newspaper, Star, User } from 'lucide-react'
 import React from 'react'
+import { Archive, CalendarDays, Clock, Megaphone, MoreHorizontal, Newspaper, Star, User } from 'lucide-react'
 
 import { DataTableColumnHeader } from '@/components/data-table/data-table-column-header'
 import { Badge } from '@/components/ui/badge'
-import { cn } from '@/lib/utils'
-import { formatDate } from '@/lib/format'
-import type { NewsItem } from '@/types/news.types'
 import { Button } from '@/components/ui/button'
 import {
-  DropdownMenuSeparator,
-  DropdownMenuContent,
-  DropdownMenuTrigger,
-  DropdownMenuLabel,
-  DropdownMenuItem,
   DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
+import { formatDate } from '@/lib/format'
+import { cn } from '@/lib/utils'
 
 const IndeterminateCheckbox = React.forwardRef<HTMLInputElement, React.InputHTMLAttributes<HTMLInputElement> & { indeterminate?: boolean }>(
   ({ indeterminate, ...props }, ref) => {

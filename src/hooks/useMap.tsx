@@ -1,6 +1,7 @@
+import type { MapState } from '@/contexts/MapContext'
 import { useContext } from 'react'
 
-import { MapStateContext, MapDispatchContext, type MapState } from '@/contexts/MapContext'
+import { MapDispatchContext, MapStateContext } from '@/contexts/MapContext'
 
 // Selector hook to minimize re-renders
 export function useMapState<T>(selector: (s: MapState) => T): T {

@@ -1,4 +1,5 @@
-import axios, { type InternalAxiosRequestConfig, type AxiosInstance, type AxiosError, type AxiosRequestConfig, type AxiosResponse } from 'axios'
+import type { AxiosError, AxiosInstance, AxiosRequestConfig, AxiosResponse, InternalAxiosRequestConfig } from 'axios'
+import axios from 'axios'
 
 const DEFAULT_API_URL = 'http://localhost/finisterre_backend/'
 const TOKEN_KEY = 'token'

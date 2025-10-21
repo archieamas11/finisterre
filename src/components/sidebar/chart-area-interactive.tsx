@@ -1,16 +1,18 @@
 'use client'
+
+import type { ChartConfig } from '@/components/ui/chart'
 import * as React from 'react'
+import { PrinterIcon } from 'lucide-react'
 import { useReactToPrint } from 'react-to-print'
 import { Area, AreaChart, CartesianGrid, ResponsiveContainer, XAxis } from 'recharts'
 
-import { useLotsTimeSeries } from '@/hooks/map-stats-hooks/ChartStats'
+import { Button } from '@/components/ui/button'
 import { Card, CardAction, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { ChartContainer, ChartTooltip, ChartTooltipContent, type ChartConfig } from '@/components/ui/chart'
+import { ChartContainer, ChartTooltip, ChartTooltipContent } from '@/components/ui/chart'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group'
+import { useLotsTimeSeries } from '@/hooks/map-stats-hooks/ChartStats'
 import { useIsMobile } from '@/hooks/use-mobile'
-import { Button } from '@/components/ui/button'
-import { PrinterIcon } from 'lucide-react'
 import PrintableAreaChart from './components/PrintableAreaChart'
 
 export const description = 'Interactive chart of new lots created per day by category'

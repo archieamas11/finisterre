@@ -1,9 +1,10 @@
-import { SearchIcon, X, ArrowRightIcon } from 'lucide-react'
 import { useCallback, useRef } from 'react'
+import { Searchbar } from 'konsta/react'
+import { ArrowRightIcon, SearchIcon, X } from 'lucide-react'
+
 import { Input } from '@/components/ui/input'
 import { cn } from '@/lib/utils'
 import { isNativePlatform } from '@/utils/platform.utils'
-import { Searchbar } from 'konsta/react'
 
 interface WebMapContext {
   searchQuery: string

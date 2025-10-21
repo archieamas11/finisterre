@@ -1,10 +1,9 @@
-import { zodResolver } from '@hookform/resolvers/zod'
-import { memo, useEffect } from 'react'
-import { useForm } from 'react-hook-form'
-import { toast } from 'sonner'
-
 import type { Customer } from '@/api/customer.api'
 import type { CustomerFormData } from '@/schema/customer.schema'
+import { memo, useEffect } from 'react'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { useForm } from 'react-hook-form'
+import { toast } from 'sonner'
 
 import { Button } from '@/components/ui/button'
 import { DatePicker } from '@/components/ui/date-picker'

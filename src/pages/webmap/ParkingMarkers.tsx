@@ -1,6 +1,7 @@
+import type { FinisterreMarkerData } from '@/components/ui/popup-content'
 import { MdLocalParking } from 'react-icons/md'
 
-import { FinisterreMarkers, type FinisterreMarkerData } from '@/components/ui/popup-content'
+import { FinisterreMarkers } from '@/components/ui/popup-content'
 
 interface Props {
   onDirectionClick?: (dest: [number, number]) => void

@@ -1,21 +1,21 @@
+import type { WebMapContext } from '@/hooks/useNavigationContext'
+import { useState } from 'react'
+import { Actions, ActionsButton, ActionsGroup, ActionsLabel, Fab } from 'konsta/react'
 import { Filter } from 'lucide-react'
 import { BiBorderAll } from 'react-icons/bi'
 import { FaRedo } from 'react-icons/fa'
-import { isAndroid } from '@/utils/platform.utils'
-import { useState } from 'react'
 
 import { Button } from '@/components/ui/button'
 import {
   DropdownMenu,
+  DropdownMenuCheckboxItem,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuCheckboxItem,
-  DropdownMenuSeparator,
   DropdownMenuLabel,
+  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
-import { Actions, ActionsGroup, ActionsLabel, ActionsButton, Fab } from 'konsta/react'
-import type { WebMapContext } from '@/hooks/useNavigationContext'
+import { isAndroid } from '@/utils/platform.utils'
 
 interface ClusterFilterDropdownProps {
   context: WebMapContext

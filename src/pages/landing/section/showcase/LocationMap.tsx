@@ -1,17 +1,18 @@
 import type { Map as LeafletMap } from 'leaflet'
 
 import 'leaflet/dist/leaflet.css'
+
+import { memo, useEffect, useMemo, useRef, useState } from 'react'
 import L from 'leaflet'
 import { ShieldCheck } from 'lucide-react'
-import { memo, useEffect, useMemo, useRef, useState } from 'react'
 import { FaDirections } from 'react-icons/fa'
 import { MdTravelExplore } from 'react-icons/md'
 import { MapContainer, Marker, Popup, TileLayer, useMap } from 'react-leaflet'
 import { Link } from 'react-router-dom'
 
 import { Button } from '@/components/ui/button'
-
 import { CEMETERY_LOCATION, MAP_BOUNDS } from './constants'
+
 import './custom-marker-styles.css'
 
 interface LocationMapProps {

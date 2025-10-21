@@ -1,6 +1,5 @@
-import L from 'leaflet'
-
 import type { ConvertedMarker } from '@/types/map.types'
+import L from 'leaflet'
 
 // Group markers by block or category key used across map layouts
 export function groupMarkersByKey(markers: ConvertedMarker[]) {

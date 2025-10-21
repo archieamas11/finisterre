@@ -1,6 +1,5 @@
-import { useMutation, useQueryClient } from '@tanstack/react-query'
-
 import type { Customer } from '@/api/customer.api'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
 
 import { editCustomer } from '@/api/customer.api'
 

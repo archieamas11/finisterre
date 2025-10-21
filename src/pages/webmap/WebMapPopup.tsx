@@ -1,7 +1,6 @@
 import { motion } from 'framer-motion'
-import { MapPin, Award, Ruler, Info } from 'lucide-react'
-import { BiXCircle } from 'react-icons/bi'
-import { BiCheckCircle } from 'react-icons/bi'
+import { Award, Info, MapPin, Ruler } from 'lucide-react'
+import { BiCheckCircle, BiXCircle } from 'react-icons/bi'
 import { BsPersonHeart } from 'react-icons/bs'
 import { FaHourglassStart } from 'react-icons/fa'
 
@@ -10,11 +9,12 @@ import { Spinner } from '@/components/ui/spinner'
 import { useAuth } from '@/hooks/useAuth'
 import { useDeceasedForPlot } from '@/hooks/useDeceasedForPlot'
 import { cn } from '@/lib/utils'
+import GetDirectionButton from '@/pages/webmap/components/get-direction-button'
 import { ShareButton } from '@/pages/webmap/components/share-button'
 import { type DeceasedData } from '@/types/deceased.types'
 import { type ConvertedMarker } from '@/types/map.types'
 import { calculateYearsBuried } from '@/utils/date.utils'
-import GetDirectionButton from '@/pages/webmap/components/get-direction-button'
+
 interface PlotLocationsProps {
   marker: ConvertedMarker
   backgroundColor?: string

@@ -1,13 +1,11 @@
 'use client'
 
-import { addDays, eachDayOfInterval, endOfMonth, endOfWeek, format, isSameDay, isSameMonth, isToday, startOfMonth, startOfWeek } from 'date-fns'
 import React, { useEffect, useMemo, useState } from 'react'
-
-import { DefaultStartHour, EventGap, EventHeight } from '@/components/calendar/constants'
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
+import { addDays, eachDayOfInterval, endOfMonth, endOfWeek, format, isSameDay, isSameMonth, isToday, startOfMonth, startOfWeek } from 'date-fns'
 
 import type { CalendarEvent } from './types'
-
+import { DefaultStartHour, EventGap, EventHeight } from '@/components/calendar/constants'
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 import { DraggableEvent } from './draggable-event'
 import { DroppableCell } from './droppable-cell'
 import { EventItem } from './event-item'

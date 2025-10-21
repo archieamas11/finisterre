@@ -1,7 +1,6 @@
-import { toast } from 'sonner'
-
 import type { Customer } from '@/api/customer.api'
 import type { CustomerFormData } from '@/schema/customer.schema'
+import { toast } from 'sonner'
 
 import { useUpsertCustomer } from '@/hooks/customer-hooks/customer.hooks'
 import CustomerForm from '@/pages/admin/interment/customer/dialog/CustomerForm'

@@ -1,11 +1,11 @@
-import { useQueryClient, useMutation } from '@tanstack/react-query'
-import { SquarePlus } from 'lucide-react'
+import type { Customer } from '@/api/customer.api'
+import type { CustomerFormData } from '@/schema/customer.schema'
 import React from 'react'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { SquarePlus } from 'lucide-react'
 import { toast } from 'sonner'
 
-import type { CustomerFormData } from '@/schema/customer.schema'
-
-import { createCustomer, type Customer } from '@/api/customer.api'
+import { createCustomer } from '@/api/customer.api'
 import { Button } from '@/components/ui/button'
 import CustomerForm from '@/pages/admin/interment/customer/dialog/CustomerForm'
 

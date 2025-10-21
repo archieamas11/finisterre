@@ -1,8 +1,8 @@
+import { useEffect, useRef, useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { Menu, X } from 'lucide-react'
-import { useState, useEffect, useRef } from 'react'
 
-import { getChambersStats, getSerenityStats, getColumbariumStats } from '@/api/map-stats.api'
+import { getChambersStats, getColumbariumStats, getSerenityStats } from '@/api/map-stats.api'
 import { ErrorMessage } from '@/components/ErrorMessage'
 import { Badge } from '@/components/ui/badge'
 import { Card } from '@/components/ui/card'

@@ -1,6 +1,7 @@
-import { Building2, Heart, Shield, Infinity as InfinityIcon, Users, FileText, MapPin } from 'lucide-react'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Building2, FileText, Heart, Infinity as InfinityIcon, MapPin, Shield, Users } from 'lucide-react'
+
 import { Badge } from '@/components/ui/badge'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { cn } from '@/lib/utils'
 
 const coreValues = [

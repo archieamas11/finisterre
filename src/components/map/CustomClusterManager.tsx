@@ -1,10 +1,10 @@
+import type { ConvertedMarker } from '@/types/map.types'
+import { memo, useCallback, useMemo } from 'react'
 import L from 'leaflet'
-import { memo, useMemo, useCallback } from 'react'
 import { Marker } from 'react-leaflet'
 
-import { ucwords } from '@/lib/format'
 import { getLabelFromGroupKey } from '@/lib/clusterUtils'
-import type { ConvertedMarker } from '@/types/map.types'
+import { ucwords } from '@/lib/format'
 
 interface CustomClusterManagerProps {
   markersByGroup: Record<string, ConvertedMarker[]>

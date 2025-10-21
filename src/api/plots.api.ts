@@ -1,4 +1,4 @@
-import type { plots, CreatePlotRequest, CreateSerenityLawnRequest, CreateMemorialChambersRequest, CreateColumbariumRequest } from '@/types/map.types'
+import type { CreateColumbariumRequest, CreateMemorialChambersRequest, CreatePlotRequest, CreateSerenityLawnRequest, plots } from '@/types/map.types'
 
 import { api } from './axiosInstance'
 

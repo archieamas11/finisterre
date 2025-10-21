@@ -1,6 +1,7 @@
+import type { Position } from '@capacitor/geolocation'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { Capacitor } from '@capacitor/core'
-import { Geolocation, type Position } from '@capacitor/geolocation'
-import { useState, useEffect, useRef, useCallback } from 'react'
+import { Geolocation } from '@capacitor/geolocation'
 
 export interface UserLocation {
   latitude: number

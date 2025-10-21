@@ -1,6 +1,11 @@
-import { useState } from 'react'
-import type { Row } from '@tanstack/react-table'
 import type { UserData } from '@/types/user.types'
+import type { Row } from '@tanstack/react-table'
+import { useState } from 'react'
+import { Archive, MoreHorizontal } from 'lucide-react'
+import { toast } from 'sonner'
+
+import { Button } from '@/components/ui/button'
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -9,12 +14,8 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
-import { Button } from '@/components/ui/button'
-import { MoreHorizontal, Archive } from 'lucide-react'
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
-import AddNewUserDialog from './dialog/AddNewUserDialog'
 import { useArchiveUser } from '@/hooks/user-hooks/useUsers'
-import { toast } from 'sonner'
+import AddNewUserDialog from './dialog/AddNewUserDialog'
 
 interface AdminUsersActionsProps {
   row: Row<UserData>

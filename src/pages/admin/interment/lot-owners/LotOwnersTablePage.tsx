@@ -2,7 +2,6 @@ import { DataTableSkeleton } from '@/components/data-table/data-table-skeleton'
 import { ErrorMessage } from '@/components/ErrorMessage'
 import { Card } from '@/components/ui/card'
 import { useGetLotOwner } from '@/hooks/lot-owner-hooks/useGetLotOwner'
-
 import LotOwnersTable from './LotOwnersTable'
 
 export default function LotOwnersTablePage() {

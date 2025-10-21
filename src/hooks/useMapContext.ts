@@ -1,6 +1,7 @@
+import type { MapState } from '@/contexts/MapContext'
 import { useContext } from 'react'
 
-import { MapStateContext, MapDispatchContext, type MapState } from '@/contexts/MapContext'
+import { MapDispatchContext, MapStateContext } from '@/contexts/MapContext'
 
 // Generic selector-based state consumption to minimize component re-renders
 export function useMapSelector<T>(selector: (state: MapState) => T): T {

@@ -1,9 +1,10 @@
+import { useCallback } from 'react'
+import { Fab } from 'konsta/react'
 import { FiRefreshCcw } from 'react-icons/fi'
+
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
-import { useCallback } from 'react'
 import { isAndroid } from '@/utils/platform.utils'
-import { Fab } from 'konsta/react'
 
 interface GenericMapContext {
   requestLocate?: () => void

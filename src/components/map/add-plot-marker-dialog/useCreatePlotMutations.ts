@@ -1,9 +1,8 @@
+import type { CreateColumbariumRequest, CreateMemorialChambersRequest, CreateSerenityLawnRequest } from '@/types/map.types'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { toast } from 'sonner'
 
-import type { CreateSerenityLawnRequest, CreateMemorialChambersRequest, CreateColumbariumRequest } from '@/types/map.types'
-
-import { createSerenityLawnPlot, createMemorialChambersPlot, createColumbariumPlot } from '@/api/plots.api'
+import { createColumbariumPlot, createMemorialChambersPlot, createSerenityLawnPlot } from '@/api/plots.api'
 
 interface UseCreatePlotMutationsArgs {
   onDone: () => void

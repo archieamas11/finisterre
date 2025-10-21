@@ -1,6 +1,7 @@
+import type { MapStatsResponse } from '@/api/map-stats.api'
 import { useQuery } from '@tanstack/react-query'
 
-import { getChambersStats, getColumbariumStats, getSerenityStats, type MapStatsResponse } from '@/api/map-stats.api'
+import { getChambersStats, getColumbariumStats, getSerenityStats } from '@/api/map-stats.api'
 
 export interface OverallMapStats {
   total: number

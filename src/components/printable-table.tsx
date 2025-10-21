@@ -1,5 +1,5 @@
-import React from 'react'
 import type { Table } from '@tanstack/react-table'
+import React from 'react'
 
 /**
  * A reusable component for printing table data in a formatted report layout.

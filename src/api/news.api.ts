@@ -1,4 +1,4 @@
-import type { NewsItem, NewsListResponse, NewsMutationResponse, NewsStatus, NewsCategory } from '@/types/news.types'
+import type { NewsCategory, NewsItem, NewsListResponse, NewsMutationResponse, NewsStatus } from '@/types/news.types'
 
 import { api } from './axiosInstance'
 

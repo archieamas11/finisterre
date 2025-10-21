@@ -1,12 +1,12 @@
+import type { MarkerTypeFormData } from '@/schema/plot.scheme'
+import type { MarkerType } from '@/types/map.types'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm } from 'react-hook-form'
-
-import type { MarkerType } from '@/types/map.types'
 
 import { Button } from '@/components/ui/button'
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { MarkerTypeSchema, type MarkerTypeFormData } from '@/schema/plot.scheme'
+import { MarkerTypeSchema } from '@/schema/plot.scheme'
 
 interface MarkerTypeStepProps {
   onCancel: () => void

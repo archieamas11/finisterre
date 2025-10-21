@@ -1,8 +1,9 @@
 import { useState } from 'react'
-import { products } from './constants'
+
 import { AdditionalServices } from './AdditionalServices'
-import { MobileList } from './MobileList'
+import { products } from './constants'
 import { DesktopProductList } from './DesktopProductList'
+import { MobileList } from './MobileList'
 
 export function Products() {
   const [hoveredId, setHoveredId] = useState<number | null>(null)

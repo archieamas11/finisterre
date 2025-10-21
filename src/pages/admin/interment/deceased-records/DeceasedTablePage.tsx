@@ -2,7 +2,6 @@ import { DataTableSkeleton } from '@/components/data-table/data-table-skeleton'
 import { ErrorMessage } from '@/components/ErrorMessage'
 import { Card } from '@/components/ui/card'
 import { useGetDeceasedRecord } from '@/hooks/deceased-hooks/useGetDeceasedRecord'
-
 import DeceasedRecordsTable from './DeceasedTable'
 
 export default function DeceasedTablePage() {

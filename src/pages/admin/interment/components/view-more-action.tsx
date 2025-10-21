@@ -1,8 +1,9 @@
 import type { Button } from '@/components/ui/button'
+import { CgMoreVerticalAlt } from 'react-icons/cg'
+
+import { Button as UIButton } from '@/components/ui/button'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
 import { useIsMobile } from '@/hooks/use-mobile'
-import { CgMoreVerticalAlt } from 'react-icons/cg'
-import { Button as UIButton } from '@/components/ui/button'
 
 interface MoreActionsButtonProps {
   onClick: () => void

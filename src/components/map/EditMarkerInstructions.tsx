@@ -1,4 +1,4 @@
-import { motion, AnimatePresence } from 'framer-motion'
+import { AnimatePresence, motion } from 'framer-motion'
 import { Edit, MousePointer } from 'lucide-react'
 import { AiOutlineEnter } from 'react-icons/ai'
 

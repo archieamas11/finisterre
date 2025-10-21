@@ -1,11 +1,11 @@
 import { useRef } from 'react'
-import { useReactToPrint } from 'react-to-print'
+import { InfoIcon, KeyIcon, PrinterIcon } from 'lucide-react'
 import { useHotkeys } from 'react-hotkeys-hook'
-import { PrinterIcon, KeyIcon, InfoIcon } from 'lucide-react'
+import { useReactToPrint } from 'react-to-print'
 
-import { Dialog, DialogContent } from '@/components/ui/dialog'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
+import { Dialog, DialogContent } from '@/components/ui/dialog'
 import { cn } from '@/lib/utils'
 
 export type LotOwnerCredentials = {

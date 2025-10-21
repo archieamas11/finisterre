@@ -7,9 +7,9 @@ import ProfileMenu from '@/components/ProfileMenu'
 import { Button } from '@/components/ui/button'
 import { NavigationMenu, NavigationMenuItem, NavigationMenuList } from '@/components/ui/navigation-menu'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
+import { ThemeToggleButton } from '@/components/ui/theme-toggle-button'
 import { useMe } from '@/hooks/useMe'
 import { cn } from '@/lib/utils'
-import { ThemeToggleButton } from '@/components/ui/theme-toggle-button'
 
 // Navigation links array to be used in both desktop and mobile menus
 const navigationLinks = [

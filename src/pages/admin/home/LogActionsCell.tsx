@@ -1,7 +1,9 @@
-import type { Row } from '@tanstack/react-table'
-import { MoreHorizontal } from 'lucide-react'
-import React from 'react'
 import type { ActivityLog } from '@/api/logs.api'
+import type { Row } from '@tanstack/react-table'
+import React from 'react'
+import { MoreHorizontal } from 'lucide-react'
+import { useReactToPrint } from 'react-to-print'
+
 import { Button } from '@/components/ui/button'
 import {
   DropdownMenu,
@@ -11,9 +13,8 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
-import { ViewLog } from './dialog/ViewLogs'
-import { useReactToPrint } from 'react-to-print'
 import PrintableLogDetails from './components/PrintableLogDetails'
+import { ViewLog } from './dialog/ViewLogs'
 
 interface LogActionsCellProps {
   row: Row<ActivityLog>

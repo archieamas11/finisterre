@@ -1,18 +1,8 @@
-import {
-  DndContext,
-  DragOverlay,
-  MouseSensor,
-  PointerSensor,
-  TouchSensor,
-  useSensor,
-  useSensors,
-  type DragEndEvent,
-  type DragOverEvent,
-  type DragStartEvent,
-  type UniqueIdentifier,
-} from '@dnd-kit/core'
+import type { DragEndEvent, DragOverEvent, DragStartEvent, UniqueIdentifier } from '@dnd-kit/core'
+import type { ReactNode } from 'react'
+import { createContext, useContext, useId, useRef, useState } from 'react'
+import { DndContext, DragOverlay, MouseSensor, PointerSensor, TouchSensor, useSensor, useSensors } from '@dnd-kit/core'
 import { addMinutes, differenceInMinutes } from 'date-fns'
-import { createContext, useContext, useId, useRef, useState, type ReactNode } from 'react'
 
 import { EventItem } from './event-item'
 import { type CalendarEvent } from './types'

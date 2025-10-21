@@ -1,7 +1,7 @@
-import Dexie, { type Table } from 'dexie'
-import { useEffect, useState, useCallback } from 'react'
-
 import type { plots } from '@/types/map.types'
+import type { Table } from 'dexie'
+import { useCallback, useEffect, useState } from 'react'
+import Dexie from 'dexie'
 
 import { getPlots } from '@/api/plots.api'
 

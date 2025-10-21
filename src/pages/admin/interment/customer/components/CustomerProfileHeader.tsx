@@ -1,6 +1,7 @@
+import type { Customer } from '@/api/customer.api'
 import { Printer } from 'lucide-react'
 import { BiMessageSquareEdit } from 'react-icons/bi'
-import type { Customer } from '@/api/customer.api'
+
 import { Button } from '@/components/ui/button'
 import { formatDate } from '@/lib/format'
 

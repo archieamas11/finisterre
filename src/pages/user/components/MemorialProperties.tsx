@@ -1,13 +1,13 @@
-import { MapPin } from 'lucide-react'
 import React from 'react'
+import { MapPin } from 'lucide-react'
 import { BsPersonHeart } from 'react-icons/bs'
 import { HiLibrary } from 'react-icons/hi'
 
+import type { Coordinates, Deceased, Lot } from './types'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { calculateYearsBuried, formatDate } from '@/utils/date.utils'
 
-import type { Lot, Deceased, Coordinates } from './types'
 type Props = {
   lot: Lot
   records: Deceased[]

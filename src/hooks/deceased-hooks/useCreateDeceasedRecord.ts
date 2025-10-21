@@ -1,9 +1,7 @@
-import { useMutation } from '@tanstack/react-query'
-import { useQueryClient } from '@tanstack/react-query'
-
-import { type DeceasedRecords } from '@/types/interment.types'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
 
 import { createDeceasedRecord } from '@/api/deceased.api'
+import { type DeceasedRecords } from '@/types/interment.types'
 
 export function useCreateDeceasedRecord() {
   const qc = useQueryClient()

@@ -1,5 +1,17 @@
+import type { ExtendedColumnSort } from '@/types/data-table'
+import type {
+  ColumnFiltersState,
+  PaginationState,
+  RowSelectionState,
+  SortingState,
+  TableOptions,
+  TableState,
+  Updater,
+  VisibilityState,
+} from '@tanstack/react-table'
+import type { Parser, UseQueryStateOptions } from 'nuqs'
+import * as React from 'react'
 import {
-  type ColumnFiltersState,
   getCoreRowModel,
   getFacetedMinMaxValues,
   getFacetedRowModel,
@@ -7,19 +19,9 @@ import {
   getFilteredRowModel,
   getPaginationRowModel,
   getSortedRowModel,
-  type PaginationState,
-  type RowSelectionState,
-  type SortingState,
-  type TableOptions,
-  type TableState,
-  type Updater,
   useReactTable,
-  type VisibilityState,
 } from '@tanstack/react-table'
-import { type Parser, parseAsArrayOf, parseAsInteger, parseAsString, type UseQueryStateOptions, useQueryState, useQueryStates } from 'nuqs'
-import * as React from 'react'
-
-import type { ExtendedColumnSort } from '@/types/data-table'
+import { parseAsArrayOf, parseAsInteger, parseAsString, useQueryState, useQueryStates } from 'nuqs'
 
 import { useDebouncedCallback } from '@/hooks/use-debounced-callback'
 import { getSortingStateParser } from '@/lib/parsers'

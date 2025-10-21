@@ -1,5 +1,5 @@
-import { useEffect, useRef } from 'react'
 import type React from 'react'
+import { useEffect, useRef } from 'react'
 import { useInView } from 'framer-motion'
 import { annotate } from 'rough-notation'
 import { type RoughAnnotation } from 'rough-notation/lib/model'

@@ -1,15 +1,16 @@
+import React, { cloneElement, isValidElement } from 'react'
 import { motion } from 'framer-motion'
 import L from 'leaflet'
 import { Maximize2 } from 'lucide-react'
-import React, { cloneElement, isValidElement } from 'react'
 import { renderToStaticMarkup } from 'react-dom/server'
 import { Marker, Popup } from 'react-leaflet'
-import { getRole } from '@/utils/auth.utils'
+
 import { CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Dialog, DialogContent, DialogTrigger } from '@/components/ui/dialog'
 import { cn } from '@/lib/utils'
-import { ShareButton } from '@/pages/webmap/components/share-button'
 import GetDirectionButton from '@/pages/webmap/components/get-direction-button'
+import { ShareButton } from '@/pages/webmap/components/share-button'
+import { getRole } from '@/utils/auth.utils'
 
 interface MarkerStyle {
   backgroundColor?: string

@@ -1,16 +1,7 @@
-import { useState, useCallback, useEffect, useRef } from 'react'
+import type { ValhallaManeuver, ValhallaRouteRequest, ValhallaRouteResponse } from '@/api/valhalla.api'
+import { useCallback, useEffect, useRef, useState } from 'react'
 
-import {
-  getValhallaRoute,
-  createPedestrianRouteRequest,
-  createAutoRouteRequest,
-  decodePolyline,
-  isOffRoute,
-  type ValhallaRouteResponse,
-  type ValhallaManeuver,
-  type ValhallaRouteRequest,
-} from '@/api/valhalla.api'
-
+import { createAutoRouteRequest, createPedestrianRouteRequest, decodePolyline, getValhallaRoute, isOffRoute } from '@/api/valhalla.api'
 import { type UserLocation } from './useLocationTracking'
 
 export interface RouteDestination {

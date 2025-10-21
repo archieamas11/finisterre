@@ -1,7 +1,7 @@
+import type { NewsCategory, NewsStatus } from '@/types/news.types'
 import { useQuery } from '@tanstack/react-query'
 
 import { getNewsList } from '@/api/news.api'
-import type { NewsCategory, NewsStatus } from '@/types/news.types'
 
 interface UseGetNewsOptions {
   search?: string

@@ -1,13 +1,14 @@
+import type { Customer, LotInfo } from '@/api/customer.api'
 import React, { useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useReactToPrint } from 'react-to-print'
-import type { Customer, LotInfo } from '@/api/customer.api'
+
 import { editCustomer } from '@/api/customer.api'
 import { Sheet, SheetContent } from '@/components/ui/sheet'
 import { formatDate } from '@/lib/format'
 import CustomerForm from '@/pages/admin/interment/customer/dialog/CustomerForm'
+import { CustomerProfileHeader, InfoItem, PrintableCustomerDetails, PropertyDeceasedCard, SectionHeader } from './components'
 import PropertiesAction from './dialog/PropertiesAction'
-import { CustomerProfileHeader, SectionHeader, InfoItem, PropertyDeceasedCard, PrintableCustomerDetails } from './components'
 
 interface ViewCustomerDialogProps {
   open: boolean

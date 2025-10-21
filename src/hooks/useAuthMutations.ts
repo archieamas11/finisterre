@@ -1,6 +1,7 @@
+import type { LoginResponse } from '@/api/auth.api'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 
-import { loginUser, type LoginResponse } from '@/api/auth.api'
+import { loginUser } from '@/api/auth.api'
 
 export function useLoginMutation() {
   const qc = useQueryClient()

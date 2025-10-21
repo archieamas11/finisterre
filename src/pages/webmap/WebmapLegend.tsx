@@ -1,6 +1,6 @@
+import { memo, useCallback, useState } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
-import { ChevronUp, Minimize2, Maximize2, X } from 'lucide-react'
-import { useState, useCallback, memo } from 'react'
+import { ChevronUp, Maximize2, Minimize2, X } from 'lucide-react'
 import { BiSolidChurch } from 'react-icons/bi'
 import { FaToilet } from 'react-icons/fa'
 import { GiOpenGate } from 'react-icons/gi'

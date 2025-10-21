@@ -1,12 +1,12 @@
-import { Suspense } from 'react'
-import React from 'react'
+import React, { Suspense } from 'react'
 import { ErrorBoundary } from 'react-error-boundary'
-import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom'
+import { BrowserRouter, Navigate, Route, Routes, useLocation } from 'react-router-dom'
 
 import { RequireAdmin, RequireAuth, RequireUser } from '@/authRoutes'
 import Spinner from '@/components/ui/spinner'
 import LandingLayout from '@/layout/LandingLayout'
 import { isNativePlatform } from '@/utils/platform.utils'
+
 const ErrorFallback = React.lazy(() => import('@/components/ErrorFallback'))
 const LoginPage = React.lazy(() => import('@/auth/LoginPage'))
 const Logout = React.lazy(() => import('@/auth/Logout'))

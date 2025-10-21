@@ -1,12 +1,12 @@
-import { BellOff, Shield, Bell } from 'lucide-react'
 import { useState } from 'react'
+import { Bell, BellOff, Shield } from 'lucide-react'
 
-import { CardContent, CardHeader, CardTitle, Card } from '@/components/ui/card'
-import { Switch } from '@/components/ui/switch'
-import AdminUsersTable from '@/pages/admin/control/AdminUsersTable'
-import { useUsers } from '@/hooks/user-hooks/useUsers'
 import { DataTableSkeleton } from '@/components/data-table/data-table-skeleton'
 import { ErrorMessage } from '@/components/ErrorMessage'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Switch } from '@/components/ui/switch'
+import { useUsers } from '@/hooks/user-hooks/useUsers'
+import AdminUsersTable from '@/pages/admin/control/AdminUsersTable'
 
 export default function AdminControlPanel() {
   const [maintenanceMode, setMaintenanceMode] = useState(false)

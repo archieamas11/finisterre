@@ -1,20 +1,19 @@
+import type { LotInfo } from '@/api/customer.api'
+import type { LotOwners } from '@/types/interment.types'
+import React from 'react'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
-import React from 'react'
 import { useForm } from 'react-hook-form'
+import { RiHeart2Fill } from 'react-icons/ri'
 import { toast } from 'sonner'
 import { z } from 'zod'
 
-import type { LotInfo } from '@/api/customer.api'
 import { updateDeceasedStatus } from '@/api/deceased.api'
-import { useEditLotOwner } from '@/hooks/lot-owner-hooks/useUpdateLotOwner'
-import type { LotOwners } from '@/types/interment.types'
-
 import { Button } from '@/components/ui/button'
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { RiHeart2Fill } from 'react-icons/ri'
+import { useEditLotOwner } from '@/hooks/lot-owner-hooks/useUpdateLotOwner'
 
 const lotStatusOptions = ['active', 'completed', 'cancelled'] as const
 const deceasedStatusSuggestions = ['transferred', 'cancelled', 'active'] as const

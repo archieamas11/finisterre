@@ -2,14 +2,11 @@
 
 import type { DraggableAttributes } from '@dnd-kit/core'
 import type { SyntheticListenerMap } from '@dnd-kit/core/dist/hooks/utilities'
-
-import { differenceInMinutes, format, getMinutes, isPast } from 'date-fns'
 import { useMemo } from 'react'
-
-import { cn } from '@/lib/utils'
+import { differenceInMinutes, format, getMinutes, isPast } from 'date-fns'
 
 import type { CalendarEvent } from './types'
-
+import { cn } from '@/lib/utils'
 import { getBorderRadiusClasses, getEventColorClasses } from './utils'
 
 // Using date-fns format with custom formatting:

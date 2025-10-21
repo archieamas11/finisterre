@@ -1,15 +1,13 @@
-import type { ColumnDef } from '@tanstack/react-table'
-
-import { BadgeCheckIcon, PencilIcon, TrashIcon, ArchiveIcon, LogInIcon, PlusIcon } from 'lucide-react'
-import { AiOutlineUser } from 'react-icons/ai'
-
 import type { ActivityLog } from '@/api/logs.api'
+import type { ColumnDef } from '@tanstack/react-table'
+import { ArchiveIcon, BadgeCheckIcon, LogInIcon, PencilIcon, PlusIcon, TrashIcon } from 'lucide-react'
+import { AiOutlineUser } from 'react-icons/ai'
 
 import { DataTableColumnHeader } from '@/components/data-table/data-table-column-header'
 import { Badge } from '@/components/ui/badge'
 import { ucwords } from '@/lib/format'
-
 import LogActionsCell from './LogActionsCell'
+
 const actionConfig = {
   add: {
     icon: PlusIcon,

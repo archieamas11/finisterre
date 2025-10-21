@@ -1,8 +1,9 @@
-import type { Row } from '@tanstack/react-table'
-import { Archive, MoreHorizontal } from 'lucide-react'
-import React, { useRef } from 'react'
-import { useReactToPrint } from 'react-to-print'
 import type { Customer } from '@/api/customer.api'
+import type { Row } from '@tanstack/react-table'
+import React, { useRef } from 'react'
+import { Archive, MoreHorizontal } from 'lucide-react'
+import { useReactToPrint } from 'react-to-print'
+
 import { Button } from '@/components/ui/button'
 import {
   DropdownMenu,
@@ -12,9 +13,9 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
+import { PrintableCustomerDetails } from '@/pages/admin/interment/customer/components'
 import EditCustomerDialog from '@/pages/admin/interment/customer/UpdateCustomer'
 import ViewCustomerDialog from '@/pages/admin/interment/customer/ViewCustomer'
-import { PrintableCustomerDetails } from '@/pages/admin/interment/customer/components'
 
 export default function CustomerActionsCell({ row }: { row: Row<Customer> }) {
   const [open, setOpen] = React.useState(false)

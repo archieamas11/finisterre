@@ -1,9 +1,8 @@
 'use client'
 
 import type { Table } from '@tanstack/react-table'
-
-import { Check, ChevronsUpDown, Settings2 } from 'lucide-react'
 import * as React from 'react'
+import { Check, ChevronsUpDown, Settings2 } from 'lucide-react'
 
 import { Button } from '@/components/ui/button'
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from '@/components/ui/command'

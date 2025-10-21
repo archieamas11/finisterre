@@ -1,10 +1,8 @@
-import type { ColumnDef } from '@tanstack/react-table'
-
-import { MapPin } from 'lucide-react'
-import React from 'react'
-import { AiOutlineUser } from 'react-icons/ai'
-
 import type { LotOwners } from '@/types/interment.types'
+import type { ColumnDef } from '@tanstack/react-table'
+import React from 'react'
+import { MapPin } from 'lucide-react'
+import { AiOutlineUser } from 'react-icons/ai'
 
 import { DataTableColumnHeader } from '@/components/data-table/data-table-column-header'
 import { Badge } from '@/components/ui/badge'

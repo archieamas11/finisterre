@@ -1,5 +1,6 @@
-import React from 'react'
 import type { Customer } from '@/api/customer.api'
+import React from 'react'
+
 import { formatDate, ucwords } from '@/lib/format'
 import { calculateYearsBuried } from '@/utils/date.utils'
 

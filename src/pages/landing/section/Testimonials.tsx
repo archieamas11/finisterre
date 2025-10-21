@@ -1,6 +1,7 @@
 'use client'
-import { Star } from 'lucide-react'
+
 import { memo } from 'react'
+import { Star } from 'lucide-react'
 
 import { Marquee } from '@/components/ui/marquee'
 import { cn } from '@/lib/utils'

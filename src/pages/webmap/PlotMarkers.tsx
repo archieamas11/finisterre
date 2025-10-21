@@ -1,8 +1,7 @@
-import L from 'leaflet'
-import { memo, useState, useCallback, useContext, useEffect, useRef } from 'react'
-import { Marker, Popup } from 'react-leaflet'
-
 import type { ConvertedMarker } from '@/types/map.types'
+import { memo, useCallback, useContext, useEffect, useRef, useState } from 'react'
+import L from 'leaflet'
+import { Marker, Popup } from 'react-leaflet'
 
 import { Drawer, DrawerContent, DrawerDescription, DrawerTitle } from '@/components/ui/drawer'
 import { LocateContext } from '@/contexts/MapContext'

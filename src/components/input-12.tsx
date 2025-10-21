@@ -1,7 +1,7 @@
 'use client'
 
-import { XCircleIcon, ImageIcon } from 'lucide-react'
 import { useState } from 'react'
+import { ImageIcon, XCircleIcon } from 'lucide-react'
 import Dropzone from 'react-dropzone'
 
 import { Label } from '@/components/ui/label'

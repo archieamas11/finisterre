@@ -1,11 +1,12 @@
-import { Dialog as KonstaDialog, DialogButton } from 'konsta/react'
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
-import { isNativePlatform } from '@/utils/platform.utils'
-import { getStatusColor } from '@/types/map.types'
-import { MdLocalParking } from 'react-icons/md'
-import { FaToilet } from 'react-icons/fa'
+import { DialogButton, Dialog as KonstaDialog } from 'konsta/react'
 import { BiSolidChurch } from 'react-icons/bi'
+import { FaToilet } from 'react-icons/fa'
 import { GiOpenGate } from 'react-icons/gi'
+import { MdLocalParking } from 'react-icons/md'
+
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
+import { getStatusColor } from '@/types/map.types'
+import { isNativePlatform } from '@/utils/platform.utils'
 
 interface LegendDialogProps {
   isOpen: boolean

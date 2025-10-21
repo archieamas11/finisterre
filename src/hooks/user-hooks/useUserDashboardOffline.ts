@@ -1,7 +1,7 @@
-import Dexie, { type Table } from 'dexie'
-import { useEffect, useState, useCallback } from 'react'
-
 import type { UserDashboardData } from '@/api/users.api'
+import type { Table } from 'dexie'
+import { useCallback, useEffect, useState } from 'react'
+import Dexie from 'dexie'
 
 import { getUserDashboard, parseCoordinates } from '@/api/users.api'
 

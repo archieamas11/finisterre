@@ -1,4 +1,5 @@
-import { type LucideIcon, LibraryBig, CalendarDays, MonitorCog, MapIcon, LayoutGrid } from 'lucide-react'
+import type { LucideIcon } from 'lucide-react'
+import { CalendarDays, LayoutGrid, LibraryBig, MapIcon, MonitorCog } from 'lucide-react'
 
 export interface NavMainItem {
   url: string

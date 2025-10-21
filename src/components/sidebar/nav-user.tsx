@@ -2,20 +2,21 @@
 
 import { ChevronsUpDown, LogOut } from 'lucide-react'
 
-import { AvatarFallback, AvatarImage, Avatar } from '@/components/ui/avatar'
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import {
-  DropdownMenuSeparator,
-  DropdownMenuContent,
-  DropdownMenuTrigger,
-  DropdownMenuLabel,
-  DropdownMenuItem,
   DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
-import { SidebarMenuButton, SidebarMenuItem, SidebarMenu, useSidebar } from '@/components/ui/sidebar'
+import { SidebarMenu, SidebarMenuButton, SidebarMenuItem, useSidebar } from '@/components/ui/sidebar'
 import { useLogout } from '@/hooks/useLogout'
 import { useMe } from '@/hooks/useMe'
-import { getInitials } from '@/utils/avatar'
 import { ucwords } from '@/lib/format'
+import { getInitials } from '@/utils/avatar'
+
 export function NavUser() {
   const { isMobile } = useSidebar()
   const { user: meUser } = useMe()

@@ -1,7 +1,6 @@
+import type { DeceasedRecords } from '@/types/interment.types'
 import React from 'react'
 import { toast } from 'sonner'
-
-import type { DeceasedRecords } from '@/types/interment.types'
 
 import { Button } from '@/components/ui/button'
 import { useCreateDeceasedRecord } from '@/hooks/deceased-hooks/useCreateDeceasedRecord'

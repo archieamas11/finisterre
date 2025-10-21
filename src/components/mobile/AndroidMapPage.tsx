@@ -1,6 +1,7 @@
-import WebMapLayout from '@/layout/WebMapLayout'
-import { Page } from 'konsta/react'
 import type { Coordinates } from '@/pages/user/components/types'
+import { Page } from 'konsta/react'
+
+import WebMapLayout from '@/layout/WebMapLayout'
 
 interface AndroidMapPageProps {
   onBack?: () => void

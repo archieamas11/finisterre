@@ -1,5 +1,6 @@
-import React from 'react'
 import type { LotOwners } from '@/types/interment.types'
+import React from 'react'
+
 import { formatDate, ucwords } from '@/lib/format'
 
 interface PrintableLotOwnerDetailsProps {

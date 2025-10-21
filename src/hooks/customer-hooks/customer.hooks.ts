@@ -1,8 +1,7 @@
-import { useQueryClient, useMutation, useQuery } from '@tanstack/react-query'
-
 import type { Customer } from '@/api/customer.api'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 
-import { createCustomer, getCustomers, editCustomer } from '@/api/customer.api'
+import { createCustomer, editCustomer, getCustomers } from '@/api/customer.api'
 
 export function useUpsertCustomer() {
   const qc = useQueryClient()

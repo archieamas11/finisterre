@@ -1,6 +1,6 @@
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import axios from 'axios'
-import { useEffect, useState, useCallback, useMemo } from 'react'
 import { FaShareSquare } from 'react-icons/fa'
 import QRCode from 'react-qr-code'
 import { toast } from 'sonner'

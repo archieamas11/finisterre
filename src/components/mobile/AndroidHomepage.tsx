@@ -1,16 +1,17 @@
-import { HiNewspaper } from 'react-icons/hi'
-import { useState, useCallback, useEffect } from 'react'
-import { Page, Navbar, Tabbar, TabbarLink, ToolbarPane, Fab, Link } from 'konsta/react'
-import { MapPin, UserIcon, HomeIcon, LogIn, BotIcon } from 'lucide-react'
-import { useNavigate } from 'react-router-dom'
-import AndroidMapPage from './AndroidMapPage'
-import AndroidProfilePage from '@/pages/android/AndroidProfilePage'
-import UserDashboard from '@/pages/user/UserDashboard'
 import type { Coordinates } from '@/pages/user/components/types'
-import { isAuthenticated } from '@/utils/auth.utils'
-import AnnouncementsPage from '@/pages/user/AnnouncementsPage'
-import Chatbot from '@/pages/landing/section/chatbot/Chatbot'
+import { useCallback, useEffect, useState } from 'react'
+import { Fab, Link, Navbar, Page, Tabbar, TabbarLink, ToolbarPane } from 'konsta/react'
+import { BotIcon, HomeIcon, LogIn, MapPin, UserIcon } from 'lucide-react'
+import { HiNewspaper } from 'react-icons/hi'
+import { useNavigate } from 'react-router-dom'
+
 import { Sheet, SheetContent } from '@/components/ui/sheet'
+import AndroidProfilePage from '@/pages/android/AndroidProfilePage'
+import Chatbot from '@/pages/landing/section/chatbot/Chatbot'
+import AnnouncementsPage from '@/pages/user/AnnouncementsPage'
+import UserDashboard from '@/pages/user/UserDashboard'
+import { isAuthenticated } from '@/utils/auth.utils'
+import AndroidMapPage from './AndroidMapPage'
 
 export default function AndroidHomepage() {
   const [activeTab, setActiveTab] = useState('home')

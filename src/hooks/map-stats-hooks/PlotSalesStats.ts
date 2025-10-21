@@ -1,6 +1,7 @@
+import type { LotsTimeSeriesPoint } from '@/api/map-stats.api'
 import { useQuery } from '@tanstack/react-query'
 
-import { getLotsTimeSeries, type LotsTimeSeriesPoint } from '@/api/map-stats.api'
+import { getLotsTimeSeries } from '@/api/map-stats.api'
 
 export interface MonthlyLotsSharePoint {
   month: string

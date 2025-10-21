@@ -1,5 +1,5 @@
-import { ChevronDown, ChevronUp, Megaphone, Calendar, Clock, Info } from 'lucide-react'
 import React, { useState } from 'react'
+import { Calendar, ChevronDown, ChevronUp, Clock, Info, Megaphone } from 'lucide-react'
 
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'

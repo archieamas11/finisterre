@@ -1,6 +1,5 @@
-import { useQuery } from '@tanstack/react-query'
-
 import type { DeceasedData as DeceasedType } from '@/types/deceased.types'
+import { useQuery } from '@tanstack/react-query'
 
 import { getPlotDetails } from '@/api/plots.api'
 

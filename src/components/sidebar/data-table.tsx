@@ -1,70 +1,58 @@
-import {
-  type UniqueIdentifier,
-  type DragEndEvent,
-  KeyboardSensor,
-  closestCenter,
-  MouseSensor,
-  TouchSensor,
-  DndContext,
-  useSensors,
-  useSensor,
-} from '@dnd-kit/core'
+import type { ChartConfig } from '@/components/ui/chart'
+import type { DragEndEvent, UniqueIdentifier } from '@dnd-kit/core'
+import type { ColumnDef, ColumnFiltersState, Row, SortingState, VisibilityState } from '@tanstack/react-table'
+import * as React from 'react'
+import { closestCenter, DndContext, KeyboardSensor, MouseSensor, TouchSensor, useSensor, useSensors } from '@dnd-kit/core'
 import { restrictToVerticalAxis } from '@dnd-kit/modifiers'
-import { verticalListSortingStrategy, SortableContext, useSortable, arrayMove } from '@dnd-kit/sortable'
+import { arrayMove, SortableContext, useSortable, verticalListSortingStrategy } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
 import {
-  IconCircleCheckFilled,
-  IconChevronsRight,
-  IconLayoutColumns,
-  IconChevronRight,
-  IconChevronsLeft,
-  IconDotsVertical,
-  IconGripVertical,
   IconChevronDown,
   IconChevronLeft,
-  IconTrendingUp,
+  IconChevronRight,
+  IconChevronsLeft,
+  IconChevronsRight,
+  IconCircleCheckFilled,
+  IconDotsVertical,
+  IconGripVertical,
+  IconLayoutColumns,
   IconLoader,
   IconPlus,
+  IconTrendingUp,
 } from '@tabler/icons-react'
 import {
-  type ColumnFiltersState,
-  getFacetedUniqueValues,
-  getPaginationRowModel,
-  type VisibilityState,
-  getFilteredRowModel,
-  getFacetedRowModel,
-  getSortedRowModel,
-  type SortingState,
-  getCoreRowModel,
-  type ColumnDef,
-  useReactTable,
   flexRender,
-  type Row,
+  getCoreRowModel,
+  getFacetedRowModel,
+  getFacetedUniqueValues,
+  getFilteredRowModel,
+  getPaginationRowModel,
+  getSortedRowModel,
+  useReactTable,
 } from '@tanstack/react-table'
-import * as React from 'react'
-import { CartesianGrid, AreaChart, XAxis, Area } from 'recharts'
+import { Area, AreaChart, CartesianGrid, XAxis } from 'recharts'
 import { toast } from 'sonner'
 import { z } from 'zod'
 
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
-import { ChartTooltipContent, type ChartConfig, ChartContainer, ChartTooltip } from '@/components/ui/chart'
+import { ChartContainer, ChartTooltip, ChartTooltipContent } from '@/components/ui/chart'
 import { Checkbox } from '@/components/ui/checkbox'
-import { DrawerDescription, DrawerContent, DrawerTrigger, DrawerFooter, DrawerHeader, DrawerClose, DrawerTitle, Drawer } from '@/components/ui/drawer'
+import { Drawer, DrawerClose, DrawerContent, DrawerDescription, DrawerFooter, DrawerHeader, DrawerTitle, DrawerTrigger } from '@/components/ui/drawer'
 import {
-  DropdownMenuCheckboxItem,
-  DropdownMenuSeparator,
-  DropdownMenuContent,
-  DropdownMenuTrigger,
-  DropdownMenuItem,
   DropdownMenu,
+  DropdownMenuCheckboxItem,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { SelectContent, SelectTrigger, SelectValue, SelectItem, Select } from '@/components/ui/select'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Separator } from '@/components/ui/separator'
-import { TableHeader, TableBody, TableCell, TableHead, TableRow, Table } from '@/components/ui/table'
-import { TabsContent, TabsTrigger, TabsList, Tabs } from '@/components/ui/tabs'
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { useIsMobile } from '@/hooks/use-mobile'
 
 export const schema = z.object({

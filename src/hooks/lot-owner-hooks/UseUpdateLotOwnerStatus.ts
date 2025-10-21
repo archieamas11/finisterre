@@ -1,6 +1,8 @@
-import { useMutation, useQueryClient } from '@tanstack/react-query'
+import type { EditLotStatus } from '@/api/interment.api'
 import type { LotOwners } from '@/types/interment.types'
-import { editLotStatusById, type EditLotStatus } from '@/api/interment.api'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
+
+import { editLotStatusById } from '@/api/interment.api'
 
 export function useEditLotStatus() {
   const queryClient = useQueryClient()

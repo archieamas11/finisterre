@@ -1,6 +1,7 @@
+import type { FinisterreMarkerData } from '@/components/ui/popup-content'
 import { GiOpenGate } from 'react-icons/gi'
 
-import { FinisterreMarkers, type FinisterreMarkerData } from '@/components/ui/popup-content'
+import { FinisterreMarkers } from '@/components/ui/popup-content'
 
 interface Props {
   onDirectionClick?: (dest: [number, number]) => void

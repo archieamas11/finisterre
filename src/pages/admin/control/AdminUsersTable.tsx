@@ -1,29 +1,19 @@
-import {
-  type ColumnFiltersState,
-  type RowSelectionState,
-  getPaginationRowModel,
-  type VisibilityState,
-  getFilteredRowModel,
-  getSortedRowModel,
-  type SortingState,
-  getCoreRowModel,
-  useReactTable,
-} from '@tanstack/react-table'
-import { SearchIcon, PrinterIcon, PlusIcon } from 'lucide-react'
+import type { ColumnFiltersState, RowSelectionState, SortingState, VisibilityState } from '@tanstack/react-table'
 import React from 'react'
+import { getCoreRowModel, getFilteredRowModel, getPaginationRowModel, getSortedRowModel, useReactTable } from '@tanstack/react-table'
+import { PlusIcon, PrinterIcon, SearchIcon } from 'lucide-react'
+import { useReactToPrint } from 'react-to-print'
 
 import { DataTable } from '@/components/data-table/data-table'
 import { DataTableToolbar } from '@/components/data-table/data-table-toolbar'
+import { PrintableTable } from '@/components/printable-table'
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
-import { Input } from '@/components/ui/input'
-import { useReactToPrint } from 'react-to-print'
-import { PrintableTable } from '@/components/printable-table'
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog'
-
+import { Input } from '@/components/ui/input'
+import { type UserData } from '@/types/user.types'
 import { adminUsersColumns } from './AdminUsersColumns'
 import AddNewUserDialog from './dialog/AddNewUserDialog'
-import { type UserData } from '@/types/user.types'
 
 interface UsersTableProps {
   data: UserData[]

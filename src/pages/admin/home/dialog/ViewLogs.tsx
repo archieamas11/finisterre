@@ -1,8 +1,9 @@
-import * as React from 'react'
 import type { ActivityLog } from '@/api/logs.api'
+import * as React from 'react'
+
+import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog'
-import { Badge } from '@/components/ui/badge'
 
 interface ViewLogProps {
   log: ActivityLog

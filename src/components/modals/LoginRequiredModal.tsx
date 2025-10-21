@@ -1,8 +1,8 @@
+import { DialogButton, Dialog as KonstaDialog } from 'konsta/react'
 import { LogIn } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 
 import { Button } from '@/components/ui/button'
-import { Dialog as KonstaDialog, DialogButton } from 'konsta/react'
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import { isAndroid } from '@/utils/platform.utils'
 

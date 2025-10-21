@@ -1,9 +1,8 @@
+import type { CustomerData } from '@/types/customer.types'
+import type { DeceasedData as DeceasedType } from '@/types/deceased.types'
 import { Users } from 'lucide-react'
 import { GiCoffin } from 'react-icons/gi'
 import { HiClock } from 'react-icons/hi'
-
-import type { CustomerData } from '@/types/customer.types'
-import type { DeceasedData as DeceasedType } from '@/types/deceased.types'
 
 import { Badge } from '@/components/ui/badge'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'

@@ -1,7 +1,6 @@
 import { type DeceasedData } from '@/types/deceased.types'
 import { type LotOwnerData } from '@/types/lot-owner.types'
 import { type UserData } from '@/types/user.types'
-
 import { api } from './axiosInstance'
 
 export interface UserDashboardData {

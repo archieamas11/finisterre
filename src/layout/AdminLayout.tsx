@@ -1,12 +1,13 @@
+import type { UserRole } from '@/navigation/sidebar/sidebar-items'
 import { useEffect, useMemo } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 
 import { AppSidebar } from '@/components/sidebar/app-sidebar'
 import { SiteHeader } from '@/components/sidebar/site-header'
-import { SidebarProvider, SidebarInset } from '@/components/ui/sidebar'
-import { findSidebarItemByPath, getSidebarItems, type UserRole } from '@/navigation/sidebar/sidebar-items'
-import { isAuthenticated } from '@/utils/auth.utils'
+import { SidebarInset, SidebarProvider } from '@/components/ui/sidebar'
 import { useAuthQuery } from '@/hooks/useAuthQuery'
+import { findSidebarItemByPath, getSidebarItems } from '@/navigation/sidebar/sidebar-items'
+import { isAuthenticated } from '@/utils/auth.utils'
 
 export default function AdminLayout() {
   const location = useLocation()

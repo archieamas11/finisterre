@@ -2,19 +2,18 @@ import * as React from 'react'
 
 import { NavMain } from '@/components/sidebar/nav-main'
 import {
-  SidebarGroupLabel,
-  SidebarMenuButton,
-  SidebarMenuItem,
+  Sidebar,
   SidebarContent,
   SidebarFooter,
-  SidebarHeader,
   SidebarGroup,
+  SidebarGroupLabel,
+  SidebarHeader,
   SidebarMenu,
+  SidebarMenuButton,
+  SidebarMenuItem,
   SidebarRail,
-  Sidebar,
 } from '@/components/ui/sidebar'
 import { type NavGroup } from '@/navigation/sidebar/sidebar-items'
-
 import { NavUser } from './nav-user'
 
 export function AppSidebar({ items, ...props }: React.ComponentProps<typeof Sidebar> & { items: NavGroup[] }) {

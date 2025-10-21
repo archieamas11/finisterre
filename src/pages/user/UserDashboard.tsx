@@ -1,25 +1,23 @@
 import { Capacitor } from '@capacitor/core'
-import { CalendarDays, Heart, MapPin, BotIcon } from 'lucide-react'
+import { BotIcon, CalendarDays, Heart, MapPin } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 
+import type { Coordinates, Deceased, Lot } from './components/types'
 import { ErrorMessage } from '@/components/ErrorMessage'
+import { PulsatingButton } from '@/components/pulsating-button'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet'
 import Spinner from '@/components/ui/spinner'
 import { useUserDashboardOffline } from '@/hooks/user-hooks/useUserDashboardOffline'
 import { cn } from '@/lib/utils'
 import { isNativePlatform } from '@/utils/platform.utils'
-
-import type { Lot, Deceased, Coordinates } from './components/types'
-
+import Chatbot from '../landing/section/chatbot/Chatbot'
 import { AnnouncementCard } from './components/AnnouncementCard'
 import { MemorialProperties } from './components/MemorialProperties'
 import { PromotionalBanner } from './components/PromotionalBanner'
 import { StatCard } from './components/StatCard'
-import { Sheet, SheetTrigger, SheetContent } from '@/components/ui/sheet'
-import { PulsatingButton } from '@/components/pulsating-button'
-import Chatbot from '../landing/section/chatbot/Chatbot'
 
 interface UserDashboardProps {
   onPlotNavigate?: (coordinates?: Coordinates | null) => void

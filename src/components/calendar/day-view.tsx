@@ -1,5 +1,6 @@
 'use client'
 
+import React, { useMemo } from 'react'
 import {
   addHours,
   areIntervalsOverlapping,
@@ -11,13 +12,10 @@ import {
   isSameDay,
   startOfDay,
 } from 'date-fns'
-import React, { useMemo } from 'react'
-
-import { EndHour, StartHour, WeekCellsHeight } from '@/components/calendar/constants'
-import { cn } from '@/lib/utils'
 
 import type { CalendarEvent } from './types'
-
+import { EndHour, StartHour, WeekCellsHeight } from '@/components/calendar/constants'
+import { cn } from '@/lib/utils'
 import { DraggableEvent } from './draggable-event'
 import { DroppableCell } from './droppable-cell'
 import { EventItem } from './event-item'

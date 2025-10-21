@@ -2,9 +2,8 @@
 
 import type { Column } from '@tanstack/react-table'
 import type { DateRange } from 'react-day-picker'
-
-import { CalendarIcon, XCircle } from 'lucide-react'
 import * as React from 'react'
+import { CalendarIcon, XCircle } from 'lucide-react'
 
 import { Button } from '@/components/ui/button'
 import { Calendar } from '@/components/ui/calendar'

@@ -1,8 +1,7 @@
+import type { UserData } from '@/types/user.types'
 import type { ColumnDef } from '@tanstack/react-table'
-
 import { AiOutlineUser } from 'react-icons/ai'
 
-import type { UserData } from '@/types/user.types'
 import { DataTableColumnHeader } from '@/components/data-table/data-table-column-header'
 import { Badge } from '@/components/ui/badge'
 import { ucwords } from '@/lib/format'

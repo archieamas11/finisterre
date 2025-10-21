@@ -1,6 +1,5 @@
-import { createContext } from 'react'
-
 import type { LotSearchResult } from '@/types/map.types'
+import { createContext } from 'react'
 
 // ==== Map State Management Types ====
 export interface MapState {

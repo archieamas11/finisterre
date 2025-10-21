@@ -1,8 +1,8 @@
+import type { UserOwnedPlot } from '@/api/plots.api'
+import type { ConvertedMarker } from '@/types/map.types'
 import { useQuery } from '@tanstack/react-query'
 
-import type { ConvertedMarker } from '@/types/map.types'
-
-import { getUserOwnedPlots, type UserOwnedPlot } from '@/api/plots.api'
+import { getUserOwnedPlots } from '@/api/plots.api'
 import { isAuthenticated } from '@/utils/auth.utils'
 
 export function useUserOwnedPlots() {

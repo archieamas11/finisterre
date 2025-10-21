@@ -1,6 +1,6 @@
-import { LogOutIcon, LayoutDashboard } from 'lucide-react'
 import { useCallback } from 'react'
-import { useNavigate, useLocation } from 'react-router-dom'
+import { LayoutDashboard, LogOutIcon } from 'lucide-react'
+import { useLocation, useNavigate } from 'react-router-dom'
 
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
@@ -13,10 +13,10 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
+import { ThemeToggleMenuItem } from '@/components/ui/theme-toggle-button'
 import { useLogout } from '@/hooks/useLogout'
 import { ucwords } from '@/lib/format'
 import { getInitials } from '@/utils/avatar'
-import { ThemeToggleMenuItem } from '@/components/ui/theme-toggle-button'
 
 interface ProfileUser {
   avatar: string

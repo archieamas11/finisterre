@@ -1,13 +1,13 @@
+import type { AnimationStart, AnimationVariant } from '@/components/provider/theme-animations'
+import React from 'react'
 import { MoonIcon, SunIcon } from 'lucide-react'
 import { useTheme } from 'next-themes'
-import React from 'react'
 
-import { type AnimationStart, type AnimationVariant, createAnimation } from '@/components/provider/theme-animations'
+import { createAnimation } from '@/components/provider/theme-animations'
 import { Button } from '@/components/ui/button'
-import { cn } from '@/lib/utils'
-
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from './tooltip'
 import { DropdownMenuItem } from '@/components/ui/dropdown-menu'
+import { cn } from '@/lib/utils'
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from './tooltip'
 
 interface ThemeToggleAnimationProps {
   variant?: AnimationVariant
