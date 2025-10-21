@@ -118,6 +118,9 @@ export interface MeResponse {
     user_id: number | null
     customer_id?: number | null
     username: string | null
+    email?: string | null
+    first_name?: string | null
+    last_name?: string | null
     role: 'admin' | 'staff' | 'user'
     iat: number | null
     exp: number | null

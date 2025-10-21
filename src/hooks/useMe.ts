@@ -4,7 +4,6 @@ import { fetchMe } from '@/api/auth.api'
 import { isAuthenticated } from '@/utils/auth.utils'
 import { dicebearAdventurerUrl } from '@/utils/avatar'
 
-// Simple hook to get current user info from token backend
 export function useMe() {
   const enabled = isAuthenticated()
   const query = useQuery({
@@ -18,9 +17,8 @@ export function useMe() {
   return {
     user: user
       ? {
-          // Map backend fields to ProfileMenu expected props
-          name: user.username ?? 'User',
-          email: user.username ? `${user.username}@example.com` : 'unknown@example.com',
+          name: user.first_name && user.last_name ? `${user.first_name} ${user.last_name}` : (user.username ?? 'User'),
+          email: user.email ?? (user.username ? `${user.username}@finisterre.site` : 'unknown@gmail.com'),
           avatar: dicebearAdventurerUrl(user.username || String(user.user_id || 'guest')),
           role: user.role,
           customerId: user.customer_id ?? null,
