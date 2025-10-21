@@ -5,12 +5,14 @@ import AutoImport from 'unplugin-auto-import/vite'
 import { defineConfig } from 'vite'
 import { ViteImageOptimizer } from 'vite-plugin-image-optimizer'
 import removeConsole from 'vite-plugin-remove-console'
+import preloadPlugin from 'vite-preload/plugin'
 
 // https://vite.dev/config/
 export default defineConfig(() => ({
   base: process.env.VERCEL ? '/' : './',
   plugins: [
     react(),
+    preloadPlugin(),
     tailwindcss(),
     ViteImageOptimizer(),
     removeConsole(),
