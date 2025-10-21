@@ -38,7 +38,6 @@ export function CreateDeceasedRecordDialog({ open, onOpenChange, onSubmit: propO
     },
   })
 
-  // 💾 Handles form submission and processes data for API
   const handleSubmit = async (values: FormData) => {
     try {
       const currentTime = new Date().toISOString()

@@ -214,7 +214,7 @@ export default function SinglePlotLocations({ marker, popupCloseTick }: PlotLoca
               e.stopPropagation()
               handleAdd()
             }}
-            className="bg-card text-accent-foreground hover:bg-accent/90 flex items-center gap-1 border px-2 py-1 text-xs"
+            className="bg-card text-card-foreground hover:bg-card/90 flex items-center gap-1 border px-2 py-1 text-xs"
           >
             <Plus className="h-3 w-3" />
             Add
@@ -223,7 +223,7 @@ export default function SinglePlotLocations({ marker, popupCloseTick }: PlotLoca
       )}
 
       {showCustomerCombo && (
-        <div className="py-3">
+        <div className="text-card-foreground py-3">
           <CustomerSelectForm
             title="Select Customer for Reservation"
             isSaving={isSavingOwner}
@@ -234,6 +234,8 @@ export default function SinglePlotLocations({ marker, popupCloseTick }: PlotLoca
             onSave={(customer_id) => {
               handleSaveOwner(customer_id)
             }}
+            headingClassName="text-card-foreground mb-3 text-sm"
+            containerClassName="bg-card mt-4 rounded-lg border p-4 text-card-foreground"
           />
         </div>
       )}

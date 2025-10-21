@@ -380,6 +380,8 @@ export default function ColumbariumPopup({ marker, onDirectionClick, isDirection
                       onSave={(customerId) => {
                         handleSaveReservation(customerId)
                       }}
+                      headingClassName="text-card-foreground mb-3 text-sm"
+                      containerClassName="bg-card mt-4 rounded-lg border p-4 text-card-foreground"
                     />
                   )}
                 </>

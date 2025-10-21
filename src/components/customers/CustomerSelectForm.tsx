@@ -22,8 +22,8 @@ export type CustomerSelectFormProps = {
 
 export default function CustomerSelectForm({
   title = 'Select Customer',
-  headingClassName = 'text-muted-foreground mb-3 text-sm font-medium',
-  containerClassName = 'bg-muted/50 mt-4 rounded-lg border p-4',
+  headingClassName = '',
+  containerClassName = '',
   popoverWidthClass = 'w-107',
   initialSelectedCustomerId,
   isSaving = false,
@@ -42,11 +42,10 @@ export default function CustomerSelectForm({
   return (
     <div className={containerClassName}>
       <h4 className={headingClassName}>{title}</h4>
-
       <Popover onOpenChange={setComboOpen} open={comboOpen}>
         <PopoverTrigger asChild>
           <Button
-            className="w-full justify-between text-gray-300"
+            className="w-full justify-between"
             disabled={isLoading}
             aria-expanded={comboOpen}
             variant="outline"
@@ -107,6 +106,7 @@ export default function CustomerSelectForm({
           disabled={isSaving || !selectedId}
           size="sm"
           className="flex-1 leading-none"
+          variant={'default'}
         >
           <Save className="mr-1 h-4 w-4" />
           {isSaving ? 'Saving...' : 'Save'}
