@@ -41,7 +41,6 @@ export default memo(function EditProfileDialog({ open, customer, onOpenChange }:
     },
   })
 
-  // Reset form with customer data when dialog opens
   useEffect(() => {
     if (open && customer) {
       form.reset({
@@ -51,7 +50,7 @@ export default memo(function EditProfileDialog({ open, customer, onOpenChange }:
         email: customer.email || '',
         address: customer.address || '',
         contact_number: customer.contact_number || '',
-        birth_date: customer.birth_date ? String(customer.birth_date).slice(0, 10) : '',
+        birth_date: customer.birth_date ? new Date(customer.birth_date).toISOString().slice(0, 10) : '',
         gender: (customer.gender === 'Female' ? 'Female' : 'Male') as CustomerFormData['gender'],
         religion: customer.religion || '',
         citizenship: customer.citizenship || '',

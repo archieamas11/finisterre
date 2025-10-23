@@ -71,7 +71,7 @@ export default function EditCustomerDialog({ open, customer, onOpenChange }: Edi
     occupation: customer.occupation || '',
     citizenship: customer.citizenship || '',
     contact_number: customer.contact_number || '',
-    birth_date: customer.birth_date ? String(customer.birth_date).slice(0, 10) : '',
+    birth_date: customer.birth_date ? new Date(customer.birth_date).toISOString().slice(0, 10) : '',
   }
 
   return (

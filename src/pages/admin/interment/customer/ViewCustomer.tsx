@@ -218,7 +218,7 @@ export default function ViewCustomer({ open, customer, onOpenChange }: ViewCusto
           occupation: customerData.occupation || '',
           citizenship: customerData.citizenship || '',
           contact_number: customerData.contact_number || '',
-          birth_date: customerData.birth_date ? String(customerData.birth_date).slice(0, 10) : '',
+          birth_date: customerData.birth_date ? new Date(customerData.birth_date).toISOString().slice(0, 10) : '',
         }}
         onOpenChange={setEditOpen}
         onSubmit={async (values, isDirty) => {
