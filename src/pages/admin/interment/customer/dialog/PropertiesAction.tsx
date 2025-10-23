@@ -148,10 +148,6 @@ export default function PropertiesAction({ open, onOpenChange, lot, customerId, 
           lot_status: nextLotStatus,
         }
 
-        // Backend automatically handles:
-        // - Setting all deceased to 'cancelled' when lot is cancelled
-        // - Setting plot to 'available' if niche_number is NULL
-        // Only set niche_status to available if it exists and lot is being cancelled
         if (nextLotStatus === 'cancelled' && 'niche_status' in lot && lot.niche_status != null) {
           payload.niche_status = 'available'
         }
@@ -159,7 +155,6 @@ export default function PropertiesAction({ open, onOpenChange, lot, customerId, 
         await editLotOwnerMutation.mutateAsync(payload)
       }
 
-      // Only update individual deceased statuses if NOT cancelling the lot
       if (hasDeceasedUpdate) {
         await Promise.all(
           deceasedUpdates

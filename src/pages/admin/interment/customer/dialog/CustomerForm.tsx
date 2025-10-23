@@ -17,7 +17,7 @@ export interface CustomerFormProps {
   isPending?: boolean
   mode: CustomerFormMode
   onOpenChange: (open: boolean) => void
-  onSubmit: (values: CustomerFormData) => Promise<void> | void
+  onSubmit: (values: CustomerFormData, isDirty: boolean) => Promise<void> | void
 }
 
 export type CustomerFormMode = 'edit' | 'add'
@@ -44,11 +44,13 @@ export default function CustomerForm({ mode, open, onSubmit, isPending, onOpenCh
   React.useEffect(() => {
     if (initialValues && open) {
       form.reset(initialValues)
+    } else if (open && mode === 'add') {
+      form.reset()
     }
-  }, [form, initialValues, open])
+  }, [form, initialValues, open, mode])
 
   const handleSubmit = async (values: CustomerFormData) => {
-    await onSubmit(values)
+    await onSubmit(values, form.formState.isDirty)
   }
 
   return (

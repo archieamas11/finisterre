@@ -2,6 +2,7 @@ import type { Customer, LotInfo } from '@/api/customer.api'
 import React, { useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useReactToPrint } from 'react-to-print'
+import { toast } from 'sonner'
 
 import { editCustomer } from '@/api/customer.api'
 import { Sheet, SheetContent } from '@/components/ui/sheet'
@@ -220,7 +221,11 @@ export default function ViewCustomer({ open, customer, onOpenChange }: ViewCusto
           birth_date: customerData.birth_date ? String(customerData.birth_date).slice(0, 10) : '',
         }}
         onOpenChange={setEditOpen}
-        onSubmit={async (values) => {
+        onSubmit={async (values, isDirty) => {
+          if (!isDirty) {
+            toast.error('No changes detected.')
+            return
+          }
           const payload: Partial<Customer> = {
             ...values,
             middle_name: values.middle_name ?? null,
