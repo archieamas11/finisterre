@@ -11,11 +11,9 @@ export function useUpdateMyProfile() {
       return await editCustomer(data as Customer)
     },
     onSuccess: (_, variables) => {
-      // Invalidate my-customer query to refetch updated data
       if (variables.customer_id) {
         queryClient.invalidateQueries({ queryKey: ['my-customer', String(variables.customer_id)] })
       }
-      // Also invalidate me query if needed
       queryClient.invalidateQueries({ queryKey: ['me'] })
     },
   })
