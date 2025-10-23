@@ -141,7 +141,9 @@ export default function CustomerForm({ mode, open, onSubmit, isPending, onOpenCh
                 name="birth_date"
                 render={({ field, fieldState }) => (
                   <FormItem>
-                    <FormLabel>Birth Date</FormLabel>
+                    <FormLabel>
+                      Birth Date<span className="text-red-500">*</span>
+                    </FormLabel>
                     <DatePicker value={field.value} onChange={field.onChange} placeholder="Select birth date" error={!!fieldState.error} />
                     <FormMessage />
                   </FormItem>
