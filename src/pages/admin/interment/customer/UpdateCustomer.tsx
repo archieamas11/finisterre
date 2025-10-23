@@ -27,24 +27,30 @@ export default function EditCustomerDialog({ open, customer, onOpenChange }: Edi
       citizenship: values.citizenship?.trim() || null,
       religion: values.religion?.trim() || null,
       contact_number: values.contact_number.trim(),
-      middle_name: values.middle_name?.trim() ?? '',
+      middle_name: values.middle_name?.trim() || null,
       birth_date: values.birth_date ? new Date(values.birth_date).toISOString().slice(0, 10) : null,
     }
 
-    toast.promise(mutateAsync(payload), {
-      loading: 'Updating customer...',
-      success: (res) => {
-        onOpenChange(false)
-        return (res as { message: string }).message
+    toast.promise(
+      mutateAsync(payload).then((result) => {
+        const typedResult = result as { success: boolean }
+        if (typedResult.success) {
+          onOpenChange(false)
+        }
+        return typedResult
+      }),
+      {
+        loading: 'Updating customer...',
+        success: 'Customer updated successfully!',
+        error: (err) => err.message,
       },
-      error: (err) => err.message,
-    })
+    )
   }
 
   const initialValues: CustomerFormData = {
     email: customer.email || '',
     address: customer.address || '',
-    middle_name: customer.middle_name ?? '',
+    middle_name: customer.middle_name || undefined,
     gender: (customer.gender === 'Female' ? 'Female' : 'Male') as CustomerFormData['gender'],
     religion: customer.religion || '',
     last_name: customer.last_name || '',

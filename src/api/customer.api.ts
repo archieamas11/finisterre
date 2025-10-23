@@ -46,26 +46,32 @@ export async function getCustomers() {
   return res.data
 }
 
+export async function getCustomerById(id: string | number) {
+  const res = await api.post('customers/get_customer.php', { id })
+  return res.data
+}
+
 export async function editCustomer(data: Customer) {
   const res = await api.post('customers/edit_customer.php', data)
+  if (!res.data.success) {
+    throw new Error(res.data.message || 'Failed to update customer')
+  }
   return res.data
 }
 
 export async function createCustomer(data: Customer) {
   const res = await api.post('customers/create_customer.php', data)
   if (!res.data.success) {
-    throw new Error(res.data.message)
+    throw new Error(res.data.message || 'Failed to create customer')
   }
   return res.data
 }
 
 export async function deleteCustomer(id: string | number) {
   const res = await api.post('customers/delete_customer.php', { id })
-  return res.data
-}
-
-export async function getCustomerById(id: string | number) {
-  const res = await api.post('customers/get_customer.php', { id })
+  if (!res.data.success) {
+    throw new Error(res.data.message || 'Failed to delete customer')
+  }
   return res.data
 }
 

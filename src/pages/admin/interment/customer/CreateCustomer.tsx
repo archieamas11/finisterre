@@ -21,7 +21,7 @@ export default function CreateCustomer() {
     try {
       const payload: Partial<Customer> = {
         first_name: data.first_name,
-        middle_name: data.middle_name ?? '',
+        middle_name: data.middle_name || null,
         last_name: data.last_name,
         email: data.email,
         address: data.address,
@@ -37,13 +37,11 @@ export default function CreateCustomer() {
       const mutationPromise = mutateAsync(payload as Customer)
       toast.promise(mutationPromise, {
         loading: 'Saving customer...',
-        success: (res) => {
-          setOpen(false)
-          return (res as { message: string }).message
-        },
-        error: (err) => (err as { message: string }).message,
+        success: 'Customer saved successfully',
+        error: (err) => err.message,
       })
       await mutationPromise
+      setOpen(false)
       queryClient.invalidateQueries({ queryKey: ['customers'] })
     } catch (error) {
       console.error('Customer creation failed:', error)
