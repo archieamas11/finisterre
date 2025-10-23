@@ -1,5 +1,5 @@
 import { useRef } from 'react'
-import { InfoIcon, KeyIcon, PrinterIcon } from 'lucide-react'
+import { InfoIcon, KeyIcon, PrinterIcon, X } from 'lucide-react'
 import { useHotkeys } from 'react-hotkeys-hook'
 import { useReactToPrint } from 'react-to-print'
 
@@ -194,17 +194,18 @@ export default function LotOwnerCredentialsDialog({ open, onOpenChange, credenti
         </div>
 
         <div className="flex gap-3 border-t pt-2 print:hidden">
-          <Button onClick={handlePrint} variant="outline" className="flex-1">
+          <Button onClick={() => onOpenChange(false)} className="flex-1" variant={'outline'}>
+            <X />
+            Close
+            <kbd className="bg-primary text-primary-foreground pointer-events-none ml-auto inline-flex h-5 items-center gap-1 rounded border px-1.5 font-mono text-[10px] font-medium opacity-100 select-none">
+              <span className="text-xs">Esc</span>
+            </kbd>
+          </Button>
+          <Button onClick={handlePrint} className="flex-1">
             <PrinterIcon className="mr-2 h-4 w-4" />
             Print Summary
             <kbd className="bg-muted text-muted-foreground pointer-events-none ml-auto inline-flex h-5 items-center gap-1 rounded border px-1.5 font-mono text-[10px] font-medium opacity-100 select-none">
               <span className="text-xs">↵</span>
-            </kbd>
-          </Button>
-          <Button onClick={() => onOpenChange(false)} className="flex-1">
-            Close
-            <kbd className="bg-primary text-muted-foreground pointer-events-none ml-auto inline-flex h-5 items-center gap-1 rounded border px-1.5 font-mono text-[10px] font-medium opacity-100 select-none">
-              <span className="text-xs">Esc</span>
             </kbd>
           </Button>
         </div>
