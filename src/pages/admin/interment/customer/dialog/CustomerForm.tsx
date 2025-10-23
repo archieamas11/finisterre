@@ -17,7 +17,7 @@ export interface CustomerFormProps {
   isPending?: boolean
   mode: CustomerFormMode
   onOpenChange: (open: boolean) => void
-  onSubmit: (values: CustomerFormData, isDirty: boolean) => Promise<void> | void
+  onSubmit: (values: CustomerFormData) => Promise<void> | void
 }
 
 export type CustomerFormMode = 'edit' | 'add'
@@ -50,7 +50,7 @@ export default function CustomerForm({ mode, open, onSubmit, isPending, onOpenCh
   }, [form, initialValues, open, mode])
 
   const handleSubmit = async (values: CustomerFormData) => {
-    await onSubmit(values, form.formState.isDirty)
+    await onSubmit(values)
   }
 
   return (

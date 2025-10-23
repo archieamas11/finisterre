@@ -17,8 +17,7 @@ export default function CreateCustomer() {
     mutationFn: createCustomer,
   })
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const handleSubmit = async (data: CustomerFormData, _isDirty: boolean) => {
+  const handleSubmit = async (data: CustomerFormData) => {
     try {
       const payload: Partial<Customer> = {
         first_name: data.first_name,

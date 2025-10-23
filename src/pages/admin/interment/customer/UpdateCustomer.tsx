@@ -14,11 +14,7 @@ interface EditCustomerDialogProps {
 export default function EditCustomerDialog({ open, customer, onOpenChange }: EditCustomerDialogProps) {
   const { isPending, mutateAsync } = useUpsertCustomer()
 
-  async function handleSubmit(values: CustomerFormData, isDirty: boolean) {
-    if (!isDirty) {
-      toast.error('No changes detected.')
-      return
-    }
+  async function handleSubmit(values: CustomerFormData) {
     const payload = {
       gender: String(values.gender),
       status: String(values.status),
