@@ -5,6 +5,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { MoreHorizontal } from 'lucide-react'
 import { Controller, useForm } from 'react-hook-form'
 import { useReactToPrint } from 'react-to-print'
+import { toast } from 'sonner'
 import { z } from 'zod'
 
 import { Button } from '@/components/ui/button'
@@ -44,8 +45,16 @@ export default function LotOwnersActionCell({ row }: { row: Row<LotOwners> }) {
   const { mutateAsync, isPending } = useEditLotStatus()
 
   const onSubmit = async (data: LotStatusForm) => {
-    await mutateAsync({ lot_id: String(record.lot_id), lot_status: data.lot_status })
-    setOpen(false)
+    toast.promise(
+      mutateAsync({ lot_id: String(record.lot_id), lot_status: data.lot_status }).then(() => {
+        setOpen(false)
+      }),
+      {
+        loading: 'Updating lot status...',
+        success: 'Lot status updated successfully!',
+        error: (err) => err.message,
+      },
+    )
   }
 
   if (!record) return null
@@ -106,7 +115,6 @@ export default function LotOwnersActionCell({ row }: { row: Row<LotOwners> }) {
           </DialogFooter>
         </DialogContent>
       </Dialog>
-      {/* Hidden printable content for Quick Print */}
       {record && <PrintableLotOwnerDetails ref={contentRef} lotOwner={record} />}
     </>
   )

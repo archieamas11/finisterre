@@ -5,6 +5,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { MoreHorizontal } from 'lucide-react'
 import { Controller, useForm } from 'react-hook-form'
 import { useReactToPrint } from 'react-to-print'
+import { toast } from 'sonner'
 import { z } from 'zod'
 
 import { Button } from '@/components/ui/button'
@@ -44,8 +45,16 @@ export default function DeceasedActionCell({ row }: { row: Row<DeceasedRecords> 
   const { mutateAsync, isPending } = useEditDeceasedStatus()
 
   const onSubmit = async (data: StatusForm) => {
-    await mutateAsync({ deceased_id: record.deceased_id, status: data.status })
-    setOpen(false)
+    toast.promise(
+      mutateAsync({ deceased_id: record.deceased_id, status: data.status }).then(() => {
+        setOpen(false)
+      }),
+      {
+        loading: 'Updating deceased status...',
+        success: 'Deceased status updated successfully!',
+        error: (err) => err.message,
+      },
+    )
   }
 
   if (!record) return null
