@@ -53,6 +53,9 @@ export async function editCustomer(data: Customer) {
 
 export async function createCustomer(data: Customer) {
   const res = await api.post('customers/create_customer.php', data)
+  if (!res.data.success) {
+    throw new Error(res.data.message)
+  }
   return res.data
 }
 

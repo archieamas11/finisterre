@@ -203,7 +203,7 @@ export default function LotOwnerCredentialsDialog({ open, onOpenChange, credenti
           </Button>
           <Button onClick={() => onOpenChange(false)} className="flex-1">
             Close
-            <kbd className="bg-muted pointer-events-none ml-auto inline-flex h-5 items-center gap-1 rounded border px-1.5 font-mono text-[10px] font-medium opacity-100 select-none">
+            <kbd className="bg-primary text-muted-foreground pointer-events-none ml-auto inline-flex h-5 items-center gap-1 rounded border px-1.5 font-mono text-[10px] font-medium opacity-100 select-none">
               <span className="text-xs">Esc</span>
             </kbd>
           </Button>

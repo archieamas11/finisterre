@@ -35,7 +35,7 @@ export default function CustomerForm({ mode, open, onSubmit, isPending, onOpenCh
       first_name: '',
       birth_date: '',
       occupation: '',
-      middle_name: undefined,
+      middle_name: '',
       citizenship: '',
       contact_number: '',
     },
@@ -49,10 +49,6 @@ export default function CustomerForm({ mode, open, onSubmit, isPending, onOpenCh
 
   const handleSubmit = async (values: CustomerFormData) => {
     await onSubmit(values)
-    if (mode === 'add') {
-      form.reset()
-    }
-    onOpenChange(false)
   }
 
   return (
