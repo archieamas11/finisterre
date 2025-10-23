@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { Archive, MoreHorizontal } from 'lucide-react'
 import { toast } from 'sonner'
 
+import ArchiveConfirmationDialog from '@/components/admin/ArchiveConfirmationDialog'
 import { Button } from '@/components/ui/button'
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import {
@@ -23,10 +24,14 @@ interface AdminUsersActionsProps {
 
 export default function AdminUsersActions({ row }: AdminUsersActionsProps) {
   const [isEditOpen, setIsEditOpen] = useState(false)
+  const [confirmOpen, setConfirmOpen] = useState(false)
   const archiveUserMutation = useArchiveUser()
 
-  async function handleArchive() {
-    if (!confirm(`Archive user ${row.original.username}?`)) return
+  function handleArchive() {
+    setConfirmOpen(true)
+  }
+
+  async function confirmArchive() {
     await toast.promise(archiveUserMutation.mutateAsync(row.original.user_id as number), {
       loading: 'Archiving user...',
       success: 'User archived successfully!',
@@ -72,6 +77,14 @@ export default function AdminUsersActions({ row }: AdminUsersActionsProps) {
           />
         </DialogContent>
       </Dialog>
+
+      <ArchiveConfirmationDialog
+        open={confirmOpen}
+        onOpenChange={setConfirmOpen}
+        onConfirm={confirmArchive}
+        title="Confirm Archive"
+        description={`Are you sure you want to archive user ${row.original.username}? This action cannot be undone.`}
+      />
     </>
   )
 }

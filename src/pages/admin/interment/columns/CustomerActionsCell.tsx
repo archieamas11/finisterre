@@ -5,6 +5,7 @@ import { Archive, MoreHorizontal } from 'lucide-react'
 import { useReactToPrint } from 'react-to-print'
 import { toast } from 'sonner'
 
+import ArchiveConfirmationDialog from '@/components/admin/ArchiveConfirmationDialog'
 import { Button } from '@/components/ui/button'
 import {
   DropdownMenu,
@@ -22,12 +23,16 @@ import ViewCustomerDialog from '@/pages/admin/interment/customer/ViewCustomer'
 export default function CustomerActionsCell({ row }: { row: Row<Customer> }) {
   const [open, setOpen] = React.useState(false)
   const [viewOpen, setViewOpen] = React.useState(false)
+  const [confirmOpen, setConfirmOpen] = React.useState(false)
   const contentRef = useRef<HTMLDivElement>(null)
   const reactToPrintFn = useReactToPrint({ contentRef })
   const archiveCustomerMutation = useArchiveCustomer()
 
-  async function handleArchive() {
-    if (!confirm(`Archive customer ${row.original.customer_id}?`)) return
+  function handleArchive() {
+    setConfirmOpen(true)
+  }
+
+  async function confirmArchive() {
     await toast.promise(archiveCustomerMutation.mutateAsync(row.original.customer_id), {
       loading: 'Archiving customer...',
       success: 'Customer archived successfully!',
@@ -73,6 +78,13 @@ export default function CustomerActionsCell({ row }: { row: Row<Customer> }) {
       <EditCustomerDialog customer={row.original} onOpenChange={setOpen} open={open} />
       <ViewCustomerDialog onOpenChange={setViewOpen} customer={row.original} open={viewOpen} />
       <PrintableCustomerDetails ref={contentRef} customer={row.original} />
+      <ArchiveConfirmationDialog
+        open={confirmOpen}
+        onOpenChange={setConfirmOpen}
+        onConfirm={confirmArchive}
+        title="Confirm Archive"
+        description={`Are you sure you want to archive customer ${row.original.customer_id}? This action cannot be undone.`}
+      />
     </>
   )
 }

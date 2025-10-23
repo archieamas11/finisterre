@@ -60,6 +60,22 @@ export function ChartAreaInteractive() {
   const printRef = React.useRef<HTMLDivElement>(null)
   const doPrint = useReactToPrint({ contentRef: printRef, documentTitle: `New Lots Created — ${descLong}` })
 
+  function printButton() {
+    return (
+      <div>
+        <Button
+          type="button"
+          variant="outline"
+          onClick={doPrint}
+          aria-label="Print chart"
+          size="icon"
+          className="text-muted-foreground hover:text-foreground ml-2"
+        >
+          <PrinterIcon />
+        </Button>
+      </div>
+    )
+  }
   return (
     <Card className="@container/card flex h-full flex-col">
       <CardHeader>
@@ -80,6 +96,7 @@ export function ChartAreaInteractive() {
             <ToggleGroupItem value="90d">Last 90 days</ToggleGroupItem>
             <ToggleGroupItem value="30d">Last 30 days</ToggleGroupItem>
             <ToggleGroupItem value="7d">Last 7 days</ToggleGroupItem>
+            {printButton()}
           </ToggleGroup>
           <div className="flex flex-col sm:flex-row sm:items-center">
             <Select onValueChange={(v) => setTimeRange(v as Range)} value={timeRange}>
@@ -105,17 +122,7 @@ export function ChartAreaInteractive() {
                 </SelectItem>
               </SelectContent>
             </Select>
-
-            <Button
-              type="button"
-              variant="outline"
-              onClick={doPrint}
-              aria-label="Print chart"
-              size="icon"
-              className="text-muted-foreground hover:text-foreground ml-2"
-            >
-              <PrinterIcon />
-            </Button>
+            <div className="**:data-[slot=select-value]:truncate @[767px]/card:hidden">{printButton()}</div>
           </div>
         </CardAction>
       </CardHeader>
