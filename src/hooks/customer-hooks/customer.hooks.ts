@@ -1,7 +1,7 @@
 import type { Customer } from '@/api/customer.api'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 
-import { createCustomer, editCustomer, getCustomers } from '@/api/customer.api'
+import { archiveCustomer, createCustomer, editCustomer, getCustomers } from '@/api/customer.api'
 
 export function useUpsertCustomer() {
   const qc = useQueryClient()
@@ -37,6 +37,17 @@ export function useCustomers() {
     queryFn: async () => {
       const r = await getCustomers()
       return r.customers ?? []
+    },
+  })
+}
+
+export function useArchiveCustomer() {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: (customer_id: string) => archiveCustomer(customer_id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['customers'] })
     },
   })
 }

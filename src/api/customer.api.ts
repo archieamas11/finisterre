@@ -65,3 +65,11 @@ export async function getCustomerById(id: string | number) {
   const res = await api.post('customers/get_customer.php', { id })
   return res.data
 }
+
+export async function archiveCustomer(customer_id: string | number) {
+  const res = await api.post('customers/archive_customer.php', { customer_id })
+  if (!res.data.success) {
+    throw new Error(res.data.message || 'Failed to archive customer')
+  }
+  return res.data
+}
