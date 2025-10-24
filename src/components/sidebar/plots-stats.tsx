@@ -10,7 +10,7 @@ import { ChartContainer, ChartTooltip, ChartTooltipContent } from '@/components/
 import { useLotsMonthlyShare } from '@/hooks/map-stats-hooks/PlotSalesStats'
 import PrintableAreaChart from './components/PrintableAreaChart'
 
-export const description = 'Monthly distribution of newly created lots by category'
+export const description = 'Total distribution of newly created lots by category over the last 12 months'
 
 const chartConfig = {
   serenity: { label: 'Serenity', color: 'var(--chart-1)' },
@@ -21,20 +21,23 @@ const chartConfig = {
 export function ChartAreaStackedExpand() {
   const { data = [], isPending, isError, error } = useLotsMonthlyShare()
 
-  const latest = data.length ? data[data.length - 1] : undefined
+  // Calculate totals across all months for printable summary
+  const totals = data.reduce(
+    (acc, month) => ({
+      serenity: acc.serenity + (Number(month.serenity) || 0),
+      columbarium: acc.columbarium + (Number(month.columbarium) || 0),
+      memorial: acc.memorial + (Number(month.memorial) || 0),
+    }),
+    { serenity: 0, columbarium: 0, memorial: 0 },
+  )
+
   const title = 'Lots Distribution'
   const period = 'Last 12 months'
-  const series = latest
-    ? [
-        { label: 'Serenity', value: Number(latest.serenity) || 0 },
-        { label: 'Columbarium', value: Number(latest.columbarium) || 0 },
-        { label: 'Chambers', value: Number(latest.memorial) || 0 },
-      ]
-    : [
-        { label: 'Serenity', value: 0 },
-        { label: 'Columbarium', value: 0 },
-        { label: 'Chambers', value: 0 },
-      ]
+  const series = [
+    { label: 'Serenity', value: totals.serenity },
+    { label: 'Columbarium', value: totals.columbarium },
+    { label: 'Chambers', value: totals.memorial },
+  ]
   const total = series.reduce((s, p) => s + p.value, 0)
 
   const printRef = React.useRef<HTMLDivElement>(null)
