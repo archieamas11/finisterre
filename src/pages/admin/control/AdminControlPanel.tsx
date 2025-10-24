@@ -46,14 +46,14 @@ export default function AdminControlPanel() {
 
   const questions: UnknownQuestion[] = unknownQuestionsData?.questions || []
 
-  if (!isLoading && !users) {
+  if (isLoading && !users) {
     return (
       <Card className="p-4">
-        <DataTableSkeleton columnCount={9} filterCount={1} />
+        <DataTableSkeleton columnCount={10} filterCount={1} />
       </Card>
     )
   }
-  if (isError || !users) {
+  if (isError) {
     return (
       <ErrorMessage
         message="Failed to load customer data. Please check your connection and try again."
