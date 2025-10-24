@@ -1,11 +1,25 @@
-import { Shield } from 'lucide-react'
+import { useQuery } from '@tanstack/react-query'
+import { Loader2, Shield } from 'lucide-react'
 
 import { DataTableSkeleton } from '@/components/data-table/data-table-skeleton'
 import { ErrorMessage } from '@/components/ErrorMessage'
-import { Card, CardHeader, CardTitle } from '@/components/ui/card'
+import { Badge } from '@/components/ui/badge'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 // import { Switch } from '@/components/ui/switch'
 import { useUsers } from '@/hooks/user-hooks/useUsers'
 import AdminUsersTable from '@/pages/admin/control/AdminUsersTable'
+
+// import UnknownQuestionsViewer from '@/pages/landing/section/chatbot/UnknownQuestionsViewer';
+
+interface UnknownQuestion {
+  id: string
+  question: string
+  count: number
+  first_asked: string
+  last_asked: string
+  confidence: number
+  status: string
+}
 
 export default function AdminControlPanel() {
   // const [maintenanceMode, setMaintenanceMode] = useState(false)
@@ -15,7 +29,24 @@ export default function AdminControlPanel() {
   const { isError, isPending, data: users, refetch } = useUsers()
   const isLoading = isPending
 
-  if (isLoading && !users) {
+  const API = import.meta.env.VITE_CHATBOT_API_URL
+
+  const {
+    data: unknownQuestionsData,
+    isLoading: isLoadingQuestions,
+    error: questionsError,
+  } = useQuery({
+    queryKey: ['unknown-questions'],
+    queryFn: async () => {
+      const res = await fetch(`${API}?action=unknown_questions`)
+      if (!res.ok) throw new Error('Failed to fetch unknown questions')
+      return res.json()
+    },
+  })
+
+  const questions: UnknownQuestion[] = unknownQuestionsData?.questions || []
+
+  if (!isLoading && !users) {
     return (
       <Card className="p-4">
         <DataTableSkeleton columnCount={9} filterCount={1} />
@@ -91,7 +122,49 @@ export default function AdminControlPanel() {
           </CardContent> */}
         </Card>
       </header>
-      <AdminUsersTable data={users} />
+      <div className="space-y-4">
+        <AdminUsersTable data={users} />
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-lg font-semibold">Unknown Questions ({questions.length})</CardTitle>
+            <CardDescription>
+              <p className="text-sm text-muted-foreground">Questions asked by users that weren't found in the FAQ database</p>
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            {isLoadingQuestions ? (
+              <div className="flex items-center justify-center py-8">
+                <Loader2 className="h-8 w-8 animate-spin" />
+                <span className="ml-2">Loading unknown questions...</span>
+              </div>
+            ) : questionsError ? (
+              <p className="text-red-500">Error loading unknown questions: {questionsError.message}</p>
+            ) : questions.length === 0 ? (
+              <p className="text-muted-foreground">No unknown questions yet.</p>
+            ) : (
+              <div className="space-y-4">
+                {questions.map((q) => (
+                  <div key={q.id} className="border rounded-lg p-4">
+                    <div className="flex items-start justify-between">
+                      <div className="flex-1">
+                        <h3 className="font-medium">{q.question}</h3>
+                        <div className="flex items-center gap-4 mt-2 text-sm text-muted-foreground">
+                          <span>
+                            Asked {q.count} time{q.count !== 1 ? 's' : ''}
+                          </span>
+                          <span>Last asked: {new Date(q.last_asked).toLocaleDateString()}</span>
+                          <span>Confidence: {(q.confidence * 100).toFixed(1)}%</span>
+                        </div>
+                      </div>
+                      <Badge variant={q.status === 'pending' ? 'secondary' : 'default'}>{q.status}</Badge>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </CardContent>
+        </Card>
+      </div>
     </div>
   )
 }
