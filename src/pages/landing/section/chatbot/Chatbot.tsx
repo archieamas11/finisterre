@@ -310,7 +310,7 @@ export default function Chatbot() {
   const showIntro = messages.length === 0
 
   return (
-    <div className="flex h-full flex-col overflow-hidden rounded-none border-0 shadow-sm">
+    <div className="flex h-full flex-col overflow-hidden rounded-none border-0 shadow-sm w-full">
       <style>{`
         .typing-dots{display:inline-flex;gap:4px;align-items:center}
         .typing-dots span{width:8px;height:8px;border-radius:50%;background:rgba(0,0,0,0.45);opacity:0.4;display:inline-block}
