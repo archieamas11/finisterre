@@ -1,17 +1,16 @@
-import { useState } from 'react'
-import { Bell, BellOff, Shield } from 'lucide-react'
+import { Shield } from 'lucide-react'
 
 import { DataTableSkeleton } from '@/components/data-table/data-table-skeleton'
 import { ErrorMessage } from '@/components/ErrorMessage'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Switch } from '@/components/ui/switch'
+import { Card, CardHeader, CardTitle } from '@/components/ui/card'
+// import { Switch } from '@/components/ui/switch'
 import { useUsers } from '@/hooks/user-hooks/useUsers'
 import AdminUsersTable from '@/pages/admin/control/AdminUsersTable'
 
 export default function AdminControlPanel() {
-  const [maintenanceMode, setMaintenanceMode] = useState(false)
-  const [sendNotifications, setSendNotifications] = useState(true)
-  const [receiveNotifications, setReceiveNotifications] = useState(true)
+  // const [maintenanceMode, setMaintenanceMode] = useState(false)
+  // const [sendNotifications, setSendNotifications] = useState(true)
+  // const [receiveNotifications, setReceiveNotifications] = useState(true)
 
   const { isError, isPending, data: users, refetch } = useUsers()
   const isLoading = isPending
@@ -42,13 +41,13 @@ export default function AdminControlPanel() {
           <CardHeader>
             <CardTitle className="flex flex-col gap-2">
               <div className="flex items-center gap-3">
-                <Shield className="h-7 w-7 text-emerald-500" />
+                <Shield className="h-7 w-7" />
                 <h1 className="text-primary text-3xl font-bold">Admin Controls</h1>
               </div>
-              <p className="text-muted-foreground text-lg">View, search, and manage your customer records.</p>
+              <p className="text-muted-foreground text-lg">Manage administrative settings and user accounts.</p>
             </CardTitle>
           </CardHeader>
-          <CardContent>
+          {/* <CardContent>
             <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
               <div className="flex items-center justify-between rounded-lg border border-emerald-100 bg-gradient-to-r from-emerald-50 to-cyan-50 p-4 dark:border-emerald-800/30 dark:from-emerald-900/20 dark:to-cyan-900/20">
                 <div className="flex items-center gap-3">
@@ -89,7 +88,7 @@ export default function AdminControlPanel() {
                 <Switch checked={receiveNotifications} onCheckedChange={setReceiveNotifications} />
               </div>
             </div>
-          </CardContent>
+          </CardContent> */}
         </Card>
       </header>
       <AdminUsersTable data={users} />
