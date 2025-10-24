@@ -33,6 +33,7 @@ const NewsAndUpdates = React.lazy(() => import('@/pages/admin/news/NewsAndUpdate
 const NotFound = React.lazy(() => import('@/pages/NotFound'))
 const About = React.lazy(() => import('@/pages/landing/section/About'))
 const Services = React.lazy(() => import('@/pages/landing/section/products/Services'))
+const UnknownQuestionsViewer = React.lazy(() => import('@/pages/landing/section/chatbot/UnknownQuestionsViewer'))
 
 function RootLanding() {
   const location = useLocation()
@@ -65,6 +66,7 @@ function AppRoutes() {
           <Route path="/logout" element={<Logout />} />
           <Route path="/unauthorized" element={<UnauthorizedPage />} />
           <Route path="/landing-android" element={<AndroidLayout />} />
+          <Route path="/questions" element={<UnknownQuestionsViewer />} />
 
           {/* User Protected Routes */}
           <Route
