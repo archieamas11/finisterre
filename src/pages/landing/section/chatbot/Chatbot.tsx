@@ -361,6 +361,7 @@ export default function Chatbot() {
           </SheetClose>
         </div>
       </CardHeader>
+      {!import.meta.env.PROD && <p className="text-center">{API}</p>}
       <CardContent className="flex flex-1 flex-col overflow-hidden p-0">
         <div ref={scrollerRef} className="scrollbar-hide flex-1 overflow-y-auto px-4 py-4 sm:px-6">
           {showIntro && (
