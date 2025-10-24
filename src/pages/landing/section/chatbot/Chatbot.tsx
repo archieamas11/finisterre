@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
-import { ArrowRightIcon, DatabaseIcon, GlobeIcon, MessageCirclePlusIcon, TextAlignStart, XIcon } from 'lucide-react'
+import { ArrowRightIcon, BadgeQuestionMark, DatabaseIcon, GlobeIcon, MessageCirclePlusIcon, TextAlignStart, XIcon } from 'lucide-react'
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
 import { toast } from 'sonner'
@@ -340,6 +340,13 @@ export default function Chatbot() {
                 <span className="h-2 w-2 rounded-full bg-red-600" aria-label="Index not built" />
               )}
             </div>
+          )}
+          {!import.meta.env.PROD && (
+            <Link to="/questions">
+              <Button onClick={testConnection} disabled={busy} variant="ghost" size="icon" className="h-8 w-8">
+                <BadgeQuestionMark className="h-4 w-4" />
+              </Button>
+            </Link>
           )}
           {!import.meta.env.PROD && (
             <Button onClick={testConnection} disabled={busy} variant="ghost" size="icon" className="h-8 w-8">
