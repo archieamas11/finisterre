@@ -21,7 +21,7 @@ type Range = '7d' | '30d' | '90d' | '1y'
 
 const chartConfig = {
   serenity: {
-    label: 'Serenity (Ground Lots)',
+    label: 'Serenity',
     color: 'var(--chart-1)',
   },
   columbarium: {
@@ -52,7 +52,7 @@ export function ChartAreaInteractive() {
   const chambersSum = data.reduce((s, d) => s + (Number((d as any).chambers) || 0), 0)
 
   const series = [
-    { label: 'Serenity (Ground Lots)', value: serenitySum },
+    { label: 'Serenity', value: serenitySum },
     { label: 'Columbarium', value: columbariumSum },
     { label: 'Chambers', value: chambersSum },
   ]

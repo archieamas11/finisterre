@@ -13,9 +13,9 @@ import PrintableAreaChart from './components/PrintableAreaChart'
 export const description = 'Monthly distribution of newly created lots by category'
 
 const chartConfig = {
-  serenity: { label: 'Serenity Lawn', color: 'var(--chart-1)' },
+  serenity: { label: 'Serenity', color: 'var(--chart-1)' },
   columbarium: { label: 'Columbarium', color: 'var(--chart-2)' },
-  memorial: { label: 'Memorial Chambers', color: 'var(--chart-3)' },
+  memorial: { label: 'Chambers', color: 'var(--chart-3)' },
 } satisfies ChartConfig
 
 export function ChartAreaStackedExpand() {
@@ -26,14 +26,14 @@ export function ChartAreaStackedExpand() {
   const period = 'Last 12 months'
   const series = latest
     ? [
-        { label: 'Serenity Lawn', value: Number(latest.serenity) || 0 },
+        { label: 'Serenity', value: Number(latest.serenity) || 0 },
         { label: 'Columbarium', value: Number(latest.columbarium) || 0 },
-        { label: 'Memorial Chambers', value: Number(latest.memorial) || 0 },
+        { label: 'Chambers', value: Number(latest.memorial) || 0 },
       ]
     : [
-        { label: 'Serenity Lawn', value: 0 },
+        { label: 'Serenity', value: 0 },
         { label: 'Columbarium', value: 0 },
-        { label: 'Memorial Chambers', value: 0 },
+        { label: 'Chambers', value: 0 },
       ]
   const total = series.reduce((s, p) => s + p.value, 0)
 
