@@ -161,14 +161,12 @@ export default function ColumbariumPopup({ marker, onDirectionClick, isDirection
               isLoading={isDirectionLoading}
               onClick={onDirectionClick}
             />
-            {!import.meta.env.PROD && (
               <ShareButton
                 coords={[marker.position[0], marker.position[1]]}
                 location={`Chamber ${marker.plot_id}`}
                 className="h-12 w-12 rounded-full shadow-md"
                 variant={'default'}
               />
-            )}
           </div>
         )}
       </div>
