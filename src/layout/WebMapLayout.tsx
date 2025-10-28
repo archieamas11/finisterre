@@ -147,6 +147,9 @@ export default function MapPage({ onBack, initialDirection }: { onBack?: () => v
     [],
   )
 
+  const ZOOM = isNativePlatform() ? 18 : 19
+  const MAX_ZOOM = isNativePlatform() ? 22 : 20
+
   const { isLoading: rqLoading, data: plotsDataRQ } = usePlots()
   const { data: offlinePlots, isLoading: offlineLoading } = useMarkersOffline()
   const plotsData = offlinePlots && offlinePlots.length > 0 ? offlinePlots : plotsDataRQ
@@ -576,12 +579,12 @@ export default function MapPage({ onBack, initialDirection }: { onBack?: () => v
               className="z-999"
             />
 
-            <MapContainer className="h-full w-full" zoomControl={false} bounds={bounds} maxZoom={25} zoom={18}>
+            <MapContainer className="h-full w-full" zoomControl={false} bounds={bounds} maxZoom={MAX_ZOOM} zoom={ZOOM} maxBoundsViscosity={1.0}>
               <MapInstanceBinder onMapReady={setMapInstance} />
               <TileLayer
                 url="https://services.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"
-                maxNativeZoom={18}
-                maxZoom={25}
+                maxNativeZoom={ZOOM}
+                maxZoom={MAX_ZOOM}
                 detectRetina={true}
               />
 
