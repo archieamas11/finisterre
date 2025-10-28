@@ -55,7 +55,7 @@ export default function CustomerForm({ mode, open, onSubmit, isPending, onOpenCh
 
   return (
     <Dialog onOpenChange={onOpenChange} open={open}>
-      <DialogContent className="lg:max-w-[900px]">
+      <DialogContent className="lg:max-w-[900px] max-h-[80vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>{mode === 'add' ? 'Add New Customer' : mode === 'edit' ? 'Edit Customer' : 'View Customer'}</DialogTitle>
           <DialogDescription>
@@ -64,7 +64,7 @@ export default function CustomerForm({ mode, open, onSubmit, isPending, onOpenCh
         </DialogHeader>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4">
-            <div className="grid grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
               <FormField
                 render={({ field }) => (
                   <FormItem>
