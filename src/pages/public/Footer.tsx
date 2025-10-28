@@ -28,7 +28,7 @@ export default function Footer() {
   }
 
   return (
-    <footer id="footer" className="border-t border-gray-300" aria-labelledby="footer-heading">
+    <footer id="footer" className="border-border/50 border-t" aria-labelledby="footer-heading">
       <h2 id="footer-heading" className="sr-only">
         Footer
       </h2>
@@ -119,23 +119,21 @@ export default function Footer() {
             </div>
           </div>
         </div>
-        <div className="border-border/50 mt-16 border-t pt-8 sm:mt-20 lg:mt-24">
-          <div className="space-y-4">
-            <div className="sm:flex sm:items-center sm:justify-between">
-              <p className="text-sm leading-5 text-gray-500">&copy; {new Date().getFullYear()} Finisterre. All rights reserved.</p>
-            </div>
-            <p className="text-xs leading-5 text-gray-500">
-              This site is protected by reCAPTCHA and the Google{' '}
-              <a href="https://policies.google.com/privacy" target="_blank" rel="noopener noreferrer" className="underline hover:text-gray-700">
-                Privacy Policy
-              </a>{' '}
-              and{' '}
-              <a href="https://policies.google.com/terms" target="_blank" rel="noopener noreferrer" className="underline hover:text-gray-700">
-                Terms of Service
-              </a>{' '}
-              apply.
-            </p>
-          </div>
+      </div>
+      <div className="border-border/50 border-t">
+        <div className="space-y-4 mx-auto max-w-[1300px] px-6 py-10 sm:py-10 text-center">
+          <p className="text-sm leading-5 text-gray-500">&copy; {new Date().getFullYear()} Finisterre. All rights reserved.</p>
+          <p className="text-xs leading-5 text-gray-500">
+            This site is protected by reCAPTCHA and the Google{' '}
+            <a href="https://policies.google.com/privacy" target="_blank" rel="noopener noreferrer" className="underline hover:text-gray-700">
+              Privacy Policy
+            </a>{' '}
+            and{' '}
+            <a href="https://policies.google.com/terms" target="_blank" rel="noopener noreferrer" className="underline hover:text-gray-700">
+              Terms of Service
+            </a>{' '}
+            apply.
+          </p>
         </div>
       </div>
     </footer>
