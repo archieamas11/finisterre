@@ -7,7 +7,7 @@ import { useNavigate } from 'react-router-dom'
 
 import { Sheet, SheetContent } from '@/components/ui/sheet'
 import AndroidProfilePage from '@/pages/android/AndroidProfilePage'
-import Chatbot from '@/pages/landing/section/chatbot/Chatbot'
+import Chatbot from '@/pages/public/chatbot/Chatbot'
 import AnnouncementsPage from '@/pages/user/AnnouncementsPage'
 import UserDashboard from '@/pages/user/UserDashboard'
 import { isAuthenticated } from '@/utils/auth.utils'

@@ -31,9 +31,9 @@ const AndroidLayout = React.lazy(() => import('@/pages/android/AndroidLayout'))
 const PublicMap = React.lazy(() => import('@/pages/webmap/PublicWebMap'))
 const NewsAndUpdates = React.lazy(() => import('@/pages/admin/news/NewsAndUpdates'))
 const NotFound = React.lazy(() => import('@/pages/NotFound'))
-const About = React.lazy(() => import('@/pages/landing/section/About'))
-const Services = React.lazy(() => import('@/pages/landing/section/products/Services'))
-const UnknownQuestionsViewer = React.lazy(() => import('@/pages/landing/section/chatbot/UnknownQuestionsViewer'))
+const About = React.lazy(() => import('@/pages/public/About'))
+const Services = React.lazy(() => import('@/pages/public/products/Services'))
+const UnknownQuestionsViewer = React.lazy(() => import('@/pages/public/chatbot/UnknownQuestionsViewer'))
 
 function RootLanding() {
   const location = useLocation()

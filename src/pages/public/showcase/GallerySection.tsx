@@ -60,7 +60,7 @@ export function GallerySection({ onImageClick }: GallerySectionProps) {
                   className={cn(
                     'rounded-full text-sm font-medium whitespace-nowrap',
                     'px-5 text-gray-500 dark:text-gray-500',
-                    'rounded-full data-[state=active]:bg-[var(--brand-secondary)] data-[state=active]:text-[var(--brand-primary)] data-[state=active]:dark:bg-[var(--brand-secondary)] data-[state=active]:dark:text-[var(--brand-primary)]',
+                    'rounded-full data-[state=active]:bg-[var(--brand-secondary)] border-0 data-[state=active]:text-[var(--brand-primary)] data-[state=active]:dark:bg-[var(--brand-secondary)] data-[state=active]:dark:text-[var(--brand-primary)]',
                   )}
                 >
                   {category.label}
