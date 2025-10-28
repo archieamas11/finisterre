@@ -5,7 +5,7 @@ import { useReactToPrint } from 'react-to-print'
 
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
-import { Dialog, DialogContent } from '@/components/ui/dialog'
+import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog'
 import { cn } from '@/lib/utils'
 
 export type LotOwnerCredentials = {
@@ -69,6 +69,7 @@ export default function LotOwnerCredentialsDialog({ open, onOpenChange, credenti
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogTitle>Lot Owner Credentials</DialogTitle>
       <DialogContent className="max-h-[90vh] max-w-2xl overflow-y-auto" showCloseButton={false}>
         <div ref={printContentRef} className="space-y-4 px-2">
           {/* Header for Print and Screen */}
