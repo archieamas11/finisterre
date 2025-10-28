@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom'
 import { useReactToPrint } from 'react-to-print'
 
 import { editCustomer } from '@/api/customer.api'
-import { Sheet, SheetContent } from '@/components/ui/sheet'
+import { Sheet, SheetContent, SheetTitle } from '@/components/ui/sheet'
 import { formatDate } from '@/lib/format'
 import CustomerForm from '@/pages/admin/interment/customer/dialog/CustomerForm'
 import { CustomerProfileHeader, InfoItem, PrintableCustomerDetails, PropertyDeceasedCard, SectionHeader } from './components'
@@ -132,6 +132,7 @@ export default function ViewCustomer({ open, customer, onOpenChange }: ViewCusto
   return (
     <>
       <Sheet onOpenChange={onOpenChange} open={open}>
+        <SheetTitle className="sr-only">View Customer</SheetTitle>
         <SheetContent className="w-full overflow-y-auto p-0 sm:max-w-md">
           {/* Profile Header */}
           <CustomerProfileHeader customer={customerData} onEditClick={handleEditClick} onPrintClick={reactToPrintFn} />

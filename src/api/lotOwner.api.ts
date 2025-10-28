@@ -24,7 +24,7 @@ export async function editLotOwner(data: Record<string, unknown>) {
 
 export async function getLotOwner() {
   try {
-    const res = await api.post('lot-owners/get_lot_owner.php')
+    const res = await api.get('lot-owners/get_lot_owner.php')
     return res.data
   } catch (error) {
     console.error('Get lot owner failed:', error)
@@ -34,7 +34,7 @@ export async function getLotOwner() {
 
 export async function getLotOwnerById(id: string) {
   try {
-    const res = await api.post('lot-owners/get_lot_owner.php', { id })
+    const res = await api.get('lot-owners/get_lot_owner.php', { params: { id } })
     return res.data
   } catch (error) {
     console.error('Get lot owner by ID failed:', error)

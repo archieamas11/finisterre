@@ -42,43 +42,73 @@ export type Customer = {
 }
 
 export async function getCustomers() {
-  const res = await api.post('customers/get_customer.php')
-  return res.data
+  try {
+    const res = await api.get('customers/get_customer.php')
+    return res.data
+  } catch (error) {
+    console.error('Get customers failed:', error)
+    throw error
+  }
 }
 
 export async function getCustomerById(id: string | number) {
-  const res = await api.post('customers/get_customer.php', { id })
-  return res.data
+  try {
+    const res = await api.get('customers/get_customer.php', { params: { id } })
+    return res.data
+  } catch (error) {
+    console.error('Get customer by ID failed:', error)
+    throw error
+  }
 }
 
 export async function editCustomer(data: Customer) {
-  const res = await api.post('customers/edit_customer.php', data)
-  if (!res.data.success) {
-    throw new Error(res.data.message || 'Failed to update customer')
+  try {
+    const res = await api.post('customers/edit_customer.php', data)
+    if (!res.data.success) {
+      throw new Error(res.data.message || 'Failed to update customer')
+    }
+    return res.data
+  } catch (error) {
+    console.error('Edit customer failed:', error)
+    throw error
   }
-  return res.data
 }
 
 export async function createCustomer(data: Customer) {
-  const res = await api.post('customers/create_customer.php', data)
-  if (!res.data.success) {
-    throw new Error(res.data.message || 'Failed to create customer')
+  try {
+    const res = await api.post('customers/create_customer.php', data)
+    if (!res.data.success) {
+      throw new Error(res.data.message || 'Failed to create customer')
+    }
+    return res.data
+  } catch (error) {
+    console.error('Create customer failed:', error)
+    throw error
   }
-  return res.data
 }
 
 export async function deleteCustomer(id: string | number) {
-  const res = await api.post('customers/delete_customer.php', { id })
-  if (!res.data.success) {
-    throw new Error(res.data.message || 'Failed to delete customer')
+  try {
+    const res = await api.post('customers/delete_customer.php', { id })
+    if (!res.data.success) {
+      throw new Error(res.data.message || 'Failed to delete customer')
+    }
+    return res.data
+  } catch (error) {
+    console.error('Delete customer failed:', error)
+    throw error
   }
-  return res.data
 }
 
 export async function archiveCustomer(customer_id: string | number) {
-  const res = await api.post('customers/archive_customer.php', { customer_id })
-  if (!res.data.success) {
-    throw new Error(res.data.message || 'Failed to archive customer')
+  try {
+    const res = await api.post('customers/archive_customer.php', { customer_id })
+    if (!res.data.success) {
+      throw new Error(res.data.message || 'Failed to archive customer')
+    }
+    return res.data
+  } catch (error) {
+    console.error('Archive customer failed:', error)
+    throw error
   }
-  return res.data
 }
