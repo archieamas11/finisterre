@@ -113,7 +113,7 @@ export default function ColumbariumPopup({ marker, onDirectionClick, isDirection
       setIsDetailOpen(true)
     } else {
       setIsDetailOpen(false)
-      toast.error('Admin access required to view niche details')
+      // Do nothing if not admin
     }
   }
 
