@@ -5,9 +5,6 @@ import 'leaflet/dist/leaflet.css'
 import type { ConvertedMarker } from '@/types/map.types'
 import type { AdminSearchItem } from '@/types/search.types'
 import L from 'leaflet'
-import iconRetinaUrl from 'leaflet/dist/images/marker-icon-2x.png'
-import iconUrl from 'leaflet/dist/images/marker-icon.png'
-import shadowUrl from 'leaflet/dist/images/marker-shadow.png'
 import { useHotkeys } from 'react-hotkeys-hook'
 import { GeoJSON, MapContainer, Popup, TileLayer, useMap } from 'react-leaflet'
 import MarkerClusterGroup from 'react-leaflet-markercluster'
@@ -39,9 +36,6 @@ import PlaygroundMarkers from '@/pages/webmap/PlaygroundMarkers'
 import { convertPlotToMarker, getCategoryBackgroundColor, getStatusColor } from '@/types/map.types'
 import AdminMapNavs from './AdminMapNavs'
 import { LocateContext } from './LocateContext'
-
-const DefaultIcon = L.icon({ iconUrl, shadowUrl, iconRetinaUrl })
-;(L.Marker.prototype as unknown as { options: { icon: L.Icon } }).options.icon = DefaultIcon
 
 function buildStatusCircleIcon(color: string) {
   return L.divIcon({
@@ -430,18 +424,7 @@ export default function AdminMapLayout() {
               url="https://services.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"
               maxNativeZoom={18}
               maxZoom={25}
-              minZoom={15}
-              tileSize={256}
-              updateWhenIdle={false}
-              updateWhenZooming={true}
-              updateInterval={200}
-              keepBuffer={16}
-              detectRetina={false}
-              crossOrigin={true}
-              zoomOffset={0}
-              zoomReverse={false}
-              opacity={1}
-              zIndex={1}
+              detectRetina={true}
             />
 
             <MapInstanceBinder onMapReady={setMapInstance} />

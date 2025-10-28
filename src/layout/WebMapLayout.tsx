@@ -6,9 +6,6 @@ import type { MapAction, MapState } from '@/contexts/MapContext'
 import type { ConvertedMarker } from '@/types/map.types'
 import { lazy, memo, Suspense, useCallback, useEffect, useMemo, useReducer, useRef, useState } from 'react'
 import L from 'leaflet'
-import iconRetinaUrl from 'leaflet/dist/images/marker-icon-2x.png'
-import iconUrl from 'leaflet/dist/images/marker-icon.png'
-import shadowUrl from 'leaflet/dist/images/marker-shadow.png'
 import { parseAsString, useQueryStates } from 'nuqs'
 import { MapContainer, TileLayer, useMap } from 'react-leaflet'
 import { toast } from 'sonner'
@@ -39,16 +36,6 @@ import { convertPlotToMarker } from '@/types/map.types'
 import { isNativePlatform } from '@/utils/platform.utils'
 
 const NavigationInstructions = lazy(() => import('@/components/map/NavigationInstructions'))
-
-const DefaultIcon = L.icon({
-  iconUrl,
-  iconRetinaUrl,
-  shadowUrl,
-  iconSize: [25, 41],
-  iconAnchor: [12, 41],
-  popupAnchor: [1, -34],
-})
-L.Marker.prototype.options.icon = DefaultIcon
 
 const MemoizedComfortRoomMarker = memo(ComfortRoomMarker)
 const MemoizedParkingMarkers = memo(ParkingMarkers)
@@ -595,7 +582,7 @@ export default function MapPage({ onBack, initialDirection }: { onBack?: () => v
                 url="https://services.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"
                 maxNativeZoom={18}
                 maxZoom={25}
-                tileSize={256}
+                detectRetina={true}
               />
 
               <MemoizedComfortRoomMarker onDirectionClick={handleDirectionClick} isDirectionLoading={state.isDirectionLoading} />
