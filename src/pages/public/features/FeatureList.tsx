@@ -33,11 +33,11 @@ export function FeatureList({ feature, index }: { feature: Feature; index: numbe
             loading="lazy"
           />
         )}
-        <div className={cn('group', feature.image ? 'p-4' : '')}>
+        <div className={cn('group ', feature.image ? 'p-4' : '')}>
           <h3
             className={cn(
               'text-lg font-semibold sm:text-xl',
-              feature.image ? 'mt-5 text-xl text-[var(--brand-primary)] sm:text-2xl' : 'text-[var(--brand-primary)]',
+              feature.image ? 'text-xl text-[var(--brand-primary)] sm:text-2xl' : 'text-[var(--brand-primary)]',
             )}
           >
             {feature.title}
@@ -46,9 +46,9 @@ export function FeatureList({ feature, index }: { feature: Feature; index: numbe
             {feature.description}
           </p>
           {feature.image && feature.href && (
-            <div className="mt-3 sm:mt-4">
+            <div className="mt-3 sm:mt-6">
               <Link to={feature.href}>
-                <Button className="bg-[var(--brand-primary)] text-sm hover:bg-[var(--brand-primary)]/80 sm:text-base">
+                <Button className="bg-[var(--brand-primary)] text-sm hover:bg-[var(--brand-primary)]/80 sm:text-base rounded-xl">
                   <span className="text-white">Learn more</span>
                   <ArrowRight className="h-4 w-4 text-white" aria-hidden />
                 </Button>
