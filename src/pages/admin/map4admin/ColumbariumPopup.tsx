@@ -1,11 +1,13 @@
 import type { LotOwnerCredentials } from '@/components/lot-owners/LotOwnerCredentialsDialog'
 import type { ConvertedMarker } from '@/types/map.types'
 import type { nicheData } from '@/types/niche.types'
+import { useRef } from 'react'
 import { useQueryClient } from '@tanstack/react-query'
 import { motion } from 'framer-motion'
-import { Crown, Heart, Mail, Phone, User } from 'lucide-react'
+import { Crown, Heart, Mail, Phone, PrinterIcon, User } from 'lucide-react'
 import { BsFillPatchCheckFill } from 'react-icons/bs'
 import { ImLibrary } from 'react-icons/im'
+import { useReactToPrint } from 'react-to-print'
 import { toast } from 'sonner'
 
 import CustomerSelectForm from '@/components/customers/CustomerSelectForm'
@@ -46,6 +48,10 @@ export default function ColumbariumPopup({ marker, onDirectionClick, isDirection
   const rows = parseInt(marker.rows)
   const cols = parseInt(marker.columns)
   const queryClient = useQueryClient()
+  const printRef = useRef<HTMLDivElement>(null)
+  const handlePrint = useReactToPrint({
+    contentRef: printRef,
+  })
   const createLotOwnerMutation = useCreateLotOwner()
 
   const handleCancelReservation = () => {
@@ -136,104 +142,116 @@ export default function ColumbariumPopup({ marker, onDirectionClick, isDirection
 
   return (
     <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3 }} className="w-full">
-      <div className="bg-background mb-2 flex h-full items-center justify-between rounded-lg border p-3">
-        <div>
-          <h3 className="text-accent-foreground flex items-center gap-2 text-lg font-bold">
-            <ImLibrary /> {ucwords(marker.category)} {marker.plot_id}
-          </h3>
-          <div className="text-foreground/80 flex gap-2 text-sm">
-            <span>
-              <span className="font-medium">Rows:</span> {marker.columns}
-            </span>
-            <span>
-              <span className="font-medium">Columns:</span> {marker.rows}
-            </span>
-            <span>
-              <span className="font-medium">Total:</span> {rows * cols} niches
-            </span>
+      <div ref={printRef}>
+        <div className="bg-background mb-2 flex h-full items-center justify-between rounded-lg border p-3">
+          <div>
+            <h3 className="text-accent-foreground flex items-center gap-2 text-lg font-bold">
+              <ImLibrary /> {ucwords(marker.category)} {marker.plot_id}
+            </h3>
+            <div className="text-foreground/80 flex gap-2 text-sm">
+              <span>
+                <span className="font-medium">Rows:</span> {marker.columns}
+              </span>
+              <span>
+                <span className="font-medium">Columns:</span> {marker.rows}
+              </span>
+              <span>
+                <span className="font-medium">Total:</span> {rows * cols} niches
+              </span>
+            </div>
           </div>
-        </div>
-        {getRole() !== 'admin' && (
-          <div className="flex gap-2">
-            <GetDirectionButton
-              className="text-primary-foreground h-12 w-12 rounded-full"
-              variant={'default'}
-              isLoading={isDirectionLoading}
-              onClick={onDirectionClick}
-            />
+          {getRole() !== 'admin' && (
+            <div className="flex gap-2">
+              <GetDirectionButton
+                className="text-primary-foreground h-12 w-12 rounded-full"
+                variant={'default'}
+                isLoading={isDirectionLoading}
+                onClick={onDirectionClick}
+              />
               <ShareButton
                 coords={[marker.position[0], marker.position[1]]}
                 location={`Chamber ${marker.plot_id}`}
                 className="h-12 w-12 rounded-full shadow-md"
                 variant={'default'}
               />
-          </div>
-        )}
-      </div>
-      <div className="mb-2">
-        <h4 className="text-foreground bg-background mb-2 rounded-lg border p-3 text-sm font-medium">Niche Layout:</h4>
-        <div
-          style={{
-            fontSize: '20px',
-            scrollbarWidth: 'thin',
-            gridTemplateColumns: `repeat(${Math.min(cols, 10)}, minmax(0, 1fr))`,
-          }}
-          className="bg-background grid w-full gap-1 rounded-lg border p-2"
-        >
-          {nicheData.map((niche, index) => {
-            const isHighlighted = (highlightedNiche ?? null) === String(niche.niche_number)
-
-            return (
-              <button
-                key={`${niche.lot_id}-${niche.row}-${niche.col}-${index}`}
-                onClick={() => handleNicheClick(niche)}
-                className={cn(
-                  'flex aspect-square min-h-[40px] cursor-pointer flex-col items-center justify-center rounded border p-1 text-center transition-all duration-200 hover:scale-105 hover:shadow-sm',
-                  getNicheStatusStyle(niche.niche_status),
-                  isHighlighted && 'z-999 scale-110 transform shadow-lg ring-4 ring-blue-500 ring-offset-2',
-                )}
-                title={`${niche.lot_id} - ${niche.niche_status}${niche.owner ? ` (${niche.owner.name})` : ''}${isHighlighted ? ' (Search Result)' : ''}`}
-              >
-                <span className="font-mono text-[10px] leading-tight">N{niche.niche_number}</span>
-                <span className="font-mono text-[11px] leading-tight">
-                  R{niche.row}C{niche.col}
-                </span>
-              </button>
-            )
-          })}
+            </div>
+          )}
+          {getRole() === 'admin' && (
+            <Button
+              variant="secondary"
+              aria-label="Print niche layout"
+              onClick={handlePrint}
+              className="bg-secondary h-12 w-12 text-secondary-foreground rounded-full"
+            >
+              <PrinterIcon />
+            </Button>
+          )}
         </div>
-      </div>
+        <div className="mb-2">
+          <h4 className="text-foreground bg-background mb-2 rounded-lg border p-3 text-sm font-medium">Niche Layout:</h4>
+          <div
+            style={{
+              fontSize: '20px',
+              scrollbarWidth: 'thin',
+              gridTemplateColumns: `repeat(${Math.min(cols, 10)}, minmax(0, 1fr))`,
+            }}
+            className="bg-background grid w-full gap-1 rounded-lg border p-2"
+          >
+            {nicheData.map((niche, index) => {
+              const isHighlighted = (highlightedNiche ?? null) === String(niche.niche_number)
 
-      <div className="bg-background mb-3 rounded-lg border p-3">
-        <div className="mb-3">
-          <div className="flex gap-4 text-xs">
-            <div className="flex items-center gap-1">
-              <div className="h-3 w-3 rounded border border-green-300 bg-green-100"></div>
-              <span className="text-foreground/80">Available</span>
-            </div>
-            <div className="flex items-center gap-1">
-              <div className="h-3 w-3 rounded border border-yellow-300 bg-yellow-100"></div>
-              <span className="text-foreground/80">Reserved</span>
-            </div>
-            <div className="flex items-center gap-1">
-              <div className="h-3 w-3 rounded border border-red-300 bg-red-100"></div>
-              <span className="text-foreground/80">Occupied</span>
-            </div>
+              return (
+                <button
+                  key={`${niche.lot_id}-${niche.row}-${niche.col}-${index}`}
+                  onClick={() => handleNicheClick(niche)}
+                  className={cn(
+                    'flex aspect-square min-h-[40px] cursor-pointer flex-col items-center justify-center rounded border p-1 text-center transition-all duration-200 hover:scale-105 hover:shadow-sm',
+                    getNicheStatusStyle(niche.niche_status),
+                    isHighlighted && 'z-999 scale-110 transform shadow-lg ring-4 ring-blue-500 ring-offset-2',
+                  )}
+                  title={`${niche.lot_id} - ${niche.niche_status}${niche.owner ? ` (${niche.owner.name})` : ''}${isHighlighted ? ' (Search Result)' : ''}`}
+                >
+                  <span className="font-mono text-[10px] leading-tight">N{niche.niche_number}</span>
+                  <span className="font-mono text-[11px] leading-tight">
+                    R{niche.row}C{niche.col}
+                  </span>
+                </button>
+              )
+            })}
           </div>
         </div>
 
-        <div className="grid grid-cols-3 gap-2 text-xs">
-          <div className="rounded bg-green-50 p-2 text-center dark:bg-green-200">
-            <div className="font-semibold text-green-700">{nicheData.filter((n) => n.niche_status === 'available').length}</div>
-            <div className="text-green-600">Available</div>
+        <div className="bg-background mb-3 rounded-lg border p-3">
+          <div className="mb-3">
+            <div className="flex gap-4 text-xs">
+              <div className="flex items-center gap-1">
+                <div className="h-3 w-3 rounded border border-green-300 bg-green-100"></div>
+                <span className="text-foreground/80">Available</span>
+              </div>
+              <div className="flex items-center gap-1">
+                <div className="h-3 w-3 rounded border border-yellow-300 bg-yellow-100"></div>
+                <span className="text-foreground/80">Reserved</span>
+              </div>
+              <div className="flex items-center gap-1">
+                <div className="h-3 w-3 rounded border border-red-300 bg-red-100"></div>
+                <span className="text-foreground/80">Occupied</span>
+              </div>
+            </div>
           </div>
-          <div className="rounded bg-yellow-50 p-2 text-center dark:bg-yellow-200">
-            <div className="font-semibold text-yellow-700">{nicheData.filter((n) => n.niche_status === 'reserved').length}</div>
-            <div className="text-yellow-600">Reserved</div>
-          </div>
-          <div className="rounded bg-red-50 p-2 text-center dark:bg-red-200">
-            <div className="font-semibold text-red-700">{nicheData.filter((n) => n.niche_status === 'occupied').length}</div>
-            <div className="text-red-600">Occupied</div>
+
+          <div className="grid grid-cols-3 gap-2 text-xs">
+            <div className="rounded bg-green-50 p-2 text-center dark:bg-green-200">
+              <div className="font-semibold text-green-700">{nicheData.filter((n) => n.niche_status === 'available').length}</div>
+              <div className="text-green-600">Available</div>
+            </div>
+            <div className="rounded bg-yellow-50 p-2 text-center dark:bg-yellow-200">
+              <div className="font-semibold text-yellow-700">{nicheData.filter((n) => n.niche_status === 'reserved').length}</div>
+              <div className="text-yellow-600">Reserved</div>
+            </div>
+            <div className="rounded bg-red-50 p-2 text-center dark:bg-red-200">
+              <div className="font-semibold text-red-700">{nicheData.filter((n) => n.niche_status === 'occupied').length}</div>
+              <div className="text-red-600">Occupied</div>
+            </div>
           </div>
         </div>
       </div>
