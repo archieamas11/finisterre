@@ -15,7 +15,7 @@ import { useLotsTimeSeries } from '@/hooks/map-stats-hooks/ChartStats'
 import { useIsMobile } from '@/hooks/use-mobile'
 import PrintableAreaChart from './components/PrintableAreaChart'
 
-export const description = 'Interactive chart of new lots created per day by category'
+export const description = 'Interactive chart of new customers created per day by category'
 
 type Range = '7d' | '30d' | '90d' | '1y'
 
@@ -58,7 +58,7 @@ export function ChartAreaInteractive() {
   ]
   const total = serenitySum + columbariumSum + chambersSum
   const printRef = React.useRef<HTMLDivElement>(null)
-  const doPrint = useReactToPrint({ contentRef: printRef, documentTitle: `New Lots Created — ${descLong}` })
+  const doPrint = useReactToPrint({ contentRef: printRef, documentTitle: `New customers Created — ${descLong}` })
 
   function printButton() {
     return (
@@ -79,7 +79,7 @@ export function ChartAreaInteractive() {
   return (
     <Card className="@container/card flex h-full flex-col">
       <CardHeader>
-        <CardTitle>New Lots Created</CardTitle>
+        <CardTitle>New Customers Created</CardTitle>
         <CardDescription>
           <span className="hidden @[540px]/card:block">Daily counts by category • {descLong}</span>
           <span className="@[540px]/card:hidden">{descLong}</span>
