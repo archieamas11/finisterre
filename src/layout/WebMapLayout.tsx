@@ -11,6 +11,7 @@ import { MapContainer, TileLayer, useMap } from 'react-leaflet'
 import { toast } from 'sonner'
 
 import { searchLotById } from '@/api/plots.api'
+import { useIsMobile } from '@/hooks/use-mobile'
 import CustomClusterManager from '@/components/map/CustomClusterManager'
 import { UserLocationMarker } from '@/components/map/UserLocationMarker'
 import { ValhallaRoute } from '@/components/map/ValhallaRoute'
@@ -147,8 +148,8 @@ export default function MapPage({ onBack, initialDirection }: { onBack?: () => v
     [],
   )
 
-  const ZOOM = isNativePlatform() ? 18 : 19
-  const MAX_ZOOM = isNativePlatform() ? 22 : 20
+  const ZOOM = useIsMobile() ? 18 : 19
+  const MAX_ZOOM = useIsMobile() ? 22 : 20
 
   const { isLoading: rqLoading, data: plotsDataRQ } = usePlots()
   const { data: offlinePlots, isLoading: offlineLoading } = useMarkersOffline()
