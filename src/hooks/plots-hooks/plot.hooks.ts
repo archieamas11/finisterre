@@ -26,6 +26,8 @@ export function usePlots() {
       const r = await getPlots()
       return r.plots ?? []
     },
+    staleTime: 30000, // Data considered fresh for 30 seconds
+    refetchInterval: 30000, // Refetch every 30 seconds
   })
 }
 
