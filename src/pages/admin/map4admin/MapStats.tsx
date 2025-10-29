@@ -202,7 +202,7 @@ export default function MapStats() {
                 <TabsTrigger
                   key={location.id}
                   value={location.id}
-                  className="dark:data-[state=active]:bg-secondary/20 rounded-md px-2 py-2 text-xs transition-colors data-[state=active]:bg-white data-[state=active]:shadow-sm"
+                  className="dark:data-[state=active]:bg-secondary/20 rounded-md border-0 px-2 py-2 text-xs transition-colors data-[state=active]:bg-white data-[state=active]:shadow-sm"
                 >
                   {location.name.split(' ')[0]}
                 </TabsTrigger>

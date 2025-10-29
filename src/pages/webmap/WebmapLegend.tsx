@@ -162,7 +162,7 @@ function WebmapLegendComponent() {
           animate="visible"
           exit="exit"
           transition={{ duration: 0.3, ease: 'easeOut' }}
-          className="border-border bg-floating-card pointer-events-auto absolute top-4 right-4 z-100 w-64 rounded-xl border shadow-2xl backdrop-blur-md"
+          className="border-border bg-floating-card pointer-events-auto absolute top-4 right-4 z-10 w-64 rounded-xl border shadow-2xl backdrop-blur-md"
         >
           <Card className="border-0 bg-transparent shadow-none">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 px-4 py-3">
