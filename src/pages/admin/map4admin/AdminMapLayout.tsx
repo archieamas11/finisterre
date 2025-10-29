@@ -1,3 +1,4 @@
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useQueryClient } from '@tanstack/react-query'
 
 import 'leaflet/dist/leaflet.css'
@@ -17,6 +18,7 @@ import AddPlotMarkerDialog from '@/components/map/AddPlotMarkerDialog'
 import EditableMarker from '@/components/map/EditableMarker'
 import EditMarkerInstructions from '@/components/map/EditMarkerInstructions'
 import MapClickHandler from '@/components/map/MapClickHandler'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import Spinner from '@/components/ui/spinner'
 import guide4BlockBUrl from '@/data/geojson/guide-4-block-b.geojson?url'
 import { usePlots } from '@/hooks/plots-hooks/plot.hooks'
@@ -108,6 +110,19 @@ export default function AdminMapLayout() {
       })
     }
   }, [])
+
+  const mapVersions = useMemo(
+    () => [
+      { id: 'latest', label: 'Latest Imagery', value: '20512' },
+      { id: '2025-10-23', label: 'October 23, 2025', value: '20512' },
+      { id: '2025-09-25', label: 'September 25, 2025', value: '58924' },
+      { id: '2024-12-12', label: 'December 12, 2024', value: '16453' },
+      { id: '2024-11-18', label: 'November 18, 2024', value: '49849' },
+      { id: '2024-10-10', label: 'October 10, 2024', value: '56450' },
+    ],
+    [],
+  )
+  const [selectedMapVersion, setSelectedMapVersion] = useState('16453')
 
   const searchLot = useCallback(
     async (lotId: string) => {
@@ -392,6 +407,23 @@ export default function AdminMapLayout() {
           <MapStats />
           <AddMarkerInstructions isVisible={isAddingMarker} />
           <EditMarkerInstructions isVisible={isEditingMarker} step={selectedPlotForEdit ? 'edit' : 'select'} />
+          <div className="absolute bottom-4 left-4 z-999 bg-white/90 backdrop-blur-sm rounded-lg p-2 shadow-lg">
+            <div className="flex items-center gap-2">
+              <span className="text-sm font-medium">Map Version:</span>
+              <Select value={selectedMapVersion} onValueChange={setSelectedMapVersion}>
+                <SelectTrigger className="w-[180px]">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {mapVersions.map((version) => (
+                    <SelectItem key={version.id} value={version.value}>
+                      {version.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
           <MapContainer className="h-full w-full rounded-lg" zoomControl={false} bounds={bounds} maxZoom={20} zoom={19}>
             {activeSearchMarker && (
               <Popup
@@ -421,7 +453,8 @@ export default function AdminMapLayout() {
               </Popup>
             )}
             <TileLayer
-              url="https://services.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"
+              key={selectedMapVersion}
+              url={`https://wayback.maptiles.arcgis.com/arcgis/rest/services/World_Imagery/WMTS/1.0.0/default028mm/MapServer/tile/${selectedMapVersion}/{z}/{y}/{x}`}
               maxNativeZoom={19}
               maxZoom={20}
               detectRetina={true}
