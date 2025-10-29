@@ -20,6 +20,8 @@ export default function FloatingChatWidget({
   tooltipClassName = '',
   buttonClassName = '',
 }: FloatingChatWidgetProps) {
+  if (import.meta.env.PROD) return null
+
   return (
     <div className="group">
       <div className="fixed right-22 bottom-8 z-30">
