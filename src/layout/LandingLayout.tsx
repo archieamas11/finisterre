@@ -1,10 +1,7 @@
 import { useEffect } from 'react'
-import { BotIcon } from 'lucide-react'
 import { Outlet, useLocation } from 'react-router-dom'
 
-import { PulsatingButton } from '@/components/pulsating-button'
-import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet'
-import Chatbot from '@/pages/public/chatbot/Chatbot'
+import FloatingChatWidget from '@/components/FloatingChatWidget'
 import ContactUs from '@/pages/public/ContactUs'
 import FAQs from '@/pages/public/FAQs'
 import FeatureSection from '@/pages/public/features'
@@ -56,25 +53,7 @@ export default function LandingLayout() {
       <div className="aurora-background pointer-events-none fixed inset-0 -z-10" aria-hidden="true" />
       <div className="relative z-10">
         <HeaderSection />
-        <div className="group">
-          <div className="fixed right-22 bottom-8 z-30">
-            <span className="rounded-full bg-white px-4 py-2 text-[var(--brand-primary)] shadow-lg transition-opacity duration-300 group-hover:opacity-0">
-              Chat with Finisbot!
-            </span>
-          </div>
-          <div className="fixed right-4 bottom-4 z-30">
-            <Sheet>
-              <SheetTrigger asChild>
-                <PulsatingButton className="h-15 w-15 rounded-full bg-[var(--brand-primary)] shadow-lg">
-                  <BotIcon className="text-white" />
-                </PulsatingButton>
-              </SheetTrigger>
-              <SheetContent forceMount showClose={false} className="rounded-none border-none">
-                <Chatbot />
-              </SheetContent>
-            </Sheet>
-          </div>
-        </div>
+        <FloatingChatWidget />
         <main className="flex-1">
           {isNestedRoute ? <Outlet /> : <LandingHome />}
           <Footer />

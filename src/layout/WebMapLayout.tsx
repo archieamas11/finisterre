@@ -6,17 +6,15 @@ import type { MapAction, MapState } from '@/contexts/MapContext'
 import type { ConvertedMarker } from '@/types/map.types'
 import { lazy, memo, Suspense, useCallback, useEffect, useMemo, useReducer, useRef, useState } from 'react'
 import L from 'leaflet'
-import { BotIcon } from 'lucide-react'
 import { parseAsString, useQueryStates } from 'nuqs'
 import { MapContainer, TileLayer, useMap } from 'react-leaflet'
 import { toast } from 'sonner'
 
 import { searchLotById } from '@/api/plots.api'
+import FloatingChatWidget from '@/components/FloatingChatWidget'
 import CustomClusterManager from '@/components/map/CustomClusterManager'
 import { UserLocationMarker } from '@/components/map/UserLocationMarker'
 import { ValhallaRoute } from '@/components/map/ValhallaRoute'
-import { PulsatingButton } from '@/components/pulsating-button'
-import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet'
 import Spinner from '@/components/ui/spinner'
 import { LocateContext, MapDispatchContext, MapStateContext } from '@/contexts/MapContext'
 import { usePlots } from '@/hooks/plots-hooks/plot.hooks'
@@ -38,7 +36,6 @@ import { WebmapLegend } from '@/pages/webmap/WebmapLegend'
 import WebMapNavs from '@/pages/webmap/WebMapNavs'
 import { convertPlotToMarker } from '@/types/map.types'
 import { isNativePlatform } from '@/utils/platform.utils'
-import Chatbot from '../pages/public/chatbot/Chatbot'
 
 const NavigationInstructions = lazy(() => import('@/components/map/NavigationInstructions'))
 
@@ -573,27 +570,7 @@ export default function MapPage({ onBack, initialDirection }: { onBack?: () => v
           <div className="relative h-full w-full overflow-hidden">
             <WebMapNavs onBack={onBack} />
             <WebmapLegend />
-            {!isNativePlatform() && (
-              <div className="group">
-                <div className="fixed right-22 bottom-8 z-30">
-                  <span className="rounded-full bg-white px-4 py-2 text-[var(--brand-primary)] shadow-lg transition-opacity duration-300 group-hover:opacity-0">
-                    Chat with Finisbot!
-                  </span>
-                </div>
-                <div className="fixed right-4 bottom-4 z-30">
-                  <Sheet>
-                    <SheetTrigger asChild>
-                      <PulsatingButton className="h-15 w-15 rounded-full bg-[var(--brand-primary)] shadow-lg">
-                        <BotIcon className="text-white" />
-                      </PulsatingButton>
-                    </SheetTrigger>
-                    <SheetContent forceMount showClose={false} className="rounded-none border-none">
-                      <Chatbot />
-                    </SheetContent>
-                  </Sheet>
-                </div>
-              </div>
-            )}
+            {!isNativePlatform() && <FloatingChatWidget />}
             <Notification
               opened={konstaNotificationOpen}
               title={konstaNotificationProps.title}
