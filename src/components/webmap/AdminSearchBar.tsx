@@ -241,7 +241,9 @@ export function AdminSearchBar({ className, onSearch, onSelectResult }: AdminSea
                     <div className="bg-card/90 sticky top-0 z-10 border-b px-4 py-3">
                       <div className="flex items-center justify-between">
                         <h3 className="text-primary text-xs font-semibold tracking-wider uppercase">Search Results</h3>
-                        <span className="bg-primary/80 text-secondary rounded-full px-2.5 py-1 text-xs shadow-sm">{results.length} items</span>
+                        <span className="bg-primary/80 text-primary-foreground rounded-full px-2.5 py-1 text-xs shadow-sm">
+                          {results.length} items
+                        </span>
                       </div>
                     </div>
                     <ul>
@@ -254,7 +256,7 @@ export function AdminSearchBar({ className, onSearch, onSelectResult }: AdminSea
                             key={`${item.lot_id}-${item.plot_id}-${item.niche_number ?? 'x'}`}
                             className={cn(
                               'group border-primary/20 flex cursor-pointer items-start gap-3 border-b px-4 py-3.5 transition-all duration-200 last:border-b-0',
-                              'hover:bg-primary/20 hover:shadow-sm',
+                              'hover:bg-primary/5 hover:shadow-sm',
                             )}
                             onClick={() => {
                               onSelectResult?.(item)
@@ -263,13 +265,13 @@ export function AdminSearchBar({ className, onSearch, onSelectResult }: AdminSea
                             }}
                           >
                             <div className="mt-0.5 flex-shrink-0">
-                              <div className="bg-secondary rounded-lg p-2.5 shadow-sm">
+                              <div className="bg-primary/20 rounded-lg p-2.5 shadow-sm">
                                 <MapPin className="text-primary h-4 w-4" />
                               </div>
                             </div>
                             <div className="min-w-0 flex-1">
-                              <div className="text-primary truncate text-sm font-medium">{primary}</div>
-                              <div className="text-primary/70 mt-1 flex items-center gap-1 truncate text-xs">
+                              <div className="text-secondary truncate text-sm font-medium">{primary}</div>
+                              <div className="text-secondary/70 mt-1 flex items-center gap-1 truncate text-xs">
                                 <span>{location}</span>
                               </div>
                             </div>
