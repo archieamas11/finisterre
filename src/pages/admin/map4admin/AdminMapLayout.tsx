@@ -392,7 +392,7 @@ export default function AdminMapLayout() {
           <MapStats />
           <AddMarkerInstructions isVisible={isAddingMarker} />
           <EditMarkerInstructions isVisible={isEditingMarker} step={selectedPlotForEdit ? 'edit' : 'select'} />
-          <MapContainer className="h-full w-full rounded-lg" zoomControl={false} bounds={bounds} maxZoom={25} zoom={18}>
+          <MapContainer className="h-full w-full rounded-lg" zoomControl={false} bounds={bounds} maxZoom={20} zoom={19}>
             {activeSearchMarker && (
               <Popup
                 className="leaflet-theme-popup"
@@ -422,8 +422,8 @@ export default function AdminMapLayout() {
             )}
             <TileLayer
               url="https://services.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"
-              maxNativeZoom={18}
-              maxZoom={25}
+              maxNativeZoom={19}
+              maxZoom={20}
               detectRetina={true}
             />
 

@@ -11,13 +11,13 @@ import { MapContainer, TileLayer, useMap } from 'react-leaflet'
 import { toast } from 'sonner'
 
 import { searchLotById } from '@/api/plots.api'
-import { useIsMobile } from '@/hooks/use-mobile'
 import CustomClusterManager from '@/components/map/CustomClusterManager'
 import { UserLocationMarker } from '@/components/map/UserLocationMarker'
 import { ValhallaRoute } from '@/components/map/ValhallaRoute'
 import Spinner from '@/components/ui/spinner'
 import { LocateContext, MapDispatchContext, MapStateContext } from '@/contexts/MapContext'
 import { usePlots } from '@/hooks/plots-hooks/plot.hooks'
+import { useIsMobile } from '@/hooks/use-mobile'
 import { useLocationTracking } from '@/hooks/useLocationTracking'
 import { useMarkersOffline } from '@/hooks/useMarkersOffline'
 import { convertUserPlotToMarker, useUserOwnedPlots } from '@/hooks/user-hooks/useUserOwnedPlots'
@@ -580,7 +580,7 @@ export default function MapPage({ onBack, initialDirection }: { onBack?: () => v
               className="z-999"
             />
 
-            <MapContainer className="h-full w-full" zoomControl={false} bounds={bounds} maxZoom={MAX_ZOOM} zoom={ZOOM} maxBoundsViscosity={1.0}>
+            <MapContainer className="h-full w-full" zoomControl={false} bounds={bounds} maxZoom={MAX_ZOOM} zoom={ZOOM}>
               <MapInstanceBinder onMapReady={setMapInstance} />
               <TileLayer
                 url="https://services.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"
