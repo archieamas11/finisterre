@@ -582,15 +582,15 @@ export default function MapPage({ onBack, initialDirection }: { onBack?: () => v
               className="z-999"
             />
 
-            <MapContainer className="h-full w-full" zoomControl={false} bounds={bounds} maxZoom={MAX_ZOOM} zoom={ZOOM}>
+            <MapContainer className="h-full w-full z-1" zoomControl={false} bounds={bounds} maxZoom={MAX_ZOOM} zoom={ZOOM}>
               <MapInstanceBinder onMapReady={setMapInstance} />
               <TileLayer
-                url="https://services.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}?bboxSR=3857&imageSR=3857"
+                url={`https://wayback.maptiles.arcgis.com/arcgis/rest/services/World_Imagery/WMTS/1.0.0/default028mm/MapServer/tile/58924/{z}/{y}/{x}`}
                 maxNativeZoom={ZOOM}
                 maxZoom={MAX_ZOOM}
                 detectRetina={true}
               />
-
+              {/* https://wayback.maptiles.arcgis.com/arcgis/rest/services/World_Imagery/WMTS/1.0.0/default028mm/MapServer/tile/49999/%7Blevel%7D/%7Brow%7D/%7Bcol%7D{' '} */}
               {/* Constants finisterre markers */}
               <MemoizedComfortRoomMarker onDirectionClick={handleDirectionClick} isDirectionLoading={state.isDirectionLoading} />
               <MemoizedParkingMarkers onDirectionClick={handleDirectionClick} isDirectionLoading={state.isDirectionLoading} />
@@ -599,7 +599,6 @@ export default function MapPage({ onBack, initialDirection }: { onBack?: () => v
               <MemoizedMainEntranceMarkers onDirectionClick={handleDirectionClick} isDirectionLoading={state.isDirectionLoading} />
               <MemoizedChapelMarkers onDirectionClick={handleDirectionClick} isDirectionLoading={state.isDirectionLoading} />
               <MemoizedPetersRockMarkers onDirectionClick={handleDirectionClick} isDirectionLoading={state.isDirectionLoading} />
-
               {/* This is for clustering the plot markers by category
               TODO: migrate to something better since this was just a quick fix and not permanent solution */}
               <CustomClusterManager

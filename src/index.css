@@ -295,15 +295,6 @@ body:has(.landing-page-root) {
   background: transparent !important;
 }
 
-body:has(.map-page-container) {
-  overflow: hidden;
-  height: 100vh;
-}
-
-.map-page-container {
-  height: 100vh;
-}
-
 .leaflet-theme-popup .leaflet-popup-content-wrapper,
 .leaflet-theme-popup .leaflet-popup-tip {
   @apply bg-background/90 supports-[backdrop-filter]:bg-background/60 backdrop-blur;
@@ -317,7 +308,7 @@ body:has(.map-page-container) {
   display: none;
 }
 
-.leaflet-container a.leaflet-popup-close-button {
+a.leaflet-popup-close-button {
   display: none;
 }
 
@@ -368,82 +359,6 @@ body:has(.map-page-container) {
   will-change: transform;
 }
 
-.custom-marker-cluster {
-  background: transparent !important;
-  border: none !important;
-  box-shadow: none !important;
-}
-
-.cluster-marker {
-  position: relative;
-  width: 40px;
-  height: 40px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transform-origin: center center;
-  transition: transform 0.2s ease-out;
-}
-
-.cluster-marker:hover {
-  transform: scale(1.1);
-}
-
-.cluster-inner {
-  width: 32px;
-  height: 32px;
-  background: rgba(0, 0, 0, 0.7);
-  border: 2px solid white;
-  border-radius: 50%;
-  color: white;
-  font-weight: bold;
-  font-size: 12px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
-  will-change: transform;
-}
-
-.plot-marker-icon {
-  background: transparent !important;
-  border: none !important;
-  box-shadow: none !important;
-}
-
-.leaflet-popup-content-wrapper {
-  transform: translateZ(0);
-  will-change: transform;
-}
-
-.marker-cluster-small,
-.marker-cluster-medium,
-.marker-cluster-large {
-  contain: layout style paint;
-}
-
-.leaflet-container {
-  transform: translateZ(0);
-  backface-visibility: hidden;
-}
-
-.marker-cluster {
-  transform: translateZ(0);
-  will-change: transform;
-}
-
-.leaflet-zoom-animated {
-  transform: translateZ(0);
-}
-
-.no-scrollbar {
-  scrollbar-width: none;
-  -ms-overflow-style: none;
-}
-
-.no-scrollbar::-webkit-scrollbar {
-  display: none;
-}
 
 button {
   -webkit-tap-highlight-color: transparent;
