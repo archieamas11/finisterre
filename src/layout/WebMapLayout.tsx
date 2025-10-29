@@ -585,12 +585,13 @@ export default function MapPage({ onBack, initialDirection }: { onBack?: () => v
             <MapContainer className="h-full w-full" zoomControl={false} bounds={bounds} maxZoom={MAX_ZOOM} zoom={ZOOM}>
               <MapInstanceBinder onMapReady={setMapInstance} />
               <TileLayer
-                url="https://services.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"
+                url="https://services.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}?bboxSR=3857&imageSR=3857"
                 maxNativeZoom={ZOOM}
                 maxZoom={MAX_ZOOM}
                 detectRetina={true}
               />
 
+              {/* Constants finisterre markers */}
               <MemoizedComfortRoomMarker onDirectionClick={handleDirectionClick} isDirectionLoading={state.isDirectionLoading} />
               <MemoizedParkingMarkers onDirectionClick={handleDirectionClick} isDirectionLoading={state.isDirectionLoading} />
               <MemoizedPlaygroundMarkers onDirectionClick={handleDirectionClick} isDirectionLoading={state.isDirectionLoading} />
@@ -599,6 +600,8 @@ export default function MapPage({ onBack, initialDirection }: { onBack?: () => v
               <MemoizedChapelMarkers onDirectionClick={handleDirectionClick} isDirectionLoading={state.isDirectionLoading} />
               <MemoizedPetersRockMarkers onDirectionClick={handleDirectionClick} isDirectionLoading={state.isDirectionLoading} />
 
+              {/* This is for clustering the plot markers by category
+              TODO: migrate to something better since this was just a quick fix and not permanent solution */}
               <CustomClusterManager
                 markersByGroup={markersByGroup}
                 onDirectionClick={handleDirectionClick}
@@ -611,20 +614,19 @@ export default function MapPage({ onBack, initialDirection }: { onBack?: () => v
                 highlightedNiche={state.highlightedNiche}
                 userMarkers={userMarkers}
               />
-
+              {route && routeCoordinates.length > 0 && (
+                <ValhallaRoute
+                  route={route}
+                  routeCoordinates={routeCoordinates}
+                  remainingCoordinates={remainingCoordinates}
+                  originalStart={originalStart || undefined}
+                  originalEnd={originalEnd || undefined}
+                  userLocation={currentLocation}
+                  isNavigating={isNavigating}
+                  showMarkers={true}
+                />
+              )}
               <Suspense fallback={null}>
-                {route && routeCoordinates.length > 0 && (
-                  <ValhallaRoute
-                    route={route}
-                    routeCoordinates={routeCoordinates}
-                    remainingCoordinates={remainingCoordinates}
-                    originalStart={originalStart || undefined}
-                    originalEnd={originalEnd || undefined}
-                    userLocation={currentLocation}
-                    isNavigating={isNavigating}
-                    showMarkers={true}
-                  />
-                )}
                 <MemoizedNavigationInstructions
                   isOpen={state.isNavigationInstructionsOpen}
                   onClose={cancelNavigation}
