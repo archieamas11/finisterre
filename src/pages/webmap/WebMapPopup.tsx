@@ -106,8 +106,8 @@ export default function PlotLocations({ marker, colors, onDirectionClick, isDire
                     aria-label={`Plot status: ${label}`}
                     title={`Plot status: ${label}`}
                   >
-                    <Icon size={12} />
-                    <span className="text-xs capitalize">{label}</span>
+                    <Icon size={14} className="leading-none" />
+                    <span className="text-xs capitalize leading-none">{label}</span>
                   </div>
                 )
               })()}
