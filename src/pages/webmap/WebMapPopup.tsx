@@ -1,9 +1,9 @@
 import { motion } from 'framer-motion'
 import { Info, Star } from 'lucide-react'
 import { BiCheckCircle, BiXCircle } from 'react-icons/bi'
-import { BsFillInfoCircleFill } from 'react-icons/bs'
 import { FaCross, FaHourglassStart } from 'react-icons/fa'
 
+import { CardDescription, CardTitle } from '@/components/ui/card'
 import { Spinner } from '@/components/ui/spinner'
 import { useAuth } from '@/hooks/useAuth'
 import { useDeceasedForPlot } from '@/hooks/useDeceasedForPlot'
@@ -59,11 +59,16 @@ export default function PlotLocations({ marker, colors, onDirectionClick, isDire
 
   return (
     <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3 }} className="mt-4.5">
-      <div className="bg-accent mb-2 rounded-lg p-3 shadow-sm transition-colors">
-        <div className="flex justify-between">
+      <div className="bg-accent rounded-lg p-4 mb-2 space-y-1">
+        <div className="border-b pb-5 text-center">
+          <CardTitle className="text-muted-foreground text-sm font-medium">Finisterre Gardenz</CardTitle>
+          <CardDescription className="text-foreground font-bold text-lg leading-none">Plot Information</CardDescription>
+        </div>
+
+        <div className="flex justify-between pt-5">
           <div className="space-y-1">
-            <div className="text-foreground font-bold text-lg leading-none">Plot Information</div>
-            <div className="text-foreground/80 text-sm leading-none">{marker.location}</div>
+            <div className="text-muted-foreground text-xs font-medium uppercase tracking-wide ">Location</div>
+            <div className="text-foreground font-bold text-md leading-none">{marker.location}</div>
           </div>
           <div className="flex gap-1">
             <GetDirectionButton
@@ -85,32 +90,47 @@ export default function PlotLocations({ marker, colors, onDirectionClick, isDire
       </div>
 
       {/* Plot status */}
-      <div className="bg-accent mb-2 flex items-center justify-between gap-2 rounded-lg p-2 px-4 shadow-sm transition-colors">
-        <span className="text-foreground flex leading-none">
-          <BsFillInfoCircleFill className="text-accent-foreground mr-1" />
-          Plot Status
-        </span>
-        {(() => {
-          const { className, Icon, label } = getStatusProps(marker.plotStatus)
-          return (
-            <div
-              className={cn('flex items-center gap-1 rounded-full px-2 py-1 text-xs font-semibold', className)}
-              aria-label={`Plot status: ${label}`}
-              title={`Plot status: ${label}`}
+      <div className="bg-accent mb-2 rounded-lg p-4 shadow-sm transition-colors">
+        <div>
+          <div className="text-muted-foreground text-xs font-medium uppercase tracking-wide text-center">Plot Details</div>
+        </div>
+        <div className="space-y-1 flex justify-center gap-2 mt-3">
+          <div className="flex gap-2">
+            {/* Plot status */}
+            {(() => {
+              const { className, Icon, label } = getStatusProps(marker.plotStatus)
+              return (
+                <div
+                  className={cn(
+                    'text-foreground font-bold text-md leading-none rounded-full px-2 py-1 flex gap-1 items-center leanding-none',
+                    className,
+                  )}
+                  aria-label={`Plot status: ${label}`}
+                  title={`Plot status: ${label}`}
+                >
+                  <Icon size={12} />
+                  <span className="text-xs capitalize">{label}</span>
+                </div>
+              )
+            })()}
+            {/* Plot classification */}
+            <span
+              className={cn('text-foreground font-bold text-md leading-none rounded-full px-2 py-1 flex gap-1 items-center leanding-none')}
+              style={colors ? { background: colors.background, color: colors.text } : {}}
             >
-              <Icon size={12} />
-              <span className="text-xs capitalize">{label}</span>
-            </div>
-          )
-        })()}
+              <Star className="font-bold" size={12} />
+              <span className="text-xs capitalize font-bold">{marker.category}</span>
+            </span>
+          </div>
+        </div>
       </div>
 
       {/* Deceased information */}
       {isAuthenticated && (
-        <div className="bg-accent mb-2 rounded-lg p-3 shadow-sm transition-colors">
+        <div className="bg-accent mb-2 rounded-lg p-4 shadow-sm transition-colors">
           <div className="mb-2 flex items-center gap-2">
-            <span className="text-foreground flex leading-none">
-              <FaCross className="text-accent-foreground mr-1" />
+            <span className="text-muted-foreground text-xs font-medium uppercase tracking-wide text-center flex leading-none">
+              <FaCross className="text-muted-foreground mr-1" />
               Deceased Information
             </span>
           </div>
@@ -142,26 +162,15 @@ export default function PlotLocations({ marker, colors, onDirectionClick, isDire
               ))}
             </ul>
           ) : (
-            <div className="text-muted-foreground py-4 text-center text-sm">This plot is empty</div>
+            <div className="text-center text-sm font-medium p-2 max-w-50 mx-auto rounded-md text-muted-foreground">
+              No deceased records found for this plot.
+            </div>
           )}
         </div>
       )}
 
-      {/* Plot classification */}
-      <div className="w-full mb-2">
-        <div className="w-full">
-          <span
-            className={cn('w-full px-3 py-2 rounded min-h-[32px] flex justify-center items-center gap-1 text-center')}
-            style={colors ? { background: colors.background, color: colors.text } : {}}
-          >
-            <Star className="h-4" />
-            <span className="capitalize font-medium">{marker.category} Plot</span>
-          </span>
-        </div>
-      </div>
-
       {/* Dimension */}
-      <div className="bg-accent mb-4 p-4 rounded-lg">
+      <div className="bg-accent mb-4.5 p-4 rounded-lg">
         <div className="grid grid-cols-2 gap-4">
           <div className="text-center space-y-1">
             <div className="text-muted-foreground text-xs font-medium uppercase tracking-wide">Dimensions</div>

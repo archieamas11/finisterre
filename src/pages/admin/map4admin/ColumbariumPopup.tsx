@@ -6,7 +6,6 @@ import { useQueryClient } from '@tanstack/react-query'
 import { motion } from 'framer-motion'
 import { Crown, Heart, Mail, Phone, PrinterIcon, User } from 'lucide-react'
 import { BsFillPatchCheckFill } from 'react-icons/bs'
-import { ImLibrary } from 'react-icons/im'
 import { useReactToPrint } from 'react-to-print'
 import { toast } from 'sonner'
 
@@ -146,7 +145,7 @@ export default function ColumbariumPopup({ marker, onDirectionClick, isDirection
         <div className="bg-background mb-2 flex h-full items-center justify-between rounded-lg border p-3">
           <div>
             <h3 className="text-accent-foreground flex items-center gap-2 text-lg font-bold">
-              <ImLibrary /> {ucwords(marker.category)} {marker.plot_id}
+              {ucwords(marker.category)} {marker.plot_id}
             </h3>
             <div className="text-foreground/80 flex gap-2 text-sm">
               <span>
@@ -188,7 +187,6 @@ export default function ColumbariumPopup({ marker, onDirectionClick, isDirection
           )}
         </div>
         <div className="mb-2">
-          <h4 className="text-foreground bg-background mb-2 rounded-lg border p-3 text-sm font-medium">Niche Layout:</h4>
           <div
             style={{
               fontSize: '20px',
@@ -221,7 +219,7 @@ export default function ColumbariumPopup({ marker, onDirectionClick, isDirection
           </div>
         </div>
 
-        <div className="bg-background mb-3 rounded-lg border p-3">
+        <div className="bg-background rounded-lg border p-3">
           <div className="mb-3">
             <div className="flex gap-4 text-xs">
               <div className="flex items-center gap-1">

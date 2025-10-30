@@ -132,9 +132,7 @@ export const convertPlotToMarker = (plot: {
 export const getCategoryColors = (category: string): { background: string; text: string } => {
   switch (category.toLowerCase()) {
     case 'platinum':
-      return { background: '#d4af37', text: '#000000' } // Gold background, black text
-    case 'chambers':
-      return { background: '#a3a3', text: '#000000' } // Light gray background, black text
+      return { background: '#d4af37', text: '#303030' } // Gold background, black text
     case 'diamond':
       return { background: '#cc6688', text: '#ffffff' } // Pink background, white text
     case 'bronze':
