@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query'
-import { Loader2, Shield } from 'lucide-react'
+import { Loader2 } from 'lucide-react'
 
 import { DataTableSkeleton } from '@/components/data-table/data-table-skeleton'
 import { ErrorMessage } from '@/components/ErrorMessage'
@@ -64,21 +64,12 @@ export default function AdminControlPanel() {
   }
 
   return (
-    <div className="min-h-screen md:p-6">
-      {/* Header */}
-      <header className="mb-4">
-        {/* Admin Controls */}
-        <Card className="bg-card text-card-foreground border-border mb-4 shadow-sm transition-shadow duration-300 hover:shadow-lg">
-          <CardHeader>
-            <CardTitle className="flex flex-col gap-2">
-              <div className="flex items-center gap-3">
-                <Shield className="h-7 w-7" />
-                <h1 className="text-primary text-3xl font-bold">Admin Controls</h1>
-              </div>
-              <p className="text-muted-foreground text-lg">Manage administrative settings and user accounts.</p>
-            </CardTitle>
-          </CardHeader>
-          {/* <CardContent>
+    <div className="space-y-6 p-4">
+      {/* Admin Controls */}
+      <div className="bg-card rounded-lg border p-6 shadow-sm">
+        <h1 className="text-primary text-3xl font-bold">Admin Controls</h1>
+        <p className="text-muted-foreground text-lg">Manage administrative settings and user accounts.</p>
+        {/* <CardContent>
             <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
               <div className="flex items-center justify-between rounded-lg border border-emerald-100 bg-gradient-to-r from-emerald-50 to-cyan-50 p-4 dark:border-emerald-800/30 dark:from-emerald-900/20 dark:to-cyan-900/20">
                 <div className="flex items-center gap-3">
@@ -120,51 +111,48 @@ export default function AdminControlPanel() {
               </div>
             </div>
           </CardContent> */}
-        </Card>
-      </header>
-      <div className="space-y-4">
-        <AdminUsersTable data={users} />
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-lg font-semibold">Unknown Questions ({questions.length})</CardTitle>
-            <CardDescription>
-              <p className="text-sm text-muted-foreground">Questions asked by users that weren't found in the FAQ database</p>
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            {isLoadingQuestions ? (
-              <div className="flex items-center justify-center py-8">
-                <Loader2 className="h-8 w-8 animate-spin" />
-                <span className="ml-2">Loading unknown questions...</span>
-              </div>
-            ) : questionsError ? (
-              <p className="text-red-500">Error loading unknown questions: {questionsError.message}</p>
-            ) : questions.length === 0 ? (
-              <p className="text-muted-foreground">No unknown questions yet.</p>
-            ) : (
-              <div className="space-y-4">
-                {questions.map((q) => (
-                  <div key={q.id} className="border rounded-lg p-4">
-                    <div className="flex items-start justify-between">
-                      <div className="flex-1">
-                        <h3 className="font-medium">{q.question}</h3>
-                        <div className="flex items-center gap-4 mt-2 text-sm text-muted-foreground">
-                          <span>
-                            Asked {q.count} time{q.count !== 1 ? 's' : ''}
-                          </span>
-                          <span>Last asked: {new Date(q.last_asked).toLocaleDateString()}</span>
-                          <span>Confidence: {(q.confidence * 100).toFixed(1)}%</span>
-                        </div>
-                      </div>
-                      <Badge variant={q.status === 'pending' ? 'secondary' : 'default'}>{q.status}</Badge>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            )}
-          </CardContent>
-        </Card>
       </div>
+      <AdminUsersTable data={users} />
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-lg font-semibold">Unknown Questions ({questions.length})</CardTitle>
+          <CardDescription>
+            <p className="text-sm text-muted-foreground">Questions asked by users that weren't found in the FAQ database</p>
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          {isLoadingQuestions ? (
+            <div className="flex items-center justify-center py-8">
+              <Loader2 className="h-8 w-8 animate-spin" />
+              <span className="ml-2">Loading unknown questions...</span>
+            </div>
+          ) : questionsError ? (
+            <p className="text-red-500">Error loading unknown questions: {questionsError.message}</p>
+          ) : questions.length === 0 ? (
+            <p className="text-muted-foreground">No unknown questions yet.</p>
+          ) : (
+            <div className="space-y-4">
+              {questions.map((q) => (
+                <div key={q.id} className="border rounded-lg p-4">
+                  <div className="flex items-start justify-between">
+                    <div className="flex-1">
+                      <h3 className="font-medium">{q.question}</h3>
+                      <div className="flex items-center gap-4 mt-2 text-sm text-muted-foreground">
+                        <span>
+                          Asked {q.count} time{q.count !== 1 ? 's' : ''}
+                        </span>
+                        <span>Last asked: {new Date(q.last_asked).toLocaleDateString()}</span>
+                        <span>Confidence: {(q.confidence * 100).toFixed(1)}%</span>
+                      </div>
+                    </div>
+                    <Badge variant={q.status === 'pending' ? 'secondary' : 'default'}>{q.status}</Badge>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </CardContent>
+      </Card>
     </div>
   )
 }
