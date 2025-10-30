@@ -115,10 +115,9 @@ export default function AdminMapLayout() {
     () => [
       { id: 'latest', label: 'Latest Imagery', value: '20512' },
       { id: '2025-10-23', label: 'October 23, 2025', value: '20512' },
-      { id: '2025-09-25', label: 'September 25, 2025', value: '58924' },
-      { id: '2024-12-12', label: 'December 12, 2024', value: '16453' },
-      { id: '2024-11-18', label: 'November 18, 2024', value: '49849' },
-      { id: '2024-10-10', label: 'October 10, 2024', value: '56450' },
+      { id: '2024-12-12', label: 'December 12, 2024', value: '58924' },
+      { id: '2023-12-12', label: 'December 12, 2023', value: '56102' },
+      { id: '2023-05-03', label: 'May 03, 2023', value: '12457' },
     ],
     [],
   )
