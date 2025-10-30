@@ -35,7 +35,7 @@ import MainEntranceMarkers from '@/pages/webmap/MainEntranceMarkers'
 import ParkingMarkers from '@/pages/webmap/ParkingMarkers'
 import PeterRockMarkers from '@/pages/webmap/PeterRock'
 import PlaygroundMarkers from '@/pages/webmap/PlaygroundMarkers'
-import { convertPlotToMarker, getCategoryBackgroundColor, getStatusColor } from '@/types/map.types'
+import { convertPlotToMarker, getStatusColor } from '@/types/map.types'
 import AdminMapNavs from './AdminMapNavs'
 import { LocateContext } from './LocateContext'
 
@@ -46,7 +46,7 @@ function buildStatusCircleIcon(color: string) {
   })
 }
 
-function renderPopupContent(marker: ConvertedMarker, backgroundColor: string, highlightedNiche?: string | null) {
+function renderPopupContent(marker: ConvertedMarker, highlightedNiche?: string | null) {
   const isColumbarium = !!(marker.rows && marker.columns)
   if (isColumbarium) {
     return (
@@ -59,7 +59,7 @@ function renderPopupContent(marker: ConvertedMarker, backgroundColor: string, hi
   }
   return (
     <Popup className="leaflet-theme-popup" closeButton={false} offset={[1, 3]} minWidth={600} maxWidth={600}>
-      <SinglePlotLocations backgroundColor={backgroundColor} marker={marker} />
+      <SinglePlotLocations marker={marker} />
     </Popup>
   )
 }
@@ -446,7 +446,7 @@ export default function AdminMapLayout() {
                   {activeSearchMarker.rows && activeSearchMarker.columns ? (
                     <ColumbariumPopup marker={activeSearchMarker} highlightedNiche={highlightedNiche ?? undefined} />
                   ) : (
-                    <SinglePlotLocations backgroundColor={getCategoryBackgroundColor(activeSearchMarker.category)} marker={activeSearchMarker} />
+                    <SinglePlotLocations marker={activeSearchMarker} />
                   )}
                 </div>
               </Popup>
@@ -495,7 +495,6 @@ export default function AdminMapLayout() {
                     {groupMarkers.map((marker: ConvertedMarker) => {
                       const statusColor = getStatusColor(marker.plotStatus)
                       const circleIcon = buildStatusCircleIcon(statusColor)
-                      const backgroundColor = getCategoryBackgroundColor(marker.category)
                       return (
                         <EditableMarker
                           key={`plot-${marker.plot_id}`}
@@ -517,7 +516,7 @@ export default function AdminMapLayout() {
                             }
                           }}
                         >
-                          {renderPopupContent(marker, backgroundColor, autoOpenPlotId === marker.plot_id ? highlightedNiche : null)}
+                          {renderPopupContent(marker, autoOpenPlotId === marker.plot_id ? highlightedNiche : null)}
                         </EditableMarker>
                       )
                     })}
@@ -540,7 +539,6 @@ export default function AdminMapLayout() {
                   {groupMarkers.map((marker: ConvertedMarker) => {
                     const statusColor = getStatusColor(marker.plotStatus)
                     const circleIcon = buildStatusCircleIcon(statusColor)
-                    const backgroundColor = getCategoryBackgroundColor(marker.category)
                     return (
                       <EditableMarker
                         key={`plot-${marker.plot_id}`}
@@ -562,7 +560,7 @@ export default function AdminMapLayout() {
                           }
                         }}
                       >
-                        {renderPopupContent(marker, backgroundColor, autoOpenPlotId === marker.plot_id ? highlightedNiche : null)}
+                        {renderPopupContent(marker, autoOpenPlotId === marker.plot_id ? highlightedNiche : null)}
                       </EditableMarker>
                     )
                   })}

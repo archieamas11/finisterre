@@ -21,7 +21,6 @@ import PlotInfo from './PlotInfo'
 
 interface PlotLocationsProps {
   marker: ConvertedMarker
-  backgroundColor?: string
   popupCloseTick?: number
 }
 

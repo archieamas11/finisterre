@@ -128,23 +128,21 @@ export const convertPlotToMarker = (plot: {
   }
 }
 
-// Get background color based on plot category
-export const getCategoryBackgroundColor = (category: string): string => {
+// Get background and text colors based on plot category
+export const getCategoryColors = (category: string): { background: string; text: string } => {
   switch (category.toLowerCase()) {
-    case 'columbarium':
-      return '#a3a3'
     case 'platinum':
-      return '#d4af37'
+      return { background: '#d4af37', text: '#000000' } // Gold background, black text
     case 'chambers':
-      return '#a3a3'
+      return { background: '#a3a3', text: '#000000' } // Light gray background, black text
     case 'diamond':
-      return '#cc6688'
+      return { background: '#cc6688', text: '#ffffff' } // Pink background, white text
     case 'bronze':
-      return '#7d7d7d'
+      return { background: '#7d7d7d', text: '#ffffff' } // Gray background, white text
     case 'silver':
-      return '#b00020'
+      return { background: '#b00020', text: '#ffffff' } // Red background, white text
     default:
-      return '#6b7280'
+      return { background: '#6b7280', text: '#ffffff' } // Gray background, white text
   }
 }
 

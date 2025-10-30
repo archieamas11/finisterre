@@ -8,7 +8,7 @@ import { LocateContext } from '@/contexts/MapContext'
 import { useIsMobile } from '@/hooks/use-mobile'
 import ColumbariumPopup from '@/pages/admin/map4admin/ColumbariumPopup'
 import PlotLocations from '@/pages/webmap/WebMapPopup'
-import { getCategoryBackgroundColor, getStatusColor } from '@/types/map.types'
+import { getCategoryColors, getStatusColor } from '@/types/map.types'
 
 const iconCache: Record<string, L.DivIcon> = {}
 const getIcon = (color: string, shape: string) => {
@@ -145,7 +145,7 @@ const PlotMarkers: React.FC<PlotMarkersProps> = memo(({ markers, isDirectionLoad
             ) : (
               <Popup className="leaflet-theme-popup" minWidth={250} closeButton={false}>
                 <PlotLocations
-                  backgroundColor={getCategoryBackgroundColor(marker.category)}
+                  colors={getCategoryColors(marker.category)}
                   onDirectionClick={onDir}
                   isDirectionLoading={isDirectionLoading}
                   marker={marker}

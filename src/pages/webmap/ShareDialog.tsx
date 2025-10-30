@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import axios from 'axios'
-import { FaShareSquare } from 'react-icons/fa'
+import { BiShareAlt } from 'react-icons/bi'
 import QRCode from 'react-qr-code'
 import { toast } from 'sonner'
 
@@ -130,7 +130,7 @@ export function ShareDialog({
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
         <Button type="button" variant={triggerVariant} size={triggerSize} className={triggerClassName} aria-label="Share plot">
-          {children || <FaShareSquare className={iconClassName || 'size-4'} />}
+          {children || <BiShareAlt className={iconClassName || 'size-4'} />}
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-md">
