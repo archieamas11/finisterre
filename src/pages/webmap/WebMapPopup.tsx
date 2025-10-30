@@ -89,45 +89,49 @@ export default function PlotLocations({ marker, colors, onDirectionClick, isDire
         </div>
       </div>
 
-      {/* Plot status */}
-      <div className="bg-accent mb-2 rounded-lg p-4 shadow-sm transition-colors">
-        <div>
-          <div className="text-muted-foreground text-xs font-medium uppercase tracking-wide text-center">Plot Details</div>
-        </div>
-        <div className="space-y-1 flex justify-center gap-2 mt-3">
-          <div className="flex gap-2">
-            {/* Plot status */}
-            {(() => {
-              const { className, Icon, label } = getStatusProps(marker.plotStatus)
-              return (
-                <div
-                  className={cn(
-                    'text-foreground font-bold text-md leading-none rounded-full px-2 py-1 flex gap-1 items-center leanding-none',
-                    className,
-                  )}
-                  aria-label={`Plot status: ${label}`}
-                  title={`Plot status: ${label}`}
-                >
-                  <Icon size={12} />
-                  <span className="text-xs capitalize">{label}</span>
-                </div>
-              )
-            })()}
-            {/* Plot classification */}
-            <span
-              className={cn('text-foreground font-bold text-md leading-none rounded-full px-2 py-1 flex gap-1 items-center leanding-none')}
-              style={colors ? { background: colors.background, color: colors.text } : {}}
-            >
-              <Star className="font-bold" size={12} />
-              <span className="text-xs capitalize font-bold">{marker.category}</span>
-            </span>
+      <div className="bg-accent mb-2 p-3 rounded-lg">
+        <div className="grid grid-cols-2 gap-4">
+          <div className="text-center space-y-2">
+            <div className="text-muted-foreground text-xs font-medium uppercase tracking-wide">Status</div>
+            <div className="flex justify-center">
+              {/* Plot status */}
+              {(() => {
+                const { className, Icon, label } = getStatusProps(marker.plotStatus)
+                return (
+                  <div
+                    className={cn(
+                      'text-foreground font-bold text-md leading-none rounded-full px-2 py-1 flex gap-1 items-center justify-center',
+                      className,
+                    )}
+                    aria-label={`Plot status: ${label}`}
+                    title={`Plot status: ${label}`}
+                  >
+                    <Icon size={12} />
+                    <span className="text-xs capitalize">{label}</span>
+                  </div>
+                )
+              })()}
+            </div>
+          </div>
+          <div className="text-center space-y-2 border-l border-border">
+            {/* Plot category */}
+            <div className="text-muted-foreground text-xs font-medium uppercase tracking-wide">Category</div>
+            <div className="flex justify-center">
+              <span
+                className={cn('text-foreground font-bold text-md leading-none rounded-full px-2 py-1 flex gap-1 items-center justify-center')}
+                style={colors ? { background: colors.background, color: colors.text } : {}}
+              >
+                <Star className="font-bold" size={12} />
+                <span className="text-xs capitalize font-bold">{marker.category}</span>
+              </span>
+            </div>
           </div>
         </div>
       </div>
 
       {/* Deceased information */}
       {isAuthenticated && (
-        <div className="bg-accent mb-2 rounded-lg p-4 shadow-sm transition-colors">
+        <div className="bg-accent mb-2 rounded-lg p-3 shadow-sm transition-colors">
           <div className="mb-2 flex items-center gap-2">
             <span className="text-muted-foreground text-xs font-medium uppercase tracking-wide text-center flex leading-none">
               <FaCross className="text-muted-foreground mr-1" />
@@ -170,7 +174,7 @@ export default function PlotLocations({ marker, colors, onDirectionClick, isDire
       )}
 
       {/* Dimension */}
-      <div className="bg-accent mb-4.5 p-4 rounded-lg">
+      <div className="bg-accent mb-4.5 p-3 rounded-lg">
         <div className="grid grid-cols-2 gap-4">
           <div className="text-center space-y-1">
             <div className="text-muted-foreground text-xs font-medium uppercase tracking-wide">Dimensions</div>
