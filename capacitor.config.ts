@@ -7,7 +7,7 @@ const config: CapacitorConfig = {
   server: {
     androidScheme: 'http',
     cleartext: true,
-    hostname: 'https://www.finisterre.site',
+    hostname: 'www.finisterre.site',
   },
   plugins: {
     CapacitorHttp: {
