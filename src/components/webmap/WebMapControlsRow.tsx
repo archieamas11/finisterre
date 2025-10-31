@@ -34,12 +34,7 @@ function TileLayerSelectorNative({ context }: { context: WebMapContext }) {
   return (
     <>
       <button className="no-long-press touch-manipulation" onClick={() => setActionsOpened(true)}>
-        <Fab
-          className="k-color-brand-green h-10"
-          text={context.tileLayerOptions[context.selectedTileLayer].name}
-          icon={MapIcon}
-          style={{ transform: 'none !important', transition: 'none !important' }}
-        />
+        <Fab className="k-color-brand-green h-10" icon={MapIcon} style={{ transform: 'none !important', transition: 'none !important' }} />
       </button>
 
       <Actions opened={actionsOpened} onBackdropClick={() => setActionsOpened(false)}>

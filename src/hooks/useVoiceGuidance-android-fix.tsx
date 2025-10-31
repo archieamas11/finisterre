@@ -1,4 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { TextToSpeech } from '@capacitor-community/text-to-speech'
+import { Capacitor } from '@capacitor/core'
 
 type SpeakOptions = {
   voiceId?: string
@@ -9,12 +11,10 @@ type SpeakOptions = {
 const STORAGE_KEY = 'ff_voice_guidance_enabled'
 
 // Module-level state to persist across React.StrictMode development double mounts.
-// This prevents duplicate initial speech playback caused by refs being reset on remount.
 let globalLastSpoken: { text: string; ts: number } | null = null
 let globalBusy = false
 let globalQueued: string | null = null
 let globalAudio: HTMLAudioElement | null = null
-let globalUtter: SpeechSynthesisUtterance | null = null
 
 function hasWebSpeechSupport() {
   return typeof window !== 'undefined' && 'speechSynthesis' in window && 'SpeechSynthesisUtterance' in window
@@ -40,9 +40,13 @@ async function elevenLabsSynthesize(apiKey: string, voiceId: string, text: strin
   return new Blob([arrayBuffer], { type: 'audio/mpeg' })
 }
 
+/**
+ * Uses Capacitor native TTS on mobile, falls back to ElevenLabs or Web Speech on web
+ */
 export default function useVoiceGuidance() {
   const apiKey = (import.meta.env.VITE_ELEVENLABS_API_KEY as string) || ''
   const defaultVoiceId = (import.meta.env.VITE_ELEVENLABS_VOICE_ID as string) || ''
+  const isNative = Capacitor.isNativePlatform()
 
   const [isEnabled, setIsEnabled] = useState<boolean>(() => {
     try {
@@ -53,25 +57,21 @@ export default function useVoiceGuidance() {
     }
   })
 
-  // Local refs proxy to module-level singletons to maintain semantics but survive remounts.
   const audioRef = useRef<HTMLAudioElement | null>(globalAudio)
-  const utterRef = useRef<SpeechSynthesisUtterance | null>(globalUtter)
   const queueRef = useRef<string | null>(globalQueued)
   const busyRef = useRef<boolean>(globalBusy)
   const lastSpokenRef = useRef<typeof globalLastSpoken>(globalLastSpoken)
-
-  // Sync outward to module scope when they change (minimal writes in critical paths only where mutated).
 
   useEffect(() => {
     try {
       localStorage.setItem(STORAGE_KEY, isEnabled ? '1' : '0')
     } catch {
-      // ignore localStorage write errors (private mode, quota, etc.)
+      // ignore localStorage write errors
     }
   }, [isEnabled])
 
   const stop = useCallback(() => {
-    // stop elevenlabs audio element
+    // Stop ElevenLabs audio
     if (audioRef.current) {
       audioRef.current.pause()
       audioRef.current.src = ''
@@ -79,39 +79,75 @@ export default function useVoiceGuidance() {
       globalAudio = null
     }
 
-    // stop speechSynthesis
-    if (hasWebSpeechSupport()) {
-      window.speechSynthesis.cancel()
-      utterRef.current = null
-      globalUtter = null
+    // Stop native TTS
+    if (isNative) {
+      TextToSpeech.stop().catch(() => {})
     }
+
+    // Stop Web Speech (web only)
+    if (!isNative && hasWebSpeechSupport()) {
+      window.speechSynthesis.cancel()
+    }
+
     queueRef.current = null
     busyRef.current = false
     globalQueued = null
     globalBusy = false
-  }, [])
+  }, [isNative])
 
   const speak = useCallback(
     async (text: string, options: SpeakOptions = {}) => {
       if (!isEnabled || !text) return
-      // Prevent repeating the same text within a short window (2s)
+
+      // Prevent repeating same text within 2s
       const now = Date.now()
       if (lastSpokenRef.current && lastSpokenRef.current.text === text && now - lastSpokenRef.current.ts < 2000) {
         return
       }
 
-      // If already speaking/playing - queue latest text (replace previous queued) and return
+      // Queue if busy
       if (busyRef.current) {
         queueRef.current = text
         globalQueued = text
         return
       }
 
-      // Mark busy
       busyRef.current = true
       globalBusy = true
 
-      // If ElevenLabs configured, try it first
+      // NATIVE PLATFORM: Use Capacitor Text-to-Speech plugin (reliable on Android/iOS)
+      if (isNative) {
+        try {
+          await TextToSpeech.speak({
+            text,
+            lang: 'en-US',
+            rate: options.rate ?? 1.0,
+            pitch: options.pitch ?? 1.0,
+            volume: 1.0,
+            category: 'ambient', // iOS audio session category
+          })
+
+          const meta = { text, ts: Date.now() }
+          lastSpokenRef.current = meta
+          globalLastSpoken = meta
+          busyRef.current = false
+          globalBusy = false
+
+          // Process queue
+          const queued = queueRef.current
+          queueRef.current = null
+          globalQueued = null
+          if (queued) void speak(queued, options)
+          return
+        } catch (err) {
+          console.error('Native TTS failed:', err)
+          busyRef.current = false
+          globalBusy = false
+          return
+        }
+      }
+
+      // WEB PLATFORM: Try ElevenLabs first, then Web Speech API
       if (apiKey && defaultVoiceId) {
         try {
           stop()
@@ -120,8 +156,9 @@ export default function useVoiceGuidance() {
           const audio = new Audio(url)
           audioRef.current = audio
           globalAudio = audio
-          // ensure autoplay is attempted
+
           await audio.play().catch(() => {})
+
           audio.onended = () => {
             URL.revokeObjectURL(url)
             audioRef.current = null
@@ -131,7 +168,7 @@ export default function useVoiceGuidance() {
             globalLastSpoken = meta
             busyRef.current = false
             globalBusy = false
-            // flush queue if any
+
             const queued = queueRef.current
             queueRef.current = null
             globalQueued = null
@@ -139,24 +176,23 @@ export default function useVoiceGuidance() {
           }
           return
         } catch (err) {
-          // fall through to Web Speech fallback
           console.warn('ElevenLabs TTS failed, falling back to Web Speech:', err)
         }
       }
 
+      // Fallback: Web Speech API (web only)
       if (hasWebSpeechSupport()) {
         stop()
         const utter = new SpeechSynthesisUtterance(text)
         utter.rate = options.rate ?? 1
         utter.pitch = options.pitch ?? 1
-        utterRef.current = utter
-        globalUtter = utter
         utter.onend = () => {
           const meta = { text, ts: Date.now() }
           lastSpokenRef.current = meta
           globalLastSpoken = meta
           busyRef.current = false
           globalBusy = false
+
           const queued = queueRef.current
           queueRef.current = null
           globalQueued = null
@@ -166,18 +202,22 @@ export default function useVoiceGuidance() {
         return
       }
 
-      // last resort: no TTS available
+      // No TTS available
       console.warn('No TTS available in this environment')
+      busyRef.current = false
+      globalBusy = false
     },
-    [apiKey, defaultVoiceId, isEnabled, stop],
+    [apiKey, defaultVoiceId, isEnabled, isNative, stop],
   )
 
   const toggle = useCallback(() => setIsEnabled((v) => !v), [])
 
-  const canUseTts = useMemo(() => !!(apiKey && defaultVoiceId) || hasWebSpeechSupport(), [apiKey, defaultVoiceId])
+  const canUseTts = useMemo(() => {
+    if (isNative) return true // Native TTS always available
+    return !!(apiKey && defaultVoiceId) || hasWebSpeechSupport()
+  }, [apiKey, defaultVoiceId, isNative])
 
   useEffect(() => {
-    // cleanup on unmount
     return () => stop()
   }, [stop])
 
