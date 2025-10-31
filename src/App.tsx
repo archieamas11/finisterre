@@ -4,6 +4,7 @@ import { BrowserRouter, Navigate, Route, Routes, useLocation } from 'react-route
 
 import { RequireAdmin, RequireAuth, RequireUser } from '@/authRoutes'
 import Spinner from '@/components/ui/spinner'
+import { useAppLinks } from '@/hooks/useAppLinks'
 import LandingLayout from '@/layout/LandingLayout'
 import { isNativePlatform } from '@/utils/platform.utils'
 
@@ -44,6 +45,9 @@ function RootLanding() {
 }
 
 function AppRoutes() {
+  // Hook to handle incoming Android App Links and deep links
+  useAppLinks()
+
   return (
     <Suspense
       fallback={

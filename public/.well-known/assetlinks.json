@@ -1,0 +1,10 @@
+[
+  {
+    "relation": ["delegate_permission/common.handle_all_urls"],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "com.archieamas11.finisterre",
+      "sha256_cert_fingerprints": ["9C:89:1C:39:E1:C5:A4:75:50:56:2F:0C:4A:52:C0:02:7E:58:E9:B5:78:6D:81:4E:87:BE:A3:01:03:7D:DC:2D"]
+    }
+  }
+]
