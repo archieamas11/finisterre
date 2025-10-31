@@ -1,3 +1,5 @@
+import { useEffect } from 'react'
+
 import Spinner from '@/components/ui/spinner'
 import { useLogout } from '@/hooks/useLogout'
 

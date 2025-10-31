@@ -1,7 +1,7 @@
 import type { LotOwnerCredentials } from '@/components/lot-owners/LotOwnerCredentialsDialog'
 import type { ConvertedMarker } from '@/types/map.types'
 import type { nicheData } from '@/types/niche.types'
-import { useRef } from 'react'
+import { useRef, useState } from 'react'
 import { useQueryClient } from '@tanstack/react-query'
 import { motion } from 'framer-motion'
 import { Crown, Heart, Mail, Phone, PrinterIcon, User } from 'lucide-react'

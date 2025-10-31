@@ -1,6 +1,6 @@
 import type { UserRole } from '@/navigation/sidebar/sidebar-items'
 import { useEffect, useMemo } from 'react'
-import { useLocation, useNavigate } from 'react-router-dom'
+import { Outlet, useLocation, useNavigate } from 'react-router-dom'
 
 import { AppSidebar } from '@/components/sidebar/app-sidebar'
 import { SiteHeader } from '@/components/sidebar/site-header'
