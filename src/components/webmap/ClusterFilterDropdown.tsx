@@ -15,7 +15,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
-import { isAndroid } from '@/utils/platform.utils'
+import { isNativePlatform } from '@/utils/platform.utils'
 
 interface ClusterFilterDropdownProps {
   context: WebMapContext
@@ -44,7 +44,7 @@ export default function ClusterFilterDropdown({ context, className }: ClusterFil
     setActionsOpened(false)
   }
 
-  if (isAndroid()) {
+  if (isNativePlatform()) {
     return (
       <>
         <button className="no-long-press touch-manipulation" onClick={() => setActionsOpened(true)}>

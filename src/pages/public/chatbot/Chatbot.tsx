@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { ArrowRightIcon, BadgeQuestionMark, DatabaseIcon, GlobeIcon, MessageCirclePlusIcon, TextAlignStart, XIcon } from 'lucide-react'
 import ReactMarkdown from 'react-markdown'
+import { Link } from 'react-router-dom'
 import remarkGfm from 'remark-gfm'
 import { toast } from 'sonner'
 

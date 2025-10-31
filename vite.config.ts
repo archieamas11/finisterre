@@ -2,7 +2,6 @@ import path from 'path'
 import tailwindcss from '@tailwindcss/vite'
 import react from '@vitejs/plugin-react'
 import { reactGrab } from 'react-grab/plugins/vite'
-import AutoImport from 'unplugin-auto-import/vite'
 import { defineConfig } from 'vite'
 import { ViteImageOptimizer } from 'vite-plugin-image-optimizer'
 import removeConsole from 'vite-plugin-remove-console'
@@ -11,24 +10,7 @@ import preloadPlugin from 'vite-preload/plugin'
 // https://vite.dev/config/
 export default defineConfig(() => ({
   base: process.env.VERCEL ? '/' : './',
-  plugins: [
-    react(),
-    reactGrab(),
-    preloadPlugin(),
-    tailwindcss(),
-    ViteImageOptimizer(),
-    removeConsole(),
-    AutoImport({
-      imports: [
-        'react',
-        'react-router-dom',
-        {
-          'react-use': ['useLocalStorage', 'useMedia'],
-        },
-      ],
-      dts: 'src/auto-imports.d.ts',
-    }),
-  ],
+  plugins: [react(), reactGrab(), preloadPlugin(), tailwindcss(), ViteImageOptimizer(), removeConsole()],
   build: {
     target: 'esnext',
     assetsDir: 'assets',

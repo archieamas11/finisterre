@@ -56,6 +56,10 @@ export interface LocateContextValue extends MapState {
   showUserPlotsOnly: () => void
   // Count of user-owned plots (used to conditionally show My Plots entry in filters)
   userOwnedPlotsCount: number
+  // Tile layer selection
+  selectedTileLayer: string
+  setSelectedTileLayer: (layer: string) => void
+  tileLayerOptions: Record<string, { name: string; url: string }>
 }
 
 // ==== Contexts ====

@@ -32,6 +32,10 @@ export interface WebMapContext {
   showUserPlotsOnly: () => void
   resetView: () => void
   userOwnedPlotsCount: number
+  // Tile layer selection
+  selectedTileLayer: string
+  setSelectedTileLayer: (layer: string) => void
+  tileLayerOptions: Record<string, { name: string; url: string }>
 }
 
 export type MapContext = AdminContext | WebMapContext | null | undefined

@@ -1,6 +1,7 @@
 import { Notification } from 'konsta/react'
 
 import 'leaflet/dist/leaflet.css'
+import '@maptiler/leaflet-maptilersdk'
 
 import type { MapAction, MapState } from '@/contexts/MapContext'
 import type { ConvertedMarker } from '@/types/map.types'
@@ -38,6 +39,7 @@ import { convertPlotToMarker } from '@/types/map.types'
 import { isNativePlatform } from '@/utils/platform.utils'
 
 const NavigationInstructions = lazy(() => import('@/components/map/NavigationInstructions'))
+const MapTilerLayerComponent = lazy(() => import('@/components/map/MapTilerLayerComponent'))
 
 const MemoizedComfortRoomMarker = memo(ComfortRoomMarker)
 const MemoizedParkingMarkers = memo(ParkingMarkers)
@@ -87,6 +89,23 @@ const initialMapState: MapState = {
   highlightedNiche: null,
   autoOpenPopupFor: null,
 }
+
+const TILE_LAYER_OPTIONS = {
+  arcgis: {
+    name: 'Satellite',
+    url: 'https://wayback.maptiles.arcgis.com/arcgis/rest/services/World_Imagery/WMTS/1.0.0/default028mm/MapServer/tile/58924/{z}/{y}/{x}',
+  },
+  osm: {
+    name: 'Standard',
+    url: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+  },
+  maptilerStreets: {
+    name: 'Streets 3D',
+    url: 'streets-v4',
+  },
+} as const
+
+type TileLayerKey = keyof typeof TILE_LAYER_OPTIONS
 
 function mapReducer(state: MapState, action: MapAction): MapState {
   switch (action.type) {
@@ -227,6 +246,7 @@ export default function MapPage({ onBack, initialDirection }: { onBack?: () => v
   )
 
   const [mapInstance, setMapInstance] = useState<L.Map | null>(null)
+  const [selectedTileLayer, setSelectedTileLayer] = useState<TileLayerKey>('arcgis')
 
   useEffect(() => {
     if (!isNavigating || !currentLocation) return
@@ -538,6 +558,9 @@ export default function MapPage({ onBack, initialDirection }: { onBack?: () => v
       setAutoOpenPopupFor: (plotId: string | null) => dispatch({ type: 'SET_AUTO_POPUP', plotId }),
       showUserPlotsOnly,
       userOwnedPlotsCount: userMarkers.length,
+      selectedTileLayer,
+      setSelectedTileLayer: (layer: string) => setSelectedTileLayer(layer as TileLayerKey),
+      tileLayerOptions: TILE_LAYER_OPTIONS,
     }),
     [
       state,
@@ -552,6 +575,8 @@ export default function MapPage({ onBack, initialDirection }: { onBack?: () => v
       clearSearch,
       showUserPlotsOnly,
       userMarkers.length,
+      selectedTileLayer,
+      setSelectedTileLayer,
     ],
   )
 
@@ -584,12 +609,19 @@ export default function MapPage({ onBack, initialDirection }: { onBack?: () => v
 
             <MapContainer className="h-full w-full z-1" zoomControl={false} bounds={bounds} maxZoom={MAX_ZOOM} zoom={ZOOM}>
               <MapInstanceBinder onMapReady={setMapInstance} />
-              <TileLayer
-                url={`https://wayback.maptiles.arcgis.com/arcgis/rest/services/World_Imagery/WMTS/1.0.0/default028mm/MapServer/tile/58924/{z}/{y}/{x}`}
-                maxNativeZoom={ZOOM}
-                maxZoom={MAX_ZOOM}
-                detectRetina={true}
-              />
+              {selectedTileLayer === 'maptilerStreets' ? (
+                <Suspense fallback={null}>
+                  <MapTilerLayerComponent key={selectedTileLayer} apiKey={import.meta.env.VITE_MAPTILER_API_KEY} style="streets-v2" />
+                </Suspense>
+              ) : (
+                <TileLayer
+                  key={selectedTileLayer}
+                  url={TILE_LAYER_OPTIONS[selectedTileLayer].url}
+                  maxNativeZoom={ZOOM}
+                  maxZoom={MAX_ZOOM}
+                  detectRetina={true}
+                />
+              )}
               {/* https://wayback.maptiles.arcgis.com/arcgis/rest/services/World_Imagery/WMTS/1.0.0/default028mm/MapServer/tile/49999/%7Blevel%7D/%7Brow%7D/%7Bcol%7D{' '} */}
               {/* Constants finisterre markers */}
               <MemoizedComfortRoomMarker onDirectionClick={handleDirectionClick} isDirectionLoading={state.isDirectionLoading} />

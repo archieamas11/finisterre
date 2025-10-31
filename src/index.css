@@ -80,7 +80,6 @@
   }
 
   @keyframes pulse {
-
     0%,
     100% {
       box-shadow: 0 0 0 0 var(--pulse-color);
@@ -358,7 +357,6 @@ a.leaflet-popup-close-button {
   animation: marquee-vertical var(--duration, 40s) linear infinite;
   will-change: transform;
 }
-
 
 button {
   -webkit-tap-highlight-color: transparent;

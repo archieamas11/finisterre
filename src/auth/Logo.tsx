@@ -1,3 +1,5 @@
+import { Link } from 'react-router-dom'
+
 export function Logo() {
   return (
     <Link className="mb-4" to="/">

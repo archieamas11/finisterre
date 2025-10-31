@@ -63,7 +63,7 @@ export function LocationMap({ className }: LocationMapProps) {
 
   return (
     <div className={className}>
-      <div ref={mapContainerRef} className="relative z-10 h-[320px] w-full sm:h-[420px] md:h-[480px] lg:h-[480px]">
+      <div ref={mapContainerRef} className="relative h-[320px] w-full sm:h-[420px] md:h-[480px] lg:h-[480px]">
         <MapContainer
           center={[CEMETERY_LOCATION.lat, CEMETERY_LOCATION.lng]}
           zoom={16}
@@ -74,7 +74,6 @@ export function LocationMap({ className }: LocationMapProps) {
           maxBounds={MAP_BOUNDS}
           maxBoundsViscosity={1.0}
           className="h-full w-full rounded-lg"
-          style={{ height: '100%', width: '100%' }}
         >
           <MapInitializer onMap={(m) => setLeafletMap(m)} />
           <TileLayer
@@ -154,7 +153,7 @@ const FloatingLocationCard = memo(function FloatingLocationCard({ leafletMap }: 
   }
 
   return (
-    <div className="pointer-events-none absolute bottom-2 left-1 z-20">
+    <div className="pointer-events-none absolute bottom-2 left-1 z-999">
       <div className="pointer-events-auto ml-1 inline-block max-w-xs rounded-lg border border-gray-200 bg-white/95 p-4 shadow-lg backdrop-blur-sm">
         <h4 className="text-lg font-semibold text-[var(--brand-primary)]">Finisterre Gardenz</h4>
         <p className="mt-1 text-sm text-gray-600">6QXX+C4 Minglanilla, Cebu</p>

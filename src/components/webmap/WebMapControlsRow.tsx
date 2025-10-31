@@ -1,13 +1,14 @@
 import type { AdminContext, WebMapContext } from '@/hooks/useNavigationContext'
 import { useState } from 'react'
-import { Fab } from 'konsta/react'
-import { ArrowLeft, Home, Info, Locate } from 'lucide-react'
+import { Actions, ActionsButton, ActionsGroup, ActionsLabel, Fab } from 'konsta/react'
+import { ArrowLeft, Home, Info, Locate, Map } from 'lucide-react'
 import { MdFamilyRestroom } from 'react-icons/md'
 import { Link, useLocation } from 'react-router-dom'
 import { toast } from 'sonner'
 
 import LoginRequiredModal from '@/components/modals/LoginRequiredModal'
 import { Button } from '@/components/ui/button'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import ClusterFilterDropdown from '@/components/webmap/ClusterFilterDropdown'
 import ResetMapViewButton from '@/components/webmap/ResetMapViewButton'
 import { cn } from '@/lib/utils'
@@ -18,6 +19,59 @@ interface WebMapControlsRowProps {
   context: WebMapContext | AdminContext | null | undefined
   onBack?: () => void
   onLegendClick?: () => void
+}
+
+const MAP_STYLE_PREVIEWS: Record<string, string> = {
+  arcgis: 'https://cloud.maptiler.com/static/img/maps/satellite.png?t=1755757107',
+  maptilerStreets: 'https://cloud.maptiler.com/static/img/maps/streets-v4.png?t=1760544391',
+  osm: 'https://cloud.maptiler.com/static/img/maps/openstreetmap.png?t=1755757107',
+}
+
+function TileLayerSelectorNative({ context }: { context: WebMapContext }) {
+  const [actionsOpened, setActionsOpened] = useState(false)
+  const MapIcon = <Map className="h-5 w-5" />
+
+  return (
+    <>
+      <button className="no-long-press touch-manipulation" onClick={() => setActionsOpened(true)}>
+        <Fab
+          className="k-color-brand-green h-10"
+          text={context.tileLayerOptions[context.selectedTileLayer].name}
+          icon={MapIcon}
+          style={{ transform: 'none !important', transition: 'none !important' }}
+        />
+      </button>
+
+      <Actions opened={actionsOpened} onBackdropClick={() => setActionsOpened(false)}>
+        <ActionsGroup>
+          <ActionsLabel>Map Style</ActionsLabel>
+          {Object.entries(context.tileLayerOptions).map(([key, option]) => (
+            <ActionsButton
+              key={key}
+              bold={context.selectedTileLayer === key}
+              onClick={() => {
+                context.setSelectedTileLayer(key)
+                setActionsOpened(false)
+              }}
+            >
+              <div className="flex items-center gap-4 w-full py-2">
+                <img
+                  src={MAP_STYLE_PREVIEWS[key]}
+                  alt={`${option.name} preview`}
+                  className="h-16 w-16 rounded-md border border-gray-300 object-cover shadow-sm"
+                  loading="lazy"
+                />
+                <span className="text-base font-medium">{option.name}</span>
+              </div>
+            </ActionsButton>
+          ))}
+        </ActionsGroup>
+        <ActionsGroup>
+          <ActionsButton onClick={() => setActionsOpened(false)}>Cancel</ActionsButton>
+        </ActionsGroup>
+      </Actions>
+    </>
+  )
 }
 
 export default function WebMapControlsRow({ context, onBack, onLegendClick }: WebMapControlsRowProps) {
@@ -46,8 +100,8 @@ export default function WebMapControlsRow({ context, onBack, onLegendClick }: We
   return (
     <div
       className={cn(
-        'flex w-full flex-nowrap items-center gap-2 overflow-x-auto pt-0 pb-1 md:mx-auto',
-        'lg:justify-center',
+        'flex min-w-0 max-w-full flex-nowrap items-center mx-auto gap-2 overflow-x-auto pt-0 pb-1 md:mx-auto',
+        'lg:w-auto lg:flex-wrap lg:justify-center',
         !isNativePlatform() && 'no-scrollbar',
       )}
       role="group"
@@ -154,6 +208,38 @@ export default function WebMapControlsRow({ context, onBack, onLegendClick }: We
       <div className="shrink-0">
         <ResetMapViewButton context={context} />
       </div>
+      {context && 'selectedTileLayer' in context && (
+        <div className="shrink-0">
+          {isNativePlatform() ? (
+            <TileLayerSelectorNative context={context as WebMapContext} />
+          ) : (
+            <Select
+              value={(context as WebMapContext).selectedTileLayer}
+              onValueChange={(value) => (context as WebMapContext).setSelectedTileLayer(value)}
+            >
+              <SelectTrigger className="!h-9 !gap-2 !border-0 !bg-background !text-background-foreground hover:!bg-background/80 !shrink-0 !rounded-full !text-xs sm:!text-sm !shadow-sm [&>span]:line-clamp-1 !px-3 !py-2">
+                <Map className="text-accent-foreground h-3 w-3 sm:h-4 sm:w-4 shrink-0" />
+                <SelectValue>{(context as WebMapContext).tileLayerOptions[(context as WebMapContext).selectedTileLayer]?.name}</SelectValue>
+              </SelectTrigger>
+              <SelectContent className="min-w-[240px]">
+                {Object.entries((context as WebMapContext).tileLayerOptions).map(([key, option]) => (
+                  <SelectItem key={key} value={key} className="py-3">
+                    <div className="flex items-center gap-3">
+                      <img
+                        src={MAP_STYLE_PREVIEWS[key]}
+                        alt={`${option.name} preview`}
+                        className="h-16 w-16 rounded-md border border-border object-cover shadow-sm"
+                        loading="lazy"
+                      />
+                      <span className="text-sm font-medium">{option.name}</span>
+                    </div>
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          )}
+        </div>
+      )}
       {onLegendClick && (
         <>
           {isNativePlatform() ? (
