@@ -8,6 +8,8 @@ import { toast } from 'sonner'
 import { Button } from '@/components/ui/button'
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
 import { Input } from '@/components/ui/input'
+import { isNativePlatform } from '@/utils/platform.utils'
+import { getShareOrigin } from '@/utils/share.utils'
 
 interface ShareDialogProps {
   coords: [number, number]
@@ -43,6 +45,10 @@ export function ShareDialog({
   children,
 }: ShareDialogProps) {
   const { isOpen, setIsOpen, currentLocation, setCurrentLocation, isGettingLocation, setIsGettingLocation, reset } = useShareState(false)
+  const shareOrigin = useMemo(() => getShareOrigin(), [])
+  const isNative = useMemo(() => isNativePlatform(), [])
+  const tinyUrlKey = import.meta.env.VITE_TINYURL_API_URL as string | undefined
+  const shouldShorten = useMemo(() => Boolean(tinyUrlKey) && !isNative, [tinyUrlKey, isNative])
 
   // Acquire user location lazily when dialog first opens
   useEffect(() => {
@@ -75,43 +81,45 @@ export function ShareDialog({
 
   // Build share link aligning with navigation parser (?from=lat,lng&to=lat,lng)
   const shareLink = useMemo(() => {
-    const base = `${window.location.origin}/map/`
+    const base = `${shareOrigin}/map/`
     const toParam = `to=${coords[0].toFixed(6)},${coords[1].toFixed(6)}`
     if (currentLocation) {
       const fromParam = `from=${currentLocation[0].toFixed(6)},${currentLocation[1].toFixed(6)}`
       return `${base}?${fromParam}&${toParam}`
     }
     return `${base}?${toParam}`
-  }, [coords, currentLocation])
+  }, [coords, currentLocation, shareOrigin])
 
-  const shortenUrl = useCallback(async (url: string) => {
-    const apiKey = import.meta.env.VITE_TINYURL_API_URL as string | undefined
-    if (!apiKey) return url // Fallback: just return original link if no key configured
+  const shortenUrl = useCallback(
+    async (url: string) => {
+      if (!tinyUrlKey || isNative) return url // Fallback: just return original link if no key configured or native deep link preferred
 
-    try {
-      const response = await axios.post(
-        'https://api.tinyurl.com/create',
-        { url, domain: 'tinyurl.com' },
-        {
-          headers: {
-            Authorization: `Bearer ${apiKey}`,
-            'Content-Type': 'application/json',
-            Accept: 'application/json',
+      try {
+        const response = await axios.post(
+          'https://api.tinyurl.com/create',
+          { url, domain: 'tinyurl.com' },
+          {
+            headers: {
+              Authorization: `Bearer ${tinyUrlKey}`,
+              'Content-Type': 'application/json',
+              Accept: 'application/json',
+            },
           },
-        },
-      )
-      const tiny = response.data?.data?.tiny_url
-      return typeof tiny === 'string' ? tiny : url
-    } catch (err) {
-      console.warn('TinyURL shorten failed, using original URL', err)
-      return url
-    }
-  }, [])
+        )
+        const tiny = response.data?.data?.tiny_url
+        return typeof tiny === 'string' ? tiny : url
+      } catch (err) {
+        console.warn('TinyURL shorten failed, using original URL', err)
+        return url
+      }
+    },
+    [tinyUrlKey, isNative],
+  )
 
   const { data: shortenedLink, isFetching: isShortening } = useQuery({
     queryKey: ['shorten-share', shareLink],
     queryFn: () => shortenUrl(shareLink),
-    enabled: !!shareLink,
+    enabled: shouldShorten && !!shareLink,
     staleTime: 1000 * 60 * 10,
   })
 
