@@ -1,15 +1,16 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
-import { useQuery } from '@tanstack/react-query'
-import axios from 'axios'
+import { Capacitor } from '@capacitor/core'
 import { BiShareAlt } from 'react-icons/bi'
 import QRCode from 'react-qr-code'
-import { toast } from 'sonner'
 
 import { Button } from '@/components/ui/button'
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
 import { Input } from '@/components/ui/input'
-import { isNativePlatform } from '@/utils/platform.utils'
-import { getShareOrigin } from '@/utils/share.utils'
+import { APP_CONFIG } from '@/config/app-config'
+import { useShortenUrl } from '@/hooks/shorten-url/useShortenUrl'
+import { useCopyToClipboard } from '@/hooks/useCopyToClipboard'
+
+const PRODUCTION_DOMAIN = APP_CONFIG.URL
 
 interface ShareDialogProps {
   coords: [number, number]
@@ -45,10 +46,7 @@ export function ShareDialog({
   children,
 }: ShareDialogProps) {
   const { isOpen, setIsOpen, currentLocation, setCurrentLocation, isGettingLocation, setIsGettingLocation, reset } = useShareState(false)
-  const shareOrigin = useMemo(() => getShareOrigin(), [])
-  const isNative = useMemo(() => isNativePlatform(), [])
-  const tinyUrlKey = import.meta.env.VITE_TINYURL_API_URL as string | undefined
-  const shouldShorten = useMemo(() => Boolean(tinyUrlKey) && !isNative, [tinyUrlKey, isNative])
+  const { copy } = useCopyToClipboard()
 
   // Acquire user location lazily when dialog first opens
   useEffect(() => {
@@ -80,58 +78,19 @@ export function ShareDialog({
   }, [isOpen, reset])
 
   // Build share link aligning with navigation parser (?from=lat,lng&to=lat,lng)
+  // Always use production domain for shareable links (especially in Capacitor/mobile app)
   const shareLink = useMemo(() => {
-    const base = `${shareOrigin}/map/`
+    const origin = Capacitor.isNativePlatform() ? PRODUCTION_DOMAIN : window.location.origin
+    const base = `${origin}/map/`
     const toParam = `to=${coords[0].toFixed(6)},${coords[1].toFixed(6)}`
     if (currentLocation) {
       const fromParam = `from=${currentLocation[0].toFixed(6)},${currentLocation[1].toFixed(6)}`
       return `${base}?${fromParam}&${toParam}`
     }
     return `${base}?${toParam}`
-  }, [coords, currentLocation, shareOrigin])
+  }, [coords, currentLocation])
 
-  const shortenUrl = useCallback(
-    async (url: string) => {
-      if (!tinyUrlKey || isNative) return url // Fallback: just return original link if no key configured or native deep link preferred
-
-      try {
-        const response = await axios.post(
-          'https://api.tinyurl.com/create',
-          { url, domain: 'tinyurl.com' },
-          {
-            headers: {
-              Authorization: `Bearer ${tinyUrlKey}`,
-              'Content-Type': 'application/json',
-              Accept: 'application/json',
-            },
-          },
-        )
-        const tiny = response.data?.data?.tiny_url
-        return typeof tiny === 'string' ? tiny : url
-      } catch (err) {
-        console.warn('TinyURL shorten failed, using original URL', err)
-        return url
-      }
-    },
-    [tinyUrlKey, isNative],
-  )
-
-  const { data: shortenedLink, isFetching: isShortening } = useQuery({
-    queryKey: ['shorten-share', shareLink],
-    queryFn: () => shortenUrl(shareLink),
-    enabled: shouldShorten && !!shareLink,
-    staleTime: 1000 * 60 * 10,
-  })
-
-  const copyToClipboard = useCallback(async () => {
-    const link = shortenedLink || shareLink
-    try {
-      await navigator.clipboard.writeText(link)
-      toast.success('Link copied')
-    } catch {
-      toast.error('Copy failed')
-    }
-  }, [shortenedLink, shareLink])
+  const { data: shortenedLink, isFetching: isShortening } = useShortenUrl(shareLink)
 
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
@@ -162,7 +121,7 @@ export function ShareDialog({
                 className="bg-muted flex-1 text-xs"
                 aria-label="Share URL"
               />
-              <Button type="button" onClick={copyToClipboard} disabled={isShortening}>
+              <Button type="button" onClick={() => copy(shortenedLink || shareLink)} disabled={isShortening}>
                 Copy
               </Button>
             </div>

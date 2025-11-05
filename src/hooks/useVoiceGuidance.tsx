@@ -20,7 +20,7 @@ function hasWebSpeechSupport() {
   return typeof window !== 'undefined' && 'speechSynthesis' in window && 'SpeechSynthesisUtterance' in window
 }
 
-async function elevenLabsSynthesize(apiKey: string, voiceId: string, text: string): Promise<Blob> {
+async function elevenLabsSynthesize(apiKey: string, voiceId: string, text: string): Promise<string> {
   const url = `https://api.elevenlabs.io/v1/text-to-speech/${voiceId}`
   const res = await fetch(url, {
     method: 'POST',
@@ -37,7 +37,9 @@ async function elevenLabsSynthesize(apiKey: string, voiceId: string, text: strin
     throw new Error(`ElevenLabs TTS failed: ${res.status} ${txt}`)
   }
   const arrayBuffer = await res.arrayBuffer()
-  return new Blob([arrayBuffer], { type: 'audio/mpeg' })
+  // Convert to base64 data URL for better Android compatibility
+  const base64 = btoa(String.fromCharCode(...new Uint8Array(arrayBuffer)))
+  return `data:audio/mpeg;base64,${base64}`
 }
 
 export default function useVoiceGuidance() {
@@ -115,15 +117,21 @@ export default function useVoiceGuidance() {
       if (apiKey && defaultVoiceId) {
         try {
           stop()
-          const blob = await elevenLabsSynthesize(apiKey, options.voiceId || defaultVoiceId, text)
-          const url = URL.createObjectURL(blob)
-          const audio = new Audio(url)
+          const dataUrl = await elevenLabsSynthesize(apiKey, options.voiceId || defaultVoiceId, text)
+          const audio = new Audio(dataUrl)
           audioRef.current = audio
           globalAudio = audio
-          // ensure autoplay is attempted
-          await audio.play().catch(() => {})
+
+          // Handle errors during playback
+          audio.onerror = (err) => {
+            console.error('Audio playback error:', err)
+            audioRef.current = null
+            globalAudio = null
+            busyRef.current = false
+            globalBusy = false
+          }
+
           audio.onended = () => {
-            URL.revokeObjectURL(url)
             audioRef.current = null
             globalAudio = null
             const meta = { text, ts: Date.now() }
@@ -137,10 +145,20 @@ export default function useVoiceGuidance() {
             globalQueued = null
             if (queued) void speak(queued, options)
           }
+
+          // Attempt autoplay - use promise chain for better error handling on Android
+          audio.play().catch((err) => {
+            console.warn('Audio autoplay prevented or failed:', err)
+            // Reset busy state if play fails
+            busyRef.current = false
+            globalBusy = false
+          })
           return
         } catch (err) {
           // fall through to Web Speech fallback
           console.warn('ElevenLabs TTS failed, falling back to Web Speech:', err)
+          busyRef.current = false
+          globalBusy = false
         }
       }
 
