@@ -5,9 +5,7 @@ const config: CapacitorConfig = {
   appName: 'Finisterre Gardenz',
   webDir: 'dist',
   server: {
-    androidScheme: 'http',
-    cleartext: true,
-    hostname: 'www.finisterre.site',
+    androidScheme: 'https',
   },
   plugins: {
     CapacitorHttp: {

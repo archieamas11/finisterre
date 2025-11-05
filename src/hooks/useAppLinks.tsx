@@ -11,37 +11,39 @@ export function useAppLinks() {
   const navigate = useNavigate()
 
   useEffect(() => {
-    let mounted = true
+    let listenerHandle: { remove: () => void } | null = null
 
-    App.addListener('appUrlOpen', (event: URLOpenListenerEvent) => {
-      if (!mounted) return
+    // Add listener for app URL open events
+    const setupListener = async () => {
+      listenerHandle = await App.addListener('appUrlOpen', (event: URLOpenListenerEvent) => {
+        const url = event.url
+        console.log('App opened with URL:', url)
 
-      const url = event.url
-      console.log('App opened with URL:', url)
+        try {
+          // Parse the incoming URL (e.g., https://www.finisterre.site/map/?from=...&to=...)
+          const urlObj = new URL(url)
+          const pathname = urlObj.pathname
+          const search = urlObj.search
 
-      try {
-        // Parse the incoming URL
-        const urlObj = new URL(url)
-        const pathname = urlObj.pathname
-        const search = urlObj.search
-
-        if (pathname) {
-          const fullPath = search ? `${pathname}${search}` : pathname
-          console.log('Navigating to:', fullPath)
-          navigate(fullPath)
+          if (pathname) {
+            const fullPath = search ? `${pathname}${search}` : pathname
+            console.log('Navigating to:', fullPath)
+            // Navigate to the path with query params (e.g., /map/?from=...&to=...)
+            navigate(fullPath, { replace: true })
+          }
+        } catch (error) {
+          console.error('Failed to parse app URL:', error)
         }
-      } catch (error) {
-        console.error('Failed to parse app URL:', error)
-      }
-    }).then((listener) => {
-      if (!mounted) {
-        listener.remove()
-      }
-    })
+      })
+    }
 
+    setupListener()
+
+    // Cleanup: only remove this specific listener
     return () => {
-      mounted = false
-      App.removeAllListeners()
+      if (listenerHandle) {
+        listenerHandle.remove()
+      }
     }
   }, [navigate])
 }

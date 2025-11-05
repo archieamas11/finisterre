@@ -21,13 +21,24 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
 
-            <!-- Android App Links intent filter -->
+            <!-- Android App Links intent filter for finisterre.site -->
             <intent-filter android:autoVerify="true">
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
-                <data android:scheme="https" android:host="finisterre.site" android:pathPrefix="/map" />
-                <data android:scheme="https" android:host="www.finisterre.site" android:pathPrefix="/map" />
+                <data android:scheme="https" />
+                <data android:host="finisterre.site" />
+                <data android:pathPrefix="/map" />
+            </intent-filter>
+
+            <!-- Android App Links intent filter for www.finisterre.site -->
+            <intent-filter android:autoVerify="true">
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="https" />
+                <data android:host="www.finisterre.site" />
+                <data android:pathPrefix="/map" />
             </intent-filter>
         </activity>
 
