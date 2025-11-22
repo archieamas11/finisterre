@@ -113,7 +113,6 @@ export default function AdminMapLayout() {
 
   const mapVersions = useMemo(
     () => [
-      { id: 'latest', label: 'Latest Imagery', value: '20512' },
       { id: '2025-10-23', label: 'October 23, 2025', value: '20512' },
       { id: '2024-12-12', label: 'December 12, 2024', value: '58924' },
       { id: '2023-12-12', label: 'December 12, 2023', value: '56102' },
@@ -121,7 +120,7 @@ export default function AdminMapLayout() {
     ],
     [],
   )
-  const [selectedMapVersion, setSelectedMapVersion] = useState('16453')
+  const [selectedMapVersion, setSelectedMapVersion] = useState('58924')
 
   const searchLot = useCallback(
     async (lotId: string) => {
@@ -406,9 +405,9 @@ export default function AdminMapLayout() {
           <MapStats />
           <AddMarkerInstructions isVisible={isAddingMarker} />
           <EditMarkerInstructions isVisible={isEditingMarker} step={selectedPlotForEdit ? 'edit' : 'select'} />
-          <div className="absolute bottom-4 left-4 z-999 bg-white/90 backdrop-blur-sm rounded-lg p-2 shadow-lg">
+          <div className="absolute bottom-4 left-4 z-999 bg-card backdrop-blur-sm rounded-lg p-2 shadow-lg border">
             <div className="flex items-center gap-2">
-              <span className="text-sm font-medium">Map Version:</span>
+              <span className="text-sm font-mediumd">Map Version:</span>
               <Select value={selectedMapVersion} onValueChange={setSelectedMapVersion}>
                 <SelectTrigger className="w-[180px]">
                   <SelectValue />
