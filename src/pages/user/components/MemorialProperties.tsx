@@ -1,7 +1,5 @@
 import React from 'react'
 import { MapPin } from 'lucide-react'
-import { BsPersonHeart } from 'react-icons/bs'
-import { HiLibrary } from 'react-icons/hi'
 
 import type { Coordinates, Deceased, Lot } from './types'
 import { Badge } from '@/components/ui/badge'
@@ -21,34 +19,19 @@ export const MemorialProperties: React.FC<Props> = ({ lot, records, onNavigate }
       <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
         <div className="w-full sm:w-auto">
           <h4 className="flex items-center gap-2 text-sm font-semibold tracking-wide text-slate-500 dark:text-slate-400">
-            <span className="inline-flex items-center gap-1">
-              <span className="text-base" aria-hidden="true">
-                <HiLibrary />
-              </span>
-              Property Information
-            </span>
+            <span className="inline-flex items-center gap-1">Property Information</span>
           </h4>
           <div className="mt-2">
             <p className="text-lg font-semibold text-slate-900 dark:text-white">{plotTitle}</p>
             <p className="text-sm text-slate-500 dark:text-slate-400">{graveInfo}</p>
           </div>
         </div>
-        <Button
-          size="sm"
-          variant="default"
-          className="mt-1 w-full shadow sm:w-auto text-primary-foreground"
-          onClick={() => onNavigate(lot.coordinates)}
-        >
-          <MapPin className="mr-1 h-4 w-4" /> Navigate
+        <Button size="sm" variant="default" className="w-full shadow sm:w-auto text-primary-foreground" onClick={() => onNavigate(lot.coordinates)}>
+          <MapPin className="h-4 w-4" /> Navigate
         </Button>
       </div>
       <div className="mt-2 border-t border-slate-200 pt-4 dark:border-slate-700">
-        <h5 className="mb-3 flex items-center gap-2 text-sm font-semibold tracking-wide text-slate-500 dark:text-slate-400">
-          <span className="flex items-center text-base" aria-hidden="true">
-            <BsPersonHeart />
-          </span>
-          Deceased Information
-        </h5>
+        <h5 className="mb-3 flex items-center gap-2 text-sm font-semibold tracking-wide text-slate-500 dark:text-slate-400">Deceased Information</h5>
         {records.length === 0 && (
           <div className="rounded-lg border border-dashed border-slate-300 bg-slate-50 p-4 text-sm text-slate-500 dark:border-slate-600 dark:bg-slate-800/40 dark:text-slate-400">
             No memorial records found for this plot.
