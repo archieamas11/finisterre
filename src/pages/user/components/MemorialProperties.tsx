@@ -33,7 +33,12 @@ export const MemorialProperties: React.FC<Props> = ({ lot, records, onNavigate }
             <p className="text-sm text-slate-500 dark:text-slate-400">{graveInfo}</p>
           </div>
         </div>
-        <Button size="sm" variant="outline" className="mt-1 w-full shadow sm:w-auto" onClick={() => onNavigate(lot.coordinates)}>
+        <Button
+          size="sm"
+          variant="default"
+          className="mt-1 w-full shadow sm:w-auto text-primary-foreground"
+          onClick={() => onNavigate(lot.coordinates)}
+        >
           <MapPin className="mr-1 h-4 w-4" /> Navigate
         </Button>
       </div>
