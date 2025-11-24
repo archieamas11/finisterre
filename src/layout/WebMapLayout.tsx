@@ -19,7 +19,7 @@ import { ValhallaRoute } from '@/components/map/ValhallaRoute'
 import Spinner from '@/components/ui/spinner'
 import { LocateContext, MapDispatchContext, MapStateContext } from '@/contexts/MapContext'
 import { usePlots } from '@/hooks/plots-hooks/plot.hooks'
-import { useIsSmallMobile } from '@/hooks/use-mobile'
+// import { useIsSmallMobile } from '@/hooks/use-mobile'
 import { useLocationTracking } from '@/hooks/useLocationTracking'
 import { useMarkersOffline } from '@/hooks/useMarkersOffline'
 import { convertUserPlotToMarker, useUserOwnedPlots } from '@/hooks/user-hooks/useUserOwnedPlots'
@@ -160,7 +160,7 @@ function mapReducer(state: MapState, action: MapAction): MapState {
 }
 
 export default function MapPage({ onBack, initialDirection }: { onBack?: () => void; initialDirection?: { lat: number; lng: number } | null }) {
-  const isSmallMobile = useIsSmallMobile()
+  // const isSmallMobile = useIsSmallMobile()
   const bounds = useMemo<[[number, number], [number, number]]>(
     () => [
       [10.247883800064669, 123.79691285546676],
@@ -169,8 +169,11 @@ export default function MapPage({ onBack, initialDirection }: { onBack?: () => v
     [],
   )
 
-  const ZOOM = isSmallMobile ? 18 : 19
-  const MAX_ZOOM = isSmallMobile ? 22 : 20
+  // const ZOOM = isSmallMobile ? 18 : 19
+  // const MAX_ZOOM = isSmallMobile ? 22 : 20
+
+  // const ZOOM = 18
+  // const MAX_ZOOM = 22
 
   const { isLoading: rqLoading, data: plotsDataRQ } = usePlots()
   const { data: offlinePlots, isLoading: offlineLoading } = useMarkersOffline()
@@ -608,7 +611,7 @@ export default function MapPage({ onBack, initialDirection }: { onBack?: () => v
               className="z-999"
             />
 
-            <MapContainer className="h-full w-full z-1" zoomControl={false} bounds={bounds} maxZoom={MAX_ZOOM} zoom={ZOOM}>
+            <MapContainer className="h-full w-full z-1" zoomControl={false} bounds={bounds} maxZoom={25} zoom={18}>
               <MapInstanceBinder onMapReady={setMapInstance} />
               {selectedTileLayer === 'maptilerStreets' ? (
                 <MapTilerLayerComponent key={selectedTileLayer} apiKey={import.meta.env.VITE_MAPTILER_API_KEY} style="streets-v2" />
@@ -616,8 +619,10 @@ export default function MapPage({ onBack, initialDirection }: { onBack?: () => v
                 <TileLayer
                   key={selectedTileLayer}
                   url={TILE_LAYER_OPTIONS[selectedTileLayer].url}
-                  maxNativeZoom={ZOOM}
-                  maxZoom={MAX_ZOOM}
+                  // maxNativeZoom={ZOOM}
+                  // maxZoom={MAX_ZOOM}
+                  maxNativeZoom={18}
+                  maxZoom={25}
                   detectRetina={true}
                 />
               )}
