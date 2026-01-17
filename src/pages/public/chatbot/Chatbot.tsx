@@ -237,10 +237,19 @@ export default function Chatbot() {
     setBusy(true)
     setMessages((prev) => [...prev, { sender: 'bot', text: 'Thinking...', isTyping: true }])
     try {
+      // Build conversation history from messages (last 10 messages)
+      const history = messages.slice(-10).map((msg) => ({
+        role: msg.sender === 'user' ? 'user' : 'assistant',
+        content: msg.text,
+      }))
+
       const res = await fetch(`${API}?action=chat`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ prompt: finalPrompt }),
+        body: JSON.stringify({
+          prompt: finalPrompt,
+          history: history,
+        }),
       })
       if (!res.ok) {
         const errorData = await res.json().catch(() => ({ error: 'Unknown error' }))
