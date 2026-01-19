@@ -94,6 +94,7 @@ export default function AdminMapLayout() {
       ] as [[number, number], [number, number]],
     [],
   )
+
   const resetView = useCallback(() => {
     if (mapInstance) {
       const centerLat = (bounds[0][0] + bounds[1][0]) / 2
@@ -101,6 +102,7 @@ export default function AdminMapLayout() {
       mapInstance.flyTo([centerLat, centerLng], 18)
     }
   }, [mapInstance, bounds])
+
   const markerRegistryRef = useRef<Record<string, L.Marker | null>>({})
   const registerMarkerRef = useCallback((plotId: string, marker: L.Marker | null) => {
     markerRegistryRef.current[plotId] = marker
@@ -422,7 +424,7 @@ export default function AdminMapLayout() {
               </Select>
             </div>
           </div>
-          <MapContainer className="h-full w-full rounded-lg" zoomControl={false} bounds={bounds} maxZoom={20} zoom={19}>
+          <MapContainer className="h-full w-full rounded-lg" zoomControl={false} bounds={bounds} maxZoom={25} zoom={18}>
             {activeSearchMarker && (
               <Popup
                 className="leaflet-theme-popup"
@@ -453,8 +455,8 @@ export default function AdminMapLayout() {
             <TileLayer
               key={selectedMapVersion}
               url={`https://wayback.maptiles.arcgis.com/arcgis/rest/services/World_Imagery/WMTS/1.0.0/default028mm/MapServer/tile/${selectedMapVersion}/{z}/{y}/{x}`}
-              maxNativeZoom={19}
-              maxZoom={20}
+              maxNativeZoom={18}
+              maxZoom={25}
               detectRetina={true}
             />
 
