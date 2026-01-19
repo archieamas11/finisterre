@@ -159,35 +159,35 @@ export default function MapStats() {
       <Card className="bg-floating-card w-full overflow-hidden border p-0">
         {hasError && <ErrorMessage message="Error fetching map statistics" />}
         {/* Header */}
-        <div className="border-b border-gray-200 px-6 pt-5 pb-3 dark:border-stone-700">
-          <h2 className="text-lg font-bold text-gray-800 dark:text-gray-100">Plots Markers Statistics</h2>
+        <div className="border-b border-gray-200 p-3 dark:border-stone-700">
+          <h2 className="text-base font-bold text-gray-800 dark:text-gray-100">Plots Markers Statistics</h2>
           <p className="text-xs text-gray-500 dark:text-gray-400">Real-time availability data</p>
         </div>
         {/* Summary Stats */}
-        <div className="bg-background m-2 rounded-md px-5 py-5">
-          <div className="mb-3 flex items-center justify-between">
+        <div className="bg-background m-2 rounded-md p-3">
+          <div className="mb-2 flex items-center justify-between">
             <span className="text-xs font-medium text-gray-500 dark:text-gray-400">Total Spaces</span>
-            <Badge variant="outline" className="px-3 py-1 text-xs font-semibold">
+            <Badge variant="outline" className="px-2 py-0.5 text-xs font-semibold">
               {isLoading ? 'Loading...' : totalSpaces}
             </Badge>
           </div>
 
-          <div className="grid grid-cols-3 gap-4">
-            <div className="rounded-lg bg-green-50 p-3 text-center dark:bg-green-900/20">
-              <div className="text-lg font-bold text-green-600 dark:text-green-400">
-                {isLoading ? <Skeleton className="mb-1 h-6 w-full rounded" /> : totals.available}
+          <div className="grid grid-cols-3 gap-2">
+            <div className="rounded-lg bg-green-50 p-2 text-center dark:bg-green-900/20">
+              <div className="text-base font-bold text-green-600 dark:text-green-400">
+                {isLoading ? <Skeleton className="mb-1 h-5 w-full rounded" /> : totals.available}
               </div>
               <div className="text-xs text-green-700 dark:text-green-300">Available</div>
             </div>
-            <div className="rounded-lg bg-red-50 p-3 text-center dark:bg-red-900/20">
-              <div className="text-lg font-bold text-red-600 dark:text-red-400">
-                {isLoading ? <Skeleton className="mb-1 h-6 w-full rounded" /> : totals.occupied}
+            <div className="rounded-lg bg-red-50 p-2 text-center dark:bg-red-900/20">
+              <div className="text-base font-bold text-red-600 dark:text-red-400">
+                {isLoading ? <Skeleton className="mb-1 h-5 w-full rounded" /> : totals.occupied}
               </div>
               <div className="text-xs text-red-700 dark:text-red-300">Occupied</div>
             </div>
-            <div className="rounded-lg bg-yellow-50 p-3 text-center dark:bg-yellow-900/20">
-              <div className="text-lg font-bold text-yellow-600 dark:text-yellow-400">
-                {isLoading ? <Skeleton className="mb-1 h-6 w-full rounded" /> : totals.reserved}
+            <div className="rounded-lg bg-yellow-50 p-2 text-center dark:bg-yellow-900/20">
+              <div className="text-base font-bold text-yellow-600 dark:text-yellow-400">
+                {isLoading ? <Skeleton className="mb-1 h-5 w-full rounded" /> : totals.reserved}
               </div>
               <div className="text-xs text-yellow-700 dark:text-yellow-300">Reserved</div>
             </div>
@@ -195,9 +195,9 @@ export default function MapStats() {
         </div>
 
         {/* Location Tabs */}
-        <div className="px-2 pb-2">
+        <div className="p-2">
           <Tabs defaultValue="serenity" className="w-full">
-            <TabsList className="dark:bg-background mb-2 grid h-auto w-full grid-cols-3 gap-1 rounded-lg bg-gray-100 p-1">
+            <TabsList className="dark:bg-background grid h-auto w-full grid-cols-3 gap-1 rounded-lg bg-gray-100 p-1">
               {locationData.map((location) => (
                 <TabsTrigger
                   key={location.id}
@@ -213,13 +213,13 @@ export default function MapStats() {
               const locationTotal = location.total ?? location.stats.reduce((sum, stat) => sum + stat.value, 0)
 
               return (
-                <TabsContent key={location.id} value={location.id} className="space-y-5 p-3 pt-1">
+                <TabsContent key={location.id} value={location.id} className="space-y-3 p-2 pt-1">
                   <div>
-                    <h3 className="font-semibold text-gray-800 dark:text-gray-100">{location.name}</h3>
+                    <h3 className="text-sm font-semibold text-gray-800 dark:text-gray-100">{location.name}</h3>
                     <p className="text-xs text-gray-500 dark:text-gray-400">{locationTotal} total spaces</p>
                   </div>
 
-                  <div className="space-y-4">
+                  <div className="space-y-3">
                     {location.stats.map((stat) => {
                       const denominator = locationTotal > 0 ? locationTotal : 1
                       const percentage = Math.round((stat.value / denominator) * 100)
@@ -231,7 +231,7 @@ export default function MapStats() {
                             <span className={`text-sm font-bold ${stat.color}`}>{stat.value}</span>
                           </div>
                           <div className="flex items-center gap-2">
-                            <Progress value={percentage} className="h-2 flex-1" />
+                            <Progress value={percentage} className="h-1.5 flex-1" />
                             <span className="w-8 text-right text-xs text-gray-500 dark:text-gray-400">
                               {Number.isFinite(percentage) ? percentage : 0}%
                             </span>
@@ -241,7 +241,7 @@ export default function MapStats() {
                     })}
                   </div>
 
-                  <div className="pt-2">
+                  <div className="pt-1">
                     <div className="flex items-center justify-between">
                       <span className="text-xs font-medium text-gray-500 dark:text-gray-400">Occupancy Rate</span>
                       <span className="text-xs font-bold text-gray-700 dark:text-gray-300">
