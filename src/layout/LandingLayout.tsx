@@ -2,7 +2,7 @@ import { useEffect } from 'react'
 import { Outlet, useLocation } from 'react-router-dom'
 
 import FloatingChatWidget from '@/components/FloatingChatWidget'
-import ContactUs from '@/pages/public/ContactUs'
+import { ContactSection } from '@/pages/public/contact/ContactSection'
 import FAQs from '@/pages/public/FAQs'
 import FeatureSection from '@/pages/public/features'
 import Footer from '@/pages/public/Footer'
@@ -22,7 +22,7 @@ function LandingHome() {
       <Showcase />
       <Testimonials />
       {/* <PublicNewsAnnouncement /> */}
-      <ContactUs />
+      <ContactSection />
       <FAQs />
     </>
   )
