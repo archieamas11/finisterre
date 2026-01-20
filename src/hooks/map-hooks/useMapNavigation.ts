@@ -1,6 +1,6 @@
 import type { MapAction } from '@/contexts/MapContext'
 import type { UserLocation } from '@/hooks/useLocationTracking'
-import type { NavigationState as ValhallaNavigationState } from '@/hooks/useValhalla'
+import type { NavigationState } from '@/hooks/useValhalla'
 import type { ValhallaRouteResponse } from '@/api/valhalla.api'
 import { useCallback, useEffect, useRef } from 'react'
 import type L from 'leaflet'
@@ -9,6 +9,9 @@ import { parseAsString, useQueryStates } from 'nuqs'
 import { VALHALLA_CONFIG } from '@/constants/map.constants'
 import { useValhalla } from '@/hooks/useValhalla'
 import { isNativePlatform } from '@/utils/platform.utils'
+
+// Re-export NavigationState for consumers
+export type { NavigationState }
 
 /**
  * Query state for navigation URL parameters
@@ -74,7 +77,7 @@ export interface UseMapNavigationReturn {
   /** Original end point */
   originalEnd: [number, number] | null
   /** Navigation state (current maneuver, etc.) */
-  navigation: ValhallaNavigationState
+  navigation: NavigationState
   /** Total distance of route in meters */
   totalDistance: number | null
   /** Total estimated time in seconds */

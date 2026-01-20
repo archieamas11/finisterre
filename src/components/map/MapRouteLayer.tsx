@@ -23,26 +23,13 @@ export interface MapRouteLayerProps {
   userLocation: UserLocation | null
   /** Whether navigation is active */
   isNavigating: boolean
+  /** Whether to show user heading indicator */
+  showHeading?: boolean
 }
 
 /**
  * Component for rendering the navigation route and user location
  * Shows route polyline when navigating, or just user location marker when not
- *
- * @example
- * ```tsx
- * <MapContainer>
- *   <MapRouteLayer
- *     route={route}
- *     routeCoordinates={routeCoordinates}
- *     remainingCoordinates={remainingCoordinates}
- *     originalStart={originalStart}
- *     originalEnd={originalEnd}
- *     userLocation={currentLocation}
- *     isNavigating={isNavigating}
- *   />
- * </MapContainer>
- * ```
  */
 function MapRouteLayerComponent({
   route,
@@ -52,6 +39,7 @@ function MapRouteLayerComponent({
   originalEnd,
   userLocation,
   isNavigating,
+  showHeading = true,
 }: MapRouteLayerProps) {
   const hasActiveRoute = route && routeCoordinates.length > 0
 
@@ -71,7 +59,14 @@ function MapRouteLayerComponent({
   }
 
   // Show user location marker when not navigating
-  return <UserLocationMarker userLocation={userLocation} />
+  return (
+    <UserLocationMarker
+      userLocation={userLocation}
+      showHeading={showHeading}
+      animate={true}
+      animationDuration={1000}
+    />
+  )
 }
 
 export const MapRouteLayer = memo(MapRouteLayerComponent)
