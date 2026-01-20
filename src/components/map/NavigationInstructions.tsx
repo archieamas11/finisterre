@@ -255,7 +255,7 @@ export default function NavigationInstructions({
           transition={{ duration: 0.2 }}
           className={cn(
             'fixed bottom-0 z-[1000] mx-auto w-full',
-            'sm:inset-x-auto sm:top-4 sm:bottom-auto sm:left-4 sm:w-[420px]',
+            'sm:inset-x-auto sm:top-4 sm:bottom-auto sm:left-4 sm:w-[360px]',
           )}
           role="region"
           aria-label="Turn-by-turn navigation"
@@ -268,8 +268,8 @@ export default function NavigationInstructions({
           >
             <CardContent
               className={cn(
-                'px-4 pb-4 pt-3 sm:px-4 sm:pb-4 sm:pt-4',
-                'pb-[calc(env(safe-area-inset-bottom)+1rem)] sm:pb-4',
+                'px-3 pb-3 pt-2.5 sm:px-3 sm:pb-3 sm:pt-3',
+                'pb-[calc(env(safe-area-inset-bottom)+1rem)] sm:pb-3',
               )}
             >
               <button
@@ -286,12 +286,12 @@ export default function NavigationInstructions({
               <div className="flex items-start justify-between gap-3">
                 <div className="min-w-0">
                   <div className="flex flex-wrap items-center gap-2">
-                    <span className="text-2xl font-semibold tracking-tight sm:text-3xl">Navigation</span>
+                    <span className="text-xl font-semibold tracking-tight sm:text-2xl">Navigation</span>
                   </div>
 
                   {/* Summary stats */}
                   {hasSummary && !isRerouting && (
-                    <div className="mt-1 flex items-center gap-2 text-base text-muted-foreground">
+                    <div className="mt-1 flex items-center gap-2 text-sm text-muted-foreground">
                       {typeof distanceToDestination === 'number' && <span>{formatDistanceCompact(distanceToDestination)}</span>}
                       {typeof distanceToDestination === 'number' && typeof estimatedTimeRemaining === 'number' && <span>•</span>}
                       {typeof estimatedTimeRemaining === 'number' && <span>{formatTime(estimatedTimeRemaining)}</span>}
@@ -336,7 +336,7 @@ export default function NavigationInstructions({
                 <motion.div
                   initial={{ opacity: 0, height: 0 }}
                   animate={{ opacity: 1, height: 'auto' }}
-                  className="mt-3 flex items-center gap-2 rounded-xl bg-orange-100 px-3 py-2 text-sm text-orange-800 dark:bg-orange-900/40 dark:text-orange-300"
+                  className="mt-2 flex items-center gap-2 rounded-xl bg-orange-100 px-2.5 py-1.5 text-xs text-orange-800 dark:bg-orange-900/40 dark:text-orange-300"
                 >
                   <AlertTriangle className="h-4 w-4 animate-pulse" />
                   Recalculating route...
@@ -348,25 +348,25 @@ export default function NavigationInstructions({
                 <>
                   <div
                     className={cn(
-                      'mt-4 rounded-lg p-4 sm:p-5',
+                      'mt-3 rounded-lg p-3 sm:p-4',
                       'bg-gradient-to-b from-accent to-accent/60 text-white',
                     )}
                   >
-                    <div className="flex items-start gap-4">
-                      <div className="flex h-25 w-25 shrink-0 items-center justify-center rounded-full shadow-lg bg-blue-700 self-center my-auto">
+                    <div className="flex items-start gap-3">
+                      <div className="flex h-20 w-20 shrink-0 items-center justify-center rounded-full shadow-lg bg-blue-700 self-center my-auto">
                         <span className="text-white flex items-center justify-center h-full w-full">
-                          {getManeuverIcon(currentManeuver.type, '3xl')}
+                          {getManeuverIcon(currentManeuver.type, '2xl')}
                         </span>
                       </div>
 
                       <div className="min-w-0 flex-1">
-                        <p className="text-2xl font-semibold leading-tight sm:text-[2rem]">
+                        <p className="text-xl font-semibold leading-tight sm:text-2xl">
                           {currentManeuver.instruction}
                         </p>
 
                         <div className="mt-2 flex items-center gap-2 text-white/80">
                           {typeof distanceToManeuver === 'number' && !isDestinationManeuver(currentManeuver.type) && (
-                            <span className="text-lg font-medium">{formatDistanceCompact(distanceToManeuver)}</span>
+                            <span className="text-base font-medium">{formatDistanceCompact(distanceToManeuver)}</span>
                           )}
                           {typeof distanceToManeuver === 'number' && !isDestinationManeuver(currentManeuver.type) && (
                             <span aria-hidden="true">•</span>
@@ -389,17 +389,17 @@ export default function NavigationInstructions({
                       initial={{ opacity: 0, y: -5 }}
                       animate={{ opacity: 1, y: 0 }}
                       className={cn(
-                        'mt-5 z-[999] flex itemscenter justify-between gap-3 rounded-lg p-4',
+                        'mt-3 z-[999] flex itemscenter justify-between gap-2 rounded-lg p-3',
                         'bg-foreground/10',
                       )}
                     >
-                      <div className="flex min-w-0 items-center gap-3">
-                        <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-foreground/20">
+                      <div className="flex min-w-0 items-center gap-2.5">
+                        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-foreground/20">
                           <span className="text-foreground">{getManeuverIcon(nextManeuver.type)}</span>
                         </div>
                         <div className="min-w-0">
-                          <span className="text-sm uppercase tracking-wide font-medium text-muted-foreground">Then</span>
-                          <span className="block truncate text-lg font-semibold text-foreground">{nextManeuver.instruction}</span>
+                          <span className="text-xs uppercase tracking-wide font-medium text-muted-foreground">Then</span>
+                          <span className="block truncate text-base font-semibold text-foreground">{nextManeuver.instruction}</span>
                         </div>
                       </div>
                       <span className="shrink-0 self-end text-sm text-muted-foreground">{formatDistance(nextManeuver.length)}</span>
@@ -418,10 +418,10 @@ export default function NavigationInstructions({
                     showDetails && 'block',
                   )}
                 >
-                  <Separator className="my-4" />
-                  <h4 className="mb-3 text-xl font-semibold tracking-tight">All Directions</h4>
+                  <Separator className="my-3" />
+                  <h4 className="mb-2 text-lg font-semibold tracking-tight">All Directions</h4>
 
-                  <ScrollArea className={cn('h-52 sm:h-64', showDetails && 'h-[50vh]')}>
+                  <ScrollArea className={cn('h-48 sm:h-56', showDetails && 'h-[45vh]')}>
                     <div className="space-y-2 pr-2 pb-2">
                       {allManeuvers.map((maneuver, index) => {
                         const isCurrent = index === maneuverIndex
@@ -431,7 +431,7 @@ export default function NavigationInstructions({
                           <div
                             key={index}
                             className={cn(
-                              'flex w-full items-start gap-3 rounded-lg p-3 transition-colors',
+                              'flex w-full items-start gap-2.5 rounded-lg p-2.5 transition-colors',
                               isCurrent && 'bg-accent/60 text-white',
                               !isCurrent && isPast && 'opacity-60',
                               !isCurrent && !isPast && 'hover:bg-foreground/5',
@@ -439,17 +439,17 @@ export default function NavigationInstructions({
                           >
                             <div
                               className={cn(
-                                'flex h-10 w-10 shrink-0 items-center justify-center rounded-full',
-                                isCurrent ? 'bg-accent' : 'bg-orange-400',
+                                'flex h-9 w-9 shrink-0 items-center justify-center rounded-full',
+                                isCurrent ? 'bg-accent' : getManeuverSurface(maneuver.type).iconWrapClass,
                               )}
                             >
-                              <span className={cn(isCurrent ? 'text-blue-600' : 'text-foreground')}>{getManeuverIcon(maneuver.type)}</span>
+                              <span className={cn(isCurrent ? 'text-blue-600' : 'text-orange-400')}>{getManeuverIcon(maneuver.type)}</span>
                             </div>
 
                             <div className="min-w-0 flex-1">
                               <p
                                 className={cn(
-                                  'text-lg',
+                                  'text-base',
                                   isCurrent ? 'font-base text-white' : isPast ? 'line-through' : '',
                                 )}
                               >

@@ -1,6 +1,6 @@
 import { memo, useCallback, useState } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
-import { ChevronUp, Maximize2, Minimize2, X } from 'lucide-react'
+import { ChevronUp, Maximize2, X } from 'lucide-react'
 import { BiSolidChurch } from 'react-icons/bi'
 import { FaToilet } from 'react-icons/fa'
 import { GiOpenGate } from 'react-icons/gi'
@@ -25,12 +25,6 @@ const initialOpenSections = {
   facilities: true,
 } as const
 
-interface LegendSection {
-  title: string
-  items: LegendItem[]
-  key: keyof typeof initialOpenSections
-}
-
 // Animation variants
 const cardVariants = {
   hidden: {
@@ -50,41 +44,10 @@ const cardVariants = {
   },
 }
 
-const sectionVariants = {
-  closed: {
-    height: 0,
-    opacity: 0,
-  },
-  open: {
-    height: 'auto',
-    opacity: 1,
-  },
-}
-
-const itemVariants = {
-  hidden: {
-    opacity: 0,
-    x: -10,
-  },
-  visible: {
-    opacity: 1,
-    x: 0,
-  },
-}
-
-const buttonVariants = {
-  hover: {
-    scale: 1.05,
-  },
-  tap: {
-    scale: 0.95,
-  },
-}
-
 const categories: LegendItem[] = [
-  { key: 'serenity', label: 'Serenity Lawn', color: '#FFFF', shape: 'circle' },
-  { key: 'columbarium', label: 'Columbarium', color: '#FFFF', shape: 'diamond' },
-  { key: 'chambers', label: 'Memorial Chambers', color: '#FFFF', shape: 'square' },
+  { key: 'serenity', label: 'Serenity Lawn', color: '#FFB800', shape: 'circle' },
+  { key: 'columbarium', label: 'Columbarium', color: '#2563EB', shape: 'diamond' },
+  { key: 'chambers', label: 'Memorial Chambers', color: '#A0816C', shape: 'square' },
 ]
 
 const statuses: LegendItem[] = [
@@ -95,21 +58,14 @@ const statuses: LegendItem[] = [
 ]
 
 const facilities: LegendItem[] = [
-  { key: 'comfort-room', label: 'Comfort Room', color: '#059669', icon: <FaToilet className="h-3.5 w-3.5" /> },
-  { key: 'parking', label: 'Parking', color: '#2563EB', icon: <MdLocalParking className="h-3.5 w-3.5" /> },
-  { key: 'main-entrance', label: 'Main Entrance', color: '#000000', icon: <GiOpenGate className="h-3.5 w-3.5" /> },
-  { key: 'chapel', label: 'Chapel', color: '#FF9800', icon: <BiSolidChurch className="h-3.5 w-3.5" /> },
-]
-
-const legendSections: LegendSection[] = [
-  { title: 'Categories', items: categories, key: 'categories' },
-  { title: 'Status', items: statuses, key: 'status' },
-  { title: 'Facilities', items: facilities, key: 'facilities' },
+  { key: 'restrooms', label: 'Restrooms', color: '#10B981', icon: <FaToilet className="h-3.5 w-3.5" /> },
+  { key: 'parking', label: 'Parking', color: '#2563EB', icon: <MdLocalParking className="h-4 w-4" /> },
+  { key: 'main-entrance', label: 'Main Entrance', color: '#374151', icon: <GiOpenGate className="h-3.5 w-3.5" /> },
+  { key: 'chapel', label: 'Chapel', color: '#F97316', icon: <BiSolidChurch className="h-3.5 w-3.5" /> },
 ]
 
 function WebmapLegendComponent() {
   const [openSections, setOpenSections] = useState(initialOpenSections)
-  const [isMinimized, setIsMinimized] = useState(false)
   const [isCollapsed, setIsCollapsed] = useState(false)
 
   const toggleSection = useCallback((section: keyof typeof initialOpenSections) => {
@@ -117,10 +73,6 @@ function WebmapLegendComponent() {
       ...prev,
       [section]: !prev[section],
     }))
-  }, [])
-
-  const toggleMinimize = useCallback(() => {
-    setIsMinimized((prev) => !prev)
   }, [])
 
   const toggleCollapse = useCallback(() => {
@@ -135,18 +87,16 @@ function WebmapLegendComponent() {
           animate={{ opacity: 1, scale: 1 }}
           exit={{ opacity: 0, scale: 0.8 }}
           transition={{ duration: 0.2 }}
+          className="absolute top-4 right-4 z-100"
         >
           <Button
             variant="secondary"
             size="sm"
-            className="absolute top-4 right-4 z-100 h-8 w-8 rounded-full"
+            className="h-10 w-10 rounded-full bg-black/60 text-white shadow-lg backdrop-blur-md hover:bg-black/80"
             onClick={toggleCollapse}
             aria-label="Show map legend"
-            asChild
           >
-            <motion.button whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }} transition={{ duration: 0.1 }}>
-              <ChevronUp className="h-4 w-4" />
-            </motion.button>
+            <Maximize2 className="h-5 w-5" />
           </Button>
         </motion.div>
       </div>
@@ -162,134 +112,133 @@ function WebmapLegendComponent() {
           animate="visible"
           exit="exit"
           transition={{ duration: 0.3, ease: 'easeOut' }}
-          className="border-border bg-floating-card pointer-events-auto absolute top-4 right-4 z-10 w-64 rounded-xl border shadow-2xl backdrop-blur-md"
+          className="pointer-events-auto absolute top-4 right-4 z-10 w-56 sm:w-64 lg:w-72 max-h-[calc(100vh-2rem)] overflow-hidden rounded-xl sm:rounded-[2rem] border-0 bg-black/60 shadow-2xl backdrop-blur-2xl flex flex-col"
         >
-          <Card className="border-0 bg-transparent shadow-none">
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 px-4 py-3">
-              <CardTitle className="text-foreground text-sm font-semibold">Map Legend</CardTitle>
-              <div className="flex items-center gap-1">
-                <motion.div variants={buttonVariants} whileHover="hover" whileTap="tap">
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    className="hover:bg-muted/50 h-6 w-6 p-0"
-                    onClick={toggleMinimize}
-                    aria-label={isMinimized ? 'Expand legend' : 'Minimize legend'}
-                  >
-                    {isMinimized ? <Maximize2 className="h-3 w-3" /> : <Minimize2 className="h-3 w-3" />}
-                  </Button>
-                </motion.div>
-                <motion.div variants={buttonVariants} whileHover="hover" whileTap="tap">
-                  <Button variant="ghost" size="sm" className="hover:bg-muted/50 h-6 w-6 p-0" onClick={toggleCollapse} aria-label="Hide legend">
-                    <X className="h-3 w-3" />
-                  </Button>
-                </motion.div>
+          <Card className="border-0 bg-transparent shadow-none flex flex-col h-full">
+            <CardHeader className="relative flex flex-row items-start justify-between space-y-0 px-4 pt-4 pb-2 sm:px-5 sm:pt-5 sm:pb-3 shrink-0">
+              <div className="space-y-0.5">
+                <CardTitle className="text-sm sm:text-base lg:text-lg font-bold leading-tight text-white">
+                  Memorial Park<br />Map Legend
+                </CardTitle>
+              </div>
+              <div className="flex flex-col items-end gap-2">
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="h-6 w-6 sm:h-7 sm:w-7 rounded-full bg-white/10 p-0 text-white/70 hover:bg-white/20 hover:text-white"
+                  onClick={toggleCollapse}
+                  aria-label="Hide legend"
+                >
+                  <X className="h-3 w-3 sm:h-3.5 sm:w-3.5" />
+                </Button>
               </div>
             </CardHeader>
 
-            <AnimatePresence>
-              {!isMinimized && (
-                <motion.div
-                  initial={{ opacity: 0, height: 0 }}
-                  animate={{ opacity: 1, height: 'auto' }}
-                  exit={{ opacity: 0, height: 0 }}
-                  transition={{ duration: 0.3, ease: 'easeInOut' }}
-                >
-                  <CardContent className="p-0">
-                    {legendSections.map((section, index) => (
+            <CardContent className="px-4 pb-4 pt-0 sm:px-5 sm:pb-5 overflow-y-auto custom-scrollbar">
+              <div className="space-y-3 sm:space-y-4">
+                {/* Categories Section */}
+                <div className="space-y-2 sm:space-y-3">
+                  <button
+                    onClick={() => toggleSection('categories')}
+                    className="flex w-full items-center justify-between text-white/90"
+                  >
+                    <span className="text-xs sm:text-sm font-bold">Categories</span>
+                    <ChevronUp className={cn("h-3.5 w-3.5 sm:h-4 sm:w-4 text-white/40 transition-transform duration-200", !openSections.categories && "rotate-180")} />
+                  </button>
+                  <AnimatePresence>
+                    {openSections.categories && (
                       <motion.div
-                        key={section.key}
-                        className={cn('border-border', { 'border-b': index < legendSections.length - 1 })}
-                        initial={{ opacity: 0, y: 10 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: index * 0.1, duration: 0.3, ease: 'easeOut' }}
+                        initial={{ height: 0, opacity: 0 }}
+                        animate={{ height: 'auto', opacity: 1 }}
+                        exit={{ height: 0, opacity: 0 }}
+                        className="space-y-2 sm:space-y-2.5 overflow-hidden"
                       >
-                        <motion.div variants={buttonVariants} whileHover="hover" whileTap="tap">
-                          <Button
-                            variant="ghost"
-                            className="hover:bg-muted/50 flex h-auto w-full items-center justify-between px-4 py-3 text-xs font-medium transition-colors duration-150"
-                            onClick={() => toggleSection(section.key)}
-                            aria-expanded={openSections[section.key]}
-                            aria-controls={`${section.key}-content`}
-                          >
-                            <span className="text-foreground">{section.title}</span>
-                            <motion.div animate={{ rotate: openSections[section.key] ? 0 : 180 }} transition={{ duration: 0.2, ease: 'easeInOut' }}>
-                              <ChevronUp className="text-muted-foreground h-4 w-4" />
-                            </motion.div>
-                          </Button>
-                        </motion.div>
-
-                        <AnimatePresence>
-                          {openSections[section.key] && (
-                            <motion.div
-                              variants={sectionVariants}
-                              initial="closed"
-                              animate="open"
-                              exit="closed"
-                              transition={{ duration: 0.3, ease: 'easeInOut' }}
-                              className="overflow-hidden"
-                            >
-                              <div className="space-y-2 px-4 pb-4">
-                                {section.items.map((item, itemIndex) => (
-                                  <motion.div
-                                    key={item.key}
-                                    className="-m-1 flex items-center rounded-md p-1"
-                                    title={item.label}
-                                    variants={itemVariants}
-                                    initial="hidden"
-                                    animate="visible"
-                                    transition={{ delay: itemIndex * 0.05, duration: 0.2, ease: 'easeOut' }}
-                                  >
-                                    {item.icon ? (
-                                      <motion.div
-                                        className="mr-3 flex h-6 w-6 items-center justify-center rounded-md text-white shadow-sm"
-                                        style={{ background: item.color }}
-                                        whileHover={{ scale: 1.1 }}
-                                        transition={{ duration: 0.1 }}
-                                      >
-                                        {item.icon}
-                                      </motion.div>
-                                    ) : section.key === 'categories' && item.shape ? (
-                                      <motion.div
-                                        className="mr-3 flex h-6 w-6 items-center justify-center"
-                                        whileHover={{ scale: 1.1 }}
-                                        transition={{ duration: 0.1 }}
-                                      >
-                                        {item.shape === 'circle' && <div className="bg-primary h-3 w-3 rounded-full shadow-sm" />}
-                                        {item.shape === 'diamond' && <div className="bg-primary h-3 w-3 rotate-45 shadow-sm" />}
-                                        {item.shape === 'square' && <div className="bg-primary h-3 w-3 shadow-sm" />}
-                                      </motion.div>
-                                    ) : (
-                                      <motion.div
-                                        className={cn('mr-3 h-3 rounded-md shadow-sm', {
-                                          'w-6': section.key === 'status',
-                                          'w-3': section.key !== 'status',
-                                        })}
-                                        style={{ background: item.color }}
-                                        whileHover={{ scale: 1.1 }}
-                                        transition={{ duration: 0.1 }}
-                                      />
-                                    )}
-                                    <span className="text-muted-foreground text-xs font-medium">{item.label}</span>
-                                  </motion.div>
-                                ))}
-                              </div>
-                            </motion.div>
-                          )}
-                        </AnimatePresence>
+                        {categories.map((item) => (
+                          <div key={item.key} className="flex items-center gap-2 sm:gap-3">
+                            <div className="flex h-6 w-6 sm:h-7 sm:w-7 items-center justify-center">
+                              {item.shape === 'circle' && (
+                                <div className="h-4 w-4 sm:h-5 sm:w-5 rounded-full shadow-lg" style={{ backgroundColor: item.color }} />
+                              )}
+                              {item.shape === 'diamond' && (
+                                <div className="h-3.5 w-3.5 sm:h-4 sm:w-4 rotate-45 shadow-lg" style={{ backgroundColor: item.color }} />
+                              )}
+                              {item.shape === 'square' && (
+                                <div className="h-4 w-4 sm:h-5 sm:w-5 rounded-md shadow-lg" style={{ backgroundColor: item.color }} />
+                              )}
+                            </div>
+                            <span className="text-[11px] sm:text-xs font-semibold text-white/80">{item.label}</span>
+                          </div>
+                        ))}
                       </motion.div>
-                    ))}
+                    )}
+                  </AnimatePresence>
+                </div>
 
-                    {/* Imagery Date Information */}
-                    <div className="border-border border-t pt-5">
-                      <div className="text-muted-foreground text-xs text-center">
-                        <p>Map Imagery dated December 12, 2024</p>
+                <div className="h-[1px] w-full bg-white/10" />
+
+                {/* Status Section */}
+                <div className="space-y-2 sm:space-y-3">
+                  <button
+                    onClick={() => toggleSection('status')}
+                    className="flex w-full items-center justify-between text-white/90"
+                  >
+                    <span className="text-xs sm:text-sm font-bold">Status</span>
+                    <ChevronUp className={cn("h-3.5 w-3.5 sm:h-4 sm:w-4 text-white/40 transition-transform duration-200", !openSections.status && "rotate-180")} />
+                  </button>
+                  <AnimatePresence>
+                    {openSections.status && (
+                      <motion.div
+                        initial={{ height: 0, opacity: 0 }}
+                        animate={{ height: 'auto', opacity: 1 }}
+                        exit={{ height: 0, opacity: 0 }}
+                        className="grid grid-cols-2 gap-1.5 overflow-hidden"
+                      >
+                        {statuses.map((item) => (
+                          <div
+                            key={item.key}
+                            className="flex items-center justify-center rounded-full py-1 px-1.5 sm:py-1.5 sm:px-2 shadow-lg transition-transform hover:scale-105"
+                            style={{ backgroundColor: item.color }}
+                          >
+                            <span className="text-[9px] sm:text-[10px] font-bold text-white whitespace-nowrap">{item.label}</span>
+                          </div>
+                        ))}
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </div>
+
+                <div className="h-[1px] w-full bg-white/10" />
+
+                {/* Facilities Section */}
+                <div className="space-y-2 sm:space-y-3">
+                  <div className="flex w-full items-center justify-between text-white/90">
+                    <span className="text-xs sm:text-sm font-bold">Facilities</span>
+                  </div>
+                  <div className="grid grid-cols-2 gap-y-2 sm:gap-y-3 gap-x-2">
+                    {facilities.map((item) => (
+                      <div key={item.key} className="flex items-center gap-2 sm:gap-2.5">
+                        <div
+                          className="flex h-7 w-7 sm:h-8 sm:w-8 shrink-0 items-center justify-center rounded-lg shadow-lg"
+                          style={{ backgroundColor: item.color }}
+                        >
+                          <div className="text-white scale-[0.8] sm:scale-[0.9]">
+                            {item.icon}
+                          </div>
+                        </div>
+                        <span className="text-[10px] sm:text-[11px] font-bold leading-tight text-white/80">{item.label}</span>
                       </div>
-                    </div>
-                  </CardContent>
-                </motion.div>
-              )}
-            </AnimatePresence>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Imagery Date */}
+                <div className="pt-1 text-center">
+                  <p className="text-[9px] font-medium text-white/30">
+                    Map Imagery dated December 12, 2024
+                  </p>
+                </div>
+              </div>
+            </CardContent>
           </Card>
         </motion.div>
       </AnimatePresence>
