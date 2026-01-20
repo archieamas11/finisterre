@@ -115,7 +115,7 @@ export default function NavigationInstructions({
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: 20 }}
           transition={{ duration: 0.2 }}
-          className={cn('fixed bottom-0 z-[1000] mx-auto w-full', 'sm:inset-x-auto sm:top-8 sm:bottom-auto sm:left-8 sm:w-96')}
+          className="fixed bottom-0 z-[1000] mx-auto w-full sm:inset-x-auto sm:top-4 sm:bottom-auto sm:left-4 sm:w-96"
           role="region"
           aria-label="Turn-by-turn navigation"
         >
