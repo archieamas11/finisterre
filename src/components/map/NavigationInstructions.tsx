@@ -15,6 +15,8 @@ import {
   RotateCcw,
   Circle,
   Target,
+  ChevronUp,
+  ChevronDown,
 } from 'lucide-react'
 
 import { FaWalking } from "react-icons/fa";
@@ -24,11 +26,11 @@ import { type ValhallaManeuver, TURN_TYPES, isDestinationManeuver, isTurnManeuve
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { ScrollArea } from '@/components/ui/scroll-area'
-import { Separator } from '@/components/ui/separator'
 import { type NavigationState } from '@/hooks/useValhalla'
 import useVoiceGuidance from '@/hooks/useVoiceGuidance'
 import { formatDistance, formatTime } from '@/lib/format'
 import { cn } from '@/lib/utils'
+import { Separator } from '../ui/separator';
 
 interface NavigationInstructionsProps {
   isOpen: boolean
@@ -254,184 +256,182 @@ export default function NavigationInstructions({
           exit={{ opacity: 0, y: 20 }}
           transition={{ duration: 0.2 }}
           className={cn(
-            'fixed bottom-0 z-[1000] mx-auto w-full',
-            'sm:inset-x-auto sm:top-4 sm:bottom-auto sm:left-4 sm:w-[360px]',
+            'fixed bottom-4 z-[1000] mx-auto w-full max-w-3xl',
+            'sm:left-1/2 sm:-translate-x-1/2 sm:bottom-0',
           )}
           role="region"
           aria-label="Turn-by-turn navigation"
         >
-          <Card
-            className={cn(
-              'rounded-t-3xl shadow-lg sm:rounded-2xl',
-              'bg-background/95 supports-[backdrop-filter]:bg-background/80 backdrop-blur-lg',
-            )}
-          >
-            <CardContent
-              className={cn(
-                'px-3 pb-3 pt-2.5 sm:px-3 sm:pb-3 sm:pt-3',
-                'pb-[calc(env(safe-area-inset-bottom)+1rem)] sm:pb-3',
-              )}
-            >
-              <button
-                type="button"
-                onClick={() => setShowDetails((v) => !v)}
-                className="sm:hidden w-full"
-                aria-expanded={showDetails}
-                aria-controls="nav-details"
-              >
-                <div className="mx-auto mb-3 h-1.5 w-12 rounded-full bg-foreground/15" />
-                <span className="sr-only">{showDetails ? 'Collapse navigation details' : 'Expand navigation details'}</span>
-              </button>
-
-              <div className="flex items-start justify-between gap-3">
-                <div className="min-w-0">
-                  <div className="flex flex-wrap items-center gap-2">
-                    <span className="text-xl font-semibold tracking-tight sm:text-2xl">Navigation</span>
+          <div className='rounded-t-3xl shadow-lg bg-background/95 supports-[backdrop-filter]:bg-background/80 backdrop-blur-lg p-4'          >
+            {/* Header - spans full width */}
+            <div className="flex items-center justify-between gap-2">
+              <div className="min-w-0 flex items-center gap-2">
+                <span className="text-base font-semibold tracking-tight sm:text-lg">Navigation</span>
+                {/* Summary stats */}
+                {hasSummary && !isRerouting && (
+                  <div className="flex items-center gap-1 text-xs text-muted-foreground">
+                    {typeof distanceToDestination === 'number' && <span>{formatDistanceCompact(distanceToDestination)}</span>}
+                    {typeof distanceToDestination === 'number' && typeof estimatedTimeRemaining === 'number' && <span>•</span>}
+                    {typeof estimatedTimeRemaining === 'number' && <span>{formatTime(estimatedTimeRemaining)}</span>}
                   </div>
-
-                  {/* Summary stats */}
-                  {hasSummary && !isRerouting && (
-                    <div className="mt-1 flex items-center gap-2 text-sm text-muted-foreground">
-                      {typeof distanceToDestination === 'number' && <span>{formatDistanceCompact(distanceToDestination)}</span>}
-                      {typeof distanceToDestination === 'number' && typeof estimatedTimeRemaining === 'number' && <span>•</span>}
-                      {typeof estimatedTimeRemaining === 'number' && <span>{formatTime(estimatedTimeRemaining)}</span>}
-                    </div>
-                  )}
-                </div>
-
-                <div className="flex items-center gap-2">
-                  {/* Voice guidance toggle */}
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    size="icon"
-                    onClick={toggle}
-                    title={canUseTts ? (isEnabled ? 'Disable voice' : 'Enable voice') : 'TTS unavailable'}
-                    aria-pressed={isEnabled}
-                    disabled={!canUseTts}
-                    className={cn(
-                      'rounded-full',
-                      'bg-foreground/10 text-foreground/70 hover:bg-foreground/15',
-                      isEnabled ? 'bg-green-100 text-green-800' : '',
-                    )}
-                  >
-                    {isEnabled ? <Volume2 className="h-4 w-4" /> : <VolumeOff className="h-4 w-4" />}
-                  </Button>
-
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    size="icon"
-                    onClick={onClose}
-                    aria-label="Close"
-                    className="rounded-full bg-foreground/10 text-foreground/70 hover:bg-foreground/15"
-                  >
-                    <X className="h-4 w-4" />
-                  </Button>
-                </div>
+                )}
               </div>
 
-              {/* Rerouting indicator */}
-              {isRerouting && (
-                <motion.div
-                  initial={{ opacity: 0, height: 0 }}
-                  animate={{ opacity: 1, height: 'auto' }}
-                  className="mt-2 flex items-center gap-2 rounded-xl bg-orange-100 px-2.5 py-1.5 text-xs text-orange-800 dark:bg-orange-900/40 dark:text-orange-300"
+              <div className="flex items-center gap-1">
+                {/* Voice guidance toggle */}
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="icon"
+                  onClick={toggle}
+                  title={canUseTts ? (isEnabled ? 'Disable voice' : 'Enable voice') : 'TTS unavailable'}
+                  aria-pressed={isEnabled}
+                  disabled={!canUseTts}
+                  className={cn(
+                    'rounded-full h-7 w-7',
+                    'bg-foreground/10 text-foreground/70 hover:bg-foreground/15',
+                    isEnabled ? 'bg-green-100 text-green-800' : '',
+                  )}
                 >
-                  <AlertTriangle className="h-4 w-4 animate-pulse" />
-                  Recalculating route...
-                </motion.div>
-              )}
+                  {isEnabled ? <Volume2 className="h-3 w-3" /> : <VolumeOff className="h-3 w-3" />}
+                </Button>
 
-              {/* Current maneuver card */}
-              {currentManeuver && (
-                <>
-                  <div
-                    className={cn(
-                      'mt-3 rounded-lg p-3 sm:p-4',
-                      'bg-gradient-to-b from-accent to-accent/60 text-white',
-                    )}
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="icon"
+                  onClick={onClose}
+                  aria-label="Close"
+                  className="rounded-full h-7 w-7 bg-foreground/10 text-foreground/70 hover:bg-foreground/15"
+                >
+                  <X className="h-3 w-3" />
+                </Button>
+
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="icon"
+                  onClick={() => setShowDetails((v) => !v)}
+                  aria-expanded={showDetails}
+                  aria-label={showDetails ? 'Collapse directions' : 'Expand directions'}
+                  className="rounded-full h-7 w-7 bg-foreground/10 text-foreground/70 hover:bg-foreground/15"
+                >
+                  {showDetails ? (
+                    <ChevronDown className="h-3 w-3" />
+                  ) : (
+                    <ChevronUp className="h-3 w-3" />
+                  )}
+                </Button>
+              </div>
+            </div>
+
+            <Separator className='bg-secondary/50 my-2' />
+
+            {/* Two-column layout */}
+            <div className="mt-3 grid grid-cols-1 lg:grid-cols-2 gap-3">
+              {/* Left Column: Current maneuver, rerouting, next maneuver */}
+              <div className="flex flex-col gap-2">
+                {/* Rerouting indicator */}
+                {isRerouting && (
+                  <motion.div
+                    initial={{ opacity: 0, height: 0 }}
+                    animate={{ opacity: 1, height: 'auto' }}
+                    className="flex items-center gap-1.5 rounded-xl bg-orange-100 px-2 py-1 text-xs text-orange-800 dark:bg-orange-900/40 dark:text-orange-300"
                   >
-                    <div className="flex items-start gap-3">
-                      <div className="flex h-20 w-20 shrink-0 items-center justify-center rounded-full shadow-lg bg-blue-700 self-center my-auto">
-                        <span className="text-white flex items-center justify-center h-full w-full">
-                          {getManeuverIcon(currentManeuver.type, '2xl')}
-                        </span>
-                      </div>
+                    <AlertTriangle className="h-3.5 w-3.5 animate-pulse" />
+                    Recalculating route...
+                  </motion.div>
+                )}
 
-                      <div className="min-w-0 flex-1">
-                        <p className="text-xl font-semibold leading-tight sm:text-2xl">
-                          {currentManeuver.instruction}
-                        </p>
-
-                        <div className="mt-2 flex items-center gap-2 text-white/80">
-                          {typeof distanceToManeuver === 'number' && !isDestinationManeuver(currentManeuver.type) && (
-                            <span className="text-base font-medium">{formatDistanceCompact(distanceToManeuver)}</span>
-                          )}
-                          {typeof distanceToManeuver === 'number' && !isDestinationManeuver(currentManeuver.type) && (
-                            <span aria-hidden="true">•</span>
-                          )}
-                          <span className="text-base">{formatTime(currentManeuver.time)}</span>
-                        </div>
-
-                        {currentManeuver.street_names && currentManeuver.street_names.length > 0 && (
-                          <p className="mt-1 line-clamp-1 text-sm text-white/75">
-                            {currentManeuver.street_names.join(', ')}
-                          </p>
-                        )}
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className='border absolute left-13 -z-10 h-5 border-gray-500' />
-                  {nextManeuver && (
-                    <motion.div
-                      initial={{ opacity: 0, y: -5 }}
-                      animate={{ opacity: 1, y: 0 }}
+                {/* Current maneuver card */}
+                {currentManeuver && (
+                  <>
+                    <div
                       className={cn(
-                        'mt-3 z-[999] flex itemscenter justify-between gap-2 rounded-lg p-3',
-                        'bg-foreground/10',
+                        'rounded-lg p-2.5 sm:p-3',
+                        'bg-gradient-to-b from-accent to-accent/20 text-white',
                       )}
                     >
-                      <div className="flex min-w-0 items-center gap-2.5">
-                        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-foreground/20">
-                          <span className="text-foreground">{getManeuverIcon(nextManeuver.type)}</span>
+                      <div className="flex items-start gap-2.5">
+                        <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-full shadow-lg bg-blue-700 self-center my-auto">
+                          <span className="text-white flex items-center justify-center h-full w-full">
+                            {getManeuverIcon(currentManeuver.type, 'xl')}
+                          </span>
                         </div>
-                        <div className="min-w-0">
-                          <span className="text-xs uppercase tracking-wide font-medium text-muted-foreground">Then</span>
-                          <span className="block truncate text-base font-semibold text-foreground">{nextManeuver.instruction}</span>
+
+                        <div className="min-w-0 flex-1">
+                          <p className="text-lg font-semibold leading-tight sm:text-xl">
+                            {currentManeuver.instruction}
+                          </p>
+
+                          <div className="mt-1.5 flex items-center gap-1.5 text-white/80">
+                            {typeof distanceToManeuver === 'number' && !isDestinationManeuver(currentManeuver.type) && (
+                              <span className="text-sm font-medium">{formatDistanceCompact(distanceToManeuver)}</span>
+                            )}
+                            {typeof distanceToManeuver === 'number' && !isDestinationManeuver(currentManeuver.type) && (
+                              <span aria-hidden="true">•</span>
+                            )}
+                            <span className="text-sm">{formatTime(currentManeuver.time)}</span>
+                          </div>
+
+                          {currentManeuver.street_names && currentManeuver.street_names.length > 0 && (
+                            <p className="mt-1 line-clamp-1 text-xs text-white/75">
+                              {currentManeuver.street_names.join(', ')}
+                            </p>
+                          )}
                         </div>
                       </div>
-                      <span className="shrink-0 self-end text-sm text-muted-foreground">{formatDistance(nextManeuver.length)}</span>
-                    </motion.div>
-                  )}
-                </>
-              )}
+                    </div>
 
-              {/* All directions list */}
+                    {/* Next maneuver */}
+                    {nextManeuver && (
+                      <motion.div
+                        initial={{ opacity: 0, y: -5 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        className='bg-gray-700 flex items-center justify-between gap-2 rounded-lg p-2'
+                      >
+                        <div className="flex min-w-0 items-center gap-2">
+                          <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-foreground/20">
+                            <span className="text-foreground">{getManeuverIcon(nextManeuver.type)}</span>
+                          </div>
+                          <div className="min-w-0">
+                            <span className="text-xs uppercase tracking-wide font-medium text-muted-foreground">Then</span>
+                            <span className="block truncate text-sm font-semibold text-foreground">{nextManeuver.instruction}</span>
+                          </div>
+                        </div>
+                        <span className="shrink-0 self-end text-xs text-muted-foreground">{formatDistance(nextManeuver.length)}</span>
+                      </motion.div>
+                    )}
+                  </>
+                )}
+
+                {/* Empty state for left column */}
+                {!currentManeuver && (
+                  <div className="text-muted-foreground py-6 text-center">
+                    <p className="text-xs">No route instructions available</p>
+                  </div>
+                )}
+              </div>
+
+              {/* Right Column: All directions list */}
               {allManeuvers.length > 0 && (
-                <div
-                  id="nav-details"
-                  className={cn(
-                    'mt-4',
-                    'hidden sm:block',
-                    showDetails && 'block',
-                  )}
-                >
-                  <Separator className="my-3" />
-                  <h4 className="mb-2 text-lg font-semibold tracking-tight">All Directions</h4>
+                <div id="nav-details">
+                  <div className="mb-1.5 flex items-center justify-between">
+                    <h4 className="text-base font-semibold tracking-tight">All Directions</h4>
+                  </div>
 
-                  <ScrollArea className={cn('h-48 sm:h-56', showDetails && 'h-[45vh]')}>
-                    <div className="space-y-2 pr-2 pb-2">
-                      {allManeuvers.map((maneuver, index) => {
-                        const isCurrent = index === maneuverIndex
-                        const isPast = index < maneuverIndex
+                  <ScrollArea className={cn(showDetails ? 'h-40 sm:h-48 lg:h-[calc(100vh-350px)]' : 'max-h-fit')}>
+                    <div className="space-y-0 pr-2 pb-2">
+                      {(showDetails ? allManeuvers : allManeuvers.slice(0, 2)).map((maneuver, index) => {
+                        const actualIndex = showDetails ? index : index
+                        const isCurrent = actualIndex === maneuverIndex
+                        const isPast = actualIndex < maneuverIndex
 
                         return (
                           <div
-                            key={index}
+                            key={actualIndex}
                             className={cn(
-                              'flex w-full items-start gap-2.5 rounded-lg p-2.5 transition-colors',
+                              'flex w-full items-start gap-2 rounded-lg p-2 transition-colors',
                               isCurrent && 'bg-accent/60 text-white',
                               !isCurrent && isPast && 'opacity-60',
                               !isCurrent && !isPast && 'hover:bg-foreground/5',
@@ -439,7 +439,7 @@ export default function NavigationInstructions({
                           >
                             <div
                               className={cn(
-                                'flex h-9 w-9 shrink-0 items-center justify-center rounded-full',
+                                'flex h-8 w-8 shrink-0 items-center justify-center rounded-full',
                                 isCurrent ? 'bg-accent' : getManeuverSurface(maneuver.type).iconWrapClass,
                               )}
                             >
@@ -449,13 +449,13 @@ export default function NavigationInstructions({
                             <div className="min-w-0 flex-1">
                               <p
                                 className={cn(
-                                  'text-base',
+                                  'text-sm',
                                   isCurrent ? 'font-base text-white' : isPast ? 'line-through' : '',
                                 )}
                               >
                                 {maneuver.instruction}
                               </p>
-                              <div className={cn('flex items-center gap-2 text-sm', isCurrent ? 'text-white/80' : 'text-muted-foreground')}>
+                              <div className={cn('flex items-center gap-1.5 text-xs', isCurrent ? 'text-white/80' : 'text-muted-foreground')}>
                                 <span>{formatDistance(maneuver.length)}</span>
                                 <span>•</span>
                                 <span>{formatTime(maneuver.time)}</span>
@@ -468,15 +468,8 @@ export default function NavigationInstructions({
                   </ScrollArea>
                 </div>
               )}
-
-              {/* Empty state */}
-              {allManeuvers.length === 0 && !currentManeuver && (
-                <div className="text-muted-foreground py-10 text-center">
-                  <p className="text-sm">No route instructions available</p>
-                </div>
-              )}
-            </CardContent>
-          </Card>
+            </div>
+          </div>
         </motion.div>
       )}
     </AnimatePresence>
