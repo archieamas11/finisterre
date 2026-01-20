@@ -24,7 +24,6 @@ import { FaWalking } from "react-icons/fa";
 
 import { type ValhallaManeuver, TURN_TYPES, isDestinationManeuver, isTurnManeuver } from '@/api/valhalla.api'
 import { Button } from '@/components/ui/button'
-import { Card, CardContent } from '@/components/ui/card'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { type NavigationState } from '@/hooks/useValhalla'
 import useVoiceGuidance from '@/hooks/useVoiceGuidance'
@@ -185,11 +184,8 @@ export default function NavigationInstructions({
   allManeuvers,
   isNavigating,
   isRerouting = false,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   totalDistance: _totalDistance,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   totalTime: _totalTime,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   rerouteCount: _rerouteCount,
 }: NavigationInstructionsProps) {
   const {
