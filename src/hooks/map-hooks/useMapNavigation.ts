@@ -1,6 +1,7 @@
 import type { MapAction } from '@/contexts/MapContext'
 import type { UserLocation } from '@/hooks/useLocationTracking'
-import type { ValhallaRouteResponse, NavigationState as ValhallaNavigationState } from '@/hooks/useValhalla'
+import type { NavigationState as ValhallaNavigationState } from '@/hooks/useValhalla'
+import type { ValhallaRouteResponse } from '@/api/valhalla.api'
 import { useCallback, useEffect, useRef } from 'react'
 import type L from 'leaflet'
 import { parseAsString, useQueryStates } from 'nuqs'
@@ -206,7 +207,7 @@ export function useMapNavigation({
         dispatch({ type: 'SET_NAV_OPEN', value: true })
       } catch (err: unknown) {
         notifyError(`Navigation failed: ${err instanceof Error ? err.message : 'Unknown error'}`, 'Navigation Error')
-        if (!isTracking) await startTracking().catch(() => {})
+        if (!isTracking) await startTracking().catch(() => { })
       } finally {
         dispatch({ type: 'SET_DIRECTION_LOADING', value: false })
       }
