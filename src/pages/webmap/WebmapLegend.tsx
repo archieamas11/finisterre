@@ -118,7 +118,7 @@ function WebmapLegendComponent() {
             <CardHeader className="relative flex flex-row items-start justify-between space-y-0 px-4 pt-4 pb-2 sm:px-5 sm:pt-5 sm:pb-3 shrink-0">
               <div className="space-y-0.5">
                 <CardTitle className="text-sm sm:text-base lg:text-lg font-bold leading-tight text-white">
-                  Memorial Park<br />Map Legend
+                  Finisterre<br />Map Legend
                 </CardTitle>
               </div>
               <div className="flex flex-col items-end gap-2">
