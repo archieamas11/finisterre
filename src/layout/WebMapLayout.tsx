@@ -155,7 +155,6 @@ export default function MapPage({ onBack, initialDirection }: MapPageProps) {
     handleLocationUpdate(currentLocation)
   }, [currentLocation, isNavigating, handleLocationUpdate])
 
-  // Cleanup tracking on unmount
   useEffect(() => {
     return () => {
       stopTracking()
@@ -187,9 +186,9 @@ export default function MapPage({ onBack, initialDirection }: MapPageProps) {
       const loc = isTracking
         ? currentLocation
         : await getCurrentLocation().catch(() => {
-            alert('Unable to get your location. Check GPS permissions.')
-            return null
-          })
+          alert('Unable to get your location. Check GPS permissions.')
+          return null
+        })
 
       if (loc && mapInstance && !isNavigating) {
         startTracking()
@@ -235,7 +234,7 @@ export default function MapPage({ onBack, initialDirection }: MapPageProps) {
           `Navigation failed: ${err instanceof Error ? err.message : 'Unknown error'}`,
           'Navigation Error',
         )
-        if (!isTracking) await startTracking().catch(() => {})
+        if (!isTracking) await startTracking().catch(() => { })
       } finally {
         dispatch({ type: 'SET_DIRECTION_LOADING', value: false })
       }

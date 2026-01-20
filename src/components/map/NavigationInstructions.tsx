@@ -45,8 +45,29 @@ interface NavigationInstructionsProps {
 /**
  * Get icon component for maneuver type
  */
-function getManeuverIcon(type: number, size: 'sm' | 'lg' = 'sm'): React.ReactNode {
-  const sizeClass = size === 'lg' ? 'h-6 w-6' : 'h-4 w-4'
+function getManeuverIcon(
+  type: number,
+  size: 'sm' | 'lg' | 'xl' | '2xl' | '3xl' = 'sm'
+): React.ReactNode {
+  let sizeClass: string
+  switch (size) {
+    case 'lg':
+      sizeClass = 'h-6 w-6'
+      break
+    case 'xl':
+      sizeClass = 'h-8 w-8'
+      break
+    case '2xl':
+      sizeClass = 'h-10 w-10'
+      break
+    case '3xl':
+      sizeClass = 'h-12 w-12'
+      break
+    case 'sm':
+    default:
+      sizeClass = 'h-4 w-4'
+      break
+  }
 
   // Start maneuvers
   if (TURN_TYPES.START.includes(type)) {
@@ -234,7 +255,6 @@ export default function NavigationInstructions({
           transition={{ duration: 0.2 }}
           className={cn(
             'fixed bottom-0 z-[1000] mx-auto w-full',
-            // desktop/tablet: floating panel
             'sm:inset-x-auto sm:top-4 sm:bottom-auto sm:left-4 sm:w-[420px]',
           )}
           role="region"
@@ -249,11 +269,9 @@ export default function NavigationInstructions({
             <CardContent
               className={cn(
                 'px-4 pb-4 pt-3 sm:px-4 sm:pb-4 sm:pt-4',
-                // iOS safe-area (home indicator)
                 'pb-[calc(env(safe-area-inset-bottom)+1rem)] sm:pb-4',
               )}
             >
-              {/* Drag handle / tap-to-expand (mobile) */}
               <button
                 type="button"
                 onClick={() => setShowDetails((v) => !v)}
@@ -265,15 +283,10 @@ export default function NavigationInstructions({
                 <span className="sr-only">{showDetails ? 'Collapse navigation details' : 'Expand navigation details'}</span>
               </button>
 
-              {/* Header (matches screenshot: Navigation + Live + actions) */}
               <div className="flex items-start justify-between gap-3">
                 <div className="min-w-0">
                   <div className="flex flex-wrap items-center gap-2">
                     <span className="text-2xl font-semibold tracking-tight sm:text-3xl">Navigation</span>
-                    <span className="inline-flex items-center gap-2 rounded-full bg-foreground/10 px-3 py-1 text-sm text-foreground/80">
-                      <span className="h-2 w-2 rounded-full bg-emerald-500" aria-hidden="true" />
-                      Live
-                    </span>
                   </div>
 
                   {/* Summary stats */}
@@ -298,8 +311,8 @@ export default function NavigationInstructions({
                     disabled={!canUseTts}
                     className={cn(
                       'rounded-full',
-                      // screenshot style: subtle dark pill
                       'bg-foreground/10 text-foreground/70 hover:bg-foreground/15',
+                      isEnabled ? 'bg-green-100 text-green-800' : '',
                     )}
                   >
                     {isEnabled ? <Volume2 className="h-4 w-4" /> : <VolumeOff className="h-4 w-4" />}
@@ -335,14 +348,15 @@ export default function NavigationInstructions({
                 <>
                   <div
                     className={cn(
-                      'mt-4 rounded-2xl p-4 sm:p-5',
-                      // Apple Maps-like blue card
-                      'bg-gradient-to-b from-sky-500 to-blue-600 text-white',
+                      'mt-4 rounded-lg p-4 sm:p-5',
+                      'bg-gradient-to-b from-accent to-accent/60 text-white',
                     )}
                   >
                     <div className="flex items-start gap-4">
-                      <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-white">
-                        <span className="text-blue-600">{getManeuverIcon(currentManeuver.type, 'lg')}</span>
+                      <div className="flex h-25 w-25 shrink-0 items-center justify-center rounded-full shadow-lg bg-blue-700 self-center my-auto">
+                        <span className="text-white flex items-center justify-center h-full w-full">
+                          {getManeuverIcon(currentManeuver.type, '3xl')}
+                        </span>
                       </div>
 
                       <div className="min-w-0 flex-1">
@@ -369,27 +383,26 @@ export default function NavigationInstructions({
                     </div>
                   </div>
 
-                  {/* Next maneuver preview */}
+                  <div className='border absolute left-13 -z-10 h-5 border-gray-500' />
                   {nextManeuver && (
                     <motion.div
                       initial={{ opacity: 0, y: -5 }}
                       animate={{ opacity: 1, y: 0 }}
                       className={cn(
-                        'mt-3 flex items-center justify-between gap-3 rounded-2xl px-4 py-3',
-                        // dark strip like screenshot (works in both themes via foreground alpha)
+                        'mt-5 z-[999] flex itemscenter justify-between gap-3 rounded-lg p-4',
                         'bg-foreground/10',
                       )}
                     >
                       <div className="flex min-w-0 items-center gap-3">
-                        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-muted">
+                        <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-foreground/20">
                           <span className="text-foreground">{getManeuverIcon(nextManeuver.type)}</span>
                         </div>
                         <div className="min-w-0">
-                          <span className="block text-xs uppercase tracking-wide text-muted-foreground">Then</span>
-                          <span className="block truncate text-sm font-medium text-foreground">{nextManeuver.instruction}</span>
+                          <span className="text-sm uppercase tracking-wide font-medium text-muted-foreground">Then</span>
+                          <span className="block truncate text-lg font-semibold text-foreground">{nextManeuver.instruction}</span>
                         </div>
                       </div>
-                      <span className="shrink-0 text-sm text-muted-foreground">{formatDistance(nextManeuver.length)}</span>
+                      <span className="shrink-0 self-end text-sm text-muted-foreground">{formatDistance(nextManeuver.length)}</span>
                     </motion.div>
                   )}
                 </>
@@ -401,28 +414,25 @@ export default function NavigationInstructions({
                   id="nav-details"
                   className={cn(
                     'mt-4',
-                    // desktop: always visible
                     'hidden sm:block',
-                    // mobile: controlled by sheet expansion
                     showDetails && 'block',
                   )}
                 >
                   <Separator className="my-4" />
-                  <h4 className="mb-3 text-sm font-semibold tracking-tight">All Directions</h4>
+                  <h4 className="mb-3 text-xl font-semibold tracking-tight">All Directions</h4>
 
                   <ScrollArea className={cn('h-52 sm:h-64', showDetails && 'h-[50vh]')}>
                     <div className="space-y-2 pr-2 pb-2">
                       {allManeuvers.map((maneuver, index) => {
                         const isCurrent = index === maneuverIndex
                         const isPast = index < maneuverIndex
-                        const surface = getManeuverSurface(maneuver.type)
 
                         return (
                           <div
                             key={index}
                             className={cn(
-                              'flex w-full items-start gap-3 rounded-2xl p-3 transition-colors',
-                              isCurrent && 'bg-gradient-to-b from-sky-500 to-blue-600 text-white',
+                              'flex w-full items-start gap-3 rounded-lg p-3 transition-colors',
+                              isCurrent && 'bg-accent/60 text-white',
                               !isCurrent && isPast && 'opacity-60',
                               !isCurrent && !isPast && 'hover:bg-foreground/5',
                             )}
@@ -430,22 +440,22 @@ export default function NavigationInstructions({
                             <div
                               className={cn(
                                 'flex h-10 w-10 shrink-0 items-center justify-center rounded-full',
-                                isCurrent ? 'bg-white' : 'bg-white',
+                                isCurrent ? 'bg-accent' : 'bg-orange-400',
                               )}
                             >
-                              <span className={cn(isCurrent ? 'text-blue-600' : surface.iconClass)}>{getManeuverIcon(maneuver.type)}</span>
+                              <span className={cn(isCurrent ? 'text-blue-600' : 'text-foreground')}>{getManeuverIcon(maneuver.type)}</span>
                             </div>
 
                             <div className="min-w-0 flex-1">
                               <p
                                 className={cn(
-                                  'text-sm',
-                                  isCurrent ? 'font-semibold text-white' : isPast ? 'line-through' : '',
+                                  'text-lg',
+                                  isCurrent ? 'font-base text-white' : isPast ? 'line-through' : '',
                                 )}
                               >
                                 {maneuver.instruction}
                               </p>
-                              <div className={cn('flex items-center gap-2 text-xs', isCurrent ? 'text-white/80' : 'text-muted-foreground')}>
+                              <div className={cn('flex items-center gap-2 text-sm', isCurrent ? 'text-white/80' : 'text-muted-foreground')}>
                                 <span>{formatDistance(maneuver.length)}</span>
                                 <span>•</span>
                                 <span>{formatTime(maneuver.time)}</span>
