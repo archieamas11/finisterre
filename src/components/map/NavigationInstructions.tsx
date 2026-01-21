@@ -252,8 +252,8 @@ export default function NavigationInstructions({
           exit={{ opacity: 0, y: 20 }}
           transition={{ duration: 0.2 }}
           className={cn(
-            'fixed bottom-4 z-[1000] mx-auto w-full max-w-3xl',
-            'sm:left-1/2 sm:-translate-x-1/2 sm:bottom-0',
+            'fixed bottom-0 z-[1000] mx-auto w-full max-w-3xl',
+            'sm:left-1/2 sm:-translate-x-1/2',
           )}
           role="region"
           aria-label="Turn-by-turn navigation"
@@ -379,12 +379,15 @@ export default function NavigationInstructions({
                       </div>
                     </div>
 
-                    {/* Next maneuver */}
+                    {/* Next maneuver - hidden on mobile when collapsed */}
                     {nextManeuver && (
                       <motion.div
                         initial={{ opacity: 0, y: -5 }}
                         animate={{ opacity: 1, y: 0 }}
-                        className='bg-gray-700 flex items-center justify-between gap-2 rounded-lg p-2'
+                        className={cn(
+                          'bg-gray-700 flex items-center justify-between gap-2 rounded-lg p-2',
+                          !showDetails && 'hidden lg:flex'
+                        )}
                       >
                         <div className="flex min-w-0 items-center gap-2">
                           <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-foreground/20">
@@ -409,9 +412,9 @@ export default function NavigationInstructions({
                 )}
               </div>
 
-              {/* Right Column: All directions list */}
+              {/* Right Column: All directions list - hidden on mobile when collapsed */}
               {allManeuvers.length > 0 && (
-                <div id="nav-details">
+                <div id="nav-details" className={cn(!showDetails && 'hidden lg:block')}>
                   <div className="mb-1.5 flex items-center justify-between">
                     <h4 className="text-base font-semibold tracking-tight">All Directions</h4>
                   </div>
