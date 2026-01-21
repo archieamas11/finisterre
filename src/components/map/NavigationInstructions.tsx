@@ -252,7 +252,7 @@ export default function NavigationInstructions({
           exit={{ opacity: 0, y: 20 }}
           transition={{ duration: 0.2 }}
           className={cn(
-            'fixed bottom-0 z-[1000] mx-auto w-full max-w-3xl',
+            'fixed bottom-0 z-500 mx-auto w-full max-w-3xl',
             'sm:left-1/2 sm:-translate-x-1/2',
           )}
           role="region"
@@ -332,7 +332,7 @@ export default function NavigationInstructions({
                   <motion.div
                     initial={{ opacity: 0, height: 0 }}
                     animate={{ opacity: 1, height: 'auto' }}
-                    className="flex items-center gap-1.5 rounded-xl bg-orange-100 px-2 py-1 text-xs text-orange-800 dark:bg-orange-900/40 dark:text-orange-300"
+                    className="flex items-center gap-1.5 rounded-lg bg-orange-100 p-2 text-xs text-orange-800 dark:bg-orange-900/40 dark:text-orange-300"
                   >
                     <AlertTriangle className="h-3.5 w-3.5 animate-pulse" />
                     Recalculating route...
@@ -340,7 +340,7 @@ export default function NavigationInstructions({
                 )}
 
                 {/* Current maneuver card */}
-                {currentManeuver && (
+                {currentManeuver && !isRerouting && (
                   <>
                     <div
                       className={cn(
@@ -356,11 +356,11 @@ export default function NavigationInstructions({
                         </div>
 
                         <div className="min-w-0 flex-1">
-                          <p className="text-lg font-semibold leading-tight sm:text-xl">
+                          <p className="text-lg font-semibold text-accent-foreground leading-tight sm:text-xl">
                             {currentManeuver.instruction}
                           </p>
 
-                          <div className="mt-1.5 flex items-center gap-1.5 text-white/80">
+                          <div className="mt-1.5 flex items-center gap-1.5 text-accent-foreground">
                             {typeof distanceToManeuver === 'number' && !isDestinationManeuver(currentManeuver.type) && (
                               <span className="text-sm font-medium">{formatDistanceCompact(distanceToManeuver)}</span>
                             )}
@@ -385,7 +385,7 @@ export default function NavigationInstructions({
                         initial={{ opacity: 0, y: -5 }}
                         animate={{ opacity: 1, y: 0 }}
                         className={cn(
-                          'bg-gray-700 flex items-center justify-between gap-2 rounded-lg p-2',
+                          'bg-accent/50 text-accent-foreground flex items-center justify-between gap-2 rounded-lg p-2',
                           !showDetails && 'hidden lg:flex'
                         )}
                       >
@@ -431,8 +431,8 @@ export default function NavigationInstructions({
                             key={actualIndex}
                             className={cn(
                               'flex w-full items-start gap-2 rounded-lg p-2 transition-colors',
-                              isCurrent && 'bg-accent/60 text-white',
-                              !isCurrent && isPast && 'opacity-60',
+                              isCurrent && 'bg-accent/60 text-accent-foreground',
+                              !isCurrent && isPast && 'opacity-60 bg-accent',
                               !isCurrent && !isPast && 'hover:bg-foreground/5',
                             )}
                           >
@@ -449,12 +449,12 @@ export default function NavigationInstructions({
                               <p
                                 className={cn(
                                   'text-sm',
-                                  isCurrent ? 'font-base text-white' : isPast ? 'line-through' : '',
+                                  isCurrent ? 'font-base text-accent-foreground' : isPast ? 'line-through' : '',
                                 )}
                               >
                                 {maneuver.instruction}
                               </p>
-                              <div className={cn('flex items-center gap-1.5 text-xs', isCurrent ? 'text-white/80' : 'text-muted-foreground')}>
+                              <div className={cn('flex items-center gap-1.5 text-xs', isCurrent ? 'text-accent-foreground' : 'text-muted-foreground')}>
                                 <span>{formatDistance(maneuver.length)}</span>
                                 <span>•</span>
                                 <span>{formatTime(maneuver.time)}</span>

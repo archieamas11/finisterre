@@ -24,14 +24,14 @@ export default function FloatingChatWidget({
 
   return (
     <div className="group">
-      <div className="fixed right-22 bottom-8 z-30">
+      <div className="fixed right-22 bottom-60 z-30 sm:right-22 sm:bottom-8">
         <span
           className={`rounded-full bg-white px-4 py-2 text-[var(--brand-primary)] shadow-lg transition-opacity duration-300 group-hover:opacity-0 ${tooltipClassName}`}
         >
           {tooltipText}
         </span>
       </div>
-      <div className="fixed right-4 bottom-4 z-30">
+      <div className="fixed right-4 bottom-55 sm:right-4 sm:bottom-4 z-30">
         <Sheet>
           <SheetTrigger asChild>
             <PulsatingButton className={`h-15 w-15 rounded-full bg-[var(--brand-primary)] shadow-lg ${buttonClassName}`}>
