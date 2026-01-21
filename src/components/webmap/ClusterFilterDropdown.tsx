@@ -4,6 +4,7 @@ import { Actions, ActionsButton, ActionsGroup, ActionsLabel, Fab } from 'konsta/
 import { Filter } from 'lucide-react'
 import { BiBorderAll } from 'react-icons/bi'
 import { FaRedo } from 'react-icons/fa'
+import { ChevronDown } from 'lucide-react'
 
 import { Button } from '@/components/ui/button'
 import {
@@ -15,7 +16,6 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 
 import { isNativePlatform } from '@/utils/platform.utils'
 
@@ -95,6 +95,7 @@ export default function ClusterFilterDropdown({ context, className }: ClusterFil
         >
           <Filter className="text-accent-foreground h-3 w-3 sm:h-4 sm:w-4" />
           <span>Filter</span>
+          <ChevronDown className="h-4 w-4" />
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="center" className="w-56">
