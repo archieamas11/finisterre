@@ -64,7 +64,7 @@ export default function SearchToggle({ context, className }: SearchToggleProps) 
           <form onSubmit={handleSearchSubmit} className="flex w-full gap-1" role="search" aria-label="Lot search">
             <div className="relative flex-1">
               <Input
-                className="peer bg-background dark:bg-background text-background-foreground dark:text-background-foreground h-9 w-full rounded-full border-none ps-9 pe-10 text-xs md:h-10 md:text-sm"
+                className="peer bg-background dark:bg-background text-background-foreground dark:text-background-foreground h-9 w-full rounded-lg border-none ps-9 pe-10 text-xs md:h-10 md:text-sm"
                 placeholder="Search lot..."
                 value={context.searchQuery}
                 onChange={(e) => context.setSearchQuery(e.target.value)}

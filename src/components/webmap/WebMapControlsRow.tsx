@@ -114,7 +114,7 @@ export default function WebMapControlsRow({ context, onBack, onLegendClick }: We
               <Button
                 variant="secondary"
                 size="sm"
-                className="bg-background no-long-press text-background-foreground hover:bg-background/80 touch-manipulation rounded-full text-xs sm:text-sm"
+                className="bg-background no-long-press text-background-foreground hover:bg-background/80 touch-manipulation rounded-lg text-xs sm:text-sm"
               >
                 <Home className="text-accent-foreground h-3 w-3 sm:h-4 sm:w-4" />
                 <span>Home</span>
@@ -136,7 +136,7 @@ export default function WebMapControlsRow({ context, onBack, onLegendClick }: We
         <Button
           variant="secondary"
           size="sm"
-          className="bg-background no-long-press text-background-foreground hover:bg-background/80 shrink-0 touch-manipulation rounded-full text-xs sm:text-sm"
+          className="bg-background no-long-press text-background-foreground hover:bg-background/80 shrink-0 touch-manipulation rounded-lg text-xs sm:text-sm"
           onClick={handleMyPlotsClick}
           aria-label="My Plots"
         >
@@ -168,7 +168,7 @@ export default function WebMapControlsRow({ context, onBack, onLegendClick }: We
             <Button
               variant="secondary"
               size="sm"
-              className="bg-background no-long-press text-background-foreground hover:bg-background/80 shrink-0 touch-manipulation rounded-full"
+              className="bg-background no-long-press text-background-foreground hover:bg-background/80 shrink-0 touch-manipulation rounded-lg"
               onClick={() => {
                 if (context && 'clearSearch' in context && 'resetGroupSelection' in context) {
                   const webMapCtx = context as WebMapContext
@@ -192,7 +192,7 @@ export default function WebMapControlsRow({ context, onBack, onLegendClick }: We
         <Button
           variant="secondary"
           size="sm"
-          className="bg-background no-long-press text-background-foreground hover:bg-background/80 shrink-0 touch-manipulation rounded-full text-xs sm:text-sm"
+          className="bg-background no-long-press text-background-foreground hover:bg-background/80 shrink-0 touch-manipulation rounded-lg text-xs sm:text-sm"
           onClick={() => context?.requestLocate()}
           aria-label="Locate me"
         >
@@ -212,7 +212,7 @@ export default function WebMapControlsRow({ context, onBack, onLegendClick }: We
               value={(context as WebMapContext).selectedTileLayer}
               onValueChange={(value) => (context as WebMapContext).setSelectedTileLayer(value)}
             >
-              <SelectTrigger className="!h-9 !gap-2 !border-0 !bg-background !text-background-foreground hover:!bg-background/80 !shrink-0 !rounded-full !text-xs sm:!text-sm !shadow-sm [&>span]:line-clamp-1 !px-3 !py-2">
+              <SelectTrigger className="!h-9 !gap-2 !border-0 !bg-background !text-background-foreground hover:!bg-background/80 !shrink-0 !rounded-lg !text-xs sm:!text-sm !shadow-sm [&>span]:line-clamp-1 !px-3 !py-2">
                 <Map className="text-accent-foreground h-3 w-3 sm:h-4 sm:w-4 shrink-0" />
                 <SelectValue>{(context as WebMapContext).tileLayerOptions[(context as WebMapContext).selectedTileLayer]?.name}</SelectValue>
               </SelectTrigger>
@@ -249,7 +249,7 @@ export default function WebMapControlsRow({ context, onBack, onLegendClick }: We
             <Button
               variant="secondary"
               size="sm"
-              className="bg-background no-long-press text-background-foreground hover:bg-background/80 shrink-0 touch-manipulation rounded-full text-xs sm:text-sm lg:hidden"
+              className="bg-background no-long-press text-background-foreground hover:bg-background/80 shrink-0 touch-manipulation rounded-lg text-xs sm:text-sm lg:hidden"
               onClick={onLegendClick}
               aria-label="Show legend"
             >

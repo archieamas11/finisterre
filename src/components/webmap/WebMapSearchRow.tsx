@@ -33,7 +33,7 @@ export default function WebMapSearchRow({ context }: WebMapSearchRowProps) {
             <Button
               variant="secondary"
               size="sm"
-              className="bg-background text-background-foreground hover:bg-background/80 h-9 rounded-full text-xs sm:text-sm md:h-10"
+              className="bg-background text-background-foreground hover:bg-background/80 h-9 rounded-lg text-xs sm:text-sm md:h-10"
             >
               <RiLoginBoxLine className="h-4 w-4" />
               <span>Login</span>

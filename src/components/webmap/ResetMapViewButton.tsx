@@ -47,7 +47,7 @@ export default function ResetMapViewButton({ context, onReset, className, size =
           size={size}
           aria-label="Reset map view"
           onClick={handleReset}
-          className={cn('bg-background text-background-foreground hover:bg-background/80shrink-0 rounded-full text-xs sm:text-sm', className)}
+          className={cn('bg-background text-background-foreground hover:bg-background/80shrink-0 rounded-lg text-xs sm:text-sm', className)}
         >
           <FiRefreshCcw className="text-accent-foreground h-3 w-3 sm:h-4 sm:w-4" />
           {children ? <span>{children}</span> : <span>Reset View</span>}
