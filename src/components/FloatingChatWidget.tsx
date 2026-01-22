@@ -20,7 +20,7 @@ export default function FloatingChatWidget({
   tooltipClassName = '',
   buttonClassName = '',
 }: FloatingChatWidgetProps) {
-  if (import.meta.env.PROD) return null
+  // if (import.meta.env.PROD) return null
 
   return (
     <div className="group">
