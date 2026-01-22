@@ -33,6 +33,21 @@ export function MemorialChambersStep({ coordinates, onBack, onCancel, onDone }: 
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
         <div className="grid grid-cols-12 gap-2">
+          <div className="col-span-12">
+            <FormField
+              control={form.control}
+              name="block"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Block</FormLabel>
+                  <FormControl>
+                    <Input placeholder="Enter Cluster Name" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
           <div className="col-span-6">
             <FormField
               control={form.control}

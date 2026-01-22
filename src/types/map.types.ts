@@ -44,7 +44,7 @@ export interface plots {
 export interface CreatePlotRequest {
   block: string
   category: string
-  coordinates: string // String format for API: "lng, lat"
+  coordinates: string
   status?: string
 }
 
@@ -63,6 +63,7 @@ export interface CreateSerenityLawnRequest {
 export interface CreateMemorialChambersRequest {
   rows: string
   columns: string
+  block: string
   coordinates: string
   status?: string
 }

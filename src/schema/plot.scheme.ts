@@ -18,6 +18,9 @@ export const SerenityLawnSchema = z.object({
 export const MemorialChambersSchema = z.object({
   rows: z.string().min(1, 'Rows is required'),
   columns: z.string().min(1, 'Columns is required'),
+  block: z.string()
+    .min(1, 'Cluster is required')
+    .regex(/^[A-Za-z]+$/, 'Cluster name must only contain letters'),
 })
 
 export const ColumbariumSchema = z.object({
