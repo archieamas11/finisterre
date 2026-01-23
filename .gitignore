@@ -36,3 +36,5 @@ dev-dist
 finisterre.code-workspace
 openspec/*
 AGENTS.md
+.github/skills
+.agents/
