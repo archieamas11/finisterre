@@ -64,7 +64,7 @@ const facilities: LegendItem[] = [
   { key: 'chapel', label: 'Chapel', color: '#F97316', icon: <BiSolidChurch className="h-3.5 w-3.5" /> },
 ]
 
-function WebmapLegendComponent() {
+function MapLegendComponent() {
   const [openSections, setOpenSections] = useState(initialOpenSections)
   const [isCollapsed, setIsCollapsed] = useState(false)
 
@@ -246,6 +246,7 @@ function WebmapLegendComponent() {
   )
 }
 
-export const WebmapLegend = memo(WebmapLegendComponent)
+export const MapLegend = memo(MapLegendComponent)
+MapLegend.displayName = 'MapLegend'
 
-export default WebmapLegend
+export default MapLegend

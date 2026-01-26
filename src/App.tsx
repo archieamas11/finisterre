@@ -20,7 +20,7 @@ const UserAnnouncements = React.lazy(() => import('@/pages/user/AnnouncementsPag
 const Bookings = React.lazy(() => import('@/pages/admin/bookings/ManageBookings'))
 const AdminDashboard = React.lazy(() => import('@/pages/admin/home/AdminDashboard'))
 const UserDashboard = React.lazy(() => import('@/pages/user/UserDashboard'))
-const AdminMapLayout = React.lazy(() => import('@/pages/admin/map4admin/AdminMapLayout'))
+const AdminMapPage = React.lazy(() => import('@/pages/admin/map4admin/AdminMapPage'))
 const IntermentSetup = React.lazy(() => import('@/pages/admin/interment/IntermentSetup'))
 const AdminControlPanel = React.lazy(() => import('@/pages/admin/control/AdminControlPanel'))
 const AdminIntermentDeceasedPage = React.lazy(() => import('@/pages/admin/interment/deceased-records/deceased'))
@@ -106,7 +106,7 @@ function AppRoutes() {
               <Route element={<AdminIntermentLotOwnersPage />} path="lot-owners" />
               <Route element={<AdminIntermentDeceasedPage />} path="deceased-records" />
             </Route>
-            <Route element={<AdminMapLayout />} path="map" />
+            <Route element={<AdminMapPage />} path="map" />
             <Route element={<Bookings />} path="bookings" />
             <Route element={<AdminControlPanel />} path="control-panel" />
             <Route element={<NewsAndUpdates />} path="news" />

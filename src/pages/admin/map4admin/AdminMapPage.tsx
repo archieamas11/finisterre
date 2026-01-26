@@ -27,19 +27,21 @@ import { createClusterIconFactory, getLabelFromGroupKey, groupMarkersByKey } fro
 import { ucwords } from '@/lib/format'
 import ColumbariumPopup from '@/pages/admin/map4admin/ColumbariumPopup'
 import MapStats from '@/pages/admin/map4admin/MapStats'
-import SinglePlotLocations from '@/pages/admin/map4admin/SinglePlotPopup'
-import CenterSerenityMarkers from '@/pages/webmap/CenterSerenityMarkers'
-import ChapelMarkers from '@/pages/webmap/ChapelMarkers'
-import ComfortRoomMarker from '@/pages/webmap/ComfortRoomMarkers'
-import MainEntranceMarkers from '@/pages/webmap/MainEntranceMarkers'
-import ParkingMarkers from '@/pages/webmap/ParkingMarkers'
-import PeterRockMarkers from '@/pages/webmap/PeterRock'
-import PlaygroundMarkers from '@/pages/webmap/PlaygroundMarkers'
+import SinglePlotPopup from '@/pages/admin/map4admin/SinglePlotPopup'
+import {
+  CenterSerenityMarkers,
+  ChapelMarkers,
+  ComfortRoomMarker,
+  MainEntranceMarkers,
+  ParkingMarkers,
+  PetersRockMarkers,
+  PlaygroundMarkers,
+} from '@/components/map/markers'
 import { convertPlotToMarker, getStatusColor } from '@/types/map.types'
 import AdminMapNavs from './AdminMapNavs'
 import { LocateContext } from './LocateContext'
 
-function buildStatusCircleIcon(color: string) {
+function createStatusCircleIcon(color: string) {
   return L.divIcon({
     className: '',
     html: `<div style="width:15px;height:15px;border-radius:50%;background:${color};border:1px solid #fff;box-shadow:0 0 4px rgba(0,0,0,0.15);"></div>`,
@@ -59,12 +61,12 @@ function renderPopupContent(marker: ConvertedMarker, highlightedNiche?: string |
   }
   return (
     <Popup className="leaflet-theme-popup" closeButton={false} offset={[1, 3]} minWidth={600} maxWidth={600}>
-      <SinglePlotLocations marker={marker} />
+      <SinglePlotPopup marker={marker} />
     </Popup>
   )
 }
 
-export default function AdminMapLayout() {
+export default function AdminMapPage() {
   const location = useLocation()
   const navigate = useNavigate()
   const { data: authData } = useAuthQuery()
@@ -81,11 +83,11 @@ export default function AdminMapLayout() {
   const [showAddDialog, setShowAddDialog] = useState(false)
   const [isEditingMarker, setIsEditingMarker] = useState(false)
   const [selectedPlotForEdit, setSelectedPlotForEdit] = useState<string | null>(null)
-  const locateRef = useRef<(() => void) | null>(null)
+  const locationTrackingRef = useRef<(() => void) | null>(null)
   const requestLocate = () => {
-    if (locateRef.current) locateRef.current()
+    if (locationTrackingRef.current) locationTrackingRef.current()
   }
-  const [guide4Data, setGuide4Data] = useState<GeoJSON.GeoJSON | null>(null)
+  const [blockBGuideGeoJson, setBlockBGuideGeoJson] = useState<GeoJSON.GeoJSON | null>(null)
   const bounds = useMemo(
     () =>
       [
@@ -108,7 +110,7 @@ export default function AdminMapLayout() {
     markerRegistryRef.current[plotId] = marker
     if (marker) {
       marker.on('popupopen', function () {
-        console.log('[AdminMapLayout] marker popupopen for plot', plotId)
+        console.log('[AdminMapPage] marker popupopen for plot', plotId)
       })
     }
   }, [])
@@ -143,9 +145,9 @@ export default function AdminMapLayout() {
 
   const handleSelectSearchResult = useCallback(
     (item: AdminSearchItem) => {
-      console.log('[AdminMapLayout] select result', { item })
+      console.log('[AdminMapPage] select result', { item })
       if (isEditingMarker) {
-        console.log('[AdminMapLayout] exiting edit mode for popup open')
+        console.log('[AdminMapPage] exiting edit mode for popup open')
         setIsEditingMarker(false)
         setSelectedPlotForEdit(null)
         document.body.classList.remove('edit-marker-mode')
@@ -153,23 +155,23 @@ export default function AdminMapLayout() {
 
       const marker = markers.find((m: ConvertedMarker) => String(m.plot_id) === String(item.plot_id))
       if (!marker) {
-        console.log('[AdminMapLayout] marker not found for plot_id', item.plot_id, 'available markers:', markers.length)
+        console.log('[AdminMapPage] marker not found for plot_id', item.plot_id, 'available markers:', markers.length)
         return
       }
 
-      const targetPlotId = String(item.plot_id)
-      const targetNiche = item.niche_number ? String(item.niche_number) : null
+      const searchResultPlotId = String(item.plot_id)
+      const searchResultNiche = item.niche_number ? String(item.niche_number) : null
 
-      const openTargetPopup = () => {
-        console.log('[AdminMapLayout] openTargetPopup', { targetPlotId, targetNiche })
-        setHighlightedNiche(targetNiche)
+      const openSearchResultPopup = () => {
+        console.log('[AdminMapPage] openSearchResultPopup', { searchResultPlotId, searchResultNiche })
+        setHighlightedNiche(searchResultNiche)
         setActiveSearchMarker(marker)
-        setAutoOpenPlotId(targetPlotId)
+        setAutoOpenPlotId(searchResultPlotId)
       }
 
       if (!mapInstance) {
-        console.log('[AdminMapLayout] mapInstance not ready yet; opening immediately and skipping flyTo')
-        openTargetPopup()
+        console.log('[AdminMapPage] mapInstance not ready yet; opening immediately and skipping flyTo')
+        openSearchResultPopup()
         return
       }
 
@@ -180,29 +182,29 @@ export default function AdminMapLayout() {
       const isAtPosition = Math.abs(center.lat - lat) < 1e-6 && Math.abs(center.lng - lng) < 1e-6
 
       if (currentZoom >= desiredZoom && isAtPosition) {
-        console.log('[AdminMapLayout] already centered at zoom, opening immediately')
-        openTargetPopup()
+        console.log('[AdminMapPage] already centered at zoom, opening immediately')
+        openSearchResultPopup()
         return
       }
 
-      let fired = false
+      let hasMoveEndFired = false
       const onMoveEnd = () => {
-        if (fired) return
-        fired = true
+        if (hasMoveEndFired) return
+        hasMoveEndFired = true
         mapInstance.off('moveend', onMoveEnd)
-        console.log('[AdminMapLayout] moveend fired → opening popup')
-        openTargetPopup()
+        console.log('[AdminMapPage] moveend fired → opening popup')
+        openSearchResultPopup()
       }
       mapInstance.on('moveend', onMoveEnd)
       window.setTimeout(() => {
-        if (fired) return
-        fired = true
+        if (hasMoveEndFired) return
+        hasMoveEndFired = true
         mapInstance.off('moveend', onMoveEnd)
-        console.log('[AdminMapLayout] moveend fallback → opening popup')
-        openTargetPopup()
+        console.log('[AdminMapPage] moveend fallback → opening popup')
+        openSearchResultPopup()
       }, 900)
 
-      console.log('[AdminMapLayout] flyTo', { position: marker.position, desiredZoom })
+      console.log('[AdminMapPage] flyTo', { position: marker.position, desiredZoom })
       mapInstance.flyTo(marker.position, desiredZoom, { animate: true })
     },
     [markers, mapInstance, isEditingMarker],
@@ -215,13 +217,13 @@ export default function AdminMapLayout() {
     const matchedMarker = markers.find((marker: ConvertedMarker) => String(marker.plot_id) === String(state.focusPlotId))
     if (!matchedMarker) return
 
-    const parsedPlotId = Number.parseInt(String(state.focusPlotId), 10)
-    const markerPlotNumber = Number.parseInt(String(matchedMarker.plot_id), 10)
-    const plotIdNumber = Number.isFinite(parsedPlotId) ? parsedPlotId : Number.isFinite(markerPlotNumber) ? markerPlotNumber : 0
+    const parsedFocusPlotId = Number.parseInt(String(state.focusPlotId), 10)
+    const parsedMarkerPlotId = Number.parseInt(String(matchedMarker.plot_id), 10)
+    const normalizedPlotId = Number.isFinite(parsedFocusPlotId) ? parsedFocusPlotId : Number.isFinite(parsedMarkerPlotId) ? parsedMarkerPlotId : 0
 
     handleSelectSearchResult({
-      lot_id: plotIdNumber,
-      plot_id: plotIdNumber,
+      lot_id: normalizedPlotId,
+      plot_id: normalizedPlotId,
       niche_number: state.focusNicheNumber ?? null,
       customer_id: null,
       customer_fullname: null,
@@ -239,7 +241,7 @@ export default function AdminMapLayout() {
     const center = mapInstance.getCenter()
     const isAtPosition = Math.abs(center.lat - lat) < 1e-6 && Math.abs(center.lng - lng) < 1e-6
     if (!isAtPosition || mapInstance.getZoom() < desiredZoom) {
-      console.log('[AdminMapLayout] post-ready flyTo', { position: activeSearchMarker.position, desiredZoom })
+      console.log('[AdminMapPage] post-ready flyTo', { position: activeSearchMarker.position, desiredZoom })
       mapInstance.flyTo(activeSearchMarker.position, desiredZoom, { animate: true })
     }
   }, [activeSearchMarker, mapInstance])
@@ -261,33 +263,33 @@ export default function AdminMapLayout() {
     })
   }
 
-  const onMarkerClickForEdit = (plotId: string) => {
+  const handleMarkerClickForEdit = (plotId: string) => {
     if (isEditingMarker) {
       setSelectedPlotForEdit(plotId)
     }
   }
 
-  const onEditComplete = useCallback(() => {
+  const handleEditComplete = useCallback(() => {
     setSelectedPlotForEdit(null)
     setIsEditingMarker(false)
     document.body.classList.remove('edit-marker-mode')
   }, [])
 
-  const onMapClick = (coordinates: [number, number]) => {
+  const handleMapClick = (coordinates: [number, number]) => {
     setSelectedCoordinates(coordinates)
     setShowAddDialog(true)
     setIsAddingMarker(false)
     document.body.classList.remove('add-marker-mode')
   }
 
-  const onDialogClose = (open: boolean) => {
+  const handleDialogClose = (open: boolean) => {
     setShowAddDialog(open)
     if (!open) {
       setSelectedCoordinates(null)
     }
   }
 
-  const onAddDone = () => {
+  const handleAddDone = () => {
     setSelectedCoordinates(null)
     setShowAddDialog(false)
     setIsAddingMarker(true)
@@ -321,7 +323,7 @@ export default function AdminMapLayout() {
       }
 
       if (isEditingMarker && selectedPlotForEdit) {
-        onEditComplete()
+        handleEditComplete()
         return
       }
 
@@ -336,25 +338,25 @@ export default function AdminMapLayout() {
       enableOnFormTags: true,
       enableOnContentEditable: true,
     },
-    [isAddingMarker, isEditingMarker, showAddDialog, selectedPlotForEdit, onEditComplete],
+    [isAddingMarker, isEditingMarker, showAddDialog, selectedPlotForEdit, handleEditComplete],
   )
 
   // Load local GeoJSON asset at runtime (avoids bundler parsing issues)
   useEffect(() => {
-    let mounted = true
-    async function load() {
+    let isMounted = true
+    async function loadGuideGeoJson() {
       try {
-        const res = await fetch(guide4BlockBUrl)
-        if (!res.ok) return
-        const json = (await res.json()) as GeoJSON.GeoJSON
-        if (mounted) setGuide4Data(json)
+        const response = await fetch(guide4BlockBUrl)
+        if (!response.ok) return
+        const geoJsonData = (await response.json()) as GeoJSON.GeoJSON
+        if (isMounted) setBlockBGuideGeoJson(geoJsonData)
       } catch {
         // Optional layer load failure ignored (non-critical visual enhancement)
       }
     }
-    load()
+    loadGuideGeoJson()
     return () => {
-      mounted = false
+      isMounted = false
     }
   }, [])
 
@@ -447,7 +449,7 @@ export default function AdminMapLayout() {
                   {activeSearchMarker.rows && activeSearchMarker.columns ? (
                     <ColumbariumPopup marker={activeSearchMarker} highlightedNiche={highlightedNiche ?? undefined} />
                   ) : (
-                    <SinglePlotLocations marker={activeSearchMarker} />
+                    <SinglePlotPopup marker={activeSearchMarker} />
                   )}
                 </div>
               </Popup>
@@ -463,10 +465,10 @@ export default function AdminMapLayout() {
             <MapInstanceBinder onMapReady={setMapInstance} />
 
             {/* GeoJSON overlay for test accounts */}
-            {showGuide4 && guide4Data && (
+            {showGuide4 && blockBGuideGeoJson && (
               <GeoJSON
                 interactive={false}
-                data={guide4Data}
+                data={blockBGuideGeoJson}
                 style={() => ({
                   color: '#FFDE21',
                   weight: 1,
@@ -481,21 +483,21 @@ export default function AdminMapLayout() {
               />
             )}
 
-            <MapClickHandler isAddingMarker={isAddingMarker} onMapClick={onMapClick} />
+            <MapClickHandler isAddingMarker={isAddingMarker} onMapClick={handleMapClick} />
             <MainEntranceMarkers />
             <ChapelMarkers />
             <PlaygroundMarkers />
             <ParkingMarkers />
             <CenterSerenityMarkers />
             <ComfortRoomMarker />
-            <PeterRockMarkers />
+            <PetersRockMarkers />
             {Object.entries(markersByGroup).map(([groupKey, groupMarkers]) => {
               if (isEditingMarker || isAddingMarker) {
                 return (
                   <div key={`cluster-${groupKey}`}>
                     {groupMarkers.map((marker: ConvertedMarker) => {
                       const statusColor = getStatusColor(marker.plotStatus)
-                      const circleIcon = buildStatusCircleIcon(statusColor)
+                      const circleIcon = createStatusCircleIcon(statusColor)
                       return (
                         <EditableMarker
                           key={`plot-${marker.plot_id}`}
@@ -504,8 +506,8 @@ export default function AdminMapLayout() {
                           icon={circleIcon}
                           isEditable={isEditingMarker}
                           isSelected={selectedPlotForEdit === marker.plot_id}
-                          onMarkerClick={onMarkerClickForEdit}
-                          onEditComplete={onEditComplete}
+                          onMarkerClick={handleMarkerClickForEdit}
+                          onEditComplete={handleEditComplete}
                           onSaveSuccess={() => setSelectedPlotForEdit(null)}
                           onPopupOpen={() => handlePopupOpen(marker.plot_id)}
                           autoOpenPlotId={autoOpenPlotId}
@@ -539,7 +541,7 @@ export default function AdminMapLayout() {
                 >
                   {groupMarkers.map((marker: ConvertedMarker) => {
                     const statusColor = getStatusColor(marker.plotStatus)
-                    const circleIcon = buildStatusCircleIcon(statusColor)
+                    const circleIcon = createStatusCircleIcon(statusColor)
                     return (
                       <EditableMarker
                         key={`plot-${marker.plot_id}`}
@@ -548,8 +550,8 @@ export default function AdminMapLayout() {
                         icon={circleIcon}
                         isEditable={isEditingMarker}
                         isSelected={selectedPlotForEdit === marker.plot_id}
-                        onMarkerClick={onMarkerClickForEdit}
-                        onEditComplete={onEditComplete}
+                        onMarkerClick={handleMarkerClickForEdit}
+                        onEditComplete={handleEditComplete}
                         onSaveSuccess={() => setSelectedPlotForEdit(null)}
                         onPopupOpen={() => handlePopupOpen(marker.plot_id)}
                         autoOpenPlotId={autoOpenPlotId}
@@ -570,7 +572,7 @@ export default function AdminMapLayout() {
             })}
           </MapContainer>
         </div>
-        <AddPlotMarkerDialog open={showAddDialog} onOpenChange={onDialogClose} coordinates={selectedCoordinates} onDoneAdd={onAddDone} />
+        <AddPlotMarkerDialog open={showAddDialog} onOpenChange={handleDialogClose} coordinates={selectedCoordinates} onDoneAdd={handleAddDone} />
       </LocateContext.Provider>
     </div>
   )

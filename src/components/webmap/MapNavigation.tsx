@@ -5,7 +5,7 @@ import WebMapControlsRow from '@/components/webmap/WebMapControlsRow'
 import WebMapSearchRow from '@/components/webmap/WebMapSearchRow'
 import { useWebMapContext } from '@/hooks/useNavigationContext'
 
-export default function WebMapNavs({ onBack }: { onBack?: () => void }) {
+export default function MapNavigation({ onBack }: { onBack?: () => void }) {
   const { context } = useWebMapContext()
   const [isLegendOpen, setIsLegendOpen] = useState(false)
 

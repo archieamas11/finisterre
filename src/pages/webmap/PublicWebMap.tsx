@@ -1,9 +1,9 @@
-import MapPage from '@/layout/WebMapLayout'
+import WebMapPage from '@/pages/webmap/WebMapPage'
 
 export default function PublicMap() {
   return (
     <div className="h-screen w-full">
-      <MapPage />
+      <WebMapPage />
     </div>
   )
 }

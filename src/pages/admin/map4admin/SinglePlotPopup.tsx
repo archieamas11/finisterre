@@ -24,7 +24,7 @@ interface PlotLocationsProps {
   popupCloseTick?: number
 }
 
-export default function SinglePlotLocations({ marker, popupCloseTick }: PlotLocationsProps) {
+export default function SinglePlotPopup({ marker, popupCloseTick }: PlotLocationsProps) {
   const { data: plotDetails, isLoading: isLoadingDetails } = usePlotDetails(marker.plot_id)
 
   type OwnerData = {
@@ -148,12 +148,12 @@ export default function SinglePlotLocations({ marker, popupCloseTick }: PlotLoca
         const customer = (customers as Customer[]).find((c) => String(c.customer_id) === String(customerToUse))
         const optimisticOwner = customer
           ? {
-              lot_id: undefined,
-              customer_id: String(customer.customer_id),
-              fullname: `${customer.first_name} ${customer.last_name}`.trim(),
-              email: customer.email ?? '',
-              contact: customer.contact_number ?? '',
-            }
+            lot_id: undefined,
+            customer_id: String(customer.customer_id),
+            fullname: `${customer.first_name} ${customer.last_name}`.trim(),
+            email: customer.email ?? '',
+            contact: customer.contact_number ?? '',
+          }
           : null
 
         queryClient.setQueryData(['plotDetails', marker.plot_id], (old: unknown) => ({

@@ -1,7 +1,7 @@
 import type { Coordinates } from '@/pages/user/components/types'
 import { Page } from 'konsta/react'
 
-import WebMapLayout from '@/layout/WebMapLayout'
+import WebMapPage from '@/pages/webmap/WebMapPage'
 
 interface AndroidMapPageProps {
   onBack?: () => void
@@ -12,7 +12,7 @@ export default function AndroidMapPage({ onBack, coordinates }: AndroidMapPagePr
   return (
     <Page>
       <div className="h-screen w-full">
-        <WebMapLayout onBack={onBack} initialDirection={coordinates ? { lat: coordinates[0], lng: coordinates[1] } : undefined} />
+        <WebMapPage onBack={onBack} initialDirection={coordinates ? { lat: coordinates[0], lng: coordinates[1] } : undefined} />
       </div>
     </Page>
   )

@@ -7,7 +7,7 @@ import { Drawer, DrawerContent, DrawerDescription, DrawerTitle } from '@/compone
 import { LocateContext } from '@/contexts/MapContext'
 import { useIsMobile } from '@/hooks/use-mobile'
 import ColumbariumPopup from '@/pages/admin/map4admin/ColumbariumPopup'
-import PlotLocations from '@/pages/webmap/WebMapPopup'
+import PlotPopup from '@/components/webmap/PlotPopup'
 import { getCategoryColors, getStatusColor } from '@/types/map.types'
 
 const iconCache: Record<string, L.DivIcon> = {}
@@ -144,7 +144,7 @@ const PlotMarkers: React.FC<PlotMarkersProps> = memo(({ markers, isDirectionLoad
               </Popup>
             ) : (
               <Popup className="leaflet-theme-popup" minWidth={250} closeButton={false}>
-                <PlotLocations
+                <PlotPopup
                   colors={getCategoryColors(marker.category)}
                   onDirectionClick={onDir}
                   isDirectionLoading={isDirectionLoading}

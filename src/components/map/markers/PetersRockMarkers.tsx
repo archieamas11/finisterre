@@ -25,6 +25,6 @@ const PetersRock: FinisterreMarkerData[] = [
   },
 ]
 
-export default function PeterRockMarkers({ onDirectionClick, isDirectionLoading = false }: Props) {
+export default function PetersRockMarkers({ onDirectionClick, isDirectionLoading = false }: Props) {
   return <FinisterreMarkers items={PetersRock} onDirectionClick={onDirectionClick} isDirectionLoading={isDirectionLoading} />
 }

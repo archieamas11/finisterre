@@ -2,14 +2,16 @@ import type { ConvertedMarker, LotSearchResult } from '@/types/map.types'
 import { memo } from 'react'
 
 import CustomClusterManager from '@/components/map/CustomClusterManager'
-import CenterSerenityMarkers from '@/pages/webmap/CenterSerenityMarkers'
-import ChapelMarkers from '@/pages/webmap/ChapelMarkers'
-import ComfortRoomMarker from '@/pages/webmap/ComfortRoomMarkers'
-import MainEntranceMarkers from '@/pages/webmap/MainEntranceMarkers'
-import ParkingMarkers from '@/pages/webmap/ParkingMarkers'
-import PetersRockMarkers from '@/pages/webmap/PeterRock'
-import PlaygroundMarkers from '@/pages/webmap/PlaygroundMarkers'
-import PlotMarkers from '@/pages/webmap/PlotMarkers'
+import {
+  CenterSerenityMarkers,
+  ChapelMarkers,
+  ComfortRoomMarker,
+  MainEntranceMarkers,
+  ParkingMarkers,
+  PetersRockMarkers,
+  PlaygroundMarkers,
+  PlotMarkers,
+} from '@/components/map/markers'
 
 // Memoize individual marker components for performance
 const MemoizedComfortRoomMarker = memo(ComfortRoomMarker)

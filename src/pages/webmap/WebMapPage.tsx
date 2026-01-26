@@ -1,5 +1,5 @@
 /**
- * WebMapLayout - Main map page component
+ * WebMapPage - Main map page component
  *
  * This component orchestrates the interactive cemetery map with features including:
  * - Location tracking and navigation
@@ -38,8 +38,8 @@ import { useMarkersOffline } from '@/hooks/useMarkersOffline'
 import { convertUserPlotToMarker, useUserOwnedPlots } from '@/hooks/user-hooks/useUserOwnedPlots'
 import { useValhalla } from '@/hooks/useValhalla'
 import { groupMarkersByKey } from '@/lib/clusterUtils'
-import { WebmapLegend } from '@/pages/webmap/WebmapLegend'
-import WebMapNavs from '@/pages/webmap/WebMapNavs'
+import { MapLegend } from '@/components/webmap/MapLegend'
+import MapNavigation from '@/components/webmap/MapNavigation'
 import { mapReducer, initialMapState } from '@/reducers/mapReducer'
 import { convertPlotToMarker } from '@/types/map.types'
 import { isNativePlatform } from '@/utils/platform.utils'
@@ -49,9 +49,9 @@ const NavigationInstructions = lazy(() => import('@/components/map/NavigationIns
 const MemoizedNavigationInstructions = memo(NavigationInstructions)
 
 /**
- * Props for the MapPage component
+ * Props for the WebMapPage component
  */
-interface MapPageProps {
+interface WebMapPageProps {
   /** Callback when back button is clicked */
   onBack?: () => void
   /** Initial direction for deep linking (native platforms) */
@@ -61,18 +61,18 @@ interface MapPageProps {
 /**
  * Main map page component
  */
-export default function MapPage({ onBack, initialDirection }: MapPageProps) {
+export default function WebMapPage({ onBack, initialDirection }: WebMapPageProps) {
   // ============= Data Fetching =============
-  const { isLoading: rqLoading, data: plotsDataRQ } = usePlots()
-  const { data: offlinePlots, isLoading: offlineLoading } = useMarkersOffline()
-  const plotsData = offlinePlots && offlinePlots.length > 0 ? offlinePlots : plotsDataRQ
-  const isLoading = !plotsData && (rqLoading || offlineLoading)
+  const { isLoading: isPlotsLoading, data: plotsData } = usePlots()
+  const { data: cachedPlots, isLoading: isCacheLoading } = useMarkersOffline()
+  const plotsDataToUse = cachedPlots && cachedPlots.length > 0 ? cachedPlots : plotsData
+  const isLoading = !plotsDataToUse && (isPlotsLoading || isCacheLoading)
   const { data: userPlotsData } = useUserOwnedPlots()
 
   // Convert plot data to markers
   const markers = useMemo(
-    () => plotsData?.map(convertPlotToMarker) || [],
-    [plotsData],
+    () => plotsDataToUse?.map(convertPlotToMarker) || [],
+    [plotsDataToUse],
   )
 
   const userMarkers = useMemo(() => {
@@ -121,11 +121,11 @@ export default function MapPage({ onBack, initialDirection }: MapPageProps) {
   const { notificationState, closeNotification, notifyError, notify } = notifications
 
   // ============= Refs for tracking state =============
-  const hasCenteredRef = useRef(false)
-  const suppressAutoCenterRef = useRef(false)
-  const lastDestSigRef = useRef<string | null>(null)
-  const lastCancelledDestRef = useRef<string | null>(null)
-  const lastInitDirRef = useRef<string | null>(null)
+  const hasAutoCenteredRef = useRef(false)
+  const shouldSuppressAutoCenterRef = useRef(false)
+  const lastDestinationSignatureRef = useRef<string | null>(null)
+  const lastCancelledDestinationRef = useRef<string | null>(null)
+  const lastInitialDirectionRef = useRef<string | null>(null)
 
   // ============= Computed Values =============
   const markersByGroup = useMemo(() => groupMarkersByKey(markers), [markers])
@@ -164,18 +164,18 @@ export default function MapPage({ onBack, initialDirection }: MapPageProps) {
   // Auto-center map on first location
   useEffect(() => {
     if (!currentLocation || !mapInstance) return
-    if (hasCenteredRef.current) return
-    if (suppressAutoCenterRef.current) {
-      suppressAutoCenterRef.current = false
+    if (hasAutoCenteredRef.current) return
+    if (shouldSuppressAutoCenterRef.current) {
+      shouldSuppressAutoCenterRef.current = false
       return
     }
     if (isNavigating) return
 
-    hasCenteredRef.current = true
+    hasAutoCenteredRef.current = true
     mapInstance.flyTo([currentLocation.latitude, currentLocation.longitude])
 
     const timer = setTimeout(() => {
-      hasCenteredRef.current = false
+      hasAutoCenteredRef.current = false
     }, 1000)
     return () => clearTimeout(timer)
   }, [currentLocation, mapInstance, isNavigating])
@@ -183,16 +183,16 @@ export default function MapPage({ onBack, initialDirection }: MapPageProps) {
   // ============= Location Handlers =============
   const requestLocate = useCallback(
     async (zoom: number = MAP_ZOOM.LOCATE) => {
-      const loc = isTracking
+      const locationData = isTracking
         ? currentLocation
         : await getCurrentLocation().catch(() => {
           alert('Unable to get your location. Check GPS permissions.')
           return null
         })
 
-      if (loc && mapInstance && !isNavigating) {
+      if (locationData && mapInstance && !isNavigating) {
         startTracking()
-        mapInstance.flyTo([loc.latitude, loc.longitude], zoom, { animate: true })
+        mapInstance.flyTo([locationData.latitude, locationData.longitude], zoom, { animate: true })
       }
     },
     [isTracking, currentLocation, getCurrentLocation, startTracking, mapInstance, isNavigating],
@@ -200,15 +200,15 @@ export default function MapPage({ onBack, initialDirection }: MapPageProps) {
 
   // ============= Navigation Handlers =============
   const cancelNavigation = useCallback(() => {
-    const currentTo = lastDestSigRef.current
-    if (currentTo) lastCancelledDestRef.current = currentTo
-    lastDestSigRef.current = null
+    const currentDestination = lastDestinationSignatureRef.current
+    if (currentDestination) lastCancelledDestinationRef.current = currentDestination
+    lastDestinationSignatureRef.current = null
     stopNavigation()
     dispatch({ type: 'SET_NAV_OPEN', value: false })
     dispatch({ type: 'SET_DIRECTION_LOADING', value: false })
-    suppressAutoCenterRef.current = true
+    shouldSuppressAutoCenterRef.current = true
     setTimeout(() => {
-      suppressAutoCenterRef.current = false
+      shouldSuppressAutoCenterRef.current = false
     }, 2000)
   }, [stopNavigation])
 
@@ -225,7 +225,7 @@ export default function MapPage({ onBack, initialDirection }: MapPageProps) {
         if (!from) throw new Error('Could not determine current location')
 
         await startNavigation(from, { latitude: toLat, longitude: toLng })
-        lastDestSigRef.current = `${toLat.toFixed(6)},${toLng.toFixed(6)}`
+        lastDestinationSignatureRef.current = `${toLat.toFixed(6)},${toLng.toFixed(6)}`
 
         if (!isTracking) await requestLocate()
         dispatch({ type: 'SET_NAV_OPEN', value: true })
@@ -245,10 +245,10 @@ export default function MapPage({ onBack, initialDirection }: MapPageProps) {
   // Handle initial direction from props (native deep linking)
   useEffect(() => {
     if (!initialDirection || !isNativePlatform()) return
-    const sig = `${initialDirection.lat},${initialDirection.lng}`
-    if (lastInitDirRef.current === sig) return
+    const signature = `${initialDirection.lat},${initialDirection.lng}`
+    if (lastInitialDirectionRef.current === signature) return
     if (isNavigating) return
-    lastInitDirRef.current = sig
+    lastInitialDirectionRef.current = signature
     requestAnimationFrame(() => handleDirectionClick([initialDirection.lat, initialDirection.lng]))
   }, [initialDirection, handleDirectionClick, isNavigating])
 
@@ -364,18 +364,18 @@ export default function MapPage({ onBack, initialDirection }: MapPageProps) {
     [],
   )
 
-  const setAutoOpenPopupFor = useCallback(
+  const setAutoPopupPlotId = useCallback(
     (plotId: string | null) => dispatch({ type: 'SET_AUTO_POPUP', plotId }),
     [],
   )
 
-  const handleSetSelectedTileLayer = useCallback(
+  const setTileLayer = useCallback(
     (layer: string) => setSelectedTileLayer(layer as TileLayerKey),
     [],
   )
 
   // Navigation-related context values
-  const navigationContextValue = useMemo(
+  const navigationActions = useMemo(
     () => ({
       requestLocate,
       cancelNavigation,
@@ -385,7 +385,7 @@ export default function MapPage({ onBack, initialDirection }: MapPageProps) {
   )
 
   // Clustering-related context values
-  const clusteringContextValue = useMemo(
+  const clusteringActions = useMemo(
     () => ({
       selectedGroups: state.selectedGroups,
       clusterViewMode: state.clusterViewMode,
@@ -409,7 +409,7 @@ export default function MapPage({ onBack, initialDirection }: MapPageProps) {
   )
 
   // Search-related context values
-  const searchContextValue = useMemo(
+  const searchActions = useMemo(
     () => ({
       searchQuery: state.searchQuery,
       searchResult: state.searchResult,
@@ -419,7 +419,7 @@ export default function MapPage({ onBack, initialDirection }: MapPageProps) {
       searchLot,
       clearSearch,
       setSearchQuery,
-      setAutoOpenPopupFor,
+      setAutoOpenPopupFor: setAutoPopupPlotId, // Internal name improved, but context property name maintained for backward compatibility
     }),
     [
       state.searchQuery,
@@ -430,30 +430,30 @@ export default function MapPage({ onBack, initialDirection }: MapPageProps) {
       searchLot,
       clearSearch,
       setSearchQuery,
-      setAutoOpenPopupFor,
+      setAutoPopupPlotId,
     ],
   )
 
   // Tile layer context values
-  const tileLayerContextValue = useMemo(
+  const tileLayerActions = useMemo(
     () => ({
       selectedTileLayer,
-      setSelectedTileLayer: handleSetSelectedTileLayer,
+      setSelectedTileLayer: setTileLayer,
       tileLayerOptions: TILE_LAYER_OPTIONS,
     }),
-    [selectedTileLayer, handleSetSelectedTileLayer],
+    [selectedTileLayer, setTileLayer],
   )
 
   // Combined context value (maintains backward compatibility)
-  const contextValue = useMemo(
+  const mapContextValue = useMemo(
     () => ({
       ...state,
-      ...navigationContextValue,
-      ...clusteringContextValue,
-      ...searchContextValue,
-      ...tileLayerContextValue,
+      ...navigationActions,
+      ...clusteringActions,
+      ...searchActions,
+      ...tileLayerActions,
     }),
-    [state, navigationContextValue, clusteringContextValue, searchContextValue, tileLayerContextValue],
+    [state, navigationActions, clusteringActions, searchActions, tileLayerActions],
   )
 
   // ============= Render =============
@@ -464,13 +464,13 @@ export default function MapPage({ onBack, initialDirection }: MapPageProps) {
   return (
     <MapStateContext.Provider value={state}>
       <MapDispatchContext.Provider value={dispatch}>
-        <LocateContext.Provider value={contextValue}>
+        <LocateContext.Provider value={mapContextValue}>
           <div className="relative h-full w-full overflow-hidden">
             {/* Navigation bar */}
-            <WebMapNavs onBack={onBack} />
+            <MapNavigation onBack={onBack} />
 
             {/* Map legend */}
-            <WebmapLegend />
+            <MapLegend />
 
             {/* Chat widget (web only) */}
             {!isNativePlatform() && <FloatingChatWidget />}

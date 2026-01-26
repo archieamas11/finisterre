@@ -13,14 +13,14 @@ import { ShareButton } from '@/pages/webmap/components/share-button'
 import { type DeceasedData } from '@/types/deceased.types'
 import { type ConvertedMarker } from '@/types/map.types'
 
-interface PlotLocationsProps {
+interface PlotPopupProps {
   marker: ConvertedMarker
   colors?: { background: string; text: string }
   onDirectionClick?: () => void
   isDirectionLoading?: boolean
 }
 
-export default function PlotLocations({ marker, colors, onDirectionClick, isDirectionLoading = false }: PlotLocationsProps) {
+export default function PlotPopup({ marker, colors, onDirectionClick, isDirectionLoading = false }: PlotPopupProps) {
   const { isAuthenticated } = useAuth()
   const { data: deceasedData, isLoading: isDeceasedLoading } = useDeceasedForPlot(marker.plot_id)
 
