@@ -23,6 +23,12 @@ import Spinner from '@/components/ui/spinner'
 import guide4BlockBUrl from '@/data/geojson/guide4block_B.geojson?url'
 import guide4BlockCUrl from '@/data/geojson/guide4block_C.geojson?url'
 import guide4BlockDUrl from '@/data/geojson/guide4block_D.geojson?url'
+
+import blockBAreaUrl from '@/data/geojson/block_b_area.geojson?url'
+import blockCAreaUrl from '@/data/geojson/block_c_area.geojson?url'
+import blockDAreaUrl from '@/data/geojson/block_d_area.geojson?url'
+
+
 import { usePlots } from '@/hooks/plots-hooks/plot.hooks'
 import { useAuthQuery } from '@/hooks/useAuthQuery'
 import { createClusterIconFactory, getLabelFromGroupKey, groupMarkersByKey } from '@/lib/clusterUtils'
@@ -92,6 +98,9 @@ export default function AdminMapPage() {
   const [blockBGuideGeoJson, setBlockBGuideGeoJson] = useState<GeoJSON.GeoJSON | null>(null)
   const [blockCGuideGeoJson, setBlockCGuideGeoJson] = useState<GeoJSON.GeoJSON | null>(null)
   const [blockDGuideGeoJson, setBlockDGuideGeoJson] = useState<GeoJSON.GeoJSON | null>(null)
+  const [blockBAreaGeoJson, setBlockBAreaGeoJson] = useState<GeoJSON.GeoJSON | null>(null)
+  const [blockCAreaGeoJson, setBlockCAreaGeoJson] = useState<GeoJSON.GeoJSON | null>(null)
+  const [blockDAreaGeoJson, setBlockDAreaGeoJson] = useState<GeoJSON.GeoJSON | null>(null)
   const bounds = useMemo(
     () =>
       [
@@ -349,34 +358,71 @@ export default function AdminMapPage() {
   useEffect(() => {
     let isMounted = true
     async function loadGuideGeoJson() {
+      // Load guide GeoJSON files (only for test account)
+      if (showGuide4) {
+        try {
+          // Load Block B Guide
+          const responseB = await fetch(guide4BlockBUrl)
+          if (responseB.ok) {
+            const geoJsonDataB = (await responseB.json()) as GeoJSON.GeoJSON
+            if (isMounted) setBlockBGuideGeoJson(geoJsonDataB)
+          }
+        } catch {
+          // Optional layer load failure ignored (non-critical visual enhancement)
+        }
+
+        try {
+          // Load Block C Guide
+          const responseC = await fetch(guide4BlockCUrl)
+          if (responseC.ok) {
+            const geoJsonDataC = (await responseC.json()) as GeoJSON.GeoJSON
+            if (isMounted) setBlockCGuideGeoJson(geoJsonDataC)
+          }
+        } catch {
+          // Optional layer load failure ignored (non-critical visual enhancement)
+        }
+
+        try {
+          // Load Block D Guide
+          const responseD = await fetch(guide4BlockDUrl)
+          if (responseD.ok) {
+            const geoJsonDataD = (await responseD.json()) as GeoJSON.GeoJSON
+            if (isMounted) setBlockDGuideGeoJson(geoJsonDataD)
+          }
+        } catch {
+          // Optional layer load failure ignored (non-critical visual enhancement)
+        }
+      }
+
+      // Load area GeoJSON files (for all users)
       try {
-        // Load Block B
-        const responseB = await fetch(guide4BlockBUrl)
-        if (responseB.ok) {
-          const geoJsonDataB = (await responseB.json()) as GeoJSON.GeoJSON
-          if (isMounted) setBlockBGuideGeoJson(geoJsonDataB)
+        // Load Block B Area
+        const responseBArea = await fetch(blockBAreaUrl)
+        if (responseBArea.ok) {
+          const geoJsonDataBArea = (await responseBArea.json()) as GeoJSON.GeoJSON
+          if (isMounted) setBlockBAreaGeoJson(geoJsonDataBArea)
         }
       } catch {
         // Optional layer load failure ignored (non-critical visual enhancement)
       }
 
       try {
-        // Load Block C
-        const responseC = await fetch(guide4BlockCUrl)
-        if (responseC.ok) {
-          const geoJsonDataC = (await responseC.json()) as GeoJSON.GeoJSON
-          if (isMounted) setBlockCGuideGeoJson(geoJsonDataC)
+        // Load Block C Area
+        const responseCArea = await fetch(blockCAreaUrl)
+        if (responseCArea.ok) {
+          const geoJsonDataCArea = (await responseCArea.json()) as GeoJSON.GeoJSON
+          if (isMounted) setBlockCAreaGeoJson(geoJsonDataCArea)
         }
       } catch {
         // Optional layer load failure ignored (non-critical visual enhancement)
       }
 
       try {
-        // Load Block D
-        const responseD = await fetch(guide4BlockDUrl)
-        if (responseD.ok) {
-          const geoJsonDataD = (await responseD.json()) as GeoJSON.GeoJSON
-          if (isMounted) setBlockDGuideGeoJson(geoJsonDataD)
+        // Load Block D Area
+        const responseDArea = await fetch(blockDAreaUrl)
+        if (responseDArea.ok) {
+          const geoJsonDataDArea = (await responseDArea.json()) as GeoJSON.GeoJSON
+          if (isMounted) setBlockDAreaGeoJson(geoJsonDataDArea)
         }
       } catch {
         // Optional layer load failure ignored (non-critical visual enhancement)
@@ -386,7 +432,7 @@ export default function AdminMapPage() {
     return () => {
       isMounted = false
     }
-  }, [])
+  }, [showGuide4])
 
   const handlePopupOpen = (plot_id: string) => {
     queryClient.invalidateQueries({
@@ -531,6 +577,60 @@ export default function AdminMapPage() {
               <GeoJSON
                 interactive={false}
                 data={blockDGuideGeoJson}
+                style={() => ({
+                  color: '#FFDE21',
+                  weight: 1,
+                  opacity: 1,
+                })}
+                onEachFeature={(feature, layer) => {
+                  const id = (feature.properties as { id?: string | number | null } | undefined)?.id ?? 'Guide Path'
+                  layer.bindTooltip(String(id), {
+                    sticky: true,
+                  })
+                }}
+              />
+            )}
+
+            {blockBAreaGeoJson && (
+              <GeoJSON
+                interactive={false}
+                data={blockBAreaGeoJson}
+                style={() => ({
+                  color: '#FFDE21',
+                  weight: 1,
+                  opacity: 1,
+                })}
+                onEachFeature={(feature, layer) => {
+                  const id = (feature.properties as { id?: string | number | null } | undefined)?.id ?? 'Guide Path'
+                  layer.bindTooltip(String(id), {
+                    sticky: true,
+                  })
+                }}
+              />
+            )}
+
+            {blockCAreaGeoJson && (
+              <GeoJSON
+                interactive={false}
+                data={blockCAreaGeoJson}
+                style={() => ({
+                  color: '#FFDE21',
+                  weight: 1,
+                  opacity: 1,
+                })}
+                onEachFeature={(feature, layer) => {
+                  const id = (feature.properties as { id?: string | number | null } | undefined)?.id ?? 'Guide Path'
+                  layer.bindTooltip(String(id), {
+                    sticky: true,
+                  })
+                }}
+              />
+            )}
+
+            {blockDAreaGeoJson && (
+              <GeoJSON
+                interactive={false}
+                data={blockDAreaGeoJson}
                 style={() => ({
                   color: '#FFDE21',
                   weight: 1,
