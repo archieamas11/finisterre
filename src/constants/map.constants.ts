@@ -9,7 +9,9 @@ import type { MapState } from '@/contexts/MapContext'
 export const TILE_LAYER_OPTIONS = {
   arcgis: {
     name: 'Satellite',
-    url: 'https://wayback.maptiles.arcgis.com/arcgis/rest/services/World_Imagery/WMTS/1.0.0/default028mm/MapServer/tile/58924/{z}/{y}/{x}',
+    // Dec. 12, 2024 - ArcGIS World Imagery
+    // url: 'https://wayback.maptiles.arcgis.com/arcgis/rest/services/World_Imagery/WMTS/1.0.0/default028mm/MapServer/tile/58924/{z}/{y}/{x}',
+    url: 'https://services.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', // Oct. 23, 2025 - Latest ArcGIS World Imagery
   },
   osm: {
     name: 'Standard',
