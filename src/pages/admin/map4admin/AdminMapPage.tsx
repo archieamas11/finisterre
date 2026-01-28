@@ -46,7 +46,7 @@ import { LocateContext } from './LocateContext'
 function createStatusCircleIcon(backgroundColor: string, borderColor: string) {
   return L.divIcon({
     className: '',
-    html: `<div style="width:15px;height:15px;border-radius:50%;background:${backgroundColor};border:2px solid ${borderColor};box-shadow:0 0 4px rgba(0,0,0,0.15);"></div>`,
+    html: `<div style="width:20px;height:15px;border-radius:8%;background:${backgroundColor};border:2px solid ${borderColor};box-shadow:0 0 4px rgba(0,0,0,0.15);transform: rotate(-20deg);"></div>`,
   })
 }
 

@@ -28,6 +28,8 @@ export function usePlots() {
     },
     staleTime: 30000, // Data considered fresh for 30 seconds
     refetchInterval: 30000, // Refetch every 30 seconds
+    refetchOnMount: 'always',
+    refetchOnWindowFocus: true,
   })
 }
 
