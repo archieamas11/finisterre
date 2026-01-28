@@ -133,13 +133,13 @@ export const convertPlotToMarker = (plot: {
 export const getCategoryColors = (category: string): { background: string; text: string } => {
   switch (category.toLowerCase()) {
     case 'platinum':
-      return { background: '#d4af37', text: '#303030' } // Gold background, black text
+      return { background: '#ffbe00', text: '#303030' } // Gold background, black text
     case 'diamond':
-      return { background: '#cc6688', text: '#ffffff' } // Pink background, white text
+      return { background: '#c0819e', text: '#ffffff' } // Pink background, white text
     case 'bronze':
-      return { background: '#7d7d7d', text: '#ffffff' } // Gray background, white text
+      return { background: '#ffffff', text: '#303030' } // White background, dark text
     case 'silver':
-      return { background: '#b00020', text: '#ffffff' } // Red background, white text
+      return { background: '#f10d0e', text: '#ffffff' } // Red background, white text
     default:
       return { background: '#6b7280', text: '#ffffff' } // Gray background, white text
   }
@@ -154,6 +154,10 @@ export const getStatusColor = (status: string): string => {
       return '#ef4444'
     case 'reserved':
       return '#facc15'
+    case 'sold':
+      return '#000000'
+    case 'hold':
+      return '#00ffff'
     default:
       return '#a3a3a3'
   }

@@ -20,7 +20,9 @@ import EditMarkerInstructions from '@/components/map/EditMarkerInstructions'
 import MapClickHandler from '@/components/map/MapClickHandler'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import Spinner from '@/components/ui/spinner'
-import guide4BlockBUrl from '@/data/geojson/guide-4-block-b.geojson?url'
+import guide4BlockBUrl from '@/data/geojson/guide4block_B.geojson?url'
+import guide4BlockCUrl from '@/data/geojson/guide4block_C.geojson?url'
+import guide4BlockDUrl from '@/data/geojson/guide4block_D.geojson?url'
 import { usePlots } from '@/hooks/plots-hooks/plot.hooks'
 import { useAuthQuery } from '@/hooks/useAuthQuery'
 import { createClusterIconFactory, getLabelFromGroupKey, groupMarkersByKey } from '@/lib/clusterUtils'
@@ -37,14 +39,14 @@ import {
   PetersRockMarkers,
   PlaygroundMarkers,
 } from '@/components/map/markers'
-import { convertPlotToMarker, getStatusColor } from '@/types/map.types'
+import { convertPlotToMarker, getStatusColor, getCategoryColors } from '@/types/map.types'
 import AdminMapNavs from './AdminMapNavs'
 import { LocateContext } from './LocateContext'
 
-function createStatusCircleIcon(color: string) {
+function createStatusCircleIcon(backgroundColor: string, borderColor: string) {
   return L.divIcon({
     className: '',
-    html: `<div style="width:15px;height:15px;border-radius:50%;background:${color};border:1px solid #fff;box-shadow:0 0 4px rgba(0,0,0,0.15);"></div>`,
+    html: `<div style="width:15px;height:15px;border-radius:50%;background:${backgroundColor};border:2px solid ${borderColor};box-shadow:0 0 4px rgba(0,0,0,0.15);"></div>`,
   })
 }
 
@@ -88,6 +90,8 @@ export default function AdminMapPage() {
     if (locationTrackingRef.current) locationTrackingRef.current()
   }
   const [blockBGuideGeoJson, setBlockBGuideGeoJson] = useState<GeoJSON.GeoJSON | null>(null)
+  const [blockCGuideGeoJson, setBlockCGuideGeoJson] = useState<GeoJSON.GeoJSON | null>(null)
+  const [blockDGuideGeoJson, setBlockDGuideGeoJson] = useState<GeoJSON.GeoJSON | null>(null)
   const bounds = useMemo(
     () =>
       [
@@ -124,7 +128,7 @@ export default function AdminMapPage() {
     ],
     [],
   )
-  const [selectedMapVersion, setSelectedMapVersion] = useState('58924')
+  const [selectedMapVersion, setSelectedMapVersion] = useState('20512')
 
   const searchLot = useCallback(
     async (lotId: string) => {
@@ -341,15 +345,39 @@ export default function AdminMapPage() {
     [isAddingMarker, isEditingMarker, showAddDialog, selectedPlotForEdit, handleEditComplete],
   )
 
-  // Load local GeoJSON asset at runtime (avoids bundler parsing issues)
+  // Load local GeoJSON assets at runtime (avoids bundler parsing issues)
   useEffect(() => {
     let isMounted = true
     async function loadGuideGeoJson() {
       try {
-        const response = await fetch(guide4BlockBUrl)
-        if (!response.ok) return
-        const geoJsonData = (await response.json()) as GeoJSON.GeoJSON
-        if (isMounted) setBlockBGuideGeoJson(geoJsonData)
+        // Load Block B
+        const responseB = await fetch(guide4BlockBUrl)
+        if (responseB.ok) {
+          const geoJsonDataB = (await responseB.json()) as GeoJSON.GeoJSON
+          if (isMounted) setBlockBGuideGeoJson(geoJsonDataB)
+        }
+      } catch {
+        // Optional layer load failure ignored (non-critical visual enhancement)
+      }
+
+      try {
+        // Load Block C
+        const responseC = await fetch(guide4BlockCUrl)
+        if (responseC.ok) {
+          const geoJsonDataC = (await responseC.json()) as GeoJSON.GeoJSON
+          if (isMounted) setBlockCGuideGeoJson(geoJsonDataC)
+        }
+      } catch {
+        // Optional layer load failure ignored (non-critical visual enhancement)
+      }
+
+      try {
+        // Load Block D
+        const responseD = await fetch(guide4BlockDUrl)
+        if (responseD.ok) {
+          const geoJsonDataD = (await responseD.json()) as GeoJSON.GeoJSON
+          if (isMounted) setBlockDGuideGeoJson(geoJsonDataD)
+        }
       } catch {
         // Optional layer load failure ignored (non-critical visual enhancement)
       }
@@ -482,6 +510,40 @@ export default function AdminMapPage() {
                 }}
               />
             )}
+            {showGuide4 && blockCGuideGeoJson && (
+              <GeoJSON
+                interactive={false}
+                data={blockCGuideGeoJson}
+                style={() => ({
+                  color: '#FFDE21',
+                  weight: 1,
+                  opacity: 1,
+                })}
+                onEachFeature={(feature, layer) => {
+                  const id = (feature.properties as { id?: string | number | null } | undefined)?.id ?? 'Guide Path'
+                  layer.bindTooltip(String(id), {
+                    sticky: true,
+                  })
+                }}
+              />
+            )}
+            {showGuide4 && blockDGuideGeoJson && (
+              <GeoJSON
+                interactive={false}
+                data={blockDGuideGeoJson}
+                style={() => ({
+                  color: '#FFDE21',
+                  weight: 1,
+                  opacity: 1,
+                })}
+                onEachFeature={(feature, layer) => {
+                  const id = (feature.properties as { id?: string | number | null } | undefined)?.id ?? 'Guide Path'
+                  layer.bindTooltip(String(id), {
+                    sticky: true,
+                  })
+                }}
+              />
+            )}
 
             <MapClickHandler isAddingMarker={isAddingMarker} onMapClick={handleMapClick} />
             <MainEntranceMarkers />
@@ -496,8 +558,9 @@ export default function AdminMapPage() {
                 return (
                   <div key={`cluster-${groupKey}`}>
                     {groupMarkers.map((marker: ConvertedMarker) => {
+                      const categoryColors = getCategoryColors(marker.category)
                       const statusColor = getStatusColor(marker.plotStatus)
-                      const circleIcon = createStatusCircleIcon(statusColor)
+                      const circleIcon = createStatusCircleIcon(categoryColors.background, statusColor)
                       return (
                         <EditableMarker
                           key={`plot-${marker.plot_id}`}
@@ -540,8 +603,9 @@ export default function AdminMapPage() {
                   animate={false}
                 >
                   {groupMarkers.map((marker: ConvertedMarker) => {
+                    const categoryColors = getCategoryColors(marker.category)
                     const statusColor = getStatusColor(marker.plotStatus)
-                    const circleIcon = createStatusCircleIcon(statusColor)
+                    const circleIcon = createStatusCircleIcon(categoryColors.background, statusColor)
                     return (
                       <EditableMarker
                         key={`plot-${marker.plot_id}`}
