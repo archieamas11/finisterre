@@ -100,8 +100,8 @@ export default function EditableMarker({
         top: 45%;
         left: 49%;
         transform: translate(-50%, -50%);
-        width: 150%;
-        height: 150%;
+        width: 200%;
+        height: 250%;
         border: 3px dashed #3b82f6;
         border-radius: 50%;
         animation: rotate 10s linear infinite;

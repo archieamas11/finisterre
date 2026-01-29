@@ -1,13 +1,13 @@
 import { useEffect } from 'react'
-import { RiMapPinAddLine } from 'react-icons/ri'
 
 import { Button } from '@/components/ui/button'
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
 import { useAdminContext } from '@/hooks/useNavigationContext'
 import { cn } from '@/lib/utils'
+import { PencilLineIcon } from 'lucide-react'
 
 export default function AdminControls() {
-  const { context, onAddMarkerClick, onEditMarkerClick } = useAdminContext()
+  const { context, onAddMarkerClick, onEditMarkerClick, onMultiEditSelectClick } = useAdminContext()
 
   useEffect(() => {
     if (!context?.isAddingMarker) return
@@ -34,7 +34,7 @@ export default function AdminControls() {
           aria-label="Admin map controls"
           className="bg-background text-background-foreground hover:bg-background/80shrink-0 rounded-full text-xs sm:text-sm"
         >
-          <RiMapPinAddLine
+          <PencilLineIcon
             className={cn('h-3 w-3 sm:h-4 sm:w-4', {
               'text-primary-foreground': context.isAddingMarker,
               'text-accent-foreground': !context.isAddingMarker,
@@ -45,6 +45,7 @@ export default function AdminControls() {
       <DropdownMenuContent>
         <DropdownMenuItem onClick={onAddMarkerClick}>{context.isAddingMarker ? 'Cancel Add' : 'Add Marker'}</DropdownMenuItem>
         <DropdownMenuItem onClick={onEditMarkerClick}>{context.isEditingMarker ? 'Cancel Edit' : 'Edit Marker'}</DropdownMenuItem>
+        <DropdownMenuItem onClick={onMultiEditSelectClick}>{context.isEditingMarker ? 'Cancel Multi Edit' : 'Edit Multiple Markers'}</DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
   )

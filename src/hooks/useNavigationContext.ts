@@ -7,6 +7,8 @@ export interface AdminContext {
   requestLocate: () => void
   isAddingMarker: boolean
   toggleAddMarker: () => void
+  toggleMultiEditSelect: () => void
+  isMultiEditSelecting: boolean
   isEditingMarker: boolean
   toggleEditMarker: () => void
 }
@@ -84,28 +86,40 @@ export const useMapContext = () => {
 export const useAdminContext = () => {
   const { context, isAdmin } = useMapContext()
 
+  const adminContext = isAdmin && isAdminContext(context) ? context : null
+
   const onAddMarkerClick = useCallback(() => {
-    if (isAdmin && context) {
-      if ((context as AdminContext).isEditingMarker) {
-        ;(context as AdminContext).toggleEditMarker()
-      }
-      ;(context as AdminContext).toggleAddMarker()
+    if (!adminContext) return
+
+    if (adminContext.isEditingMarker) {
+      adminContext.toggleEditMarker()
     }
-  }, [isAdmin, context])
+    adminContext.toggleAddMarker()
+  }, [adminContext])
 
   const onEditMarkerClick = useCallback(() => {
-    if (isAdmin && context) {
-      if ((context as AdminContext).isAddingMarker) {
-        ;(context as AdminContext).toggleAddMarker()
-      }
-      ;(context as AdminContext).toggleEditMarker()
+    if (!adminContext) return
+
+    if (adminContext.isAddingMarker) {
+      adminContext.toggleAddMarker()
     }
-  }, [isAdmin, context])
+    adminContext.toggleEditMarker()
+  }, [adminContext])
+
+  const onMultiEditSelectClick = useCallback(() => {
+    if (!adminContext) return
+
+    if (adminContext.isAddingMarker) {
+      adminContext.toggleAddMarker()
+    }
+    adminContext.toggleEditMarker()
+  }, [adminContext])
 
   return {
-    context: isAdmin ? (context as AdminContext) : null,
+    context: adminContext,
     onAddMarkerClick,
     onEditMarkerClick,
+    onMultiEditSelectClick,
   }
 }
 

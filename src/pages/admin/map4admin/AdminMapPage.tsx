@@ -18,24 +18,6 @@ import AddPlotMarkerDialog from '@/components/map/AddPlotMarkerDialog'
 import EditableMarker from '@/components/map/EditableMarker'
 import EditMarkerInstructions from '@/components/map/EditMarkerInstructions'
 import MapClickHandler from '@/components/map/MapClickHandler'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import Spinner from '@/components/ui/spinner'
-import guide4BlockBUrl from '@/data/geojson/guide4block_B.geojson?url'
-import guide4BlockCUrl from '@/data/geojson/guide4block_C.geojson?url'
-import guide4BlockDUrl from '@/data/geojson/guide4block_D.geojson?url'
-
-import blockBAreaUrl from '@/data/geojson/block_b_area.geojson?url'
-import blockCAreaUrl from '@/data/geojson/block_c_area.geojson?url'
-import blockDAreaUrl from '@/data/geojson/block_d_area.geojson?url'
-
-
-import { usePlots } from '@/hooks/plots-hooks/plot.hooks'
-import { useAuthQuery } from '@/hooks/useAuthQuery'
-import { createClusterIconFactory, getLabelFromGroupKey, groupMarkersByKey } from '@/lib/clusterUtils'
-import { ucwords } from '@/lib/format'
-import ColumbariumPopup from '@/pages/admin/map4admin/ColumbariumPopup'
-import MapStats from '@/pages/admin/map4admin/MapStats'
-import SinglePlotPopup from '@/pages/admin/map4admin/SinglePlotPopup'
 import {
   CenterSerenityMarkers,
   ChapelMarkers,
@@ -45,7 +27,22 @@ import {
   PetersRockMarkers,
   PlaygroundMarkers,
 } from '@/components/map/markers'
-import { convertPlotToMarker, getStatusColor, getCategoryColors } from '@/types/map.types'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import Spinner from '@/components/ui/spinner'
+import blockBAreaUrl from '@/data/geojson/block_b_area.geojson?url'
+import blockCAreaUrl from '@/data/geojson/block_c_area.geojson?url'
+import blockDAreaUrl from '@/data/geojson/block_d_area.geojson?url'
+import guide4BlockBUrl from '@/data/geojson/guide4block_B.geojson?url'
+import guide4BlockCUrl from '@/data/geojson/guide4block_C.geojson?url'
+import guide4BlockDUrl from '@/data/geojson/guide4block_D.geojson?url'
+import { usePlots } from '@/hooks/plots-hooks/plot.hooks'
+import { useAuthQuery } from '@/hooks/useAuthQuery'
+import { createClusterIconFactory, getLabelFromGroupKey, groupMarkersByKey } from '@/lib/clusterUtils'
+import { ucwords } from '@/lib/format'
+import ColumbariumPopup from '@/pages/admin/map4admin/ColumbariumPopup'
+import MapStats from '@/pages/admin/map4admin/MapStats'
+import SinglePlotPopup from '@/pages/admin/map4admin/SinglePlotPopup'
+import { convertPlotToMarker, getCategoryColors, getStatusColor } from '@/types/map.types'
 import AdminMapNavs from './AdminMapNavs'
 import { LocateContext } from './LocateContext'
 
