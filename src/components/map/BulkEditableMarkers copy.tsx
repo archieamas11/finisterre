@@ -35,7 +35,7 @@ export default function BulkEditableMarkers({ markers, selectedPlotIds, onSelect
   const currentPositionsRef = useRef<Map<string, [number, number]>>(new Map())
 
   // Drag state
-  const [, setHasDragged] = useState(false)
+  const [hasDragged, setHasDragged] = useState(false)
   const isDraggingRef = useRef(false)
   const dragStartLatLngRef = useRef<L.LatLng | null>(null)
 
@@ -80,23 +80,12 @@ export default function BulkEditableMarkers({ markers, selectedPlotIds, onSelect
         z-index: 1000 !important;
         filter: drop-shadow(0 0 8px rgba(59, 130, 246, 0.9)) brightness(1.1);
         cursor: move !important;
-        pointer-events: auto !important;
-        touch-action: none !important;
-        user-select: none !important;
-        -webkit-user-select: none !important;
-      }
-      .marker-bulk-selected * {
-        cursor: move !important;
-        pointer-events: auto !important;
-        touch-action: none !important;
       }
       .marker-bulk-selected > * {
         cursor: move !important;
-        pointer-events: auto !important;
       }
       .leaflet-container.bulk-dragging {
         cursor: grabbing !important;
-        touch-action: none !important;
       }
       .leaflet-container.bulk-dragging * {
         cursor: grabbing !important;
@@ -120,9 +109,6 @@ export default function BulkEditableMarkers({ markers, selectedPlotIds, onSelect
         const el = leafletMarker.getElement()
         if (el) {
           el.classList.add('marker-bulk-selected')
-          // Add data attribute for reliable detection in production
-          el.setAttribute('data-bulk-selected', 'true')
-          el.setAttribute('data-plot-id', plotId)
         }
         // Close popup if open
         leafletMarker.closePopup()
@@ -136,8 +122,6 @@ export default function BulkEditableMarkers({ markers, selectedPlotIds, onSelect
           const el = leafletMarker.getElement()
           if (el) {
             el.classList.remove('marker-bulk-selected')
-            el.removeAttribute('data-bulk-selected')
-            el.removeAttribute('data-plot-id')
           }
         }
       })
@@ -282,103 +266,29 @@ export default function BulkEditableMarkers({ markers, selectedPlotIds, onSelect
     [cancelEdit, selectedPlotIds],
   )
 
-  // Helper to check if an element is a selected marker
-  const isSelectedMarkerElement = useCallback(
-    (target: HTMLElement | null): boolean => {
-      if (!target) return false
-
-      // Method 1: Check for data attribute (most reliable in production)
-      if (target.closest('[data-bulk-selected="true"]')) return true
-
-      // Method 2: Check for our custom class
-      if (target.closest('.marker-bulk-selected')) return true
-
-      // Method 3: Check if target is inside any of our registered markers
-      const selectedIds = Array.from(selectedPlotIds)
-      for (const plotId of selectedIds) {
-        const leafletMarker = markerRegistryRef.current[plotId]
-        if (leafletMarker) {
-          const markerEl = leafletMarker.getElement()
-          if (markerEl && (markerEl === target || markerEl.contains(target))) {
-            return true
-          }
-        }
-      }
-
-      // Method 4: Check if it's a leaflet marker icon inside our selection
-      const markerIcon = target.closest('.leaflet-marker-icon')
-      if (markerIcon) {
-        // Check if this marker icon belongs to one of our selected markers
-        for (const plotId of selectedIds) {
-          const leafletMarker = markerRegistryRef.current[plotId]
-          if (leafletMarker) {
-            const markerEl = leafletMarker.getElement()
-            if (markerEl === markerIcon) {
-              return true
-            }
-          }
-        }
-      }
-
-      return false
-    },
-    [selectedPlotIds, markerRegistryRef],
-  )
-
-  // Get coordinates from mouse or touch event
-  const getEventCoordinates = useCallback(
-    (e: MouseEvent | TouchEvent): { x: number; y: number } | null => {
-      const container = map.getContainer()
-      const rect = container.getBoundingClientRect()
-
-      if ('touches' in e) {
-        // Touch event
-        if (e.touches.length > 0) {
-          return {
-            x: e.touches[0].clientX - rect.left,
-            y: e.touches[0].clientY - rect.top,
-          }
-        } else if (e.changedTouches && e.changedTouches.length > 0) {
-          return {
-            x: e.changedTouches[0].clientX - rect.left,
-            y: e.changedTouches[0].clientY - rect.top,
-          }
-        }
-        return null
-      } else {
-        // Mouse event
-        return {
-          x: e.clientX - rect.left,
-          y: e.clientY - rect.top,
-        }
-      }
-    },
-    [map],
-  )
-
   // Main drag handling effect
   useEffect(() => {
     if (selectedPlotIds.size === 0) return
 
     const container = map.getContainer()
 
-    const startDrag = (e: MouseEvent | TouchEvent) => {
+    const onMouseDown = (e: MouseEvent) => {
+      // Check if clicked on a selected marker
       const target = e.target as HTMLElement
+      const isOnSelectedMarker = target.closest('.marker-bulk-selected')
 
-      // Check if clicked/touched on a selected marker
-      if (!isSelectedMarkerElement(target)) {
-        return
-      }
+      if (!isOnSelectedMarker) return
 
-      console.log('[BulkEdit] Drag start on selected marker')
+      console.log('[BulkEdit] Mouse down on selected marker')
 
       e.preventDefault()
       e.stopPropagation()
 
-      const coords = getEventCoordinates(e)
-      if (!coords) return
-
-      const containerPoint = L.point(coords.x, coords.y)
+      // Get the click position in lat/lng
+      const rect = container.getBoundingClientRect()
+      const x = e.clientX - rect.left
+      const y = e.clientY - rect.top
+      const containerPoint = L.point(x, y)
       const latlng = map.containerPointToLatLng(containerPoint)
 
       isDraggingRef.current = true
@@ -388,15 +298,14 @@ export default function BulkEditableMarkers({ markers, selectedPlotIds, onSelect
       container.classList.add('bulk-dragging')
     }
 
-    const moveDrag = (e: MouseEvent | TouchEvent) => {
+    const onMouseMove = (e: MouseEvent) => {
       if (!isDraggingRef.current || !dragStartLatLngRef.current) return
 
-      e.preventDefault()
-
-      const coords = getEventCoordinates(e)
-      if (!coords) return
-
-      const containerPoint = L.point(coords.x, coords.y)
+      // Get current mouse position in lat/lng
+      const rect = container.getBoundingClientRect()
+      const x = e.clientX - rect.left
+      const y = e.clientY - rect.top
+      const containerPoint = L.point(x, y)
       const currentLatLng = map.containerPointToLatLng(containerPoint)
 
       // Calculate delta from drag start
@@ -408,10 +317,10 @@ export default function BulkEditableMarkers({ markers, selectedPlotIds, onSelect
       setHasDragged(true)
     }
 
-    const endDrag = () => {
+    const onMouseUp = () => {
       if (!isDraggingRef.current) return
 
-      console.log('[BulkEdit] Drag ended')
+      console.log('[BulkEdit] Mouse up - drag ended, hasDragged:', hasDragged)
 
       isDraggingRef.current = false
       dragStartLatLngRef.current = null
@@ -421,6 +330,7 @@ export default function BulkEditableMarkers({ markers, selectedPlotIds, onSelect
 
       // Show instruction toast if markers were moved
       if (currentPositionsRef.current.size > 0) {
+        // Check if any positions actually changed
         let anyChanged = false
         currentPositionsRef.current.forEach((currPos, plotId) => {
           const origPos = originalPositionsRef.current.get(plotId)
@@ -439,59 +349,21 @@ export default function BulkEditableMarkers({ markers, selectedPlotIds, onSelect
       }
     }
 
-    // Mouse events (capture phase to intercept before Leaflet)
-    document.addEventListener('mousedown', startDrag, true)
-    document.addEventListener('mousemove', moveDrag, true)
-    document.addEventListener('mouseup', endDrag, true)
-
-    // Touch events for mobile/tablet support
-    document.addEventListener('touchstart', startDrag, { capture: true, passive: false })
-    document.addEventListener('touchmove', moveDrag, { capture: true, passive: false })
-    document.addEventListener('touchend', endDrag, true)
-    document.addEventListener('touchcancel', endDrag, true)
-
-    // Pointer events as fallback (better cross-browser support)
-    const onPointerDown = (e: PointerEvent) => {
-      if (e.pointerType === 'touch') return // Already handled by touch events
-      startDrag(e as unknown as MouseEvent)
-    }
-    const onPointerMove = (e: PointerEvent) => {
-      if (e.pointerType === 'touch') return
-      moveDrag(e as unknown as MouseEvent)
-    }
-    const onPointerUp = (e: PointerEvent) => {
-      if (e.pointerType === 'touch') return
-      endDrag()
-    }
-
-    document.addEventListener('pointerdown', onPointerDown, true)
-    document.addEventListener('pointermove', onPointerMove, true)
-    document.addEventListener('pointerup', onPointerUp, true)
-    document.addEventListener('pointercancel', endDrag, true)
+    // Use capture phase to intercept before Leaflet
+    document.addEventListener('mousedown', onMouseDown, true)
+    document.addEventListener('mousemove', onMouseMove, true)
+    document.addEventListener('mouseup', onMouseUp, true)
 
     return () => {
-      // Mouse events
-      document.removeEventListener('mousedown', startDrag, true)
-      document.removeEventListener('mousemove', moveDrag, true)
-      document.removeEventListener('mouseup', endDrag, true)
-
-      // Touch events
-      document.removeEventListener('touchstart', startDrag, true)
-      document.removeEventListener('touchmove', moveDrag, true)
-      document.removeEventListener('touchend', endDrag, true)
-      document.removeEventListener('touchcancel', endDrag, true)
-
-      // Pointer events
-      document.removeEventListener('pointerdown', onPointerDown, true)
-      document.removeEventListener('pointermove', onPointerMove, true)
-      document.removeEventListener('pointerup', onPointerUp, true)
-      document.removeEventListener('pointercancel', endDrag, true)
+      document.removeEventListener('mousedown', onMouseDown, true)
+      document.removeEventListener('mousemove', onMouseMove, true)
+      document.removeEventListener('mouseup', onMouseUp, true)
 
       // Cleanup
       map.dragging.enable()
       container.classList.remove('bulk-dragging')
     }
-  }, [map, selectedPlotIds, moveMarkersByDelta, isSelectedMarkerElement, getEventCoordinates])
+  }, [map, selectedPlotIds, moveMarkersByDelta, hasDragged])
 
   // Show initial instruction when markers are selected
   useEffect(() => {
