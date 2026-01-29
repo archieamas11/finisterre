@@ -19,7 +19,7 @@ export default function EditMarkerInstructions({ isVisible, step }: EditMarkerIn
           animate={{ opacity: 1, x: 0 }}
           exit={{ opacity: 0, x: -20 }}
           transition={{ duration: 0.2, ease: 'easeOut' }}
-          className="absolute top-4 left-4 z-[1000] w-80"
+          className="absolute top-2 left-2 z-[1000] w-80"
           role="dialog"
           aria-modal="true"
           aria-label={step === 'select' ? 'Select marker to edit' : 'Edit marker position'}
