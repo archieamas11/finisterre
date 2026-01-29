@@ -50,14 +50,21 @@ import { ucwords } from '@/lib/format'
 import ColumbariumPopup from '@/pages/admin/map4admin/ColumbariumPopup'
 import MapStats from '@/pages/admin/map4admin/MapStats'
 import SinglePlotPopup from '@/pages/admin/map4admin/SinglePlotPopup'
-import { convertPlotToMarker, getCategoryColors, getStatusColor } from '@/types/map.types'
+import { convertPlotToMarker, getCategoryColors } from '@/types/map.types'
 import AdminMapNavs from './AdminMapNavs'
 import { LocateContext } from './LocateContext'
 
-function createStatusCircleIcon(backgroundColor: string, borderColor: string) {
+// function createStatusCircleIcon(backgroundColor: string, borderColor: string) {
+//   return L.divIcon({
+//     className: '',
+//     html: `<div style="width:20px;height:15px;border-radius:8%;background:${backgroundColor};border:2px solid ${borderColor};box-shadow:0 0 4px rgba(0,0,0,0.15);transform: rotate(-20deg);"></div>`,
+//   })
+// }
+
+function createStatusCircleIcon(backgroundColor: string) {
   return L.divIcon({
     className: '',
-    html: `<div style="width:20px;height:15px;border-radius:8%;background:${backgroundColor};border:2px solid ${borderColor};box-shadow:0 0 4px rgba(0,0,0,0.15);transform: rotate(-20deg);"></div>`,
+    html: `<div style="width:20px;height:15px;border-radius:8%;background:${backgroundColor};box-shadow:0 0 4px rgba(0,0,0,0.15);transform: rotate(-20deg);"></div>`,
   })
 }
 
@@ -722,8 +729,9 @@ export default function AdminMapPage() {
                   <div key={`cluster-${groupKey}`}>
                     {groupMarkers.map((marker: ConvertedMarker) => {
                       const categoryColors = getCategoryColors(marker.category)
-                      const statusColor = getStatusColor(marker.plotStatus)
-                      const circleIcon = createStatusCircleIcon(categoryColors.background, statusColor)
+                      // const statusColor = getStatusColor(marker.plotStatus)
+                      // const circleIcon = createStatusCircleIcon(categoryColors.background, statusColor)
+                      const circleIcon = createStatusCircleIcon(categoryColors.background)
                       const isInBulkSelection = isMultiEditSelecting && selectedPlotIds.has(marker.plot_id)
                       return (
                         <EditableMarker
@@ -769,8 +777,9 @@ export default function AdminMapPage() {
                 >
                   {groupMarkers.map((marker: ConvertedMarker) => {
                     const categoryColors = getCategoryColors(marker.category)
-                    const statusColor = getStatusColor(marker.plotStatus)
-                    const circleIcon = createStatusCircleIcon(categoryColors.background, statusColor)
+                    // const statusColor = getStatusColor(marker.plotStatus)
+                    // const circleIcon = createStatusCircleIcon(categoryColors.background, statusColor)
+                    const circleIcon = createStatusCircleIcon(categoryColors.background)
                     return (
                       <EditableMarker
                         key={`plot-${marker.plot_id}`}
