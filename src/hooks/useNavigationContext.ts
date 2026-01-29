@@ -93,6 +93,8 @@ export const useAdminContext = () => {
 
     if (adminContext.isEditingMarker) {
       adminContext.toggleEditMarker()
+    } else if (adminContext.isMultiEditSelecting) {
+      adminContext.toggleMultiEditSelect()
     }
     adminContext.toggleAddMarker()
   }, [adminContext])
@@ -102,6 +104,8 @@ export const useAdminContext = () => {
 
     if (adminContext.isAddingMarker) {
       adminContext.toggleAddMarker()
+    } else if (adminContext.isMultiEditSelecting) {
+      adminContext.toggleMultiEditSelect()
     }
     adminContext.toggleEditMarker()
   }, [adminContext])
@@ -111,8 +115,10 @@ export const useAdminContext = () => {
 
     if (adminContext.isAddingMarker) {
       adminContext.toggleAddMarker()
+    } else if (adminContext.isEditingMarker) {
+      adminContext.toggleEditMarker()
     }
-    adminContext.toggleEditMarker()
+    adminContext.toggleMultiEditSelect()
   }, [adminContext])
 
   return {

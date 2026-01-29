@@ -30,6 +30,14 @@ export async function updatePlotCoordinates(plot_id: string, coordinates: string
   return res.data
 }
 
+export async function updateMultiplePlotCoordinates(updates: Array<{ plot_id: string; coordinates: string }>) {
+  // Bulk update coordinates for multiple plots atomically
+  const res = await api.post('plots/update_multiple_plot_coordinates.php', {
+    updates,
+  })
+  return res.data
+}
+
 export async function getPlots() {
   const res = await api.post('plots/get_plots.php')
   return res.data

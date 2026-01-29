@@ -33,9 +33,10 @@ export default function AdminMapNavs({ searchLot, resetView, onSelectResult }: A
           size={'sm'}
           aria-label="Print map view"
           onClick={() => window.print()}
-          className={'bg-background text-background-foreground hover:bg-background/80shrink-0 rounded-full text-xs sm:text-sm'}
+          className={'bg-background text-background-foreground hover:bg-background/80shrink-0 rounded-lg text-xs sm:text-sm'}
         >
           <PrinterIcon />
+          Print Map
         </Button>
       </div>
     </nav>

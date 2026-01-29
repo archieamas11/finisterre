@@ -15,6 +15,7 @@ interface EditableMarkerProps {
   children: React.ReactNode
   isEditable: boolean
   isSelected: boolean
+  isBulkEditing?: boolean
   onMarkerClick: (plotId: string) => void
   onEditComplete: () => void
   onSaveSuccess?: () => void
@@ -31,6 +32,7 @@ export default function EditableMarker({
   children,
   isEditable,
   isSelected,
+  isBulkEditing = false,
   onMarkerClick,
   onEditComplete,
   onSaveSuccess,
@@ -355,6 +357,11 @@ export default function EditableMarker({
   }, [isEditable, onMarkerClick, plotId])
 
   const eventHandlers = useMemo(() => {
+    // Disable all interactions during bulk editing
+    if (isBulkEditing) {
+      return {}
+    }
+
     const handlers: Record<string, () => void> = {
       click: function () {
         console.log('[EditableMarker] click plot', plotId, 'editable', isEditable, 'selected', isSelected)
@@ -374,11 +381,11 @@ export default function EditableMarker({
         }
     }
     return handlers
-  }, [handleMarkerClick, isEditable, onPopupOpen, onPopupClose])
+  }, [handleMarkerClick, isEditable, isBulkEditing, onPopupOpen, onPopupClose, plotId, isSelected])
 
   return (
     <Marker ref={markerRef} position={localPosition} icon={markerIcon} eventHandlers={eventHandlers} draggable={isSelected && isEditable}>
-      {!isEditable && children}
+      {!isEditable && !isBulkEditing && children}
     </Marker>
   )
 }

@@ -266,17 +266,17 @@ export default function MapStats() {
   return (
     <>
       {/* Desktop View */}
-      <div className="pointer-events-auto absolute top-6 right-6 z-999 hidden lg:block">
+      <div className="pointer-events-auto absolute top-2 right-2 z-999 hidden lg:block">
         <StatsCard />
       </div>
 
       {/* Mobile/Tablet View */}
-      <div className="pointer-events-auto absolute top-6 left-6 z-999 lg:hidden">
+      <div className="pointer-events-auto absolute top-2 left-2 z-999 lg:hidden">
         <div className="relative">
           {/* Burger Menu Button */}
           <button
             onClick={() => setOpen(!open)}
-            className="flex h-12 w-12 cursor-pointer items-center justify-center rounded-full border border-white/20 bg-white/90 shadow-lg backdrop-blur-md dark:border-stone-700/50 dark:bg-[#16141e]/80"
+            className="flex h-10 w-10 cursor-pointer items-center justify-center rounded-full bg-background text-background-foreground hover:bg-background/80 "
           >
             {open ? <X className="h-6 w-6 text-gray-700 dark:text-gray-200" /> : <Menu className="h-6 w-6 text-gray-700 dark:text-gray-200" />}
           </button>

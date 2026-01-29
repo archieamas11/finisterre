@@ -2,19 +2,25 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useQueryClient } from '@tanstack/react-query'
 
 import 'leaflet/dist/leaflet.css'
+import 'leaflet-draw/dist/leaflet.draw.css'
 
 import type { ConvertedMarker } from '@/types/map.types'
 import type { AdminSearchItem } from '@/types/search.types'
 import L from 'leaflet'
+
+import 'leaflet-draw'
+
 import { useHotkeys } from 'react-hotkeys-hook'
 import { GeoJSON, MapContainer, Popup, TileLayer, useMap } from 'react-leaflet'
 import MarkerClusterGroup from 'react-leaflet-markercluster'
 import { useLocation, useNavigate } from 'react-router-dom'
+import { toast } from 'sonner'
 
 import { searchLotById } from '@/api/plots.api'
 import { ErrorMessage } from '@/components/ErrorMessage'
 import AddMarkerInstructions from '@/components/map/AddMarkerInstructions'
 import AddPlotMarkerDialog from '@/components/map/AddPlotMarkerDialog'
+import BulkEditableMarkers, { getMarkersInPolygon } from '@/components/map/BulkEditableMarkers'
 import EditableMarker from '@/components/map/EditableMarker'
 import EditMarkerInstructions from '@/components/map/EditMarkerInstructions'
 import MapClickHandler from '@/components/map/MapClickHandler'
@@ -27,6 +33,8 @@ import {
   PetersRockMarkers,
   PlaygroundMarkers,
 } from '@/components/map/markers'
+import MultiEditMarkerInstructions from '@/components/map/MultiEditMarkerInstructions'
+import PolygonDrawControl from '@/components/map/PolygonDrawControl'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import Spinner from '@/components/ui/spinner'
 import blockBAreaUrl from '@/data/geojson/block_b_area.geojson?url'
@@ -88,6 +96,8 @@ export default function AdminMapPage() {
   const [showAddDialog, setShowAddDialog] = useState(false)
   const [isEditingMarker, setIsEditingMarker] = useState(false)
   const [selectedPlotForEdit, setSelectedPlotForEdit] = useState<string | null>(null)
+  const [isMultiEditSelecting, setIsMultiEditSelecting] = useState(false)
+  const [selectedPlotIds, setSelectedPlotIds] = useState<Set<string>>(new Set())
   const locationTrackingRef = useRef<(() => void) | null>(null)
   const requestLocate = () => {
     if (locationTrackingRef.current) locationTrackingRef.current()
@@ -273,6 +283,38 @@ export default function AdminMapPage() {
     })
   }
 
+  const toggleMultiEditSelect = () => {
+    setIsMultiEditSelecting((prev) => {
+      const next = !prev
+      if (!next) {
+        setSelectedPlotIds(new Set())
+      }
+      document.body.classList.toggle('multi-edit-mode', next)
+      return next
+    })
+  }
+
+  const handlePolygonComplete = useCallback(
+    (latLngs: L.LatLng[]) => {
+      const selectedIds = getMarkersInPolygon(markers, latLngs)
+
+      if (selectedIds.length === 0) {
+        toast.info('No markers found in selection area')
+        return
+      }
+
+      setSelectedPlotIds(new Set(selectedIds))
+      toast.success(`Selected ${selectedIds.length} marker${selectedIds.length !== 1 ? 's' : ''}`)
+    },
+    [markers],
+  )
+
+  const handleBulkEditComplete = useCallback(() => {
+    setSelectedPlotIds(new Set())
+    setIsMultiEditSelecting(false)
+    document.body.classList.remove('multi-edit-mode')
+  }, [])
+
   const handleMarkerClickForEdit = (plotId: string) => {
     if (isEditingMarker) {
       setSelectedPlotForEdit(plotId)
@@ -310,6 +352,7 @@ export default function AdminMapPage() {
     return () => {
       document.body.classList.remove('add-marker-mode')
       document.body.classList.remove('edit-marker-mode')
+      document.body.classList.remove('multi-edit-mode')
     }
   }, [])
 
@@ -332,6 +375,13 @@ export default function AdminMapPage() {
         return
       }
 
+      if (isMultiEditSelecting) {
+        setIsMultiEditSelecting(false)
+        setSelectedPlotIds(new Set())
+        document.body.classList.remove('multi-edit-mode')
+        return
+      }
+
       if (isEditingMarker && selectedPlotForEdit) {
         handleEditComplete()
         return
@@ -348,7 +398,7 @@ export default function AdminMapPage() {
       enableOnFormTags: true,
       enableOnContentEditable: true,
     },
-    [isAddingMarker, isEditingMarker, showAddDialog, selectedPlotForEdit, handleEditComplete],
+    [isAddingMarker, isEditingMarker, isMultiEditSelecting, showAddDialog, selectedPlotForEdit, handleEditComplete],
   )
 
   // Load local GeoJSON assets at runtime (avoids bundler parsing issues)
@@ -473,11 +523,18 @@ export default function AdminMapPage() {
           toggleAddMarker,
           isEditingMarker,
           toggleEditMarker,
+          isMultiEditSelecting,
+          toggleMultiEditSelect,
         }}
       >
         <div className="relative z-1 h-full w-full">
           <AdminMapNavs searchLot={searchLot} resetView={resetView} onSelectResult={handleSelectSearchResult} />
           <MapStats />
+          <MultiEditMarkerInstructions
+            isVisible={isMultiEditSelecting}
+            step={selectedPlotIds.size === 0 ? 'draw' : 'selected'}
+            selectedCount={selectedPlotIds.size}
+          />
           <AddMarkerInstructions isVisible={isAddingMarker} />
           <EditMarkerInstructions isVisible={isEditingMarker} step={selectedPlotForEdit ? 'edit' : 'select'} />
           <div className="absolute bottom-4 left-4 z-999 bg-card backdrop-blur-sm rounded-lg p-2 shadow-lg border">
@@ -643,6 +700,15 @@ export default function AdminMapPage() {
             )}
 
             <MapClickHandler isAddingMarker={isAddingMarker} onMapClick={handleMapClick} />
+            <PolygonDrawControl isActive={isMultiEditSelecting && selectedPlotIds.size === 0} onPolygonComplete={handlePolygonComplete} />
+            {isMultiEditSelecting && selectedPlotIds.size > 0 && (
+              <BulkEditableMarkers
+                markers={markers}
+                selectedPlotIds={selectedPlotIds}
+                onSelectionComplete={handleBulkEditComplete}
+                markerRegistryRef={markerRegistryRef}
+              />
+            )}
             <MainEntranceMarkers />
             <ChapelMarkers />
             <PlaygroundMarkers />
@@ -651,13 +717,14 @@ export default function AdminMapPage() {
             <ComfortRoomMarker />
             <PetersRockMarkers />
             {Object.entries(markersByGroup).map(([groupKey, groupMarkers]) => {
-              if (isEditingMarker || isAddingMarker) {
+              if (isEditingMarker || isAddingMarker || isMultiEditSelecting) {
                 return (
                   <div key={`cluster-${groupKey}`}>
                     {groupMarkers.map((marker: ConvertedMarker) => {
                       const categoryColors = getCategoryColors(marker.category)
                       const statusColor = getStatusColor(marker.plotStatus)
                       const circleIcon = createStatusCircleIcon(categoryColors.background, statusColor)
+                      const isInBulkSelection = isMultiEditSelecting && selectedPlotIds.has(marker.plot_id)
                       return (
                         <EditableMarker
                           key={`plot-${marker.plot_id}`}
@@ -666,6 +733,7 @@ export default function AdminMapPage() {
                           icon={circleIcon}
                           isEditable={isEditingMarker}
                           isSelected={selectedPlotForEdit === marker.plot_id}
+                          isBulkEditing={isMultiEditSelecting}
                           onMarkerClick={handleMarkerClickForEdit}
                           onEditComplete={handleEditComplete}
                           onSaveSuccess={() => setSelectedPlotForEdit(null)}
@@ -679,7 +747,7 @@ export default function AdminMapPage() {
                             }
                           }}
                         >
-                          {renderPopupContent(marker, autoOpenPlotId === marker.plot_id ? highlightedNiche : null)}
+                          {!isInBulkSelection && renderPopupContent(marker, autoOpenPlotId === marker.plot_id ? highlightedNiche : null)}
                         </EditableMarker>
                       )
                     })}

@@ -6,6 +6,8 @@ export const LocateContext = createContext<{
   toggleAddMarker: () => void
   isEditingMarker: boolean
   toggleEditMarker: () => void
+  isMultiEditSelecting: boolean
+  toggleMultiEditSelect: () => void
 } | null>(null)
 
 export default LocateContext
